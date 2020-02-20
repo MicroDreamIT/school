@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="clearfix">
+            <span class="pull-right tableTools-container"></span>
+        </div>
+        <!-- div.table-responsive -->
+        <div class="table-responsive">
+            <table  class="table table-striped dataex-html5-selectors">
+                <thead>
+                <tr>
+                    <th>S.N.</th>
+                    <th>Files</th>
+                    <th>Description</th>
+                    <th><i class="ace-icon fa fa-download bigger-120"></i> &nbsp;Download</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (isset($data['download']) && $data['download']->count() > 0)
+                    @php($i=1)
+                    @foreach($data['download'] as $download)
+                        <tr>
+                            <td>{{ $i }}</td>
+                            <td>
+                                <a href="{{ asset('downloads'.DIRECTORY_SEPARATOR.$download->file) }}" target="_blank">
+                                    {{ $download->title }}
+                                </a>
+                            </td>
+                            <td>{{ $download->description }}</td>
+                            <td>
+                                <div class="hidden-sm hidden-md action-buttons">
+                                    <a href="{{ asset('downloads'.DIRECTORY_SEPARATOR.$download->file) }}" target="_blank" class="btn btn-primary btn-sm">
+                                        <i class="ace-icon fa fa-download bigger-130"></i> Download
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @php($i++)
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="6">No {{ $panel }} data found. Please Filter {{ $panel }} to show. </td>
+                    </tr>
+                @endif
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

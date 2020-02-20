@@ -1,0 +1,1 @@
+<?php echo e($panel, false); ?> Manager<?php /**PATH /home/viholddep/public_html/edu/resources/views/library/book/includes/breadcrumb-primary.blade.php ENDPATH**/ ?>

@@ -15,8 +15,38 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {}
+  data: function data() {
+    return {
+      students: []
+    };
+  },
+  created: function created() {
+    this.getList();
+  },
+  methods: {
+    getList: function getList() {
+      this.$http.get('/json/student').then(function (res) {});
+    }
+  }
 });
 
 /***/ }),
@@ -36,7 +66,69 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "index" }, [_vm._v("\n    I am student\n")])
+  return _c(
+    "div",
+    { staticClass: "index" },
+    [
+      _c(
+        "vs-row",
+        { attrs: { "vs-justify": "center" } },
+        [
+          _c("vs-card", [
+            _c("div", { attrs: { slot: "header" }, slot: "header" }, [
+              _c("h3", [
+                _vm._v("\n                    Student List\n                ")
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", [
+              _c("span", [
+                _vm._v(
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { attrs: { slot: "footer" }, slot: "footer" },
+              [
+                _c(
+                  "vs-row",
+                  { attrs: { "vs-justify": "flex-end" } },
+                  [
+                    _c("vs-button", {
+                      attrs: {
+                        type: "gradient",
+                        color: "danger",
+                        icon: "favorite"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("vs-button", {
+                      attrs: { color: "primary", icon: "turned_in_not" }
+                    }),
+                    _vm._v(" "),
+                    _c("vs-button", {
+                      attrs: {
+                        color: "rgb(230,230,230)",
+                        "color-text": "rgb(50,50,50)",
+                        icon: "settings"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ],
+              1
+            )
+          ])
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

@@ -9752,7 +9752,6 @@ __webpack_require__.r(__webpack_exports__);
   tag: "2",
   tagColor: "warning",
   icon: "HomeIcon",
-  i18n: "Dashboard",
   submenu: [{
     url: '/dashboard/analytics',
     name: "Analytics",
@@ -9764,7 +9763,20 @@ __webpack_require__.r(__webpack_exports__);
     slug: "dashboard-ecommerce",
     i18n: "eCommerce"
   }]
-}, {}, {
+}, {
+  url: null,
+  name: "Student & Stuff",
+  icon: "HomeIcon",
+  submenu: [{
+    url: null,
+    name: 'student',
+    submenu: [{
+      url: '/student',
+      name: "Student Detail",
+      slug: "Student Detail"
+    }]
+  }]
+}, {
   header: "Apps",
   icon: "PackageIcon",
   i18n: "Apps",

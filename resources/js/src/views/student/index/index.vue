@@ -1,6 +1,6 @@
 <template>
     <div class="index">
-        <pre v-text="$attrs"/>
+        I am student
     </div>
 </template>
 

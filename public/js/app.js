@@ -115351,7 +115351,16 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     component: function component() {
       return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(17), __webpack_require__.e(21)]).then(__webpack_require__.bind(null, /*! ./layouts/main/Main.vue */ "./resources/js/src/layouts/main/Main.vue"));
     },
-    children: [// =============================================================================
+    children: [{
+      path: '/student',
+      name: 'student.index',
+      component: function component() {
+        return __webpack_require__.e(/*! import() */ 115).then(__webpack_require__.bind(null, /*! ./views/student/index/index.vue */ "./resources/js/src/views/student/index/index.vue"));
+      },
+      meta: {
+        rule: 'admin'
+      }
+    }, // =============================================================================
     // Theme Routes
     // =============================================================================
     {
@@ -115420,7 +115429,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/apps/calendar/vue-simple-calendar',
       name: 'calendar-simple-calendar',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(7), __webpack_require__.e(120), __webpack_require__.e(83)]).then(__webpack_require__.bind(null, /*! ./views/apps/calendar/SimpleCalendar.vue */ "./resources/js/src/views/apps/calendar/SimpleCalendar.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(7), __webpack_require__.e(121), __webpack_require__.e(83)]).then(__webpack_require__.bind(null, /*! ./views/apps/calendar/SimpleCalendar.vue */ "./resources/js/src/views/apps/calendar/SimpleCalendar.vue"));
       },
       meta: {
         rule: 'editor',
@@ -115737,7 +115746,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/ui-elements/card/card-actions',
       name: 'card-actions',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 115).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardActions.vue */ "./resources/js/src/views/ui-elements/card/CardActions.vue"));
+        return __webpack_require__.e(/*! import() */ 116).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardActions.vue */ "./resources/js/src/views/ui-elements/card/CardActions.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116692,7 +116701,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/extensions/quill-editor',
       name: 'extra-component-quill-editor',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(13), __webpack_require__.e(123), __webpack_require__.e(69)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/quill-editor/QuillEditor.vue */ "./resources/js/src/views/components/extra-components/quill-editor/QuillEditor.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(13), __webpack_require__.e(124), __webpack_require__.e(69)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/quill-editor/QuillEditor.vue */ "./resources/js/src/views/components/extra-components/quill-editor/QuillEditor.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116749,7 +116758,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/extensions/datetime-picker',
       name: 'extra-component-datetime-picker',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(4), __webpack_require__.e(119), __webpack_require__.e(30)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/datetime-picker/DatetimePicker.vue */ "./resources/js/src/views/components/extra-components/datetime-picker/DatetimePicker.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(4), __webpack_require__.e(120), __webpack_require__.e(30)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/datetime-picker/DatetimePicker.vue */ "./resources/js/src/views/components/extra-components/datetime-picker/DatetimePicker.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116844,7 +116853,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/extensions/context-menu',
       name: 'extra-component-context-menu',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(124), __webpack_require__.e(78)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/context-menu/ContextMenu.vue */ "./resources/js/src/views/components/extra-components/context-menu/ContextMenu.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(125), __webpack_require__.e(78)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/context-menu/ContextMenu.vue */ "./resources/js/src/views/components/extra-components/context-menu/ContextMenu.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116882,7 +116891,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/extensions/autocomplete',
       name: 'extra-component-autocomplete',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(121), __webpack_require__.e(95)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/autocomplete/Autocomplete.vue */ "./resources/js/src/views/components/extra-components/autocomplete/Autocomplete.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(122), __webpack_require__.e(95)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/autocomplete/Autocomplete.vue */ "./resources/js/src/views/components/extra-components/autocomplete/Autocomplete.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116901,7 +116910,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/extensions/tree',
       name: 'extra-component-tree',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(125), __webpack_require__.e(57)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/tree/Tree.vue */ "./resources/js/src/views/components/extra-components/tree/Tree.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(126), __webpack_require__.e(57)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/tree/Tree.vue */ "./resources/js/src/views/components/extra-components/tree/Tree.vue"));
       },
       meta: {
         breadcrumb: [{
@@ -116986,7 +116995,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   {
     path: '',
     component: function component() {
-      return __webpack_require__.e(/*! import() */ 122).then(__webpack_require__.bind(null, /*! @/layouts/full-page/FullPage.vue */ "./resources/js/src/layouts/full-page/FullPage.vue"));
+      return __webpack_require__.e(/*! import() */ 123).then(__webpack_require__.bind(null, /*! @/layouts/full-page/FullPage.vue */ "./resources/js/src/layouts/full-page/FullPage.vue"));
     },
     children: [// =============================================================================
     // PAGES
@@ -117058,7 +117067,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/pages/error-404',
       name: 'page-error-404',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 116).then(__webpack_require__.bind(null, /*! @/views/pages/Error404.vue */ "./resources/js/src/views/pages/Error404.vue"));
+        return __webpack_require__.e(/*! import() */ 117).then(__webpack_require__.bind(null, /*! @/views/pages/Error404.vue */ "./resources/js/src/views/pages/Error404.vue"));
       },
       meta: {
         rule: 'editor'
@@ -117067,7 +117076,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/pages/error-500',
       name: 'page-error-500',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 117).then(__webpack_require__.bind(null, /*! @/views/pages/Error500.vue */ "./resources/js/src/views/pages/Error500.vue"));
+        return __webpack_require__.e(/*! import() */ 118).then(__webpack_require__.bind(null, /*! @/views/pages/Error500.vue */ "./resources/js/src/views/pages/Error500.vue"));
       },
       meta: {
         rule: 'editor'
@@ -117076,7 +117085,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       path: '/pages/not-authorized',
       name: 'page-not-authorized',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 118).then(__webpack_require__.bind(null, /*! @/views/pages/NotAuthorized.vue */ "./resources/js/src/views/pages/NotAuthorized.vue"));
+        return __webpack_require__.e(/*! import() */ 119).then(__webpack_require__.bind(null, /*! @/views/pages/NotAuthorized.vue */ "./resources/js/src/views/pages/NotAuthorized.vue"));
       },
       meta: {
         rule: 'editor'

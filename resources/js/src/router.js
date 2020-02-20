@@ -33,7 +33,6 @@ const router = new Router({
         return { x: 0, y: 0 }
     },
     routes: [
-
         {
     // =============================================================================
     // MAIN LAYOUT ROUTES
@@ -41,6 +40,14 @@ const router = new Router({
             path: '',
             component: () => import('./layouts/main/Main.vue'),
             children: [
+                {
+                    path:'/student',
+                    name:'student.index',
+                    component:()=>import('./views/student/index/index.vue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
         // =============================================================================
         // Theme Routes
         // =============================================================================

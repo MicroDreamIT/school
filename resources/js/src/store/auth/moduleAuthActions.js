@@ -10,8 +10,8 @@
 import jwt from "../../http/requests/auth/jwt/index.js"
 
 
-import firebase from 'firebase/app'
-import 'firebase/auth'
+// import firebase from 'firebase/app'
+// import 'firebase/auth'
 import router from '@/router'
 
 export default {

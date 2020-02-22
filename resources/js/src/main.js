@@ -30,12 +30,12 @@ import "./fake-db/index.js"
 import '../themeConfig.js'
 
 // Firebase
-import '@/firebase/firebaseConfig'
+// import '@/firebase/firebaseConfig'
 
 
-// Auth0 Plugin
-import AuthPlugin from "./plugins/auth"
-Vue.use(AuthPlugin);
+// // Auth0 Plugin
+// import AuthPlugin from "./plugins/auth"
+// Vue.use(AuthPlugin);
 
 
 // ACL

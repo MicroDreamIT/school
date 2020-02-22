@@ -51,10 +51,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::middleware('web')
-            ->namespace($this->namespace)
-            ->prefix('json')
-            ->group(base_path('routes/json.php'));
+//        Route::middleware('web')
+//            ->namespace($this->namespace)
+//            ->prefix('json')
+//            ->group(base_path('routes/json.php'));
 
         Route::middleware('web')
              ->namespace($this->namespace)

@@ -16,9 +16,13 @@
 
             <vs-navbar class="vx-navbar navbar-custom navbar-skelton" :color="navbarColorLocal" :class="textColor">
 
-                <vs-spacer />
-
-                <profile-drop-down />
+                <vs-spacer/>
+                <div class="nav-item d-none d-lg-block cursor-pointer" @click="$root.toggleMaximize">
+                    <a class="nav-link nav-link-expand">
+                    <i class="ficon feather" :class="$root.isMaximized?'icon-minimize':'icon-maximize'"></i></a>
+                </div>
+                <nav-custom-dropdown></nav-custom-dropdown>
+                <profile-drop-down/>
 
             </vs-navbar>
         </div>
@@ -28,7 +32,8 @@
 
 <script>
 
-    import ProfileDropDown  from "./custom-profile.vue"
+    import ProfileDropDown from "./custom-profile.vue"
+    import NavCustomDropdown from "./nav-custom-dropdown.vue"
 
     export default {
         name: "custom-navbar",
@@ -39,7 +44,7 @@
             },
         },
         components: {
-            ProfileDropDown,
+            ProfileDropDown, NavCustomDropdown
         },
         computed: {
             navbarColorLocal() {
@@ -57,9 +62,9 @@
 
             // NAVBAR STYLE
             classObj() {
-                if (this.verticalNavMenuWidth == "default")      return "navbar-default"
+                if (this.verticalNavMenuWidth == "default") return "navbar-default"
                 else if (this.verticalNavMenuWidth == "reduced") return "navbar-reduced"
-                else if (this.verticalNavMenuWidth)              return "navbar-full"
+                else if (this.verticalNavMenuWidth) return "navbar-full"
             },
         },
         methods: {
@@ -69,4 +74,14 @@
         }
     }
 </script>
+<style lang="scss">
+    .icon-minimize:before {
+        content: "\e88d";
+    }
+
+    .ficon {
+        font-size: 1.5rem;
+        color: #626262;
+    }
+</style>
 

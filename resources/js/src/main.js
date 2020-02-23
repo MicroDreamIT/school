@@ -18,6 +18,7 @@ Vue.use(Vuesax)
 
 // axios
 import axios from "./axios.js"
+
 Vue.prototype.$http = axios
 
 // API Calls
@@ -58,22 +59,26 @@ import './filters/filters'
 
 // Clipboard
 import VueClipboard from 'vue-clipboard2'
+
 Vue.use(VueClipboard);
 
 
 // Tour
 import VueTour from 'vue-tour'
+
 Vue.use(VueTour)
 require('vue-tour/dist/vue-tour.css')
 
 
 // VeeValidate
 import VeeValidate from 'vee-validate'
+
 Vue.use(VeeValidate);
 
 
 // Google Maps
 import * as VueGoogleMaps from 'vue2-google-maps'
+
 Vue.use(VueGoogleMaps, {
     load: {
         // Add your API key here
@@ -83,7 +88,8 @@ Vue.use(VueGoogleMaps, {
 })
 
 // Vuejs - Vue wrapper for hammerjs
-import { VueHammer } from 'vue2-hammer'
+import {VueHammer} from 'vue2-hammer'
+
 Vue.use(VueHammer)
 
 // PrismJS
@@ -100,5 +106,22 @@ new Vue({
     store,
     i18n,
     acl,
+    el: '#app',
+    data() {
+        return {
+            isMaximized: false
+        }
+    },
+    methods: {
+        toggleMaximize() {
+            console.log(this.$el)
+            if (this.isMaximized) {
+
+            } else {
+
+            }
+            this.isMaximized = !this.isMaximized;
+        }
+    },
     render: h => h(App)
 }).$mount('#app')

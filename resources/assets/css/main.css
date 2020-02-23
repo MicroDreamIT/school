@@ -57,3 +57,9 @@
  * @import "utilities/background-patterns";
  * @import "utilities/skew-transforms";
  */
+#app:-webkit-full-screen {
+	width: 100%;
+	height: 100%;
+	background-color: #FFFFFF;
+	margin: 0;
+}

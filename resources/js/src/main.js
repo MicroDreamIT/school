@@ -114,14 +114,33 @@ new Vue({
     },
     methods: {
         toggleMaximize() {
-            console.log(this.$el)
             if (this.isMaximized) {
-
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen)
+                    document.msExitFullscreen()
             } else {
-
+                if (this.$el.requestFullScreen) {
+                    this.$el.requestFullScreen();
+                } else if (this.$el.mozRequestFullScreen) {
+                    this.$el.mozRequestFullScreen();
+                } else if (this.$el.webkitRequestFullScreen) {
+                    this.$el.webkitRequestFullScreen(this.$el.ALLOW_KEYBOARD_INPUT);
+                }
             }
-            this.isMaximized = !this.isMaximized;
+            this.isMaximized=!this.isMaximized
+        },
+        onFullScreenChange() {
+            let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+            console.log(fullscreenElement)
+            // if in fullscreen mode fullscreenElement won't be null
         }
+
+
     },
     render: h => h(App)
 }).$mount('#app')

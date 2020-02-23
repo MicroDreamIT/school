@@ -17,12 +17,12 @@
             <vs-navbar class="vx-navbar navbar-custom navbar-skelton" :color="navbarColorLocal" :class="textColor">
 
                 <vs-spacer/>
-                <div class="nav-item d-none d-lg-block cursor-pointer" @click="$root.toggleMaximize">
+                <div class="nav-item d-none d-lg-block cursor-pointer mx-3" @click="$root.toggleMaximize">
                     <a class="nav-link nav-link-expand">
                     <i class="ficon feather" :class="$root.isMaximized?'icon-minimize':'icon-maximize'"></i></a>
                 </div>
-                <nav-custom-dropdown></nav-custom-dropdown>
-                <profile-drop-down/>
+                <nav-custom-dropdown class="mx-3 px-3"></nav-custom-dropdown>
+                <profile-drop-down class="ml-3"/>
 
             </vs-navbar>
         </div>

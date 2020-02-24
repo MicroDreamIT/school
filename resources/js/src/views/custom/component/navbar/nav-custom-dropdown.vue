@@ -3,7 +3,7 @@
         <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer my-dropdown">
             <div class="text-right leading-tight hidden sm:block">
                 <p class="font-semibold">Admin Control</p>
-                <i class="ficon angle-down"></i>
+                <i class="fa fa-angle-down"></i>
             </div>
             <vs-dropdown-menu class="vx-navbar-dropdown">
                 <ul style="min-width: 9rem">

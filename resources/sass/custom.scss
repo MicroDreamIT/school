@@ -1,0 +1,40 @@
+.pageTitle {
+  font-weight: 500;
+  color: #636363;
+  margin-right: 1rem;
+}
+
+.smBtn {
+  margin: 0 1.5px;
+  border-color: #4839eb;
+  background-color: #7367f0;
+  color: #fff;
+  padding: 0.5rem 1.5rem !important;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: 0.4285rem;
+}
+
+.router-link-exact-active {
+  .smBtn {
+    border-color: #24b263 !important;
+    background-color: #28c76f !important;
+
+    &:hover {
+      box-shadow: 0 8px 25px -8px #28c76f;
+    }
+  }
+
+}
+
+a.router-link-active {
+  .vs-icon {
+    font-size: 0.7rem;
+  }
+  text-decoration: none !important;
+}
+
+
+.vs-pagination--ul{
+  margin-bottom:0!important;
+}

@@ -11,36 +11,22 @@
                 </h3>
             </template>
             <template slot="thead">
-                <vs-th sort-key="email">
-                    Email
+                <vs-th sort-key="index">
+                    SN. NO.
                 </vs-th>
-                <vs-th sort-key="username">
-                    Name
-                </vs-th>
-                <vs-th sort-key="website">
-                    Website
-                </vs-th>
-                <vs-th sort-key="id">
-                    Nro
+                <vs-th :sort-key="col.sort_key?col.sort_key:''" v-for="(col,i) in columns" :key="i">
+                    {{col.name}}
                 </vs-th>
             </template>
 
             <template slot-scope="{data}">
                 <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                    <vs-td :data="data[idx].email">
-                        {{data[idx].email}}
+                    <vs-td>
+                        {{idx+1}}
                     </vs-td>
 
-                    <vs-td :data="data[idx].username">
-                        {{data[idx].username}}
-                    </vs-td>
-
-                    <vs-td :data="data[idx].id">
-                        {{data[idx].website}}
-                    </vs-td>
-
-                    <vs-td :data="data[idx].id">
-                        {{data[idx].id}}
+                    <vs-td v-for="(col,indx) in columns" :key="indx">
+                        <span v-if="col.field">{{data[idx][col.field]}}</span>
                     </vs-td>
                 </vs-tr>
 
@@ -57,8 +43,17 @@
         props: {
             searchData: {
                 type: Object,
-                default: {}
-            }
+                default: () => {}
+            },
+            columns: {
+                type: Array,
+                default: () => []
+            },
+            url: {
+                type: String,
+                default: () => ''
+            },
+
         },
         data() {
             return {
@@ -134,6 +129,8 @@
                         "website": "ambrose.net",
                     }
                 ],
+                header:[],
+                columnName:[],
                 currentPage:1,
                 selected: []
             }

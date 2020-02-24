@@ -90,7 +90,7 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12">
-                            <student-table :searchData="searchData"/>
+                            <student-table :searchData="searchData" :url="url" :columns="columns"/>
                         </div>
                     </div>
                 </vs-card>
@@ -115,6 +115,16 @@
                     academic_status: null,
                     status:null
                 },
+                url: '/ajax/student/',
+                columns: [
+                    {name: 'Name', field: 'name',sort_key:'name'},
+                    {name: 'Email', field: 'email',sort_key:'email'},
+                    {name: 'Mobile', field: 'mobile'},
+                    {name: 'PID'},
+                    {name: 'File Number'},
+                    {name: 'Status'},
+                    {name: 'Action'},
+                ],
                 academic_status: ['Back Continue', 'Continue', 'Drop Out'],
                 status: ['Active', 'In-Active'],
                 filterBox: false,

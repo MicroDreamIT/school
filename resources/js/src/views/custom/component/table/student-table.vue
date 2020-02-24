@@ -26,28 +26,28 @@
             </template>
 
             <template slot-scope="{data}">
-                <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
-                    <vs-td :data="data[indextr].email">
-                        {{data[indextr].email}}
+                <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
+                    <vs-td :data="data[idx].email">
+                        {{data[idx].email}}
                     </vs-td>
 
-                    <vs-td :data="data[indextr].username">
-                        {{data[indextr].username}}
+                    <vs-td :data="data[idx].username">
+                        {{data[idx].username}}
                     </vs-td>
 
-                    <vs-td :data="data[indextr].id">
-                        {{data[indextr].website}}
+                    <vs-td :data="data[idx].id">
+                        {{data[idx].website}}
                     </vs-td>
 
-                    <vs-td :data="data[indextr].id">
-                        {{data[indextr].id}}
+                    <vs-td :data="data[idx].id">
+                        {{data[idx].id}}
                     </vs-td>
                 </vs-tr>
 
             </template>
 
         </vs-table>
-        <vs-pagination :total="3" v-model="currentPage" class="my-3"></vs-pagination>
+        <vs-pagination :total="1" v-model="currentPage" class="my-3"></vs-pagination>
     </div>
 </template>
 

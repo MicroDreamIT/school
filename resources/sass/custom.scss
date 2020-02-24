@@ -38,3 +38,25 @@ a.router-link-active {
 .vs-pagination--ul{
   margin-bottom:0!important;
 }
+
+.custom-collapse{
+  cursor: default!important;
+  .vs-collapse-item--header{
+    width: fit-content;
+    .icon-header{
+      .vs-icon{
+      display: none;
+    }
+    }
+
+  }
+  .open-item{
+    .vs-collapse-item--content{
+    overflow: unset!important;
+  }
+  }
+
+}
+.vs-button{
+  border-radius: 0.4285rem;
+}

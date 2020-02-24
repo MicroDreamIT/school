@@ -11,13 +11,15 @@
 import Vue from 'vue'
 import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.css'
+import 'vue-select/dist/vue-select.css'
+import vSelect from 'vue-select'
 
 
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
 
 Vue.use(Vuesax)
-
+Vue.component('v-select', vSelect)
 // axios
 import axios from "./axios.js"
 

@@ -32,46 +32,62 @@
                 <vs-card>
                     <div class="row">
                         <div class="col-md-12 mb-2">
-                            <vs-button type="filled"
-                                       color="primary"
-                                       icon="double_arrow">
-                                Filter Students
-                            </vs-button>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-1">REG. NO.</div>
-                                <div class="col-md-2">
-                                    <vs-input class="inputx" v-model="searchData.reg_no"/>
-                                </div>
-                                <div class="col-md-1">REG. Date.</div>
-                                <div class="col-md-2">
-                                    <datepicker v-model="searchData.fromRegDate"/>
-                                    <i class="fa fa-compress"></i>
-                                    <datepicker v-model="searchData.toRegDate"/>
-                                </div>
-                                <div class="col-md-1">
-                                    Status
-                                </div>
-                                <div class="col-md-2">
-                                    <select class="custom-select" >
-                                        <option selected>Choose...</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <select class="custom-select" >
-                                        <option selected>Choose...</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <vs-collapse class="custom-collapse">
+                                <vs-collapse-item>
+                                    <div slot="header">
+                                        <vs-button type="filled"
+                                                   color="primary"
+                                                   icon="double_arrow"
+                                        >
+                                            Filter Students
+                                        </vs-button>
+                                    </div>
+                                    <div class="filterBox">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-1">REG. NO.</div>
+                                                <div class="col-md-2">
+                                                    <vs-input class="inputx" v-model="searchData.reg_no"/>
+                                                </div>
+                                                <div class="col-md-1">REG. Date.</div>
+                                                <div class="col-md-3">
+                                                    <datepicker v-model="searchData.fromRegDate"/>
+                                                    <i class="fa fa-compress"></i>
+                                                    <datepicker v-model="searchData.toRegDate"/>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    Status
+                                                </div>
+                                                <div class="col-md-2 px-0">
+                                                    <v-select v-model="searchData.academic_status"
+                                                              :options="academic_status"
+                                                              :placeholder="'Select Academic Status'"
+                                                    >
+                                                    </v-select>
+                                                </div>
+                                                <div class="col-md-2 px-0">
+                                                     <v-select v-model="searchData.status"
+                                                               :options="status"
+                                                               :placeholder="'Select Status'"
+                                                     >
+                                                    </v-select>
+                                                </div>
+                                            </div>
 
 
+                                        </div>
+                                        <div class="col-md-12 mb-2 pl-0">
+                                            <vs-button type="filled"
+                                                       color="#00b8cf"
+                                                       icon="double_arrow"
+                                                       @click="alert(searchData)"
+                                            >
+                                                Filter
+                                            </vs-button>
+                                        </div>
+                                    </div>
+                                </vs-collapse-item>
+                            </vs-collapse>
                         </div>
                         <div class="col-md-12">
                             <student-table :searchData="searchData"/>
@@ -96,10 +112,12 @@
         data() {
             return {
                 searchData: {
-                    academic_status: 'Back Continue'
+                    academic_status: null,
+                    status:null
                 },
                 academic_status: ['Back Continue', 'Continue', 'Drop Out'],
                 status: ['Active', 'In-Active'],
+                filterBox: false,
             }
         }
     }

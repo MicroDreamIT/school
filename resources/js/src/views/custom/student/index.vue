@@ -46,36 +46,117 @@
 									<div class="filterBox">
 										<div class="col-md-12">
 											<div class="row">
-												<div class="col-md-4">dfds</div>
-												<div class="col-md-4">dsfdsf</div>
-												<div class="col-md-4">sdff</div>
-												<!--<div class="col-md-1">REG. NO.</div>-->
-												<!--<div class="col-md-2">-->
-													<!--<vs-input class="inputx" v-model="searchData.reg_no"/>-->
-												<!--</div>-->
-												<!--<div class="col-md-1">REG. Date.</div>-->
-												<!--<div class="col-md-3">-->
-													<!--<datepicker v-model="searchData.fromRegDate"/>-->
-													<!--<i class="fa fa-compress"></i>-->
-													<!--<datepicker v-model="searchData.toRegDate"/>-->
-												<!--</div>-->
-												<!--<div class="col-md-1">-->
-													<!--Status-->
-												<!--</div>-->
-												<!--<div class="col-md-2 px-0">-->
-													<!--<v-select v-model="searchData.academic_status"-->
-													          <!--:options="academic_status"-->
-													          <!--:placeholder="'Select Academic Status'"-->
-													<!--&gt;-->
-													<!--</v-select>-->
-												<!--</div>-->
-												<!--<div class="col-md-2 px-0">-->
-													<!--<v-select v-model="searchData.status"-->
-													          <!--:options="status"-->
-													          <!--:placeholder="'Select Status'"-->
-													<!--&gt;-->
-													<!--</v-select>-->
-												<!--</div>-->
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Reg:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+													<div class="form-group">
+														<label>Reg:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Reg Date From</label>
+														<datepicker v-model="searchData.fromRegDate"/>
+														<label>To</label>
+														<datepicker v-model="searchData.toRegDate"/>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Status:</label>
+														<select class="form-control" name="academic_status">
+															<option value="0">Select Academic Status</option>
+															<option value="4">Back Continue</option>
+															<option value="2">Continue</option>
+															<option value="5">Drop Out</option>
+															<option value="1">New Admission</option>
+															<option value="8">Online Registration</option>
+															<option value="3">Pass Out</option>
+															<option value="6">Transfer in</option>
+															<option value="7">Transfer Out</option>
+														</select>
+													</div>
+													<div class="form-group">
+														<label>Select Status:</label>
+														<select class="form-control border-form" name="status"
+														        id="cat_id">
+															<option value="all"> Select Status</option>
+															<option value="active">Active</option>
+															<option value="in-active">In-Active</option>
+														</select>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Faculty/Class</label>
+														<select class="form-control chosen-select" name="faculty">
+															<option value="0">Select Faculty/Class</option>
+															<option value="1">BTECH</option>
+														</select>
+													
+													</div>
+													<div class="form-group">
+														<label>Sem./Sec.</label>
+														<select name="semester_select"
+														        class="form-control semester_select">
+															<option value="0"> Select Sem./Sec.</option>
+														</select>
+													</div>
+													<div class="form-group">
+														<label>Batch</label>
+														<select class="form-control" name="batch">
+															<option value="0">Select Batch</option>
+															<option value="1">ACT</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="row  mb-3">
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Religion:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Caste:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Nationality:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label>Mot.Tongue:</label>
+														<input placeholder=""
+														       class="form-control border-form input-mask-registration"
+														       autofocus="" name="" type="text"
+														>
+													</div>
+												</div>
 											</div>
 										</div>
 										<div class="col-md-12 mb-2 pl-0">
@@ -120,7 +201,8 @@
 								<button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
 									<span>JSON</span>
 								</button>
-								<button class="btn btn-secondary buttons-print" tabindex="0"aria-controls="DataTables_Table_0">
+								<button class="btn btn-secondary buttons-print" tabindex="0"
+								        aria-controls="DataTables_Table_0">
 									<span>Print</span>
 								</button>
 							</div>
@@ -163,8 +245,11 @@
                 status: ['Active', 'In-Active'],
                 filterBox: false,
             }
-        }
+        },
+
     }
+
+
 </script>
 
 <style scoped>

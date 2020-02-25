@@ -90,7 +90,33 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12">
-                            <student-table :searchData="searchData" :url="url" :columns="columns"/>
+                            <student-table :searchData="searchData"
+                                           :url="url"
+                                           :headers="columns"
+                                           :has-pagination="true"
+                            >
+                                 <template slot="items" slot-scope="props" >
+                                            <vs-td :data="props.data.email" >
+                                                {{props.data.email}}
+                                            </vs-td>
+
+                                            <vs-td :data="props.data.username" >
+                                                <router-link :to="{name:'student.view',params:{id:1}}"
+                                                             class="pointer-all">
+                                                    {{props.data.username}}
+                                                </router-link>
+
+                                            </vs-td>
+
+                                            <vs-td :data="props.data.id">
+                                                {{props.data.website}}
+                                            </vs-td>
+
+                                            <vs-td :data="props.id">
+                                                {{props.data.id}}
+                                            </vs-td>
+                                        </template>
+                            </student-table>
                         </div>
                     </div>
                 </vs-card>
@@ -117,13 +143,10 @@
                 },
                 url: '/ajax/student/',
                 columns: [
-                    {name: 'Name', field: 'name',sort_key:'name'},
                     {name: 'Email', field: 'email',sort_key:'email'},
+                    {name: 'Name', field: 'name',sort_key:'name'},
                     {name: 'Mobile', field: 'mobile'},
                     {name: 'PID'},
-                    {name: 'File Number'},
-                    {name: 'Status'},
-                    {name: 'Action'},
                 ],
                 academic_status: ['Back Continue', 'Continue', 'Drop Out'],
                 status: ['Active', 'In-Active'],

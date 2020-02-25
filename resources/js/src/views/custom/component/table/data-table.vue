@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="custom-table">
         <vs-table
                 :sst="true"
                 @search="handleSearch"
@@ -7,26 +7,30 @@
                 @sort="handleSort"
                 v-model="selected"
                 :total="totalItems"
-                pagination
-                multiple
+                :pagination="hasPagination"
+                :multiple="hasMultiple"
                 max-items="3"
                 :search="hasSearch"
                 :data="data">
 
             <template slot="thead">
+                <vs-th>SN.No.</vs-th>
                 <vs-th :sort-key="thead.sort_key" v-for="(thead,indx) in headers" :key="indx">
                     {{thead.name}}
                 </vs-th>
             </template>
             <template slot-scope="{data}">
-        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data" v-if="data.length>0">
-            <slot name="items" v-bind:data="tr">
-            </slot>
-        </vs-tr>
+                <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data" v-if="data.length>0">
+                     <vs-td class="pointer-none">
+                                                {{idx+1}}
+                     </vs-td>
+                    <slot name="items" v-bind:data="tr">
+                    </slot>
+                </vs-tr>
                 <vs-tr v-else>
                     {{noDataMessage}}
                 </vs-tr>
-      </template>
+            </template>
 
         </vs-table>
     </div>
@@ -43,13 +47,21 @@
                 type: Array,
                 default: () => []
             },
-            noDataMessage:{
+            noDataMessage: {
                 type: String,
                 default: () => 'No Data Found'
             },
-            hasSearch:{
+            hasSearch: {
                 type: Boolean,
                 default: () => true
+            },
+            hasPagination:{
+                type: Boolean,
+                default: () => false
+            },
+            hasMultiple:{
+                type: Boolean,
+                default: () => false
             }
         },
 
@@ -129,7 +141,7 @@
                         "website": "ambrose.net",
                     }
                 ],
-                items:[
+                items: [
                     {
                         "id": 1,
                         "name": "Leanne Graham",
@@ -205,8 +217,8 @@
         },
 
         methods: {
-            getData(){
-                this.items=this.data
+            getData() {
+                this.items = this.data
             },
             handleSearch(searching) {
                 console.log(searching)

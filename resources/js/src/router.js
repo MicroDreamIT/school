@@ -84,6 +84,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path:'/student/:id/details',
+                    name:'student.view',
+                    component:()=>import('./views/custom/student/details.vue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
 
 
         // =============================================================================

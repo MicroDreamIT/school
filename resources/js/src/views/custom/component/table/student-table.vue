@@ -1,15 +1,10 @@
 <template>
-    <div>
+    <div class="customTable">
         <vs-table
                 multiple
                 v-model="selected"
                 search
                 :data="users">
-            <template slot="header">
-                <h3>
-                    Users
-                </h3>
-            </template>
             <template slot="thead">
                 <vs-th sort-key="index">
                     SN. NO.
@@ -139,6 +134,3 @@
     }
 </script>
 
-<style scoped>
-
-</style>

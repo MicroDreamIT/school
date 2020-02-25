@@ -1,0 +1,54 @@
+.action-group{
+  .btn-secondary{
+    background-color: #b8c2cc !important;
+    padding: 0.8rem 2.25rem !important;
+    border: 0;
+    &:hover{
+      box-shadow: 0 8px 25px -8px #6c757d;
+    }
+  }
+}
+button.vs-tabs--btn{
+  outline: 0!important;
+  &:focus{
+    outline: 0!important;
+  }
+}
+.btn-sm{
+  padding: 0.5rem 1.5rem !important;
+  font-size: 0.7rem!important;
+  line-height: 1!important;
+  border-radius: 0.4285rem!important;
+}
+.customTable{
+  .input-search.vs-table--search-input{
+    height: calc(1em + 1rem + 2px);
+    padding: 0.5rem 1.5rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    border-radius: 4px;
+  }
+}
+.table-header{
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #979797;
+}
+.btn-success{
+  background-color:#28c76f!important;
+  &:hover{
+    box-shadow: 0 8px 25px -8px #28c76f;
+  }
+}
+.btn-warning {
+  background-color: #ff9f43 !important;
+  &:hover{
+    box-shadow: 0 8px 25px -8px #ff9f43;
+  }
+}
+.btn-danger {
+  background-color: #ea5455 !important;
+  &:hover{
+    box-shadow: 0 8px 25px -8px #ea5455;
+  }
+}

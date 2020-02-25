@@ -1,7 +1,16 @@
+//@import"../assets/css/bootstrap-extended.css";
 .pageTitle {
   font-weight: 500;
   color: #636363;
   margin-right: 1rem;
+}
+
+.btn-sm.bulk-action-btn{
+  cursor: pointer;
+  color:#606361;
+  &:hover{
+    color:#fff;
+  }
 }
 
 .smBtn {

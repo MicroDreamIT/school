@@ -11,14 +11,14 @@
 <template>
   <div id="theme-customizer">
 
-    <!-- Open Customizer Button -->
-    <vs-button
-      @click.stop="active=!active"
-      color="primary"
-      type="filled"
-      class="customizer-btn"
-      icon-pack="feather"
-      icon="icon-settings" />
+<!--    &lt;!&ndash; Open Customizer Button &ndash;&gt;-->
+<!--    <vs-button-->
+<!--      @click.stop="active=!active"-->
+<!--      color="primary"-->
+<!--      type="filled"-->
+<!--      class="customizer-btn"-->
+<!--      icon-pack="feather"-->
+<!--      icon="icon-settings" />-->
 
     <!-- Customizer Content -->
     <vs-sidebar

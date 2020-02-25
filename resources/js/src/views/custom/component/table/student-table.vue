@@ -8,18 +8,22 @@
                 v-model="selected"
                 :total="totalItems"
                 :pagination="hasPagination"
-                multiple
+                :multiple="hasMultiple"
                 max-items="3"
                 :search="hasSearch"
                 :data="data">
 
             <template slot="thead">
+                <vs-th>SN.No.</vs-th>
                 <vs-th :sort-key="thead.sort_key" v-for="(thead,indx) in headers" :key="indx">
                     {{thead.name}}
                 </vs-th>
             </template>
             <template slot-scope="{data}">
                 <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data" v-if="data.length>0">
+                     <vs-td class="pointer-none">
+                                                {{idx+1}}
+                     </vs-td>
                     <slot name="items" v-bind:data="tr">
                     </slot>
                 </vs-tr>
@@ -52,6 +56,10 @@
                 default: () => true
             },
             hasPagination:{
+                type: Boolean,
+                default: () => false
+            },
+            hasMultiple:{
                 type: Boolean,
                 default: () => false
             }

@@ -55,11 +55,11 @@
 														>
 													</div>
 													<div class="form-group">
-														<label>Reg:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
+														<label>Batch</label>
+														<select class="form-control" name="batch">
+															<option value="0">Select Batch</option>
+															<option value="1">ACT</option>
+														</select>
 													</div>
 												</div>
 												<div class="col-md-3">
@@ -111,13 +111,7 @@
 															<option value="0"> Select Sem./Sec.</option>
 														</select>
 													</div>
-													<div class="form-group">
-														<label>Batch</label>
-														<select class="form-control" name="batch">
-															<option value="0">Select Batch</option>
-															<option value="1">ACT</option>
-														</select>
-													</div>
+
 												</div>
 											</div>
 											<div class="row  mb-3">
@@ -207,7 +201,32 @@
 									<span>Print</span>
 								</button>
 							</div>
-							<student-table :searchData="searchData" :url="url" :columns="columns"/>
+							<student-table :headers="tableHeader"
+                                                :url="url"
+                                                :no-data-message="'No matching records found'"
+                                                :searchField="searchData"
+                                                :has-search="true"
+                                                :has-multiple="true"
+                                                :has-pagination="true"
+                                    >
+                                        <template slot="items" slot-scope="props">
+                                            <vs-td :data="props.data.username" class="pointer-none">
+                                                {{props.data.email}}
+                                            </vs-td>
+
+                                            <vs-td :data="props.data.username">
+                                                {{props.data.username}}
+                                            </vs-td>
+
+                                            <vs-td :data="props.data.id">
+                                                {{props.data.website}}
+                                            </vs-td>
+
+                                            <vs-td :data="props.id">
+                                                {{props.data.id}}
+                                            </vs-td>
+                                        </template>
+                                    </student-table>
 						</div>
 					</div>
 				</vs-card>
@@ -233,7 +252,7 @@
                     status: null
                 },
                 url: '/ajax/student/',
-                columns: [
+                tableHeader: [
                     {name: 'Email', field: 'email',sort_key:'email'},
                     {name: 'Name', field: 'name',sort_key:'name'},
                     {name: 'Mobile', field: 'mobile'},

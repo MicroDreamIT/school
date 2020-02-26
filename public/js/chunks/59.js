@@ -78,7 +78,7 @@ __webpack_require__.r(__webpack_exports__);
 
       /*
         This property is created for fetching latest data from API when tab is changed
-         Please check it's watcher
+          Please check it's watcher
       */
       activeTab: 0
     };

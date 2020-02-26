@@ -109,26 +109,26 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                // {
+                //     path:'/student/transfer',
+                //     name:'student.transfer',
+                //     component:()=>import('./views/custom/student/transfer.vue'),
+                //     meta:{
+                //         rule: 'admin'
+                //     }
+                // },
                 {
-                    path:'/student/transfer-student',
-                    name:'student.transfer-student',
-                    component:()=>import('./views/custom/student/transfer-student.vue'),
+                    path:'/student/document',
+                    name:'student.document',
+                    component:()=>import('./views/custom/student/document.vue'),
                     meta:{
                         rule: 'admin'
                     }
                 },
                 {
-                    path:'/student/doc-upload',
-                    name:'student.doc-upload',
-                    component:()=>import('./views/custom/student/doc-upload.vue'),
-                    meta:{
-                        rule: 'admin'
-                    }
-                },
-                {
-                    path:'/student/create-notes',
-                    name:'student.doc-upload',
-                    component:()=>import('./views/custom/student/create-notes'),
+                    path:'/student/note',
+                    name:'student.note',
+                    component:()=>import('./views/custom/student/note.vue'),
                     meta:{
                         rule: 'admin'
                     }

@@ -99,7 +99,7 @@ export default [
         submenu: [
             {
               url:null,
-              name:'student',
+              name:'Student',
               submenu:[
                 {
                   url: '/student',

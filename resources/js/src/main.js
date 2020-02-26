@@ -14,7 +14,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
 
-
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
 
@@ -95,6 +94,13 @@ Vue.use(VueGoogleMaps, {
 import {VueHammer} from 'vue2-hammer'
 
 Vue.use(VueHammer)
+
+
+import dataTable from './views/custom/component/table/data-table'
+Vue.component('data-table', dataTable)
+
+
+
 
 // PrismJS
 import 'prismjs'

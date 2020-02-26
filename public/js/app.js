@@ -210,3307 +210,6 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
 
 /***/ }),
 
-/***/ "./node_modules/@firebase/app/dist/index.cjs.js":
-/*!******************************************************!*\
-  !*** ./node_modules/@firebase/app/dist/index.cjs.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/@firebase/app/node_modules/tslib/tslib.es6.js");
-var util = __webpack_require__(/*! @firebase/util */ "./node_modules/@firebase/util/dist/index.cjs.js");
-var logger$1 = __webpack_require__(/*! @firebase/logger */ "./node_modules/@firebase/logger/dist/index.esm.js");
-
-/**
- * @license
- * Copyright 2019 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var _a;
-var ERRORS = (_a = {},
-    _a["no-app" /* NO_APP */] = "No Firebase App '{$name}' has been created - " +
-        'call Firebase App.initializeApp()',
-    _a["bad-app-name" /* BAD_APP_NAME */] = "Illegal App name: '{$name}",
-    _a["duplicate-app" /* DUPLICATE_APP */] = "Firebase App named '{$name}' already exists",
-    _a["app-deleted" /* APP_DELETED */] = "Firebase App named '{$name}' already deleted",
-    _a["duplicate-service" /* DUPLICATE_SERVICE */] = "Firebase service named '{$name}' already registered",
-    _a["invalid-app-argument" /* INVALID_APP_ARGUMENT */] = 'firebase.{$name}() takes either no argument or a ' +
-        'Firebase App instance.',
-    _a);
-var ERROR_FACTORY = new util.ErrorFactory('app', 'Firebase', ERRORS);
-
-/**
- * @license
- * Copyright 2019 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var DEFAULT_ENTRY_NAME = '[DEFAULT]';
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-// An array to capture listeners before the true auth functions
-// exist
-var tokenListeners = [];
-/**
- * Global context object for a collection of services using
- * a shared authentication state.
- */
-var FirebaseAppImpl = /** @class */ (function () {
-    function FirebaseAppImpl(options, config, firebase_) {
-        this.firebase_ = firebase_;
-        this.isDeleted_ = false;
-        this.services_ = {};
-        this.name_ = config.name;
-        this.automaticDataCollectionEnabled_ =
-            config.automaticDataCollectionEnabled || false;
-        this.options_ = util.deepCopy(options);
-        this.INTERNAL = {
-            getUid: function () { return null; },
-            getToken: function () { return Promise.resolve(null); },
-            addAuthTokenListener: function (callback) {
-                tokenListeners.push(callback);
-                // Make sure callback is called, asynchronously, in the absence of the auth module
-                setTimeout(function () { return callback(null); }, 0);
-            },
-            removeAuthTokenListener: function (callback) {
-                tokenListeners = tokenListeners.filter(function (listener) { return listener !== callback; });
-            }
-        };
-    }
-    Object.defineProperty(FirebaseAppImpl.prototype, "automaticDataCollectionEnabled", {
-        get: function () {
-            this.checkDestroyed_();
-            return this.automaticDataCollectionEnabled_;
-        },
-        set: function (val) {
-            this.checkDestroyed_();
-            this.automaticDataCollectionEnabled_ = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FirebaseAppImpl.prototype, "name", {
-        get: function () {
-            this.checkDestroyed_();
-            return this.name_;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FirebaseAppImpl.prototype, "options", {
-        get: function () {
-            this.checkDestroyed_();
-            return this.options_;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    FirebaseAppImpl.prototype.delete = function () {
-        var _this = this;
-        return new Promise(function (resolve) {
-            _this.checkDestroyed_();
-            resolve();
-        })
-            .then(function () {
-            _this.firebase_.INTERNAL.removeApp(_this.name_);
-            var services = [];
-            for (var _i = 0, _a = Object.keys(_this.services_); _i < _a.length; _i++) {
-                var serviceKey = _a[_i];
-                for (var _b = 0, _c = Object.keys(_this.services_[serviceKey]); _b < _c.length; _b++) {
-                    var instanceKey = _c[_b];
-                    services.push(_this.services_[serviceKey][instanceKey]);
-                }
-            }
-            return Promise.all(services.map(function (service) {
-                return service.INTERNAL.delete();
-            }));
-        })
-            .then(function () {
-            _this.isDeleted_ = true;
-            _this.services_ = {};
-        });
-    };
-    /**
-     * Return a service instance associated with this app (creating it
-     * on demand), identified by the passed instanceIdentifier.
-     *
-     * NOTE: Currently storage is the only one that is leveraging this
-     * functionality. They invoke it by calling:
-     *
-     * ```javascript
-     * firebase.app().storage('STORAGE BUCKET ID')
-     * ```
-     *
-     * The service name is passed to this already
-     * @internal
-     */
-    FirebaseAppImpl.prototype._getService = function (name, instanceIdentifier) {
-        if (instanceIdentifier === void 0) { instanceIdentifier = DEFAULT_ENTRY_NAME; }
-        this.checkDestroyed_();
-        if (!this.services_[name]) {
-            this.services_[name] = {};
-        }
-        if (!this.services_[name][instanceIdentifier]) {
-            /**
-             * If a custom instance has been defined (i.e. not '[DEFAULT]')
-             * then we will pass that instance on, otherwise we pass `null`
-             */
-            var instanceSpecifier = instanceIdentifier !== DEFAULT_ENTRY_NAME
-                ? instanceIdentifier
-                : undefined;
-            var service = this.firebase_.INTERNAL.factories[name](this, this.extendApp.bind(this), instanceSpecifier);
-            this.services_[name][instanceIdentifier] = service;
-        }
-        return this.services_[name][instanceIdentifier];
-    };
-    /**
-     * Callback function used to extend an App instance at the time
-     * of service instance creation.
-     */
-    FirebaseAppImpl.prototype.extendApp = function (props) {
-        var _this = this;
-        // Copy the object onto the FirebaseAppImpl prototype
-        util.deepExtend(this, props);
-        /**
-         * If the app has overwritten the addAuthTokenListener stub, forward
-         * the active token listeners on to the true fxn.
-         *
-         * TODO: This function is required due to our current module
-         * structure. Once we are able to rely strictly upon a single module
-         * implementation, this code should be refactored and Auth should
-         * provide these stubs and the upgrade logic
-         */
-        if (props.INTERNAL && props.INTERNAL.addAuthTokenListener) {
-            tokenListeners.forEach(function (listener) {
-                _this.INTERNAL.addAuthTokenListener(listener);
-            });
-            tokenListeners = [];
-        }
-    };
-    /**
-     * This function will throw an Error if the App has already been deleted -
-     * use before performing API actions on the App.
-     */
-    FirebaseAppImpl.prototype.checkDestroyed_ = function () {
-        if (this.isDeleted_) {
-            throw ERROR_FACTORY.create("app-deleted" /* APP_DELETED */, { name: this.name_ });
-        }
-    };
-    return FirebaseAppImpl;
-}());
-// Prevent dead-code elimination of these methods w/o invalid property
-// copying.
-(FirebaseAppImpl.prototype.name && FirebaseAppImpl.prototype.options) ||
-    FirebaseAppImpl.prototype.delete ||
-    console.log('dc');
-
-var version = "6.0.4";
-
-/**
- * @license
- * Copyright 2019 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-function contains(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-}
-/**
- * Because auth can't share code with other components, we attach the utility functions
- * in an internal namespace to share code.
- * This function return a firebase namespace object without
- * any utility functions, so it can be shared between the regular firebaseNamespace and
- * the lite version.
- */
-function createFirebaseNamespaceCore(firebaseAppImpl) {
-    var apps = {};
-    var factories = {};
-    var appHooks = {};
-    // A namespace is a plain JavaScript Object.
-    var namespace = {
-        // Hack to prevent Babel from modifying the object returned
-        // as the firebase namespace.
-        // @ts-ignore
-        __esModule: true,
-        initializeApp: initializeApp,
-        app: app,
-        apps: null,
-        SDK_VERSION: version,
-        INTERNAL: {
-            registerService: registerService,
-            removeApp: removeApp,
-            factories: factories,
-            useAsService: useAsService
-        }
-    };
-    // Inject a circular default export to allow Babel users who were previously
-    // using:
-    //
-    //   import firebase from 'firebase';
-    //   which becomes: var firebase = require('firebase').default;
-    //
-    // instead of
-    //
-    //   import * as firebase from 'firebase';
-    //   which becomes: var firebase = require('firebase');
-    util.patchProperty(namespace, 'default', namespace);
-    // firebase.apps is a read-only getter.
-    Object.defineProperty(namespace, 'apps', {
-        get: getApps
-    });
-    /**
-     * Called by App.delete() - but before any services associated with the App
-     * are deleted.
-     */
-    function removeApp(name) {
-        var app = apps[name];
-        callAppHooks(app, 'delete');
-        delete apps[name];
-    }
-    /**
-     * Get the App object for a given name (or DEFAULT).
-     */
-    function app(name) {
-        name = name || DEFAULT_ENTRY_NAME;
-        if (!contains(apps, name)) {
-            throw ERROR_FACTORY.create("no-app" /* NO_APP */, { name: name });
-        }
-        return apps[name];
-    }
-    util.patchProperty(app, 'App', firebaseAppImpl);
-    function initializeApp(options, rawConfig) {
-        if (rawConfig === void 0) { rawConfig = {}; }
-        if (typeof rawConfig !== 'object' || rawConfig === null) {
-            var name_1 = rawConfig;
-            rawConfig = { name: name_1 };
-        }
-        var config = rawConfig;
-        if (config.name === undefined) {
-            config.name = DEFAULT_ENTRY_NAME;
-        }
-        var name = config.name;
-        if (typeof name !== 'string' || !name) {
-            throw ERROR_FACTORY.create("bad-app-name" /* BAD_APP_NAME */, { name: String(name) });
-        }
-        if (contains(apps, name)) {
-            throw ERROR_FACTORY.create("duplicate-app" /* DUPLICATE_APP */, { name: name });
-        }
-        var app = new firebaseAppImpl(options, config, namespace);
-        apps[name] = app;
-        callAppHooks(app, 'create');
-        return app;
-    }
-    /*
-     * Return an array of all the non-deleted FirebaseApps.
-     */
-    function getApps() {
-        // Make a copy so caller cannot mutate the apps list.
-        return Object.keys(apps).map(function (name) { return apps[name]; });
-    }
-    /*
-     * Register a Firebase Service.
-     *
-     * firebase.INTERNAL.registerService()
-     *
-     * TODO: Implement serviceProperties.
-     */
-    function registerService(name, createService, serviceProperties, appHook, allowMultipleInstances) {
-        if (allowMultipleInstances === void 0) { allowMultipleInstances = false; }
-        // Cannot re-register a service that already exists
-        if (factories[name]) {
-            throw ERROR_FACTORY.create("duplicate-service" /* DUPLICATE_SERVICE */, { name: name });
-        }
-        // Capture the service factory for later service instantiation
-        factories[name] = createService;
-        // Capture the appHook, if passed
-        if (appHook) {
-            appHooks[name] = appHook;
-            // Run the **new** app hook on all existing apps
-            getApps().forEach(function (app) {
-                appHook('create', app);
-            });
-        }
-        // The Service namespace is an accessor function ...
-        function serviceNamespace(appArg) {
-            if (appArg === void 0) { appArg = app(); }
-            if (typeof appArg[name] !== 'function') {
-                // Invalid argument.
-                // This happens in the following case: firebase.storage('gs:/')
-                throw ERROR_FACTORY.create("invalid-app-argument" /* INVALID_APP_ARGUMENT */, {
-                    name: name
-                });
-            }
-            // Forward service instance lookup to the FirebaseApp.
-            return appArg[name]();
-        }
-        // ... and a container for service-level properties.
-        if (serviceProperties !== undefined) {
-            util.deepExtend(serviceNamespace, serviceProperties);
-        }
-        // Monkey-patch the serviceNamespace onto the firebase namespace
-        namespace[name] = serviceNamespace;
-        // Patch the FirebaseAppImpl prototype
-        firebaseAppImpl.prototype[name] = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            var serviceFxn = this._getService.bind(this, name);
-            return serviceFxn.apply(this, allowMultipleInstances ? args : []);
-        };
-        return serviceNamespace;
-    }
-    function callAppHooks(app, eventName) {
-        for (var _i = 0, _a = Object.keys(factories); _i < _a.length; _i++) {
-            var serviceName = _a[_i];
-            // Ignore virtual services
-            var factoryName = useAsService(app, serviceName);
-            if (factoryName === null) {
-                return;
-            }
-            if (appHooks[factoryName]) {
-                appHooks[factoryName](eventName, app);
-            }
-        }
-    }
-    // Map the requested service to a registered service name
-    // (used to map auth to serverAuth service when needed).
-    function useAsService(app, name) {
-        if (name === 'serverAuth') {
-            return null;
-        }
-        var useService = name;
-        return useService;
-    }
-    return namespace;
-}
-
-/**
- * @license
- * Copyright 2019 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Return a firebase namespace object.
- *
- * In production, this will be called exactly once and the result
- * assigned to the 'firebase' global.  It may be called multiple times
- * in unit tests.
- */
-function createFirebaseNamespace() {
-    var namespace = createFirebaseNamespaceCore(FirebaseAppImpl);
-    namespace.INTERNAL = tslib_1.__assign({}, namespace.INTERNAL, { createFirebaseNamespace: createFirebaseNamespace, extendNamespace: extendNamespace, createSubscribe: util.createSubscribe, ErrorFactory: util.ErrorFactory, deepExtend: util.deepExtend });
-    /**
-     * Patch the top-level firebase namespace with additional properties.
-     *
-     * firebase.INTERNAL.extendNamespace()
-     */
-    function extendNamespace(props) {
-        util.deepExtend(namespace, props);
-    }
-    return namespace;
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var logger = new logger$1.Logger('@firebase/app');
-// Firebase Lite detection
-if (util.isBrowser() && 'firebase' in self) {
-    logger.warn("\n    Warning: Firebase is already defined in the global scope. Please make sure\n    Firebase library is only loaded once.\n  ");
-    var sdkVersion = self.firebase.SDK_VERSION;
-    if (sdkVersion && sdkVersion.indexOf('LITE') >= 0) {
-        logger.warn("\n    Warning: You are trying to load Firebase while using Firebase Performance standalone script.\n    You should load Firebase Performance with this instance of Firebase to avoid loading duplicate code.\n    ");
-    }
-}
-var firebaseNamespace = createFirebaseNamespace();
-var initializeApp = firebaseNamespace.initializeApp;
-firebaseNamespace.initializeApp = function () {
-    // Environment check before initializing app
-    // Do the check in initializeApp, so people have a chance to disable it by setting logLevel
-    // in @firebase/logger
-    if (util.isNode()) {
-        logger.warn("\n      Warning: This is a browser-targeted Firebase bundle but it appears it is being\n      run in a Node environment.  If running in a Node environment, make sure you\n      are using the bundle specified by the \"main\" field in package.json.\n      \n      If you are using Webpack, you can specify \"main\" as the first item in\n      \"resolve.mainFields\":\n      https://webpack.js.org/configuration/resolve/#resolvemainfields\n      \n      If using Rollup, use the rollup-plugin-node-resolve plugin and set \"module\"\n      to false and \"main\" to true:\n      https://github.com/rollup/rollup-plugin-node-resolve\n      ");
-    }
-    return initializeApp.apply(undefined, arguments);
-};
-var firebase = firebaseNamespace;
-
-exports.default = firebase;
-exports.firebase = firebase;
-//# sourceMappingURL=index.cjs.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/@firebase/app/node_modules/tslib/tslib.es6.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/@firebase/app/node_modules/tslib/tslib.es6.js ***!
-  \********************************************************************/
-/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __values, __read, __spread, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__extends", function() { return __extends; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__assign", function() { return __assign; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__rest", function() { return __rest; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__decorate", function() { return __decorate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__param", function() { return __param; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__metadata", function() { return __metadata; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__awaiter", function() { return __awaiter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__generator", function() { return __generator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__exportStar", function() { return __exportStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncValues", function() { return __asyncValues; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__makeTemplateObject", function() { return __makeTemplateObject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importStar", function() { return __importStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importDefault", function() { return __importDefault; });
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
-
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
-
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    }
-    return __assign.apply(this, arguments);
-}
-
-function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
-    return t;
-}
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __param(paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-}
-
-function __metadata(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __exportStar(m, exports) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
-function __values(o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-}
-
-function __read(o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-}
-
-function __spread() {
-    for (var ar = [], i = 0; i < arguments.length; i++)
-        ar = ar.concat(__read(arguments[i]));
-    return ar;
-}
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
-function __asyncDelegator(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
-function __makeTemplateObject(cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
-
-function __importStar(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result.default = mod;
-    return result;
-}
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@firebase/auth/dist/auth.esm.js":
-/*!******************************************************!*\
-  !*** ./node_modules/@firebase/auth/dist/auth.esm.js ***!
-  \******************************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @firebase/app */ "./node_modules/@firebase/app/dist/index.cjs.js");
-/* harmony import */ var _firebase_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_firebase_app__WEBPACK_IMPORTED_MODULE_0__);
-(function() {var k,aa="function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,c){a!=Array.prototype&&a!=Object.prototype&&(a[b]=c.value)},ba="undefined"!=typeof window&&window===this?this:"undefined"!=typeof global&&null!=global?global:this;function ca(a,b){if(b){var c=ba;a=a.split(".");for(var d=0;d<a.length-1;d++){var e=a[d];e in c||(c[e]={});c=c[e]}a=a[a.length-1];d=c[a];b=b(d);b!=d&&null!=b&&aa(c,a,{configurable:!0,writable:!0,value:b})}}
-function da(a){var b=0;return function(){return b<a.length?{done:!1,value:a[b++]}:{done:!0}}}function ea(a){var b="undefined"!=typeof Symbol&&Symbol.iterator&&a[Symbol.iterator];return b?b.call(a):{next:da(a)}}
-ca("Promise",function(a){function b(g){this.b=0;this.c=void 0;this.a=[];var h=this.f();try{g(h.resolve,h.reject)}catch(m){h.reject(m)}}function c(){this.a=null}function d(g){return g instanceof b?g:new b(function(h){h(g)})}if(a)return a;c.prototype.b=function(g){if(null==this.a){this.a=[];var h=this;this.c(function(){h.g()})}this.a.push(g)};var e=ba.setTimeout;c.prototype.c=function(g){e(g,0)};c.prototype.g=function(){for(;this.a&&this.a.length;){var g=this.a;this.a=[];for(var h=0;h<g.length;++h){var m=
-g[h];g[h]=null;try{m()}catch(p){this.f(p)}}}this.a=null};c.prototype.f=function(g){this.c(function(){throw g;})};b.prototype.f=function(){function g(p){return function(v){m||(m=!0,p.call(h,v))}}var h=this,m=!1;return{resolve:g(this.o),reject:g(this.g)}};b.prototype.o=function(g){if(g===this)this.g(new TypeError("A Promise cannot resolve to itself"));else if(g instanceof b)this.u(g);else{a:switch(typeof g){case "object":var h=null!=g;break a;case "function":h=!0;break a;default:h=!1}h?this.l(g):this.h(g)}};
-b.prototype.l=function(g){var h=void 0;try{h=g.then}catch(m){this.g(m);return}"function"==typeof h?this.v(h,g):this.h(g)};b.prototype.g=function(g){this.i(2,g)};b.prototype.h=function(g){this.i(1,g)};b.prototype.i=function(g,h){if(0!=this.b)throw Error("Cannot settle("+g+", "+h+"): Promise already settled in state"+this.b);this.b=g;this.c=h;this.m()};b.prototype.m=function(){if(null!=this.a){for(var g=0;g<this.a.length;++g)f.b(this.a[g]);this.a=null}};var f=new c;b.prototype.u=function(g){var h=this.f();
-g.Ja(h.resolve,h.reject)};b.prototype.v=function(g,h){var m=this.f();try{g.call(h,m.resolve,m.reject)}catch(p){m.reject(p)}};b.prototype.then=function(g,h){function m(H,U){return"function"==typeof H?function(ta){try{p(H(ta))}catch(ld){v(ld)}}:U}var p,v,z=new b(function(H,U){p=H;v=U});this.Ja(m(g,p),m(h,v));return z};b.prototype.catch=function(g){return this.then(void 0,g)};b.prototype.Ja=function(g,h){function m(){switch(p.b){case 1:g(p.c);break;case 2:h(p.c);break;default:throw Error("Unexpected state: "+
-p.b);}}var p=this;null==this.a?f.b(m):this.a.push(m)};b.resolve=d;b.reject=function(g){return new b(function(h,m){m(g)})};b.race=function(g){return new b(function(h,m){for(var p=ea(g),v=p.next();!v.done;v=p.next())d(v.value).Ja(h,m)})};b.all=function(g){var h=ea(g),m=h.next();return m.done?d([]):new b(function(p,v){function z(ta){return function(ld){H[ta]=ld;U--;0==U&&p(H)}}var H=[],U=0;do H.push(void 0),U++,d(m.value).Ja(z(H.length-1),v),m=h.next();while(!m.done)})};return b});var fa=fa||{},l=this;
-function n(a){return"string"==typeof a}function ha(a){return"boolean"==typeof a}var ia=/^[\w+/_-]+[=]{0,2}$/,ja=null;function ka(){}
-function la(a){var b=typeof a;if("object"==b)if(a){if(a instanceof Array)return"array";if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if("[object Window]"==c)return"object";if("[object Array]"==c||"number"==typeof a.length&&"undefined"!=typeof a.splice&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("splice"))return"array";if("[object Function]"==c||"undefined"!=typeof a.call&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("call"))return"function"}else return"null";
-else if("function"==b&&"undefined"==typeof a.call)return"object";return b}function ma(a){return null===a}function na(a){return"array"==la(a)}function oa(a){var b=la(a);return"array"==b||"object"==b&&"number"==typeof a.length}function q(a){return"function"==la(a)}function r(a){var b=typeof a;return"object"==b&&null!=a||"function"==b}var pa="closure_uid_"+(1E9*Math.random()>>>0),qa=0;function ra(a,b,c){return a.call.apply(a.bind,arguments)}
-function sa(a,b,c){if(!a)throw Error();if(2<arguments.length){var d=Array.prototype.slice.call(arguments,2);return function(){var e=Array.prototype.slice.call(arguments);Array.prototype.unshift.apply(e,d);return a.apply(b,e)}}return function(){return a.apply(b,arguments)}}function t(a,b,c){Function.prototype.bind&&-1!=Function.prototype.bind.toString().indexOf("native code")?t=ra:t=sa;return t.apply(null,arguments)}
-function ua(a,b){var c=Array.prototype.slice.call(arguments,1);return function(){var d=c.slice();d.push.apply(d,arguments);return a.apply(this,d)}}var va=Date.now||function(){return+new Date};function u(a,b){function c(){}c.prototype=b.prototype;a.qb=b.prototype;a.prototype=new c;a.prototype.constructor=a;a.cd=function(d,e,f){for(var g=Array(arguments.length-2),h=2;h<arguments.length;h++)g[h-2]=arguments[h];return b.prototype[e].apply(d,g)}};function wa(a){if(!a)return!1;try{return!!a.$goog_Thenable}catch(b){return!1}};function w(a){if(Error.captureStackTrace)Error.captureStackTrace(this,w);else{var b=Error().stack;b&&(this.stack=b)}a&&(this.message=String(a))}u(w,Error);w.prototype.name="CustomError";function xa(a,b){a=a.split("%s");for(var c="",d=a.length-1,e=0;e<d;e++)c+=a[e]+(e<b.length?b[e]:"%s");w.call(this,c+a[d])}u(xa,w);xa.prototype.name="AssertionError";function ya(a,b){throw new xa("Failure"+(a?": "+a:""),Array.prototype.slice.call(arguments,1));};function za(a,b){this.c=a;this.f=b;this.b=0;this.a=null}za.prototype.get=function(){if(0<this.b){this.b--;var a=this.a;this.a=a.next;a.next=null}else a=this.c();return a};function Aa(a,b){a.f(b);100>a.b&&(a.b++,b.next=a.a,a.a=b)};function Ba(){this.b=this.a=null}var Da=new za(function(){return new Ca},function(a){a.reset()});Ba.prototype.add=function(a,b){var c=Da.get();c.set(a,b);this.b?this.b.next=c:this.a=c;this.b=c};function Ea(){var a=Fa,b=null;a.a&&(b=a.a,a.a=a.a.next,a.a||(a.b=null),b.next=null);return b}function Ca(){this.next=this.b=this.a=null}Ca.prototype.set=function(a,b){this.a=a;this.b=b;this.next=null};Ca.prototype.reset=function(){this.next=this.b=this.a=null};var Ga=Array.prototype.indexOf?function(a,b){return Array.prototype.indexOf.call(a,b,void 0)}:function(a,b){if(n(a))return n(b)&&1==b.length?a.indexOf(b,0):-1;for(var c=0;c<a.length;c++)if(c in a&&a[c]===b)return c;return-1},x=Array.prototype.forEach?function(a,b,c){Array.prototype.forEach.call(a,b,c)}:function(a,b,c){for(var d=a.length,e=n(a)?a.split(""):a,f=0;f<d;f++)f in e&&b.call(c,e[f],f,a)};function Ha(a,b){for(var c=n(a)?a.split(""):a,d=a.length-1;0<=d;--d)d in c&&b.call(void 0,c[d],d,a)}
-var Ia=Array.prototype.map?function(a,b){return Array.prototype.map.call(a,b,void 0)}:function(a,b){for(var c=a.length,d=Array(c),e=n(a)?a.split(""):a,f=0;f<c;f++)f in e&&(d[f]=b.call(void 0,e[f],f,a));return d},Ja=Array.prototype.some?function(a,b){return Array.prototype.some.call(a,b,void 0)}:function(a,b){for(var c=a.length,d=n(a)?a.split(""):a,e=0;e<c;e++)if(e in d&&b.call(void 0,d[e],e,a))return!0;return!1};
-function Ka(a){a:{var b=La;for(var c=a.length,d=n(a)?a.split(""):a,e=0;e<c;e++)if(e in d&&b.call(void 0,d[e],e,a)){b=e;break a}b=-1}return 0>b?null:n(a)?a.charAt(b):a[b]}function Ma(a,b){return 0<=Ga(a,b)}function Na(a,b){b=Ga(a,b);var c;(c=0<=b)&&Array.prototype.splice.call(a,b,1);return c}function y(a,b){var c=0;Ha(a,function(d,e){b.call(void 0,d,e,a)&&1==Array.prototype.splice.call(a,e,1).length&&c++})}function Oa(a){return Array.prototype.concat.apply([],arguments)}
-function Pa(a){var b=a.length;if(0<b){for(var c=Array(b),d=0;d<b;d++)c[d]=a[d];return c}return[]};var Qa=String.prototype.trim?function(a){return a.trim()}:function(a){return/^[\s\xa0]*([\s\S]*?)[\s\xa0]*$/.exec(a)[1]},Ra=/&/g,Sa=/</g,Ta=/>/g,Ua=/"/g,Va=/'/g,Wa=/\x00/g,Xa=/[\x00&<>"']/;function A(a,b){return-1!=a.indexOf(b)}function Ya(a,b){return a<b?-1:a>b?1:0};var Za;a:{var $a=l.navigator;if($a){var ab=$a.userAgent;if(ab){Za=ab;break a}}Za=""}function B(a){return A(Za,a)};function bb(a,b){for(var c in a)b.call(void 0,a[c],c,a)}function cb(a){for(var b in a)return!1;return!0}function db(a){var b={},c;for(c in a)b[c]=a[c];return b}var eb="constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf".split(" ");function fb(a,b){for(var c,d,e=1;e<arguments.length;e++){d=arguments[e];for(c in d)a[c]=d[c];for(var f=0;f<eb.length;f++)c=eb[f],Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c])}};function gb(a,b){for(var c=a.split("%s"),d="",e=Array.prototype.slice.call(arguments,1);e.length&&1<c.length;)d+=c.shift()+e.shift();return d+c.join("%s")}function hb(a){Xa.test(a)&&(-1!=a.indexOf("&")&&(a=a.replace(Ra,"&amp;")),-1!=a.indexOf("<")&&(a=a.replace(Sa,"&lt;")),-1!=a.indexOf(">")&&(a=a.replace(Ta,"&gt;")),-1!=a.indexOf('"')&&(a=a.replace(Ua,"&quot;")),-1!=a.indexOf("'")&&(a=a.replace(Va,"&#39;")),-1!=a.indexOf("\x00")&&(a=a.replace(Wa,"&#0;")));return a};function ib(a){l.setTimeout(function(){throw a;},0)}var jb;
-function kb(){var a=l.MessageChannel;"undefined"===typeof a&&"undefined"!==typeof window&&window.postMessage&&window.addEventListener&&!B("Presto")&&(a=function(){var e=document.createElement("IFRAME");e.style.display="none";e.src="";document.documentElement.appendChild(e);var f=e.contentWindow;e=f.document;e.open();e.write("");e.close();var g="callImmediate"+Math.random(),h="file:"==f.location.protocol?"*":f.location.protocol+"//"+f.location.host;e=t(function(m){if(("*"==h||m.origin==h)&&m.data==
-g)this.port1.onmessage()},this);f.addEventListener("message",e,!1);this.port1={};this.port2={postMessage:function(){f.postMessage(g,h)}}});if("undefined"!==typeof a&&!B("Trident")&&!B("MSIE")){var b=new a,c={},d=c;b.port1.onmessage=function(){if(void 0!==c.next){c=c.next;var e=c.yb;c.yb=null;e()}};return function(e){d.next={yb:e};d=d.next;b.port2.postMessage(0)}}return"undefined"!==typeof document&&"onreadystatechange"in document.createElement("SCRIPT")?function(e){var f=document.createElement("SCRIPT");
-f.onreadystatechange=function(){f.onreadystatechange=null;f.parentNode.removeChild(f);f=null;e();e=null};document.documentElement.appendChild(f)}:function(e){l.setTimeout(e,0)}};function lb(a,b){mb||nb();ob||(mb(),ob=!0);Fa.add(a,b)}var mb;function nb(){if(l.Promise&&l.Promise.resolve){var a=l.Promise.resolve(void 0);mb=function(){a.then(pb)}}else mb=function(){var b=pb;!q(l.setImmediate)||l.Window&&l.Window.prototype&&!B("Edge")&&l.Window.prototype.setImmediate==l.setImmediate?(jb||(jb=kb()),jb(b)):l.setImmediate(b)}}var ob=!1,Fa=new Ba;function pb(){for(var a;a=Ea();){try{a.a.call(a.b)}catch(b){ib(b)}Aa(Da,a)}ob=!1};function C(a,b){this.a=qb;this.i=void 0;this.f=this.b=this.c=null;this.g=this.h=!1;if(a!=ka)try{var c=this;a.call(b,function(d){rb(c,sb,d)},function(d){if(!(d instanceof tb))try{if(d instanceof Error)throw d;throw Error("Promise rejected.");}catch(e){}rb(c,ub,d)})}catch(d){rb(this,ub,d)}}var qb=0,sb=2,ub=3;function vb(){this.next=this.f=this.b=this.g=this.a=null;this.c=!1}vb.prototype.reset=function(){this.f=this.b=this.g=this.a=null;this.c=!1};var wb=new za(function(){return new vb},function(a){a.reset()});
-function xb(a,b,c){var d=wb.get();d.g=a;d.b=b;d.f=c;return d}function D(a){if(a instanceof C)return a;var b=new C(ka);rb(b,sb,a);return b}function E(a){return new C(function(b,c){c(a)})}function yb(a,b,c){zb(a,b,c,null)||lb(ua(b,a))}function Ab(a){return new C(function(b,c){var d=a.length,e=[];if(d)for(var f=function(p,v){d--;e[p]=v;0==d&&b(e)},g=function(p){c(p)},h=0,m;h<a.length;h++)m=a[h],yb(m,ua(f,h),g);else b(e)})}
-function Bb(a){return new C(function(b){var c=a.length,d=[];if(c)for(var e=function(h,m,p){c--;d[h]=m?{Eb:!0,value:p}:{Eb:!1,reason:p};0==c&&b(d)},f=0,g;f<a.length;f++)g=a[f],yb(g,ua(e,f,!0),ua(e,f,!1));else b(d)})}C.prototype.then=function(a,b,c){return Cb(this,q(a)?a:null,q(b)?b:null,c)};C.prototype.$goog_Thenable=!0;k=C.prototype;k.ia=function(a,b){a=xb(a,a,b);a.c=!0;Db(this,a);return this};k.s=function(a,b){return Cb(this,null,a,b)};
-k.cancel=function(a){this.a==qb&&lb(function(){var b=new tb(a);Eb(this,b)},this)};function Eb(a,b){if(a.a==qb)if(a.c){var c=a.c;if(c.b){for(var d=0,e=null,f=null,g=c.b;g&&(g.c||(d++,g.a==a&&(e=g),!(e&&1<d)));g=g.next)e||(f=g);e&&(c.a==qb&&1==d?Eb(c,b):(f?(d=f,d.next==c.f&&(c.f=d),d.next=d.next.next):Fb(c),Gb(c,e,ub,b)))}a.c=null}else rb(a,ub,b)}function Db(a,b){a.b||a.a!=sb&&a.a!=ub||Hb(a);a.f?a.f.next=b:a.b=b;a.f=b}
-function Cb(a,b,c,d){var e=xb(null,null,null);e.a=new C(function(f,g){e.g=b?function(h){try{var m=b.call(d,h);f(m)}catch(p){g(p)}}:f;e.b=c?function(h){try{var m=c.call(d,h);void 0===m&&h instanceof tb?g(h):f(m)}catch(p){g(p)}}:g});e.a.c=a;Db(a,e);return e.a}k.Lc=function(a){this.a=qb;rb(this,sb,a)};k.Mc=function(a){this.a=qb;rb(this,ub,a)};
-function rb(a,b,c){a.a==qb&&(a===c&&(b=ub,c=new TypeError("Promise cannot resolve to itself")),a.a=1,zb(c,a.Lc,a.Mc,a)||(a.i=c,a.a=b,a.c=null,Hb(a),b!=ub||c instanceof tb||Ib(a,c)))}function zb(a,b,c,d){if(a instanceof C)return Db(a,xb(b||ka,c||null,d)),!0;if(wa(a))return a.then(b,c,d),!0;if(r(a))try{var e=a.then;if(q(e))return Jb(a,e,b,c,d),!0}catch(f){return c.call(d,f),!0}return!1}
-function Jb(a,b,c,d,e){function f(m){h||(h=!0,d.call(e,m))}function g(m){h||(h=!0,c.call(e,m))}var h=!1;try{b.call(a,g,f)}catch(m){f(m)}}function Hb(a){a.h||(a.h=!0,lb(a.Xb,a))}function Fb(a){var b=null;a.b&&(b=a.b,a.b=b.next,b.next=null);a.b||(a.f=null);return b}k.Xb=function(){for(var a;a=Fb(this);)Gb(this,a,this.a,this.i);this.h=!1};
-function Gb(a,b,c,d){if(c==ub&&b.b&&!b.c)for(;a&&a.g;a=a.c)a.g=!1;if(b.a)b.a.c=null,Kb(b,c,d);else try{b.c?b.g.call(b.f):Kb(b,c,d)}catch(e){Lb.call(null,e)}Aa(wb,b)}function Kb(a,b,c){b==sb?a.g.call(a.f,c):a.b&&a.b.call(a.f,c)}function Ib(a,b){a.g=!0;lb(function(){a.g&&Lb.call(null,b)})}var Lb=ib;function tb(a){w.call(this,a)}u(tb,w);tb.prototype.name="cancel";function Mb(){0!=Nb&&(Ob[this[pa]||(this[pa]=++qa)]=this);this.qa=this.qa;this.ja=this.ja}var Nb=0,Ob={};Mb.prototype.qa=!1;function Pb(a){if(!a.qa&&(a.qa=!0,a.va(),0!=Nb)){var b=a[pa]||(a[pa]=++qa);if(0!=Nb&&a.ja&&0<a.ja.length)throw Error(a+" did not empty its onDisposeCallbacks queue. This probably means it overrode dispose() or disposeInternal() without calling the superclass' method.");delete Ob[b]}}Mb.prototype.va=function(){if(this.ja)for(;this.ja.length;)this.ja.shift()()};function Qb(a){Qb[" "](a);return a}Qb[" "]=ka;function Rb(a,b){var c=Sb;return Object.prototype.hasOwnProperty.call(c,a)?c[a]:c[a]=b(a)};var Tb=B("Opera"),Ub=B("Trident")||B("MSIE"),Vb=B("Edge"),Wb=Vb||Ub,Xb=B("Gecko")&&!(A(Za.toLowerCase(),"webkit")&&!B("Edge"))&&!(B("Trident")||B("MSIE"))&&!B("Edge"),Yb=A(Za.toLowerCase(),"webkit")&&!B("Edge");function Zb(){var a=l.document;return a?a.documentMode:void 0}var $b;
-a:{var ac="",bc=function(){var a=Za;if(Xb)return/rv:([^\);]+)(\)|;)/.exec(a);if(Vb)return/Edge\/([\d\.]+)/.exec(a);if(Ub)return/\b(?:MSIE|rv)[: ]([^\);]+)(\)|;)/.exec(a);if(Yb)return/WebKit\/(\S+)/.exec(a);if(Tb)return/(?:Version)[ \/]?(\S+)/.exec(a)}();bc&&(ac=bc?bc[1]:"");if(Ub){var cc=Zb();if(null!=cc&&cc>parseFloat(ac)){$b=String(cc);break a}}$b=ac}var Sb={};
-function dc(a){return Rb(a,function(){for(var b=0,c=Qa(String($b)).split("."),d=Qa(String(a)).split("."),e=Math.max(c.length,d.length),f=0;0==b&&f<e;f++){var g=c[f]||"",h=d[f]||"";do{g=/(\d*)(\D*)(.*)/.exec(g)||["","","",""];h=/(\d*)(\D*)(.*)/.exec(h)||["","","",""];if(0==g[0].length&&0==h[0].length)break;b=Ya(0==g[1].length?0:parseInt(g[1],10),0==h[1].length?0:parseInt(h[1],10))||Ya(0==g[2].length,0==h[2].length)||Ya(g[2],h[2]);g=g[3];h=h[3]}while(0==b)}return 0<=b})}var ec;var fc=l.document;
-ec=fc&&Ub?Zb()||("CSS1Compat"==fc.compatMode?parseInt($b,10):5):void 0;var gc=Object.freeze||function(a){return a};var hc=!Ub||9<=Number(ec),ic=Ub&&!dc("9"),jc=function(){if(!l.addEventListener||!Object.defineProperty)return!1;var a=!1,b=Object.defineProperty({},"passive",{get:function(){a=!0}});try{l.addEventListener("test",ka,b),l.removeEventListener("test",ka,b)}catch(c){}return a}();function kc(a,b){this.type=a;this.b=this.target=b;this.Kb=!0}kc.prototype.preventDefault=function(){this.Kb=!1};function lc(a,b){kc.call(this,a?a.type:"");this.relatedTarget=this.b=this.target=null;this.button=this.screenY=this.screenX=this.clientY=this.clientX=0;this.key="";this.metaKey=this.shiftKey=this.altKey=this.ctrlKey=!1;this.pointerId=0;this.pointerType="";this.a=null;if(a){var c=this.type=a.type,d=a.changedTouches&&a.changedTouches.length?a.changedTouches[0]:null;this.target=a.target||a.srcElement;this.b=b;if(b=a.relatedTarget){if(Xb){a:{try{Qb(b.nodeName);var e=!0;break a}catch(f){}e=!1}e||(b=null)}}else"mouseover"==
-c?b=a.fromElement:"mouseout"==c&&(b=a.toElement);this.relatedTarget=b;d?(this.clientX=void 0!==d.clientX?d.clientX:d.pageX,this.clientY=void 0!==d.clientY?d.clientY:d.pageY,this.screenX=d.screenX||0,this.screenY=d.screenY||0):(this.clientX=void 0!==a.clientX?a.clientX:a.pageX,this.clientY=void 0!==a.clientY?a.clientY:a.pageY,this.screenX=a.screenX||0,this.screenY=a.screenY||0);this.button=a.button;this.key=a.key||"";this.ctrlKey=a.ctrlKey;this.altKey=a.altKey;this.shiftKey=a.shiftKey;this.metaKey=
-a.metaKey;this.pointerId=a.pointerId||0;this.pointerType=n(a.pointerType)?a.pointerType:mc[a.pointerType]||"";this.a=a;a.defaultPrevented&&this.preventDefault()}}u(lc,kc);var mc=gc({2:"touch",3:"pen",4:"mouse"});lc.prototype.preventDefault=function(){lc.qb.preventDefault.call(this);var a=this.a;if(a.preventDefault)a.preventDefault();else if(a.returnValue=!1,ic)try{if(a.ctrlKey||112<=a.keyCode&&123>=a.keyCode)a.keyCode=-1}catch(b){}};lc.prototype.f=function(){return this.a};var nc="closure_listenable_"+(1E6*Math.random()|0),oc=0;function pc(a,b,c,d,e){this.listener=a;this.proxy=null;this.src=b;this.type=c;this.capture=!!d;this.Na=e;this.key=++oc;this.oa=this.Ia=!1}function qc(a){a.oa=!0;a.listener=null;a.proxy=null;a.src=null;a.Na=null};function rc(a){this.src=a;this.a={};this.b=0}rc.prototype.add=function(a,b,c,d,e){var f=a.toString();a=this.a[f];a||(a=this.a[f]=[],this.b++);var g=sc(a,b,d,e);-1<g?(b=a[g],c||(b.Ia=!1)):(b=new pc(b,this.src,f,!!d,e),b.Ia=c,a.push(b));return b};function tc(a,b){var c=b.type;c in a.a&&Na(a.a[c],b)&&(qc(b),0==a.a[c].length&&(delete a.a[c],a.b--))}function sc(a,b,c,d){for(var e=0;e<a.length;++e){var f=a[e];if(!f.oa&&f.listener==b&&f.capture==!!c&&f.Na==d)return e}return-1};var uc="closure_lm_"+(1E6*Math.random()|0),vc={},wc=0;function xc(a,b,c,d,e){if(d&&d.once)yc(a,b,c,d,e);else if(na(b))for(var f=0;f<b.length;f++)xc(a,b[f],c,d,e);else c=zc(c),a&&a[nc]?Ac(a,b,c,r(d)?!!d.capture:!!d,e):Bc(a,b,c,!1,d,e)}
-function Bc(a,b,c,d,e,f){if(!b)throw Error("Invalid event type");var g=r(e)?!!e.capture:!!e,h=Cc(a);h||(a[uc]=h=new rc(a));c=h.add(b,c,d,g,f);if(!c.proxy){d=Dc();c.proxy=d;d.src=a;d.listener=c;if(a.addEventListener)jc||(e=g),void 0===e&&(e=!1),a.addEventListener(b.toString(),d,e);else if(a.attachEvent)a.attachEvent(Ec(b.toString()),d);else if(a.addListener&&a.removeListener)a.addListener(d);else throw Error("addEventListener and attachEvent are unavailable.");wc++}}
-function Dc(){var a=Fc,b=hc?function(c){return a.call(b.src,b.listener,c)}:function(c){c=a.call(b.src,b.listener,c);if(!c)return c};return b}function yc(a,b,c,d,e){if(na(b))for(var f=0;f<b.length;f++)yc(a,b[f],c,d,e);else c=zc(c),a&&a[nc]?Gc(a,b,c,r(d)?!!d.capture:!!d,e):Bc(a,b,c,!0,d,e)}
-function Hc(a,b,c,d,e){if(na(b))for(var f=0;f<b.length;f++)Hc(a,b[f],c,d,e);else(d=r(d)?!!d.capture:!!d,c=zc(c),a&&a[nc])?(a=a.m,b=String(b).toString(),b in a.a&&(f=a.a[b],c=sc(f,c,d,e),-1<c&&(qc(f[c]),Array.prototype.splice.call(f,c,1),0==f.length&&(delete a.a[b],a.b--)))):a&&(a=Cc(a))&&(b=a.a[b.toString()],a=-1,b&&(a=sc(b,c,d,e)),(c=-1<a?b[a]:null)&&Ic(c))}
-function Ic(a){if("number"!=typeof a&&a&&!a.oa){var b=a.src;if(b&&b[nc])tc(b.m,a);else{var c=a.type,d=a.proxy;b.removeEventListener?b.removeEventListener(c,d,a.capture):b.detachEvent?b.detachEvent(Ec(c),d):b.addListener&&b.removeListener&&b.removeListener(d);wc--;(c=Cc(b))?(tc(c,a),0==c.b&&(c.src=null,b[uc]=null)):qc(a)}}}function Ec(a){return a in vc?vc[a]:vc[a]="on"+a}
-function Jc(a,b,c,d){var e=!0;if(a=Cc(a))if(b=a.a[b.toString()])for(b=b.concat(),a=0;a<b.length;a++){var f=b[a];f&&f.capture==c&&!f.oa&&(f=Kc(f,d),e=e&&!1!==f)}return e}function Kc(a,b){var c=a.listener,d=a.Na||a.src;a.Ia&&Ic(a);return c.call(d,b)}
-function Fc(a,b){if(a.oa)return!0;if(!hc){if(!b)a:{b=["window","event"];for(var c=l,d=0;d<b.length;d++)if(c=c[b[d]],null==c){b=null;break a}b=c}d=b;b=new lc(d,this);c=!0;if(!(0>d.keyCode||void 0!=d.returnValue)){a:{var e=!1;if(0==d.keyCode)try{d.keyCode=-1;break a}catch(g){e=!0}if(e||void 0==d.returnValue)d.returnValue=!0}d=[];for(e=b.b;e;e=e.parentNode)d.push(e);a=a.type;for(e=d.length-1;0<=e;e--){b.b=d[e];var f=Jc(d[e],a,!0,b);c=c&&f}for(e=0;e<d.length;e++)b.b=d[e],f=Jc(d[e],a,!1,b),c=c&&f}return c}return Kc(a,
-new lc(b,this))}function Cc(a){a=a[uc];return a instanceof rc?a:null}var Lc="__closure_events_fn_"+(1E9*Math.random()>>>0);function zc(a){if(q(a))return a;a[Lc]||(a[Lc]=function(b){return a.handleEvent(b)});return a[Lc]};function F(){Mb.call(this);this.m=new rc(this);this.Qb=this;this.Va=null}u(F,Mb);F.prototype[nc]=!0;F.prototype.addEventListener=function(a,b,c,d){xc(this,a,b,c,d)};F.prototype.removeEventListener=function(a,b,c,d){Hc(this,a,b,c,d)};
-F.prototype.dispatchEvent=function(a){var b,c=this.Va;if(c)for(b=[];c;c=c.Va)b.push(c);c=this.Qb;var d=a.type||a;if(n(a))a=new kc(a,c);else if(a instanceof kc)a.target=a.target||c;else{var e=a;a=new kc(d,c);fb(a,e)}e=!0;if(b)for(var f=b.length-1;0<=f;f--){var g=a.b=b[f];e=Mc(g,d,!0,a)&&e}g=a.b=c;e=Mc(g,d,!0,a)&&e;e=Mc(g,d,!1,a)&&e;if(b)for(f=0;f<b.length;f++)g=a.b=b[f],e=Mc(g,d,!1,a)&&e;return e};
-F.prototype.va=function(){F.qb.va.call(this);if(this.m){var a=this.m,b=0,c;for(c in a.a){for(var d=a.a[c],e=0;e<d.length;e++)++b,qc(d[e]);delete a.a[c];a.b--}}this.Va=null};function Ac(a,b,c,d,e){a.m.add(String(b),c,!1,d,e)}function Gc(a,b,c,d,e){a.m.add(String(b),c,!0,d,e)}
-function Mc(a,b,c,d){b=a.m.a[String(b)];if(!b)return!0;b=b.concat();for(var e=!0,f=0;f<b.length;++f){var g=b[f];if(g&&!g.oa&&g.capture==c){var h=g.listener,m=g.Na||g.src;g.Ia&&tc(a.m,g);e=!1!==h.call(m,d)&&e}}return e&&0!=d.Kb};function Nc(a,b,c){if(q(a))c&&(a=t(a,c));else if(a&&"function"==typeof a.handleEvent)a=t(a.handleEvent,a);else throw Error("Invalid listener argument");return 2147483647<Number(b)?-1:l.setTimeout(a,b||0)}function Oc(a){var b=null;return(new C(function(c,d){b=Nc(function(){c(void 0)},a);-1==b&&d(Error("Failed to schedule timer."))})).s(function(c){l.clearTimeout(b);throw c;})};function Pc(a){if(a.S&&"function"==typeof a.S)return a.S();if(n(a))return a.split("");if(oa(a)){for(var b=[],c=a.length,d=0;d<c;d++)b.push(a[d]);return b}b=[];c=0;for(d in a)b[c++]=a[d];return b}function Qc(a){if(a.U&&"function"==typeof a.U)return a.U();if(!a.S||"function"!=typeof a.S){if(oa(a)||n(a)){var b=[];a=a.length;for(var c=0;c<a;c++)b.push(c);return b}b=[];c=0;for(var d in a)b[c++]=d;return b}}
-function Rc(a,b){if(a.forEach&&"function"==typeof a.forEach)a.forEach(b,void 0);else if(oa(a)||n(a))x(a,b,void 0);else for(var c=Qc(a),d=Pc(a),e=d.length,f=0;f<e;f++)b.call(void 0,d[f],c&&c[f],a)};function Sc(a,b){this.b={};this.a=[];this.c=0;var c=arguments.length;if(1<c){if(c%2)throw Error("Uneven number of arguments");for(var d=0;d<c;d+=2)this.set(arguments[d],arguments[d+1])}else if(a)if(a instanceof Sc)for(c=a.U(),d=0;d<c.length;d++)this.set(c[d],a.get(c[d]));else for(d in a)this.set(d,a[d])}k=Sc.prototype;k.S=function(){Tc(this);for(var a=[],b=0;b<this.a.length;b++)a.push(this.b[this.a[b]]);return a};k.U=function(){Tc(this);return this.a.concat()};
-k.clear=function(){this.b={};this.c=this.a.length=0};function Tc(a){if(a.c!=a.a.length){for(var b=0,c=0;b<a.a.length;){var d=a.a[b];Uc(a.b,d)&&(a.a[c++]=d);b++}a.a.length=c}if(a.c!=a.a.length){var e={};for(c=b=0;b<a.a.length;)d=a.a[b],Uc(e,d)||(a.a[c++]=d,e[d]=1),b++;a.a.length=c}}k.get=function(a,b){return Uc(this.b,a)?this.b[a]:b};k.set=function(a,b){Uc(this.b,a)||(this.c++,this.a.push(a));this.b[a]=b};
-k.forEach=function(a,b){for(var c=this.U(),d=0;d<c.length;d++){var e=c[d],f=this.get(e);a.call(b,f,e,this)}};function Uc(a,b){return Object.prototype.hasOwnProperty.call(a,b)};var Vc=/^(?:([^:/?#.]+):)?(?:\/\/(?:([^/?#]*)@)?([^/#?]*?)(?::([0-9]+))?(?=[/#?]|$))?([^?#]+)?(?:\?([^#]*))?(?:#([\s\S]*))?$/;function Wc(a,b){if(a){a=a.split("&");for(var c=0;c<a.length;c++){var d=a[c].indexOf("="),e=null;if(0<=d){var f=a[c].substring(0,d);e=a[c].substring(d+1)}else f=a[c];b(f,e?decodeURIComponent(e.replace(/\+/g," ")):"")}}};function Xc(a,b){this.b=this.i=this.f="";this.m=null;this.g=this.c="";this.h=!1;var c;a instanceof Xc?(this.h=void 0!==b?b:a.h,Yc(this,a.f),this.i=a.i,this.b=a.b,Zc(this,a.m),this.c=a.c,$c(this,ad(a.a)),this.g=a.g):a&&(c=String(a).match(Vc))?(this.h=!!b,Yc(this,c[1]||"",!0),this.i=bd(c[2]||""),this.b=bd(c[3]||"",!0),Zc(this,c[4]),this.c=bd(c[5]||"",!0),$c(this,c[6]||"",!0),this.g=bd(c[7]||"")):(this.h=!!b,this.a=new cd(null,this.h))}
-Xc.prototype.toString=function(){var a=[],b=this.f;b&&a.push(dd(b,ed,!0),":");var c=this.b;if(c||"file"==b)a.push("//"),(b=this.i)&&a.push(dd(b,ed,!0),"@"),a.push(encodeURIComponent(String(c)).replace(/%25([0-9a-fA-F]{2})/g,"%$1")),c=this.m,null!=c&&a.push(":",String(c));if(c=this.c)this.b&&"/"!=c.charAt(0)&&a.push("/"),a.push(dd(c,"/"==c.charAt(0)?fd:gd,!0));(c=this.a.toString())&&a.push("?",c);(c=this.g)&&a.push("#",dd(c,hd));return a.join("")};
-Xc.prototype.resolve=function(a){var b=new Xc(this),c=!!a.f;c?Yc(b,a.f):c=!!a.i;c?b.i=a.i:c=!!a.b;c?b.b=a.b:c=null!=a.m;var d=a.c;if(c)Zc(b,a.m);else if(c=!!a.c){if("/"!=d.charAt(0))if(this.b&&!this.c)d="/"+d;else{var e=b.c.lastIndexOf("/");-1!=e&&(d=b.c.substr(0,e+1)+d)}e=d;if(".."==e||"."==e)d="";else if(A(e,"./")||A(e,"/.")){d=0==e.lastIndexOf("/",0);e=e.split("/");for(var f=[],g=0;g<e.length;){var h=e[g++];"."==h?d&&g==e.length&&f.push(""):".."==h?((1<f.length||1==f.length&&""!=f[0])&&f.pop(),
-d&&g==e.length&&f.push("")):(f.push(h),d=!0)}d=f.join("/")}else d=e}c?b.c=d:c=""!==a.a.toString();c?$c(b,ad(a.a)):c=!!a.g;c&&(b.g=a.g);return b};function Yc(a,b,c){a.f=c?bd(b,!0):b;a.f&&(a.f=a.f.replace(/:$/,""))}function Zc(a,b){if(b){b=Number(b);if(isNaN(b)||0>b)throw Error("Bad port number "+b);a.m=b}else a.m=null}function $c(a,b,c){b instanceof cd?(a.a=b,id(a.a,a.h)):(c||(b=dd(b,jd)),a.a=new cd(b,a.h))}function G(a,b,c){a.a.set(b,c)}function kd(a,b){return a.a.get(b)}
-function md(a){return a instanceof Xc?new Xc(a):new Xc(a,void 0)}function nd(a,b){var c=new Xc(null,void 0);Yc(c,"https");a&&(c.b=a);b&&(c.c=b);return c}function bd(a,b){return a?b?decodeURI(a.replace(/%25/g,"%2525")):decodeURIComponent(a):""}function dd(a,b,c){return n(a)?(a=encodeURI(a).replace(b,od),c&&(a=a.replace(/%25([0-9a-fA-F]{2})/g,"%$1")),a):null}function od(a){a=a.charCodeAt(0);return"%"+(a>>4&15).toString(16)+(a&15).toString(16)}
-var ed=/[#\/\?@]/g,gd=/[#\?:]/g,fd=/[#\?]/g,jd=/[#\?@]/g,hd=/#/g;function cd(a,b){this.b=this.a=null;this.c=a||null;this.f=!!b}function pd(a){a.a||(a.a=new Sc,a.b=0,a.c&&Wc(a.c,function(b,c){a.add(decodeURIComponent(b.replace(/\+/g," ")),c)}))}function qd(a){var b=Qc(a);if("undefined"==typeof b)throw Error("Keys are undefined");var c=new cd(null,void 0);a=Pc(a);for(var d=0;d<b.length;d++){var e=b[d],f=a[d];na(f)?rd(c,e,f):c.add(e,f)}return c}k=cd.prototype;
-k.add=function(a,b){pd(this);this.c=null;a=sd(this,a);var c=this.a.get(a);c||this.a.set(a,c=[]);c.push(b);this.b+=1;return this};function td(a,b){pd(a);b=sd(a,b);Uc(a.a.b,b)&&(a.c=null,a.b-=a.a.get(b).length,a=a.a,Uc(a.b,b)&&(delete a.b[b],a.c--,a.a.length>2*a.c&&Tc(a)))}k.clear=function(){this.a=this.c=null;this.b=0};function ud(a,b){pd(a);b=sd(a,b);return Uc(a.a.b,b)}k.forEach=function(a,b){pd(this);this.a.forEach(function(c,d){x(c,function(e){a.call(b,e,d,this)},this)},this)};
-k.U=function(){pd(this);for(var a=this.a.S(),b=this.a.U(),c=[],d=0;d<b.length;d++)for(var e=a[d],f=0;f<e.length;f++)c.push(b[d]);return c};k.S=function(a){pd(this);var b=[];if(n(a))ud(this,a)&&(b=Oa(b,this.a.get(sd(this,a))));else{a=this.a.S();for(var c=0;c<a.length;c++)b=Oa(b,a[c])}return b};k.set=function(a,b){pd(this);this.c=null;a=sd(this,a);ud(this,a)&&(this.b-=this.a.get(a).length);this.a.set(a,[b]);this.b+=1;return this};
-k.get=function(a,b){if(!a)return b;a=this.S(a);return 0<a.length?String(a[0]):b};function rd(a,b,c){td(a,b);0<c.length&&(a.c=null,a.a.set(sd(a,b),Pa(c)),a.b+=c.length)}k.toString=function(){if(this.c)return this.c;if(!this.a)return"";for(var a=[],b=this.a.U(),c=0;c<b.length;c++){var d=b[c],e=encodeURIComponent(String(d));d=this.S(d);for(var f=0;f<d.length;f++){var g=e;""!==d[f]&&(g+="="+encodeURIComponent(String(d[f])));a.push(g)}}return this.c=a.join("&")};
-function ad(a){var b=new cd;b.c=a.c;a.a&&(b.a=new Sc(a.a),b.b=a.b);return b}function sd(a,b){b=String(b);a.f&&(b=b.toLowerCase());return b}function id(a,b){b&&!a.f&&(pd(a),a.c=null,a.a.forEach(function(c,d){var e=d.toLowerCase();d!=e&&(td(this,d),rd(this,e,c))},a));a.f=b};var vd=!Ub||9<=Number(ec);function wd(a,b){this.a=a===xd&&b||"";this.b=yd}wd.prototype.na=!0;wd.prototype.ma=function(){return this.a};wd.prototype.toString=function(){return"Const{"+this.a+"}"};function zd(a){if(a instanceof wd&&a.constructor===wd&&a.b===yd)return a.a;ya("expected object of type Const, got '"+a+"'");return"type_error:Const"}var yd={},xd={};function Ad(){this.a="";this.b=Bd}Ad.prototype.na=!0;Ad.prototype.ma=function(){return this.a.toString()};Ad.prototype.toString=function(){return"TrustedResourceUrl{"+this.a+"}"};function Cd(a){if(a instanceof Ad&&a.constructor===Ad&&a.b===Bd)return a.a;ya("expected object of type TrustedResourceUrl, got '"+a+"' of type "+la(a));return"type_error:TrustedResourceUrl"}
-function Dd(a,b){var c=zd(a);if(!Ed.test(c))throw Error("Invalid TrustedResourceUrl format: "+c);a=c.replace(Fd,function(d,e){if(!Object.prototype.hasOwnProperty.call(b,e))throw Error('Found marker, "'+e+'", in format string, "'+c+'", but no valid label mapping found in args: '+JSON.stringify(b));d=b[e];return d instanceof wd?zd(d):encodeURIComponent(String(d))});return Gd(a)}var Fd=/%{(\w+)}/g,Ed=/^((https:)?\/\/[0-9a-z.:[\]-]+\/|\/[^/\\]|[^:/\\%]+\/|[^:/\\%]*[?#]|about:blank#)/i,Bd={};
-function Gd(a){var b=new Ad;b.a=a;return b};function Hd(){this.a="";this.b=Id}Hd.prototype.na=!0;Hd.prototype.ma=function(){return this.a.toString()};Hd.prototype.toString=function(){return"SafeUrl{"+this.a+"}"};function Jd(a){if(a instanceof Hd&&a.constructor===Hd&&a.b===Id)return a.a;ya("expected object of type SafeUrl, got '"+a+"' of type "+la(a));return"type_error:SafeUrl"}var Kd=/^(?:(?:https?|mailto|ftp):|[^:/?#]*(?:[/?#]|$))/i;
-function Ld(a){if(a instanceof Hd)return a;a="object"==typeof a&&a.na?a.ma():String(a);Kd.test(a)||(a="about:invalid#zClosurez");return Md(a)}var Id={};function Md(a){var b=new Hd;b.a=a;return b}Md("about:blank");function Nd(){this.a="";this.b=Od}Nd.prototype.na=!0;Nd.prototype.ma=function(){return this.a.toString()};Nd.prototype.toString=function(){return"SafeHtml{"+this.a+"}"};function Pd(a){if(a instanceof Nd&&a.constructor===Nd&&a.b===Od)return a.a;ya("expected object of type SafeHtml, got '"+a+"' of type "+la(a));return"type_error:SafeHtml"}var Od={};function Qd(a){var b=new Nd;b.a=a;return b}Qd("<!DOCTYPE html>");Qd("");Qd("<br>");function Rd(a,b){a.src=Cd(b);if(null===ja)b:{b=l.document;if((b=b.querySelector&&b.querySelector("script[nonce]"))&&(b=b.nonce||b.getAttribute("nonce"))&&ia.test(b)){ja=b;break b}ja=""}b=ja;b&&a.setAttribute("nonce",b)};function Sd(a){var b=document;return n(a)?b.getElementById(a):a}function Td(a,b){bb(b,function(c,d){c&&"object"==typeof c&&c.na&&(c=c.ma());"style"==d?a.style.cssText=c:"class"==d?a.className=c:"for"==d?a.htmlFor=c:Ud.hasOwnProperty(d)?a.setAttribute(Ud[d],c):0==d.lastIndexOf("aria-",0)||0==d.lastIndexOf("data-",0)?a.setAttribute(d,c):a[d]=c})}
-var Ud={cellpadding:"cellPadding",cellspacing:"cellSpacing",colspan:"colSpan",frameborder:"frameBorder",height:"height",maxlength:"maxLength",nonce:"nonce",role:"role",rowspan:"rowSpan",type:"type",usemap:"useMap",valign:"vAlign",width:"width"};
-function Vd(a,b,c){var d=arguments,e=document,f=String(d[0]),g=d[1];if(!vd&&g&&(g.name||g.type)){f=["<",f];g.name&&f.push(' name="',hb(g.name),'"');if(g.type){f.push(' type="',hb(g.type),'"');var h={};fb(h,g);delete h.type;g=h}f.push(">");f=f.join("")}f=e.createElement(f);g&&(n(g)?f.className=g:na(g)?f.className=g.join(" "):Td(f,g));2<d.length&&Wd(e,f,d);return f}
-function Wd(a,b,c){function d(g){g&&b.appendChild(n(g)?a.createTextNode(g):g)}for(var e=2;e<c.length;e++){var f=c[e];!oa(f)||r(f)&&0<f.nodeType?d(f):x(Xd(f)?Pa(f):f,d)}}function Xd(a){if(a&&"number"==typeof a.length){if(r(a))return"function"==typeof a.item||"string"==typeof a.item;if(q(a))return"function"==typeof a.item}return!1};function Yd(a){var b=[];Zd(new $d,a,b);return b.join("")}function $d(){}
-function Zd(a,b,c){if(null==b)c.push("null");else{if("object"==typeof b){if(na(b)){var d=b;b=d.length;c.push("[");for(var e="",f=0;f<b;f++)c.push(e),Zd(a,d[f],c),e=",";c.push("]");return}if(b instanceof String||b instanceof Number||b instanceof Boolean)b=b.valueOf();else{c.push("{");e="";for(d in b)Object.prototype.hasOwnProperty.call(b,d)&&(f=b[d],"function"!=typeof f&&(c.push(e),ae(d,c),c.push(":"),Zd(a,f,c),e=","));c.push("}");return}}switch(typeof b){case "string":ae(b,c);break;case "number":c.push(isFinite(b)&&
-!isNaN(b)?String(b):"null");break;case "boolean":c.push(String(b));break;case "function":c.push("null");break;default:throw Error("Unknown type: "+typeof b);}}}var be={'"':'\\"',"\\":"\\\\","/":"\\/","\b":"\\b","\f":"\\f","\n":"\\n","\r":"\\r","\t":"\\t","\x0B":"\\u000b"},ce=/\uffff/.test("\uffff")?/[\\"\x00-\x1f\x7f-\uffff]/g:/[\\"\x00-\x1f\x7f-\xff]/g;
-function ae(a,b){b.push('"',a.replace(ce,function(c){var d=be[c];d||(d="\\u"+(c.charCodeAt(0)|65536).toString(16).substr(1),be[c]=d);return d}),'"')};/*
-
- Copyright 2017 Google Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-function de(){var a=I();return Ub&&!!ec&&11==ec||/Edge\/\d+/.test(a)}function ee(){return l.window&&l.window.location.href||self&&self.location&&self.location.href||""}function fe(a,b){b=b||l.window;var c="about:blank";a&&(c=Jd(Ld(a)).toString());b.location.href=c}function ge(a,b){var c=[],d;for(d in a)d in b?typeof a[d]!=typeof b[d]?c.push(d):"object"==typeof a[d]&&null!=a[d]&&null!=b[d]?0<ge(a[d],b[d]).length&&c.push(d):a[d]!==b[d]&&c.push(d):c.push(d);for(d in b)d in a||c.push(d);return c}
-function he(){var a=I();a=ie(a)!=je?null:(a=a.match(/\sChrome\/(\d+)/i))&&2==a.length?parseInt(a[1],10):null;return a&&30>a?!1:!Ub||!ec||9<ec}function ke(a){a=(a||I()).toLowerCase();return a.match(/android/)||a.match(/webos/)||a.match(/iphone|ipad|ipod/)||a.match(/blackberry/)||a.match(/windows phone/)||a.match(/iemobile/)?!0:!1}function le(a){a=a||l.window;try{a.close()}catch(b){}}
-function me(a,b,c){var d=Math.floor(1E9*Math.random()).toString();b=b||500;c=c||600;var e=(window.screen.availHeight-c)/2,f=(window.screen.availWidth-b)/2;b={width:b,height:c,top:0<e?e:0,left:0<f?f:0,location:!0,resizable:!0,statusbar:!0,toolbar:!1};c=I().toLowerCase();d&&(b.target=d,A(c,"crios/")&&(b.target="_blank"));ie(I())==ne&&(a=a||"http://localhost",b.scrollbars=!0);c=a||"";(a=b)||(a={});d=window;b=c instanceof Hd?c:Ld("undefined"!=typeof c.href?c.href:String(c));c=a.target||c.target;e=[];
-for(g in a)switch(g){case "width":case "height":case "top":case "left":e.push(g+"="+a[g]);break;case "target":case "noopener":case "noreferrer":break;default:e.push(g+"="+(a[g]?1:0))}var g=e.join(",");(B("iPhone")&&!B("iPod")&&!B("iPad")||B("iPad")||B("iPod"))&&d.navigator&&d.navigator.standalone&&c&&"_self"!=c?(g=d.document.createElement("A"),b instanceof Hd||b instanceof Hd||(b="object"==typeof b&&b.na?b.ma():String(b),Kd.test(b)||(b="about:invalid#zClosurez"),b=Md(b)),g.href=Jd(b),g.setAttribute("target",
-c),a.noreferrer&&g.setAttribute("rel","noreferrer"),a=document.createEvent("MouseEvent"),a.initMouseEvent("click",!0,!0,d,1),g.dispatchEvent(a),g={}):a.noreferrer?(g=d.open("",c,g),a=Jd(b).toString(),g&&(Wb&&A(a,";")&&(a="'"+a.replace(/'/g,"%27")+"'"),g.opener=null,a=Qd('<meta name="referrer" content="no-referrer"><meta http-equiv="refresh" content="0; url='+hb(a)+'">'),g.document.write(Pd(a)),g.document.close())):(g=d.open(Jd(b).toString(),c,g))&&a.noopener&&(g.opener=null);if(g)try{g.focus()}catch(h){}return g}
-function oe(a){return new C(function(b){function c(){Oc(2E3).then(function(){if(!a||a.closed)b();else return c()})}return c()})}var pe=/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,qe=/^[^@]+@[^@]+$/;function re(){var a=null;return(new C(function(b){"complete"==l.document.readyState?b():(a=function(){b()},yc(window,"load",a))})).s(function(b){Hc(window,"load",a);throw b;})}
-function se(){return te(void 0)?re().then(function(){return new C(function(a,b){var c=l.document,d=setTimeout(function(){b(Error("Cordova framework is not ready."))},1E3);c.addEventListener("deviceready",function(){clearTimeout(d);a()},!1)})}):E(Error("Cordova must run in an Android or iOS file scheme."))}function te(a){a=a||I();return!("file:"!==ue()||!a.toLowerCase().match(/iphone|ipad|ipod|android/))}function ve(){var a=l.window;try{return!(!a||a==a.top)}catch(b){return!1}}
-function we(){return"undefined"!==typeof l.WorkerGlobalScope&&"function"===typeof l.importScripts}function xe(){return _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.hasOwnProperty("reactNative")?"ReactNative":_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.hasOwnProperty("node")?"Node":we()?"Worker":"Browser"}function ye(){var a=xe();return"ReactNative"===a||"Node"===a}function ze(){for(var a=50,b=[];0<a;)b.push("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(62*Math.random()))),a--;return b.join("")}
-var ne="Firefox",je="Chrome";
-function ie(a){var b=a.toLowerCase();if(A(b,"opera/")||A(b,"opr/")||A(b,"opios/"))return"Opera";if(A(b,"iemobile"))return"IEMobile";if(A(b,"msie")||A(b,"trident/"))return"IE";if(A(b,"edge/"))return"Edge";if(A(b,"firefox/"))return ne;if(A(b,"silk/"))return"Silk";if(A(b,"blackberry"))return"Blackberry";if(A(b,"webos"))return"Webos";if(!A(b,"safari/")||A(b,"chrome/")||A(b,"crios/")||A(b,"android"))if(!A(b,"chrome/")&&!A(b,"crios/")||A(b,"edge/")){if(A(b,"android"))return"Android";if((a=a.match(/([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/))&&
-2==a.length)return a[1]}else return je;else return"Safari";return"Other"}var Ae={Sc:"FirebaseCore-web",Uc:"FirebaseUI-web"};function Be(a,b){b=b||[];var c=[],d={},e;for(e in Ae)d[Ae[e]]=!0;for(e=0;e<b.length;e++)"undefined"!==typeof d[b[e]]&&(delete d[b[e]],c.push(b[e]));c.sort();b=c;b.length||(b=["FirebaseCore-web"]);c=xe();"Browser"===c?(d=I(),c=ie(d)):"Worker"===c&&(d=I(),c=ie(d)+"-"+c);return c+"/JsCore/"+a+"/"+b.join(",")}function I(){return l.navigator&&l.navigator.userAgent||""}
-function J(a,b){a=a.split(".");b=b||l;for(var c=0;c<a.length&&"object"==typeof b&&null!=b;c++)b=b[a[c]];c!=a.length&&(b=void 0);return b}function Ce(){try{var a=l.localStorage,b=De();if(a)return a.setItem(b,"1"),a.removeItem(b),de()?!!l.indexedDB:!0}catch(c){return we()&&!!l.indexedDB}return!1}function Ee(){return(Fe()||"chrome-extension:"===ue()||te())&&!ye()&&Ce()&&!we()}function Fe(){return"http:"===ue()||"https:"===ue()}function ue(){return l.location&&l.location.protocol||null}
-function Ge(a){a=a||I();return ke(a)||ie(a)==ne?!1:!0}function He(a){return"undefined"===typeof a?null:Yd(a)}function Ie(a){var b={},c;for(c in a)a.hasOwnProperty(c)&&null!==a[c]&&void 0!==a[c]&&(b[c]=a[c]);return b}function Je(a){if(null!==a)return JSON.parse(a)}function De(a){return a?a:Math.floor(1E9*Math.random()).toString()}function Ke(a){a=a||I();return"Safari"==ie(a)||a.toLowerCase().match(/iphone|ipad|ipod/)?!1:!0}
-function Le(){var a=l.___jsl;if(a&&a.H)for(var b in a.H)if(a.H[b].r=a.H[b].r||[],a.H[b].L=a.H[b].L||[],a.H[b].r=a.H[b].L.concat(),a.CP)for(var c=0;c<a.CP.length;c++)a.CP[c]=null}function Me(a,b){if(a>b)throw Error("Short delay should be less than long delay!");this.a=a;this.c=b;a=I();b=xe();this.b=ke(a)||"ReactNative"===b}
-Me.prototype.get=function(){var a=l.navigator;return(a&&"boolean"===typeof a.onLine&&(Fe()||"chrome-extension:"===ue()||"undefined"!==typeof a.connection)?a.onLine:1)?this.b?this.c:this.a:Math.min(5E3,this.a)};function Ne(){var a=l.document;return a&&"undefined"!==typeof a.visibilityState?"visible"==a.visibilityState:!0}
-function Oe(){var a=l.document,b=null;return Ne()||!a?D():(new C(function(c){b=function(){Ne()&&(a.removeEventListener("visibilitychange",b,!1),c())};a.addEventListener("visibilitychange",b,!1)})).s(function(c){a.removeEventListener("visibilitychange",b,!1);throw c;})}function Pe(a){try{var b=new Date(parseInt(a,10));if(!isNaN(b.getTime())&&!/[^0-9]/.test(a))return b.toUTCString()}catch(c){}return null}function Qe(){return!(!J("fireauth.oauthhelper",l)&&!J("fireauth.iframe",l))}
-function Re(){var a=l.navigator;return a&&a.serviceWorker&&a.serviceWorker.controller||null}function Se(){var a=l.navigator;return a&&a.serviceWorker?D().then(function(){return a.serviceWorker.ready}).then(function(b){return b.active||null}).s(function(){return null}):D(null)};var Te={};function Ue(a){Te[a]||(Te[a]=!0,"undefined"!==typeof console&&"function"===typeof console.warn&&console.warn(a))};var Ve;try{var We={};Object.defineProperty(We,"abcd",{configurable:!0,enumerable:!0,value:1});Object.defineProperty(We,"abcd",{configurable:!0,enumerable:!0,value:2});Ve=2==We.abcd}catch(a){Ve=!1}function K(a,b,c){Ve?Object.defineProperty(a,b,{configurable:!0,enumerable:!0,value:c}):a[b]=c}function L(a,b){if(b)for(var c in b)b.hasOwnProperty(c)&&K(a,c,b[c])}function Xe(a){var b={};L(b,a);return b}function Ye(a){var b={},c;for(c in a)a.hasOwnProperty(c)&&(b[c]=a[c]);return b}
-function Ze(a,b){if(!b||!b.length)return!0;if(!a)return!1;for(var c=0;c<b.length;c++){var d=a[b[c]];if(void 0===d||null===d||""===d)return!1}return!0}function $e(a){var b=a;if("object"==typeof a&&null!=a){b="length"in a?[]:{};for(var c in a)K(b,c,$e(a[c]))}return b};function af(a){var b={},c=a[bf],d=a[cf];a=a[df];if(!a||a!=ef&&!c)throw Error("Invalid provider user info!");b[ff]=d||null;b[gf]=c||null;K(this,hf,a);K(this,jf,$e(b))}var ef="EMAIL_SIGNIN",bf="email",cf="newEmail",df="requestType",gf="email",ff="fromEmail",jf="data",hf="operation";function M(a,b){this.code=kf+a;this.message=b||lf[a]||""}u(M,Error);M.prototype.w=function(){return{code:this.code,message:this.message}};M.prototype.toJSON=function(){return this.w()};function mf(a){var b=a&&a.code;return b?new M(b.substring(kf.length),a.message):null}
-var kf="auth/",lf={"admin-restricted-operation":"This operation is restricted to administrators only.","argument-error":"","app-not-authorized":"This app, identified by the domain where it's hosted, is not authorized to use Firebase Authentication with the provided API key. Review your key configuration in the Google API console.","app-not-installed":"The requested mobile application corresponding to the identifier (Android package name or iOS bundle ID) provided is not installed on this device.",
-"captcha-check-failed":"The reCAPTCHA response token provided is either invalid, expired, already used or the domain associated with it does not match the list of whitelisted domains.","code-expired":"The SMS code has expired. Please re-send the verification code to try again.","cordova-not-ready":"Cordova framework is not ready.","cors-unsupported":"This browser is not supported.","credential-already-in-use":"This credential is already associated with a different user account.","custom-token-mismatch":"The custom token corresponds to a different audience.",
-"requires-recent-login":"This operation is sensitive and requires recent authentication. Log in again before retrying this request.","dynamic-link-not-activated":"Please activate Dynamic Links in the Firebase Console and agree to the terms and conditions.","email-already-in-use":"The email address is already in use by another account.","expired-action-code":"The action code has expired. ","cancelled-popup-request":"This operation has been cancelled due to another conflicting popup being opened.",
-"internal-error":"An internal error has occurred.","invalid-app-credential":"The phone verification request contains an invalid application verifier. The reCAPTCHA token response is either invalid or expired.","invalid-app-id":"The mobile app identifier is not registed for the current project.","invalid-user-token":"This user's credential isn't valid for this project. This can happen if the user's token has been tampered with, or if the user isn't for the project associated with this API key.","invalid-auth-event":"An internal error has occurred.",
-"invalid-verification-code":"The SMS verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user.","invalid-continue-uri":"The continue URL provided in the request is invalid.","invalid-cordova-configuration":"The following Cordova plugins must be installed to enable OAuth sign-in: cordova-plugin-buildinfo, cordova-universal-links-plugin, cordova-plugin-browsertab, cordova-plugin-inappbrowser and cordova-plugin-customurlscheme.",
-"invalid-custom-token":"The custom token format is incorrect. Please check the documentation.","invalid-dynamic-link-domain":"The provided dynamic link domain is not configured or authorized for the current project.","invalid-email":"The email address is badly formatted.","invalid-api-key":"Your API key is invalid, please check you have copied it correctly.","invalid-cert-hash":"The SHA-1 certificate hash provided is invalid.","invalid-credential":"The supplied auth credential is malformed or has expired.",
-"invalid-message-payload":"The email template corresponding to this action contains invalid characters in its message. Please fix by going to the Auth email templates section in the Firebase Console.","invalid-oauth-provider":"EmailAuthProvider is not supported for this operation. This operation only supports OAuth providers.","invalid-oauth-client-id":"The OAuth client ID provided is either invalid or does not match the specified API key.","unauthorized-domain":"This domain is not authorized for OAuth operations for your Firebase project. Edit the list of authorized domains from the Firebase console.",
-"invalid-action-code":"The action code is invalid. This can happen if the code is malformed, expired, or has already been used.","wrong-password":"The password is invalid or the user does not have a password.","invalid-persistence-type":"The specified persistence type is invalid. It can only be local, session or none.","invalid-phone-number":"The format of the phone number provided is incorrect. Please enter the phone number in a format that can be parsed into E.164 format. E.164 phone numbers are written in the format [+][country code][subscriber number including area code].",
-"invalid-provider-id":"The specified provider ID is invalid.","invalid-recipient-email":"The email corresponding to this action failed to send as the provided recipient email address is invalid.","invalid-sender":"The email template corresponding to this action contains an invalid sender email or name. Please fix by going to the Auth email templates section in the Firebase Console.","invalid-verification-id":"The verification ID used to create the phone auth credential is invalid.","missing-android-pkg-name":"An Android Package Name must be provided if the Android App is required to be installed.",
-"auth-domain-config-required":"Be sure to include authDomain when calling firebase.initializeApp(), by following the instructions in the Firebase console.","missing-app-credential":"The phone verification request is missing an application verifier assertion. A reCAPTCHA response token needs to be provided.","missing-verification-code":"The phone auth credential was created with an empty SMS verification code.","missing-continue-uri":"A continue URL must be provided in the request.","missing-iframe-start":"An internal error has occurred.",
-"missing-ios-bundle-id":"An iOS Bundle ID must be provided if an App Store ID is provided.","missing-or-invalid-nonce":"The OIDC ID token requires a valid unhashed nonce.","missing-phone-number":"To send verification codes, provide a phone number for the recipient.","missing-verification-id":"The phone auth credential was created with an empty verification ID.","app-deleted":"This instance of FirebaseApp has been deleted.","account-exists-with-different-credential":"An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
-"network-request-failed":"A network error (such as timeout, interrupted connection or unreachable host) has occurred.","no-auth-event":"An internal error has occurred.","no-such-provider":"User was not linked to an account with the given provider.","null-user":"A null user object was provided as the argument for an operation which requires a non-null user object.","operation-not-allowed":"The given sign-in provider is disabled for this Firebase project. Enable it in the Firebase console, under the sign-in method tab of the Auth section.",
-"operation-not-supported-in-this-environment":'This operation is not supported in the environment this application is running on. "location.protocol" must be http, https or chrome-extension and web storage must be enabled.',"popup-blocked":"Unable to establish a connection with the popup. It may have been blocked by the browser.","popup-closed-by-user":"The popup has been closed by the user before finalizing the operation.","provider-already-linked":"User can only be linked to one identity for the given provider.",
-"quota-exceeded":"The project's quota for this operation has been exceeded.","redirect-cancelled-by-user":"The redirect operation has been cancelled by the user before finalizing.","redirect-operation-pending":"A redirect sign-in operation is already pending.","rejected-credential":"The request contains malformed or mismatching credentials.",timeout:"The operation has timed out.","user-token-expired":"The user's credential is no longer valid. The user must sign in again.","too-many-requests":"We have blocked all requests from this device due to unusual activity. Try again later.",
-"unauthorized-continue-uri":"The domain of the continue URL is not whitelisted.  Please whitelist the domain in the Firebase console.","unsupported-persistence-type":"The current environment does not support the specified persistence type.","user-cancelled":"User did not grant your application the permissions it requested.","user-not-found":"There is no user record corresponding to this identifier. The user may have been deleted.","user-disabled":"The user account has been disabled by an administrator.",
-"user-mismatch":"The supplied credentials do not correspond to the previously signed in user.","user-signed-out":"","weak-password":"The password must be 6 characters long or more.","web-storage-unsupported":"This browser is not supported or 3rd party cookies and data may be disabled."};function nf(a){var b=a[of];if("undefined"===typeof b)throw new M("missing-continue-uri");if("string"!==typeof b||"string"===typeof b&&!b.length)throw new M("invalid-continue-uri");this.h=b;this.b=this.a=null;this.g=!1;var c=a[pf];if(c&&"object"===typeof c){b=c[qf];var d=c[rf];c=c[sf];if("string"===typeof b&&b.length){this.a=b;if("undefined"!==typeof d&&"boolean"!==typeof d)throw new M("argument-error",rf+" property must be a boolean when specified.");this.g=!!d;if("undefined"!==typeof c&&("string"!==
-typeof c||"string"===typeof c&&!c.length))throw new M("argument-error",sf+" property must be a non empty string when specified.");this.b=c||null}else{if("undefined"!==typeof b)throw new M("argument-error",qf+" property must be a non empty string when specified.");if("undefined"!==typeof d||"undefined"!==typeof c)throw new M("missing-android-pkg-name");}}else if("undefined"!==typeof c)throw new M("argument-error",pf+" property must be a non null object when specified.");this.f=null;if((b=a[tf])&&"object"===
-typeof b)if(b=b[uf],"string"===typeof b&&b.length)this.f=b;else{if("undefined"!==typeof b)throw new M("argument-error",uf+" property must be a non empty string when specified.");}else if("undefined"!==typeof b)throw new M("argument-error",tf+" property must be a non null object when specified.");b=a[vf];if("undefined"!==typeof b&&"boolean"!==typeof b)throw new M("argument-error",vf+" property must be a boolean when specified.");this.c=!!b;a=a[wf];if("undefined"!==typeof a&&("string"!==typeof a||"string"===
-typeof a&&!a.length))throw new M("argument-error",wf+" property must be a non empty string when specified.");this.i=a||null}var pf="android",wf="dynamicLinkDomain",vf="handleCodeInApp",tf="iOS",of="url",rf="installApp",sf="minimumVersion",qf="packageName",uf="bundleId";
-function xf(a){var b={};b.continueUrl=a.h;b.canHandleCodeInApp=a.c;if(b.androidPackageName=a.a)b.androidMinimumVersion=a.b,b.androidInstallApp=a.g;b.iOSBundleId=a.f;b.dynamicLinkDomain=a.i;for(var c in b)null===b[c]&&delete b[c];return b};function yf(a){return Ia(a,function(b){b=b.toString(16);return 1<b.length?b:"0"+b}).join("")};var zf=null,Af=null;function Bf(a){var b="";Cf(a,function(c){b+=String.fromCharCode(c)});return b}function Cf(a,b){function c(m){for(;d<a.length;){var p=a.charAt(d++),v=Af[p];if(null!=v)return v;if(!/^[\s\xa0]*$/.test(p))throw Error("Unknown base64 encoding at char: "+p);}return m}Df();for(var d=0;;){var e=c(-1),f=c(0),g=c(64),h=c(64);if(64===h&&-1===e)break;b(e<<2|f>>4);64!=g&&(b(f<<4&240|g>>2),64!=h&&b(g<<6&192|h))}}
-function Df(){if(!zf){zf={};Af={};for(var a=0;65>a;a++)zf[a]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(a),Af[zf[a]]=a,62<=a&&(Af["ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.".charAt(a)]=a)}};function Ef(a){this.c=a.sub;va();this.a=a.provider_id||a.firebase&&a.firebase.sign_in_provider||null;this.b=!!a.is_anonymous||"anonymous"==this.a}Ef.prototype.f=function(){return this.b};function Ff(a){return(a=Gf(a))&&a.sub&&a.iss&&a.aud&&a.exp?new Ef(a):null}function Gf(a){if(!a)return null;a=a.split(".");if(3!=a.length)return null;a=a[1];for(var b=(4-a.length%4)%4,c=0;c<b;c++)a+=".";try{return JSON.parse(Bf(a))}catch(d){}return null};var Hf={Yc:{ab:"https://www.googleapis.com/identitytoolkit/v3/relyingparty/",ib:"https://securetoken.googleapis.com/v1/token",id:"p"},$c:{ab:"https://staging-www.sandbox.googleapis.com/identitytoolkit/v3/relyingparty/",ib:"https://staging-securetoken.sandbox.googleapis.com/v1/token",id:"s"},ad:{ab:"https://www-googleapis-test.sandbox.google.com/identitytoolkit/v3/relyingparty/",ib:"https://test-securetoken.sandbox.googleapis.com/v1/token",id:"t"}};
-function If(a){for(var b in Hf)if(Hf[b].id===a)return a=Hf[b],{firebaseEndpoint:a.ab,secureTokenEndpoint:a.ib};return null}var Jf;Jf=If("__EID__")?"__EID__":void 0;var Kf="oauth_consumer_key oauth_nonce oauth_signature oauth_signature_method oauth_timestamp oauth_token oauth_version".split(" "),Lf=["client_id","response_type","scope","redirect_uri","state"],Mf={Tc:{Oa:"locale",Ba:500,Aa:600,Pa:"facebook.com",hb:Lf},Vc:{Oa:null,Ba:500,Aa:620,Pa:"github.com",hb:Lf},Wc:{Oa:"hl",Ba:515,Aa:680,Pa:"google.com",hb:Lf},bd:{Oa:"lang",Ba:485,Aa:705,Pa:"twitter.com",hb:Kf}};function Nf(a){for(var b in Mf)if(Mf[b].Pa==a)return Mf[b];return null};function Of(a){var b={};b["facebook.com"]=Pf;b["google.com"]=Qf;b["github.com"]=Rf;b["twitter.com"]=Sf;var c=a&&a[Tf];try{if(c)return b[c]?new b[c](a):new Uf(a);if("undefined"!==typeof a[Vf])return new Wf(a)}catch(d){}return null}var Vf="idToken",Tf="providerId";
-function Wf(a){var b=a[Tf];if(!b&&a[Vf]){var c=Ff(a[Vf]);c&&c.a&&(b=c.a)}if(!b)throw Error("Invalid additional user info!");if("anonymous"==b||"custom"==b)b=null;c=!1;"undefined"!==typeof a.isNewUser?c=!!a.isNewUser:"identitytoolkit#SignupNewUserResponse"===a.kind&&(c=!0);K(this,"providerId",b);K(this,"isNewUser",c)}function Uf(a){Wf.call(this,a);a=Je(a.rawUserInfo||"{}");K(this,"profile",$e(a||{}))}u(Uf,Wf);
-function Pf(a){Uf.call(this,a);if("facebook.com"!=this.providerId)throw Error("Invalid provider ID!");}u(Pf,Uf);function Rf(a){Uf.call(this,a);if("github.com"!=this.providerId)throw Error("Invalid provider ID!");K(this,"username",this.profile&&this.profile.login||null)}u(Rf,Uf);function Qf(a){Uf.call(this,a);if("google.com"!=this.providerId)throw Error("Invalid provider ID!");}u(Qf,Uf);
-function Sf(a){Uf.call(this,a);if("twitter.com"!=this.providerId)throw Error("Invalid provider ID!");K(this,"username",a.screenName||null)}u(Sf,Uf);function Xf(a){this.a=md(a)};function Yf(a){var b=md(a),c=kd(b,"link"),d=kd(md(c),"link");b=kd(b,"deep_link_id");return kd(md(b),"link")||b||d||c||a};function Zf(){}function $f(a,b){return a.then(function(c){if(c[ag]){var d=Ff(c[ag]);if(!d||b!=d.c)throw new M("user-mismatch");return c}throw new M("user-mismatch");}).s(function(c){throw c&&c.code&&c.code==kf+"user-not-found"?new M("user-mismatch"):c;})}function bg(a,b){if(b)this.a=b;else throw new M("internal-error","failed to construct a credential");K(this,"providerId",a);K(this,"signInMethod",a)}bg.prototype.la=function(a){return cg(a,dg(this))};
-bg.prototype.b=function(a,b){var c=dg(this);c.idToken=b;return eg(a,c)};bg.prototype.f=function(a,b){return $f(fg(a,dg(this)),b)};function dg(a){return{pendingToken:a.a,requestUri:"http://localhost"}}bg.prototype.w=function(){return{providerId:this.providerId,signInMethod:this.signInMethod,pendingToken:this.a}};function gg(a){if(a&&a.providerId&&a.signInMethod&&0==a.providerId.indexOf("saml.")&&a.pendingToken)try{return new bg(a.providerId,a.pendingToken)}catch(b){}return null}
-function hg(a,b,c){this.a=null;if(b.idToken||b.accessToken)b.idToken&&K(this,"idToken",b.idToken),b.accessToken&&K(this,"accessToken",b.accessToken),b.nonce&&!b.pendingToken&&K(this,"nonce",b.nonce),b.pendingToken&&(this.a=b.pendingToken);else if(b.oauthToken&&b.oauthTokenSecret)K(this,"accessToken",b.oauthToken),K(this,"secret",b.oauthTokenSecret);else throw new M("internal-error","failed to construct a credential");K(this,"providerId",a);K(this,"signInMethod",c)}
-hg.prototype.la=function(a){return cg(a,ig(this))};hg.prototype.b=function(a,b){var c=ig(this);c.idToken=b;return eg(a,c)};hg.prototype.f=function(a,b){var c=ig(this);return $f(fg(a,c),b)};
-function ig(a){var b={};a.idToken&&(b.id_token=a.idToken);a.accessToken&&(b.access_token=a.accessToken);a.secret&&(b.oauth_token_secret=a.secret);b.providerId=a.providerId;a.nonce&&!a.a&&(b.nonce=a.nonce);b={postBody:qd(b).toString(),requestUri:"http://localhost"};a.a&&(delete b.postBody,b.pendingToken=a.a);return b}
-hg.prototype.w=function(){var a={providerId:this.providerId,signInMethod:this.signInMethod};this.idToken&&(a.oauthIdToken=this.idToken);this.accessToken&&(a.oauthAccessToken=this.accessToken);this.secret&&(a.oauthTokenSecret=this.secret);this.nonce&&(a.nonce=this.nonce);this.a&&(a.pendingToken=this.a);return a};
-function jg(a){if(a&&a.providerId&&a.signInMethod){var b={idToken:a.oauthIdToken,accessToken:a.oauthTokenSecret?null:a.oauthAccessToken,oauthTokenSecret:a.oauthTokenSecret,oauthToken:a.oauthTokenSecret&&a.oauthAccessToken,nonce:a.nonce,pendingToken:a.pendingToken};try{return new hg(a.providerId,b,a.signInMethod)}catch(c){}}return null}function kg(a,b){this.Dc=b||[];L(this,{providerId:a,isOAuthProvider:!0});this.zb={};this.cb=(Nf(a)||{}).Oa||null;this.$a=null}
-kg.prototype.Da=function(a){this.zb=db(a);return this};function lg(a){if("string"!==typeof a||0!=a.indexOf("saml."))throw new M("argument-error",'SAML provider IDs must be prefixed with "saml."');kg.call(this,a,[])}u(lg,kg);function N(a){kg.call(this,a,Lf);this.a=[]}u(N,kg);N.prototype.ua=function(a){Ma(this.a,a)||this.a.push(a);return this};N.prototype.Fb=function(){return Pa(this.a)};
-N.prototype.credential=function(a,b){var c;r(a)?c={idToken:a.idToken||null,accessToken:a.accessToken||null,nonce:a.rawNonce||null}:c={idToken:a||null,accessToken:b||null};if(!c.idToken&&!c.accessToken)throw new M("argument-error","credential failed: must provide the ID token and/or the access token.");return new hg(this.providerId,c,this.providerId)};function mg(){N.call(this,"facebook.com")}u(mg,N);K(mg,"PROVIDER_ID","facebook.com");K(mg,"FACEBOOK_SIGN_IN_METHOD","facebook.com");
-function ng(a){if(!a)throw new M("argument-error","credential failed: expected 1 argument (the OAuth access token).");var b=a;r(a)&&(b=a.accessToken);return(new mg).credential({accessToken:b})}function og(){N.call(this,"github.com")}u(og,N);K(og,"PROVIDER_ID","github.com");K(og,"GITHUB_SIGN_IN_METHOD","github.com");
-function pg(a){if(!a)throw new M("argument-error","credential failed: expected 1 argument (the OAuth access token).");var b=a;r(a)&&(b=a.accessToken);return(new og).credential({accessToken:b})}function qg(){N.call(this,"google.com");this.ua("profile")}u(qg,N);K(qg,"PROVIDER_ID","google.com");K(qg,"GOOGLE_SIGN_IN_METHOD","google.com");function rg(a,b){var c=a;r(a)&&(c=a.idToken,b=a.accessToken);return(new qg).credential({idToken:c,accessToken:b})}function sg(){kg.call(this,"twitter.com",Kf)}u(sg,kg);
-K(sg,"PROVIDER_ID","twitter.com");K(sg,"TWITTER_SIGN_IN_METHOD","twitter.com");function tg(a,b){var c=a;r(c)||(c={oauthToken:a,oauthTokenSecret:b});if(!c.oauthToken||!c.oauthTokenSecret)throw new M("argument-error","credential failed: expected 2 arguments (the OAuth access token and secret).");return new hg("twitter.com",c,"twitter.com")}
-function ug(a,b,c){this.a=a;this.c=b;K(this,"providerId","password");K(this,"signInMethod",c===vg.EMAIL_LINK_SIGN_IN_METHOD?vg.EMAIL_LINK_SIGN_IN_METHOD:vg.EMAIL_PASSWORD_SIGN_IN_METHOD)}ug.prototype.la=function(a){return this.signInMethod==vg.EMAIL_LINK_SIGN_IN_METHOD?O(a,wg,{email:this.a,oobCode:this.c}):O(a,xg,{email:this.a,password:this.c})};
-ug.prototype.b=function(a,b){return this.signInMethod==vg.EMAIL_LINK_SIGN_IN_METHOD?O(a,yg,{idToken:b,email:this.a,oobCode:this.c}):O(a,zg,{idToken:b,email:this.a,password:this.c})};ug.prototype.f=function(a,b){return $f(this.la(a),b)};ug.prototype.w=function(){return{email:this.a,password:this.c,signInMethod:this.signInMethod}};function Ag(a){return a&&a.email&&a.password?new ug(a.email,a.password,a.signInMethod):null}function vg(){L(this,{providerId:"password",isOAuthProvider:!1})}
-function Bg(a,b){b=Cg(b);if(!b)throw new M("argument-error","Invalid email link!");return new ug(a,b,vg.EMAIL_LINK_SIGN_IN_METHOD)}function Cg(a){a=Yf(a);a=new Xf(a);var b=kd(a.a,"oobCode")||null;return"signIn"===(kd(a.a,"mode")||null)&&b?b:null}L(vg,{PROVIDER_ID:"password"});L(vg,{EMAIL_LINK_SIGN_IN_METHOD:"emailLink"});L(vg,{EMAIL_PASSWORD_SIGN_IN_METHOD:"password"});
-function Dg(a){if(!(a.Ta&&a.Sa||a.Fa&&a.$))throw new M("internal-error");this.a=a;K(this,"providerId","phone");K(this,"signInMethod","phone")}Dg.prototype.la=function(a){return a.Ua(Eg(this))};Dg.prototype.b=function(a,b){var c=Eg(this);c.idToken=b;return O(a,Fg,c)};Dg.prototype.f=function(a,b){var c=Eg(this);c.operation="REAUTH";a=O(a,Gg,c);return $f(a,b)};
-Dg.prototype.w=function(){var a={providerId:"phone"};this.a.Ta&&(a.verificationId=this.a.Ta);this.a.Sa&&(a.verificationCode=this.a.Sa);this.a.Fa&&(a.temporaryProof=this.a.Fa);this.a.$&&(a.phoneNumber=this.a.$);return a};function Hg(a){if(a&&"phone"===a.providerId&&(a.verificationId&&a.verificationCode||a.temporaryProof&&a.phoneNumber)){var b={};x(["verificationId","verificationCode","temporaryProof","phoneNumber"],function(c){a[c]&&(b[c]=a[c])});return new Dg(b)}return null}
-function Eg(a){return a.a.Fa&&a.a.$?{temporaryProof:a.a.Fa,phoneNumber:a.a.$}:{sessionInfo:a.a.Ta,code:a.a.Sa}}function Ig(a){try{this.a=a||_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.auth()}catch(b){throw new M("argument-error","Either an instance of firebase.auth.Auth must be passed as an argument to the firebase.auth.PhoneAuthProvider constructor, or the default firebase App instance must be initialized via firebase.initializeApp().");}L(this,{providerId:"phone",isOAuthProvider:!1})}
-Ig.prototype.Ua=function(a,b){var c=this.a.c;return D(b.verify()).then(function(d){if(!n(d))throw new M("argument-error","An implementation of firebase.auth.ApplicationVerifier.prototype.verify() must return a firebase.Promise that resolves with a string.");switch(b.type){case "recaptcha":return Jg(c,{phoneNumber:a,recaptchaToken:d}).then(function(e){"function"===typeof b.reset&&b.reset();return e},function(e){"function"===typeof b.reset&&b.reset();throw e;});default:throw new M("argument-error",
-'Only firebase.auth.ApplicationVerifiers with type="recaptcha" are currently supported.');}})};function Kg(a,b){if(!a)throw new M("missing-verification-id");if(!b)throw new M("missing-verification-code");return new Dg({Ta:a,Sa:b})}L(Ig,{PROVIDER_ID:"phone"});L(Ig,{PHONE_SIGN_IN_METHOD:"phone"});
-function Lg(a){if(a.temporaryProof&&a.phoneNumber)return new Dg({Fa:a.temporaryProof,$:a.phoneNumber});var b=a&&a.providerId;if(!b||"password"===b)return null;var c=a&&a.oauthAccessToken,d=a&&a.oauthTokenSecret,e=a&&a.nonce,f=a&&a.oauthIdToken,g=a&&a.pendingToken;try{switch(b){case "google.com":return rg(f,c);case "facebook.com":return ng(c);case "github.com":return pg(c);case "twitter.com":return tg(c,d);default:return c||d||f||g?g?0==b.indexOf("saml.")?new bg(b,g):new hg(b,{pendingToken:g,idToken:a.oauthIdToken,
-accessToken:a.oauthAccessToken},b):(new N(b)).credential({idToken:f,accessToken:c,rawNonce:e}):null}}catch(h){return null}}function Mg(a){if(!a.isOAuthProvider)throw new M("invalid-oauth-provider");};function Ng(a,b,c,d,e,f){this.c=a;this.b=b||null;this.g=c||null;this.f=d||null;this.h=f||null;this.a=e||null;if(this.g||this.a){if(this.g&&this.a)throw new M("invalid-auth-event");if(this.g&&!this.f)throw new M("invalid-auth-event");}else throw new M("invalid-auth-event");}Ng.prototype.getUid=function(){var a=[];a.push(this.c);this.b&&a.push(this.b);this.f&&a.push(this.f);this.i&&a.push(this.i);return a.join("-")};
-Ng.prototype.w=function(){return{type:this.c,eventId:this.b,urlResponse:this.g,sessionId:this.f,postBody:this.h,error:this.a&&this.a.w()}};function Og(a){a=a||{};return a.type?new Ng(a.type,a.eventId,a.urlResponse,a.sessionId,a.error&&mf(a.error),a.postBody):null};/*
-
- Copyright 2018 Google Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-function Pg(){this.b=null;this.a=[]}var Qg=null;Pg.prototype.subscribe=function(a){var b=this;this.a.push(a);this.b||(this.b=function(c){for(var d=0;d<b.a.length;d++)b.a[d](c)},a=J("universalLinks.subscribe",l),"function"===typeof a&&a(null,this.b))};Pg.prototype.unsubscribe=function(a){y(this.a,function(b){return b==a})};function Rg(a){var b="unauthorized-domain",c=void 0,d=md(a);a=d.b;d=d.f;"chrome-extension"==d?c=gb("This chrome extension ID (chrome-extension://%s) is not authorized to run this operation. Add it to the OAuth redirect domains list in the Firebase console -> Auth section -> Sign in method tab.",a):"http"==d||"https"==d?c=gb("This domain (%s) is not authorized to run this operation. Add it to the OAuth redirect domains list in the Firebase console -> Auth section -> Sign in method tab.",a):b="operation-not-supported-in-this-environment";
-M.call(this,b,c)}u(Rg,M);function Sg(a,b,c){M.call(this,a,c);a=b||{};a.Ab&&K(this,"email",a.Ab);a.$&&K(this,"phoneNumber",a.$);a.credential&&K(this,"credential",a.credential)}u(Sg,M);Sg.prototype.w=function(){var a={code:this.code,message:this.message};this.email&&(a.email=this.email);this.phoneNumber&&(a.phoneNumber=this.phoneNumber);var b=this.credential&&this.credential.w();b&&fb(a,b);return a};Sg.prototype.toJSON=function(){return this.w()};
-function Tg(a){if(a.code){var b=a.code||"";0==b.indexOf(kf)&&(b=b.substring(kf.length));var c={credential:Lg(a)};if(a.email)c.Ab=a.email;else if(a.phoneNumber)c.$=a.phoneNumber;else if(!c.credential)return new M(b,a.message||void 0);return new Sg(b,c,a.message)}return null};function Ug(){}Ug.prototype.c=null;function Vg(a){return a.c||(a.c=a.b())};var Wg;function Xg(){}u(Xg,Ug);Xg.prototype.a=function(){var a=Yg(this);return a?new ActiveXObject(a):new XMLHttpRequest};Xg.prototype.b=function(){var a={};Yg(this)&&(a[0]=!0,a[1]=!0);return a};
-function Yg(a){if(!a.f&&"undefined"==typeof XMLHttpRequest&&"undefined"!=typeof ActiveXObject){for(var b=["MSXML2.XMLHTTP.6.0","MSXML2.XMLHTTP.3.0","MSXML2.XMLHTTP","Microsoft.XMLHTTP"],c=0;c<b.length;c++){var d=b[c];try{return new ActiveXObject(d),a.f=d}catch(e){}}throw Error("Could not create ActiveXObject. ActiveX might be disabled, or MSXML might not be installed");}return a.f}Wg=new Xg;function Zg(){}u(Zg,Ug);Zg.prototype.a=function(){var a=new XMLHttpRequest;if("withCredentials"in a)return a;if("undefined"!=typeof XDomainRequest)return new $g;throw Error("Unsupported browser");};Zg.prototype.b=function(){return{}};
-function $g(){this.a=new XDomainRequest;this.readyState=0;this.onreadystatechange=null;this.responseType=this.responseText=this.response="";this.status=-1;this.statusText="";this.a.onload=t(this.dc,this);this.a.onerror=t(this.Gb,this);this.a.onprogress=t(this.ec,this);this.a.ontimeout=t(this.ic,this)}k=$g.prototype;k.open=function(a,b,c){if(null!=c&&!c)throw Error("Only async requests are supported.");this.a.open(a,b)};
-k.send=function(a){if(a)if("string"==typeof a)this.a.send(a);else throw Error("Only string data is supported");else this.a.send()};k.abort=function(){this.a.abort()};k.setRequestHeader=function(){};k.getResponseHeader=function(a){return"content-type"==a.toLowerCase()?this.a.contentType:""};k.dc=function(){this.status=200;this.response=this.responseText=this.a.responseText;ah(this,4)};k.Gb=function(){this.status=500;this.response=this.responseText="";ah(this,4)};k.ic=function(){this.Gb()};
-k.ec=function(){this.status=200;ah(this,1)};function ah(a,b){a.readyState=b;if(a.onreadystatechange)a.onreadystatechange()}k.getAllResponseHeaders=function(){return"content-type: "+this.a.contentType};function bh(a,b,c){this.reset(a,b,c,void 0,void 0)}bh.prototype.a=null;var ch=0;bh.prototype.reset=function(a,b,c,d,e){"number"==typeof e||ch++;d||va();delete this.a};function dh(a){this.f=a;this.b=this.c=this.a=null}function eh(a,b){this.name=a;this.value=b}eh.prototype.toString=function(){return this.name};var fh=new eh("SEVERE",1E3),gh=new eh("WARNING",900),hh=new eh("CONFIG",700),ih=new eh("FINE",500);function jh(a){if(a.c)return a.c;if(a.a)return jh(a.a);ya("Root logger has no level set.");return null}dh.prototype.log=function(a,b,c){if(a.value>=jh(this).value)for(q(b)&&(b=b()),a=new bh(a,String(b),this.f),c&&(a.a=c),c=this;c;)c=c.a};var kh={},lh=null;
-function mh(a){lh||(lh=new dh(""),kh[""]=lh,lh.c=hh);var b;if(!(b=kh[a])){b=new dh(a);var c=a.lastIndexOf("."),d=a.substr(c+1);c=mh(a.substr(0,c));c.b||(c.b={});c.b[d]=b;b.a=c;kh[a]=b}return b};function nh(a,b){a&&a.log(ih,b,void 0)};function oh(a){this.f=a}u(oh,Ug);oh.prototype.a=function(){return new ph(this.f)};oh.prototype.b=function(a){return function(){return a}}({});function ph(a){F.call(this);this.u=a;this.readyState=qh;this.status=0;this.responseType=this.responseText=this.response=this.statusText="";this.onreadystatechange=null;this.i=new Headers;this.b=null;this.o="GET";this.g="";this.a=!1;this.h=mh("goog.net.FetchXmlHttp");this.l=this.c=this.f=null}u(ph,F);var qh=0;k=ph.prototype;
-k.open=function(a,b){if(this.readyState!=qh)throw this.abort(),Error("Error reopening a connection");this.o=a;this.g=b;this.readyState=1;rh(this)};k.send=function(a){if(1!=this.readyState)throw this.abort(),Error("need to call open() first. ");this.a=!0;var b={headers:this.i,method:this.o,credentials:void 0,cache:void 0};a&&(b.body=a);this.u.fetch(new Request(this.g,b)).then(this.hc.bind(this),this.Ma.bind(this))};
-k.abort=function(){this.response=this.responseText="";this.i=new Headers;this.status=0;this.c&&this.c.cancel("Request was aborted.");1<=this.readyState&&this.a&&4!=this.readyState&&(this.a=!1,sh(this,!1));this.readyState=qh};
-k.hc=function(a){this.a&&(this.f=a,this.b||(this.b=a.headers,this.readyState=2,rh(this)),this.a&&(this.readyState=3,rh(this),this.a&&("arraybuffer"===this.responseType?a.arrayBuffer().then(this.fc.bind(this),this.Ma.bind(this)):"undefined"!==typeof l.ReadableStream&&"body"in a?(this.response=this.responseText="",this.c=a.body.getReader(),this.l=new TextDecoder,th(this)):a.text().then(this.gc.bind(this),this.Ma.bind(this)))))};function th(a){a.c.read().then(a.cc.bind(a)).catch(a.Ma.bind(a))}
-k.cc=function(a){if(this.a){var b=this.l.decode(a.value?a.value:new Uint8Array(0),{stream:!a.done});b&&(this.response=this.responseText+=b);a.done?sh(this,!0):rh(this);3==this.readyState&&th(this)}};k.gc=function(a){this.a&&(this.response=this.responseText=a,sh(this,!0))};k.fc=function(a){this.a&&(this.response=a,sh(this,!0))};k.Ma=function(a){var b=this.h;b&&b.log(gh,"Failed to fetch url "+this.g,a instanceof Error?a:Error(a));this.a&&sh(this,!0)};
-function sh(a,b){b&&a.f&&(a.status=a.f.status,a.statusText=a.f.statusText);a.readyState=4;a.f=null;a.c=null;a.l=null;rh(a)}k.setRequestHeader=function(a,b){this.i.append(a,b)};k.getResponseHeader=function(a){return this.b?this.b.get(a.toLowerCase())||"":((a=this.h)&&a.log(gh,"Attempting to get response header but no headers have been received for url: "+this.g,void 0),"")};
-k.getAllResponseHeaders=function(){if(!this.b){var a=this.h;a&&a.log(gh,"Attempting to get all response headers but no headers have been received for url: "+this.g,void 0);return""}a=[];for(var b=this.b.entries(),c=b.next();!c.done;)c=c.value,a.push(c[0]+": "+c[1]),c=b.next();return a.join("\r\n")};function rh(a){a.onreadystatechange&&a.onreadystatechange.call(a)};function uh(a){F.call(this);this.headers=new Sc;this.D=a||null;this.c=!1;this.A=this.a=null;this.h=this.N=this.l="";this.f=this.I=this.i=this.G=!1;this.g=0;this.u=null;this.o=vh;this.v=this.O=!1}u(uh,F);var vh="";uh.prototype.b=mh("goog.net.XhrIo");var wh=/^https?$/i,xh=["POST","PUT"];
-function yh(a,b,c,d,e){if(a.a)throw Error("[goog.net.XhrIo] Object is active with another request="+a.l+"; newUri="+b);c=c?c.toUpperCase():"GET";a.l=b;a.h="";a.N=c;a.G=!1;a.c=!0;a.a=a.D?a.D.a():Wg.a();a.A=a.D?Vg(a.D):Vg(Wg);a.a.onreadystatechange=t(a.Jb,a);try{nh(a.b,zh(a,"Opening Xhr")),a.I=!0,a.a.open(c,String(b),!0),a.I=!1}catch(g){nh(a.b,zh(a,"Error opening Xhr: "+g.message));Ah(a,g);return}b=d||"";var f=new Sc(a.headers);e&&Rc(e,function(g,h){f.set(h,g)});e=Ka(f.U());d=l.FormData&&b instanceof
-l.FormData;!Ma(xh,c)||e||d||f.set("Content-Type","application/x-www-form-urlencoded;charset=utf-8");f.forEach(function(g,h){this.a.setRequestHeader(h,g)},a);a.o&&(a.a.responseType=a.o);"withCredentials"in a.a&&a.a.withCredentials!==a.O&&(a.a.withCredentials=a.O);try{Bh(a),0<a.g&&(a.v=Ch(a.a),nh(a.b,zh(a,"Will abort after "+a.g+"ms if incomplete, xhr2 "+a.v)),a.v?(a.a.timeout=a.g,a.a.ontimeout=t(a.Ga,a)):a.u=Nc(a.Ga,a.g,a)),nh(a.b,zh(a,"Sending request")),a.i=!0,a.a.send(b),a.i=!1}catch(g){nh(a.b,
-zh(a,"Send error: "+g.message)),Ah(a,g)}}function Ch(a){return Ub&&dc(9)&&"number"==typeof a.timeout&&void 0!==a.ontimeout}function La(a){return"content-type"==a.toLowerCase()}k=uh.prototype;k.Ga=function(){"undefined"!=typeof fa&&this.a&&(this.h="Timed out after "+this.g+"ms, aborting",nh(this.b,zh(this,this.h)),this.dispatchEvent("timeout"),this.abort(8))};function Ah(a,b){a.c=!1;a.a&&(a.f=!0,a.a.abort(),a.f=!1);a.h=b;Dh(a);Eh(a)}
-function Dh(a){a.G||(a.G=!0,a.dispatchEvent("complete"),a.dispatchEvent("error"))}k.abort=function(){this.a&&this.c&&(nh(this.b,zh(this,"Aborting")),this.c=!1,this.f=!0,this.a.abort(),this.f=!1,this.dispatchEvent("complete"),this.dispatchEvent("abort"),Eh(this))};k.va=function(){this.a&&(this.c&&(this.c=!1,this.f=!0,this.a.abort(),this.f=!1),Eh(this,!0));uh.qb.va.call(this)};k.Jb=function(){this.qa||(this.I||this.i||this.f?Fh(this):this.wc())};k.wc=function(){Fh(this)};
-function Fh(a){if(a.c&&"undefined"!=typeof fa)if(a.A[1]&&4==Gh(a)&&2==Hh(a))nh(a.b,zh(a,"Local request error detected and ignored"));else if(a.i&&4==Gh(a))Nc(a.Jb,0,a);else if(a.dispatchEvent("readystatechange"),4==Gh(a)){nh(a.b,zh(a,"Request complete"));a.c=!1;try{var b=Hh(a);a:switch(b){case 200:case 201:case 202:case 204:case 206:case 304:case 1223:var c=!0;break a;default:c=!1}var d;if(!(d=c)){var e;if(e=0===b){var f=String(a.l).match(Vc)[1]||null;if(!f&&l.self&&l.self.location){var g=l.self.location.protocol;
-f=g.substr(0,g.length-1)}e=!wh.test(f?f.toLowerCase():"")}d=e}if(d)a.dispatchEvent("complete"),a.dispatchEvent("success");else{try{var h=2<Gh(a)?a.a.statusText:""}catch(m){nh(a.b,"Can not get status: "+m.message),h=""}a.h=h+" ["+Hh(a)+"]";Dh(a)}}finally{Eh(a)}}}function Eh(a,b){if(a.a){Bh(a);var c=a.a,d=a.A[0]?ka:null;a.a=null;a.A=null;b||a.dispatchEvent("ready");try{c.onreadystatechange=d}catch(e){(a=a.b)&&a.log(fh,"Problem encountered resetting onreadystatechange: "+e.message,void 0)}}}
-function Bh(a){a.a&&a.v&&(a.a.ontimeout=null);a.u&&(l.clearTimeout(a.u),a.u=null)}function Gh(a){return a.a?a.a.readyState:0}function Hh(a){try{return 2<Gh(a)?a.a.status:-1}catch(b){return-1}}function Ih(a){try{return a.a?a.a.responseText:""}catch(b){return nh(a.b,"Can not get responseText: "+b.message),""}}
-k.getResponse=function(){try{if(!this.a)return null;if("response"in this.a)return this.a.response;switch(this.o){case vh:case "text":return this.a.responseText;case "arraybuffer":if("mozResponseArrayBuffer"in this.a)return this.a.mozResponseArrayBuffer}var a=this.b;a&&a.log(fh,"Response type "+this.o+" is not supported on this browser",void 0);return null}catch(b){return nh(this.b,"Can not get response: "+b.message),null}};function zh(a,b){return b+" ["+a.N+" "+a.l+" "+Hh(a)+"]"};/*
- Portions of this code are from MochiKit, received by
- The Closure Authors under the MIT license. All other code is Copyright
- 2005-2009 The Closure Authors. All Rights Reserved.
-*/
-function Jh(a){var b=Kh;this.g=[];this.v=b;this.u=a||null;this.f=this.a=!1;this.c=void 0;this.l=this.A=this.i=!1;this.h=0;this.b=null;this.m=0}Jh.prototype.cancel=function(a){if(this.a)this.c instanceof Jh&&this.c.cancel();else{if(this.b){var b=this.b;delete this.b;a?b.cancel(a):(b.m--,0>=b.m&&b.cancel())}this.v?this.v.call(this.u,this):this.l=!0;this.a||(a=new Lh(this),Mh(this),Nh(this,!1,a))}};Jh.prototype.o=function(a,b){this.i=!1;Nh(this,a,b)};function Nh(a,b,c){a.a=!0;a.c=c;a.f=!b;Oh(a)}
-function Mh(a){if(a.a){if(!a.l)throw new Ph(a);a.l=!1}}function Qh(a,b){Rh(a,null,b,void 0)}function Rh(a,b,c,d){a.g.push([b,c,d]);a.a&&Oh(a)}Jh.prototype.then=function(a,b,c){var d,e,f=new C(function(g,h){d=g;e=h});Rh(this,d,function(g){g instanceof Lh?f.cancel():e(g)});return f.then(a,b,c)};Jh.prototype.$goog_Thenable=!0;function Sh(a){return Ja(a.g,function(b){return q(b[1])})}
-function Oh(a){if(a.h&&a.a&&Sh(a)){var b=a.h,c=Th[b];c&&(l.clearTimeout(c.a),delete Th[b]);a.h=0}a.b&&(a.b.m--,delete a.b);b=a.c;for(var d=c=!1;a.g.length&&!a.i;){var e=a.g.shift(),f=e[0],g=e[1];e=e[2];if(f=a.f?g:f)try{var h=f.call(e||a.u,b);void 0!==h&&(a.f=a.f&&(h==b||h instanceof Error),a.c=b=h);if(wa(b)||"function"===typeof l.Promise&&b instanceof l.Promise)d=!0,a.i=!0}catch(m){b=m,a.f=!0,Sh(a)||(c=!0)}}a.c=b;d&&(h=t(a.o,a,!0),d=t(a.o,a,!1),b instanceof Jh?(Rh(b,h,d),b.A=!0):b.then(h,d));c&&(b=
-new Uh(b),Th[b.a]=b,a.h=b.a)}function Ph(){w.call(this)}u(Ph,w);Ph.prototype.message="Deferred has already fired";Ph.prototype.name="AlreadyCalledError";function Lh(){w.call(this)}u(Lh,w);Lh.prototype.message="Deferred was canceled";Lh.prototype.name="CanceledError";function Uh(a){this.a=l.setTimeout(t(this.c,this),0);this.b=a}Uh.prototype.c=function(){delete Th[this.a];throw this.b;};var Th={};function Vh(a){var b={},c=b.document||document,d=Cd(a).toString(),e=document.createElement("SCRIPT"),f={Lb:e,Ga:void 0},g=new Jh(f),h=null,m=null!=b.timeout?b.timeout:5E3;0<m&&(h=window.setTimeout(function(){Wh(e,!0);var p=new Xh(Yh,"Timeout reached for loading script "+d);Mh(g);Nh(g,!1,p)},m),f.Ga=h);e.onload=e.onreadystatechange=function(){e.readyState&&"loaded"!=e.readyState&&"complete"!=e.readyState||(Wh(e,b.dd||!1,h),Mh(g),Nh(g,!0,null))};e.onerror=function(){Wh(e,!0,h);var p=new Xh(Zh,"Error while loading script "+
-d);Mh(g);Nh(g,!1,p)};f=b.attributes||{};fb(f,{type:"text/javascript",charset:"UTF-8"});Td(e,f);Rd(e,a);$h(c).appendChild(e);return g}function $h(a){var b;return(b=(a||document).getElementsByTagName("HEAD"))&&0!=b.length?b[0]:a.documentElement}function Kh(){if(this&&this.Lb){var a=this.Lb;a&&"SCRIPT"==a.tagName&&Wh(a,!0,this.Ga)}}
-function Wh(a,b,c){null!=c&&l.clearTimeout(c);a.onload=ka;a.onerror=ka;a.onreadystatechange=ka;b&&window.setTimeout(function(){a&&a.parentNode&&a.parentNode.removeChild(a)},0)}var Zh=0,Yh=1;function Xh(a,b){var c="Jsloader error (code #"+a+")";b&&(c+=": "+b);w.call(this,c);this.code=a}u(Xh,w);function ai(a){this.f=a}u(ai,Ug);ai.prototype.a=function(){return new this.f};ai.prototype.b=function(){return{}};
-function bi(a,b,c){this.b=a;a=b||{};this.i=a.secureTokenEndpoint||"https://securetoken.googleapis.com/v1/token";this.m=a.secureTokenTimeout||ci;this.f=db(a.secureTokenHeaders||di);this.g=a.firebaseEndpoint||"https://www.googleapis.com/identitytoolkit/v3/relyingparty/";this.h=a.firebaseTimeout||ei;this.a=db(a.firebaseHeaders||fi);c&&(this.a["X-Client-Version"]=c,this.f["X-Client-Version"]=c);c="Node"==xe();c=l.XMLHttpRequest||c&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node.XMLHttpRequest;if(!c&&
-!we())throw new M("internal-error","The XMLHttpRequest compatibility library was not found.");this.c=void 0;we()?this.c=new oh(self):ye()?this.c=new ai(c):this.c=new Zg}var gi,ag="idToken",ci=new Me(3E4,6E4),di={"Content-Type":"application/x-www-form-urlencoded"},ei=new Me(3E4,6E4),fi={"Content-Type":"application/json"};function hi(a,b){b?a.a["X-Firebase-Locale"]=b:delete a.a["X-Firebase-Locale"]}
-function ii(a,b){b?(a.a["X-Client-Version"]=b,a.f["X-Client-Version"]=b):(delete a.a["X-Client-Version"],delete a.f["X-Client-Version"])}function ji(a,b,c,d,e,f,g){he()||we()?a=t(a.o,a):(gi||(gi=new C(function(h,m){ki(h,m)})),a=t(a.l,a));a(b,c,d,e,f,g)}
-bi.prototype.o=function(a,b,c,d,e,f){if(we()&&("undefined"===typeof l.fetch||"undefined"===typeof l.Headers||"undefined"===typeof l.Request))throw new M("operation-not-supported-in-this-environment","fetch, Headers and Request native APIs or equivalent Polyfills must be available to support HTTP requests from a Worker environment.");var g=new uh(this.c);if(f){g.g=Math.max(0,f);var h=setTimeout(function(){g.dispatchEvent("timeout")},f)}Ac(g,"complete",function(){h&&clearTimeout(h);var m=null;try{m=
-JSON.parse(Ih(this))||null}catch(p){m=null}b&&b(m)});Gc(g,"ready",function(){h&&clearTimeout(h);Pb(this)});Gc(g,"timeout",function(){h&&clearTimeout(h);Pb(this);b&&b(null)});yh(g,a,c,d,e)};var li=new wd(xd,"https://apis.google.com/js/client.js?onload=%{onload}"),mi="__fcb"+Math.floor(1E6*Math.random()).toString();
-function ki(a,b){if(((window.gapi||{}).client||{}).request)a();else{l[mi]=function(){((window.gapi||{}).client||{}).request?a():b(Error("CORS_UNSUPPORTED"))};var c=Dd(li,{onload:mi});Qh(Vh(c),function(){b(Error("CORS_UNSUPPORTED"))})}}
-bi.prototype.l=function(a,b,c,d,e){var f=this;gi.then(function(){window.gapi.client.setApiKey(f.b);var g=window.gapi.auth.getToken();window.gapi.auth.setToken(null);window.gapi.client.request({path:a,method:c,body:d,headers:e,authType:"none",callback:function(h){window.gapi.auth.setToken(g);b&&b(h)}})}).s(function(g){b&&b({error:{message:g&&g.message||"CORS_UNSUPPORTED"}})})};
-function ni(a,b){return new C(function(c,d){"refresh_token"==b.grant_type&&b.refresh_token||"authorization_code"==b.grant_type&&b.code?ji(a,a.i+"?key="+encodeURIComponent(a.b),function(e){e?e.error?d(oi(e)):e.access_token&&e.refresh_token?c(e):d(new M("internal-error")):d(new M("network-request-failed"))},"POST",qd(b).toString(),a.f,a.m.get()):d(new M("internal-error"))})}
-function pi(a,b,c,d,e,f){var g=md(a.g+b);G(g,"key",a.b);f&&G(g,"cb",va().toString());var h="GET"==c;if(h)for(var m in d)d.hasOwnProperty(m)&&G(g,m,d[m]);return new C(function(p,v){ji(a,g.toString(),function(z){z?z.error?v(oi(z,e||{})):p(z):v(new M("network-request-failed"))},c,h?void 0:Yd(Ie(d)),a.a,a.h.get())})}function qi(a){a=a.email;if(!n(a)||!qe.test(a))throw new M("invalid-email");}function ri(a){"email"in a&&qi(a)}
-function si(a,b){return O(a,ti,{identifier:b,continueUri:Fe()?ee():"http://localhost"}).then(function(c){return c.signinMethods||[]})}function ui(a){return O(a,vi,{}).then(function(b){return b.authorizedDomains||[]})}function wi(a){if(!a[ag])throw new M("internal-error");}
-function xi(a){if(a.phoneNumber||a.temporaryProof){if(!a.phoneNumber||!a.temporaryProof)throw new M("internal-error");}else{if(!a.sessionInfo)throw new M("missing-verification-id");if(!a.code)throw new M("missing-verification-code");}}bi.prototype.ob=function(){return O(this,yi,{})};bi.prototype.rb=function(a,b){return O(this,zi,{idToken:a,email:b})};bi.prototype.sb=function(a,b){return O(this,zg,{idToken:a,password:b})};var Ai={displayName:"DISPLAY_NAME",photoUrl:"PHOTO_URL"};k=bi.prototype;
-k.tb=function(a,b){var c={idToken:a},d=[];bb(Ai,function(e,f){var g=b[f];null===g?d.push(e):f in b&&(c[f]=g)});d.length&&(c.deleteAttribute=d);return O(this,zi,c)};k.kb=function(a,b){a={requestType:"PASSWORD_RESET",email:a};fb(a,b);return O(this,Bi,a)};k.lb=function(a,b){a={requestType:"EMAIL_SIGNIN",email:a};fb(a,b);return O(this,Ci,a)};k.jb=function(a,b){a={requestType:"VERIFY_EMAIL",idToken:a};fb(a,b);return O(this,Di,a)};function Jg(a,b){return O(a,Ei,b)}k.Ua=function(a){return O(this,Fi,a)};
-function Gi(a,b,c){return O(a,Hi,{idToken:b,deleteProvider:c})}function Ii(a){if(!a.requestUri||!a.sessionId&&!a.postBody&&!a.pendingToken)throw new M("internal-error");}function Ji(a,b){b.oauthIdToken&&b.providerId&&0==b.providerId.indexOf("oidc.")&&!b.pendingToken&&(a.sessionId?b.nonce=a.sessionId:a.postBody&&(a=new cd(a.postBody),ud(a,"nonce")&&(b.nonce=a.get("nonce"))));return b}
-function Ki(a){var b=null;a.needConfirmation?(a.code="account-exists-with-different-credential",b=Tg(a)):"FEDERATED_USER_ID_ALREADY_LINKED"==a.errorMessage?(a.code="credential-already-in-use",b=Tg(a)):"EMAIL_EXISTS"==a.errorMessage?(a.code="email-already-in-use",b=Tg(a)):a.errorMessage&&(b=Li(a.errorMessage));if(b)throw b;if(!a[ag])throw new M("internal-error");}function cg(a,b){b.returnIdpCredential=!0;return O(a,Mi,b)}function eg(a,b){b.returnIdpCredential=!0;return O(a,Ni,b)}
-function fg(a,b){b.returnIdpCredential=!0;b.autoCreate=!1;return O(a,Oi,b)}function Pi(a){if(!a.oobCode)throw new M("invalid-action-code");}k.Za=function(a,b){return O(this,Qi,{oobCode:a,newPassword:b})};k.Ka=function(a){return O(this,Ri,{oobCode:a})};k.Wa=function(a){return O(this,Si,{oobCode:a})};
-var Si={endpoint:"setAccountInfo",C:Pi,da:"email"},Ri={endpoint:"resetPassword",C:Pi,J:function(a){var b=a.requestType;if(!b||!a.email&&"EMAIL_SIGNIN"!=b)throw new M("internal-error");}},Ti={endpoint:"signupNewUser",C:function(a){qi(a);if(!a.password)throw new M("weak-password");},J:wi,R:!0},ti={endpoint:"createAuthUri"},Ui={endpoint:"deleteAccount",T:["idToken"]},Hi={endpoint:"setAccountInfo",T:["idToken","deleteProvider"],C:function(a){if(!na(a.deleteProvider))throw new M("internal-error");}},wg=
-{endpoint:"emailLinkSignin",T:["email","oobCode"],C:qi,J:wi,R:!0},yg={endpoint:"emailLinkSignin",T:["idToken","email","oobCode"],C:qi,J:wi,R:!0},Vi={endpoint:"getAccountInfo"},Ci={endpoint:"getOobConfirmationCode",T:["requestType"],C:function(a){if("EMAIL_SIGNIN"!=a.requestType)throw new M("internal-error");qi(a)},da:"email"},Di={endpoint:"getOobConfirmationCode",T:["idToken","requestType"],C:function(a){if("VERIFY_EMAIL"!=a.requestType)throw new M("internal-error");},da:"email"},Bi={endpoint:"getOobConfirmationCode",
-T:["requestType"],C:function(a){if("PASSWORD_RESET"!=a.requestType)throw new M("internal-error");qi(a)},da:"email"},vi={wb:!0,endpoint:"getProjectConfig",Ib:"GET"},Wi={wb:!0,endpoint:"getRecaptchaParam",Ib:"GET",J:function(a){if(!a.recaptchaSiteKey)throw new M("internal-error");}},Qi={endpoint:"resetPassword",C:Pi,da:"email"},Ei={endpoint:"sendVerificationCode",T:["phoneNumber","recaptchaToken"],da:"sessionInfo"},zi={endpoint:"setAccountInfo",T:["idToken"],C:ri,R:!0},zg={endpoint:"setAccountInfo",
-T:["idToken"],C:function(a){ri(a);if(!a.password)throw new M("weak-password");},J:wi,R:!0},yi={endpoint:"signupNewUser",J:wi,R:!0},Mi={endpoint:"verifyAssertion",C:Ii,Qa:Ji,J:Ki,R:!0},Oi={endpoint:"verifyAssertion",C:Ii,Qa:Ji,J:function(a){if(a.errorMessage&&"USER_NOT_FOUND"==a.errorMessage)throw new M("user-not-found");if(a.errorMessage)throw Li(a.errorMessage);if(!a[ag])throw new M("internal-error");},R:!0},Ni={endpoint:"verifyAssertion",C:function(a){Ii(a);if(!a.idToken)throw new M("internal-error");
-},Qa:Ji,J:Ki,R:!0},Xi={endpoint:"verifyCustomToken",C:function(a){if(!a.token)throw new M("invalid-custom-token");},J:wi,R:!0},xg={endpoint:"verifyPassword",C:function(a){qi(a);if(!a.password)throw new M("wrong-password");},J:wi,R:!0},Fi={endpoint:"verifyPhoneNumber",C:xi,J:wi},Fg={endpoint:"verifyPhoneNumber",C:function(a){if(!a.idToken)throw new M("internal-error");xi(a)},J:function(a){if(a.temporaryProof)throw a.code="credential-already-in-use",Tg(a);wi(a)}},Gg={Wb:{USER_NOT_FOUND:"user-not-found"},
-endpoint:"verifyPhoneNumber",C:xi,J:wi};function O(a,b,c){if(!Ze(c,b.T))return E(new M("internal-error"));var d=b.Ib||"POST",e;return D(c).then(b.C).then(function(){b.R&&(c.returnSecureToken=!0);return pi(a,b.endpoint,d,c,b.Wb,b.wb||!1)}).then(function(f){e=f;return b.Qa?b.Qa(c,e):e}).then(b.J).then(function(){if(!b.da)return e;if(!(b.da in e))throw new M("internal-error");return e[b.da]})}function Li(a){return oi({error:{errors:[{message:a}],code:400,message:a}})}
-function oi(a,b){var c=(a.error&&a.error.errors&&a.error.errors[0]||{}).reason||"";var d={keyInvalid:"invalid-api-key",ipRefererBlocked:"app-not-authorized"};if(c=d[c]?new M(d[c]):null)return c;c=a.error&&a.error.message||"";d={INVALID_CUSTOM_TOKEN:"invalid-custom-token",CREDENTIAL_MISMATCH:"custom-token-mismatch",MISSING_CUSTOM_TOKEN:"internal-error",INVALID_IDENTIFIER:"invalid-email",MISSING_CONTINUE_URI:"internal-error",INVALID_EMAIL:"invalid-email",INVALID_PASSWORD:"wrong-password",USER_DISABLED:"user-disabled",
-MISSING_PASSWORD:"internal-error",EMAIL_EXISTS:"email-already-in-use",PASSWORD_LOGIN_DISABLED:"operation-not-allowed",INVALID_IDP_RESPONSE:"invalid-credential",INVALID_PENDING_TOKEN:"invalid-credential",FEDERATED_USER_ID_ALREADY_LINKED:"credential-already-in-use",MISSING_OR_INVALID_NONCE:"missing-or-invalid-nonce",INVALID_MESSAGE_PAYLOAD:"invalid-message-payload",INVALID_RECIPIENT_EMAIL:"invalid-recipient-email",INVALID_SENDER:"invalid-sender",EMAIL_NOT_FOUND:"user-not-found",RESET_PASSWORD_EXCEED_LIMIT:"too-many-requests",
-EXPIRED_OOB_CODE:"expired-action-code",INVALID_OOB_CODE:"invalid-action-code",MISSING_OOB_CODE:"internal-error",INVALID_PROVIDER_ID:"invalid-provider-id",CREDENTIAL_TOO_OLD_LOGIN_AGAIN:"requires-recent-login",INVALID_ID_TOKEN:"invalid-user-token",TOKEN_EXPIRED:"user-token-expired",USER_NOT_FOUND:"user-token-expired",CORS_UNSUPPORTED:"cors-unsupported",DYNAMIC_LINK_NOT_ACTIVATED:"dynamic-link-not-activated",INVALID_APP_ID:"invalid-app-id",TOO_MANY_ATTEMPTS_TRY_LATER:"too-many-requests",WEAK_PASSWORD:"weak-password",
-OPERATION_NOT_ALLOWED:"operation-not-allowed",USER_CANCELLED:"user-cancelled",CAPTCHA_CHECK_FAILED:"captcha-check-failed",INVALID_APP_CREDENTIAL:"invalid-app-credential",INVALID_CODE:"invalid-verification-code",INVALID_PHONE_NUMBER:"invalid-phone-number",INVALID_SESSION_INFO:"invalid-verification-id",INVALID_TEMPORARY_PROOF:"invalid-credential",MISSING_APP_CREDENTIAL:"missing-app-credential",MISSING_CODE:"missing-verification-code",MISSING_PHONE_NUMBER:"missing-phone-number",MISSING_SESSION_INFO:"missing-verification-id",
-QUOTA_EXCEEDED:"quota-exceeded",SESSION_EXPIRED:"code-expired",REJECTED_CREDENTIAL:"rejected-credential",INVALID_CONTINUE_URI:"invalid-continue-uri",MISSING_ANDROID_PACKAGE_NAME:"missing-android-pkg-name",MISSING_IOS_BUNDLE_ID:"missing-ios-bundle-id",UNAUTHORIZED_DOMAIN:"unauthorized-continue-uri",INVALID_DYNAMIC_LINK_DOMAIN:"invalid-dynamic-link-domain",INVALID_OAUTH_CLIENT_ID:"invalid-oauth-client-id",INVALID_CERT_HASH:"invalid-cert-hash",ADMIN_ONLY_OPERATION:"admin-restricted-operation"};fb(d,
-b||{});b=(b=c.match(/^[^\s]+\s*:\s*(.*)$/))&&1<b.length?b[1]:void 0;for(var e in d)if(0===c.indexOf(e))return new M(d[e],b);!b&&a&&(b=He(a));return new M("internal-error",b)};function Yi(a){this.b=a;this.a=null;this.fb=Zi(this)}
-function Zi(a){return $i().then(function(){return new C(function(b,c){J("gapi.iframes.getContext")().open({where:document.body,url:a.b,messageHandlersFilter:J("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"),attributes:{style:{position:"absolute",top:"-100px",width:"1px",height:"1px"}},dontclear:!0},function(d){function e(){clearTimeout(f);b()}a.a=d;a.a.restyle({setHideOnLeave:!1});var f=setTimeout(function(){c(Error("Network Error"))},aj.get());d.ping(e).then(e,function(){c(Error("Network Error"))})})})})}
-function bj(a,b){return a.fb.then(function(){return new C(function(c){a.a.send(b.type,b,c,J("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"))})})}function cj(a,b){a.fb.then(function(){a.a.register("authEvent",b,J("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"))})}var dj=new wd(xd,"https://apis.google.com/js/api.js?onload=%{onload}"),ej=new Me(3E4,6E4),aj=new Me(5E3,15E3),fj=null;
-function $i(){return fj?fj:fj=(new C(function(a,b){function c(){Le();J("gapi.load")("gapi.iframes",{callback:a,ontimeout:function(){Le();b(Error("Network Error"))},timeout:ej.get()})}if(J("gapi.iframes.Iframe"))a();else if(J("gapi.load"))c();else{var d="__iframefcb"+Math.floor(1E6*Math.random()).toString();l[d]=function(){J("gapi.load")?c():b(Error("Network Error"))};d=Dd(dj,{onload:d});D(Vh(d)).s(function(){b(Error("Network Error"))})}})).s(function(a){fj=null;throw a;})};function gj(a,b,c){this.i=a;this.g=b;this.h=c;this.f=null;this.a=nd(this.i,"/__/auth/iframe");G(this.a,"apiKey",this.g);G(this.a,"appName",this.h);this.b=null;this.c=[]}gj.prototype.toString=function(){this.f?G(this.a,"v",this.f):td(this.a.a,"v");this.b?G(this.a,"eid",this.b):td(this.a.a,"eid");this.c.length?G(this.a,"fw",this.c.join(",")):td(this.a.a,"fw");return this.a.toString()};function hj(a,b,c,d,e){this.o=a;this.l=b;this.c=c;this.m=d;this.h=this.g=this.i=null;this.a=e;this.f=null}
-hj.prototype.toString=function(){var a=nd(this.o,"/__/auth/handler");G(a,"apiKey",this.l);G(a,"appName",this.c);G(a,"authType",this.m);if(this.a.isOAuthProvider){var b=this.a;try{var c=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.app(this.c).auth().ea()}catch(h){c=null}b.$a=c;G(a,"providerId",this.a.providerId);b=this.a;c=Ie(b.zb);for(var d in c)c[d]=c[d].toString();d=b.Dc;c=db(c);for(var e=0;e<d.length;e++){var f=d[e];f in c&&delete c[f]}b.cb&&b.$a&&!c[b.cb]&&(c[b.cb]=b.$a);cb(c)||G(a,"customParameters",He(c))}"function"===typeof this.a.Fb&&
-(b=this.a.Fb(),b.length&&G(a,"scopes",b.join(",")));this.i?G(a,"redirectUrl",this.i):td(a.a,"redirectUrl");this.g?G(a,"eventId",this.g):td(a.a,"eventId");this.h?G(a,"v",this.h):td(a.a,"v");if(this.b)for(var g in this.b)this.b.hasOwnProperty(g)&&!kd(a,g)&&G(a,g,this.b[g]);this.f?G(a,"eid",this.f):td(a.a,"eid");g=ij(this.c);g.length&&G(a,"fw",g.join(","));return a.toString()};function ij(a){try{return _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.app(a).auth().ya()}catch(b){return[]}}
-function jj(a,b,c,d,e){this.l=a;this.f=b;this.b=c;this.c=d||null;this.h=e||null;this.o=this.u=this.v=null;this.g=[];this.m=this.a=null}
-function kj(a){var b=ee();return ui(a).then(function(c){a:{var d=md(b),e=d.f;d=d.b;for(var f=0;f<c.length;f++){var g=c[f];var h=d;var m=e;0==g.indexOf("chrome-extension://")?h=md(g).b==h&&"chrome-extension"==m:"http"!=m&&"https"!=m?h=!1:pe.test(g)?h=h==g:(g=g.split(".").join("\\."),h=(new RegExp("^(.+\\."+g+"|"+g+")$","i")).test(h));if(h){c=!0;break a}}c=!1}if(!c)throw new Rg(ee());})}
-function lj(a){if(a.m)return a.m;a.m=re().then(function(){if(!a.u){var b=a.c,c=a.h,d=ij(a.b),e=new gj(a.l,a.f,a.b);e.f=b;e.b=c;e.c=Pa(d||[]);a.u=e.toString()}a.i=new Yi(a.u);mj(a)});return a.m}k=jj.prototype;k.Ea=function(a,b,c){var d=new M("popup-closed-by-user"),e=new M("web-storage-unsupported"),f=this,g=!1;return this.ga().then(function(){nj(f).then(function(h){h||(a&&le(a),b(e),g=!0)})}).s(function(){}).then(function(){if(!g)return oe(a)}).then(function(){if(!g)return Oc(c).then(function(){b(d)})})};
-k.Mb=function(){var a=I();return!Ge(a)&&!Ke(a)};k.Hb=function(){return!1};
-k.Db=function(a,b,c,d,e,f,g){if(!a)return E(new M("popup-blocked"));if(g&&!Ge())return this.ga().s(function(m){le(a);e(m)}),d(),D();this.a||(this.a=kj(oj(this)));var h=this;return this.a.then(function(){var m=h.ga().s(function(p){le(a);e(p);throw p;});d();return m}).then(function(){Mg(c);if(!g){var m=pj(h.l,h.f,h.b,b,c,null,f,h.c,void 0,h.h);fe(m,a)}}).s(function(m){"auth/network-request-failed"==m.code&&(h.a=null);throw m;})};
-function oj(a){a.o||(a.v=a.c?Be(a.c,ij(a.b)):null,a.o=new bi(a.f,If(a.h),a.v));return a.o}k.Ca=function(a,b,c){this.a||(this.a=kj(oj(this)));var d=this;return this.a.then(function(){Mg(b);var e=pj(d.l,d.f,d.b,a,b,ee(),c,d.c,void 0,d.h);fe(e)}).s(function(e){"auth/network-request-failed"==e.code&&(d.a=null);throw e;})};k.ga=function(){var a=this;return lj(this).then(function(){return a.i.fb}).s(function(){a.a=null;throw new M("network-request-failed");})};k.Pb=function(){return!0};
-function pj(a,b,c,d,e,f,g,h,m,p){a=new hj(a,b,c,d,e);a.i=f;a.g=g;a.h=h;a.b=db(m||null);a.f=p;return a.toString()}function mj(a){if(!a.i)throw Error("IfcHandler must be initialized!");cj(a.i,function(b){var c={};if(b&&b.authEvent){var d=!1;b=Og(b.authEvent);for(c=0;c<a.g.length;c++)d=a.g[c](b)||d;c={};c.status=d?"ACK":"ERROR";return D(c)}c.status="ERROR";return D(c)})}
-function nj(a){var b={type:"webStorageSupport"};return lj(a).then(function(){return bj(a.i,b)}).then(function(c){if(c&&c.length&&"undefined"!==typeof c[0].webStorageSupport)return c[0].webStorageSupport;throw Error();})}k.wa=function(a){this.g.push(a)};k.La=function(a){y(this.g,function(b){return b==a})};function qj(a){this.a=a||_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.reactNative&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.reactNative.AsyncStorage;if(!this.a)throw new M("internal-error","The React Native compatibility library was not found.");this.type="asyncStorage"}k=qj.prototype;k.get=function(a){return D(this.a.getItem(a)).then(function(b){return b&&Je(b)})};k.set=function(a,b){return D(this.a.setItem(a,He(b)))};k.P=function(a){return D(this.a.removeItem(a))};k.Y=function(){};k.ca=function(){};function rj(a){this.b=a;this.a={};this.c=t(this.f,this)}var sj=[];function tj(){var a=we()?self:null;x(sj,function(c){c.b==a&&(b=c)});if(!b){var b=new rj(a);sj.push(b)}return b}
-rj.prototype.f=function(a){var b=a.data.eventType,c=a.data.eventId,d=this.a[b];if(d&&0<d.length){a.ports[0].postMessage({status:"ack",eventId:c,eventType:b,response:null});var e=[];x(d,function(f){e.push(D().then(function(){return f(a.origin,a.data.data)}))});Bb(e).then(function(f){var g=[];x(f,function(h){g.push({fulfilled:h.Eb,value:h.value,reason:h.reason?h.reason.message:void 0})});x(g,function(h){for(var m in h)"undefined"===typeof h[m]&&delete h[m]});a.ports[0].postMessage({status:"done",eventId:c,
-eventType:b,response:g})})}};rj.prototype.subscribe=function(a,b){cb(this.a)&&this.b.addEventListener("message",this.c);"undefined"===typeof this.a[a]&&(this.a[a]=[]);this.a[a].push(b)};rj.prototype.unsubscribe=function(a,b){"undefined"!==typeof this.a[a]&&b?(y(this.a[a],function(c){return c==b}),0==this.a[a].length&&delete this.a[a]):b||delete this.a[a];cb(this.a)&&this.b.removeEventListener("message",this.c)};function uj(a){this.a=a}uj.prototype.postMessage=function(a,b){this.a.postMessage(a,b)};function vj(a){this.c=a;this.b=!1;this.a=[]}
-function wj(a,b,c,d){var e,f=c||{},g,h,m,p=null;if(a.b)return E(Error("connection_unavailable"));var v=d?800:50,z="undefined"!==typeof MessageChannel?new MessageChannel:null;return(new C(function(H,U){z?(e=Math.floor(Math.random()*Math.pow(10,20)).toString(),z.port1.start(),h=setTimeout(function(){U(Error("unsupported_event"))},v),g=function(ta){ta.data.eventId===e&&("ack"===ta.data.status?(clearTimeout(h),m=setTimeout(function(){U(Error("timeout"))},3E3)):"done"===ta.data.status?(clearTimeout(m),
-"undefined"!==typeof ta.data.response?H(ta.data.response):U(Error("unknown_error"))):(clearTimeout(h),clearTimeout(m),U(Error("invalid_response"))))},p={messageChannel:z,onMessage:g},a.a.push(p),z.port1.addEventListener("message",g),a.c.postMessage({eventType:b,eventId:e,data:f},[z.port2])):U(Error("connection_unavailable"))})).then(function(H){xj(a,p);return H}).s(function(H){xj(a,p);throw H;})}
-function xj(a,b){if(b){var c=b.messageChannel,d=b.onMessage;c&&(c.port1.removeEventListener("message",d),c.port1.close());y(a.a,function(e){return e==b})}}vj.prototype.close=function(){for(;0<this.a.length;)xj(this,this.a[0]);this.b=!0};function yj(){if(!zj())throw new M("web-storage-unsupported");this.c={};this.a=[];this.b=0;this.l=l.indexedDB;this.type="indexedDB";this.g=this.m=this.f=this.i=null;this.u=!1;this.h=null;var a=this;we()&&self?(this.m=tj(),this.m.subscribe("keyChanged",function(b,c){return Aj(a).then(function(d){0<d.length&&x(a.a,function(e){e(d)});return{keyProcessed:Ma(d,c.key)}})}),this.m.subscribe("ping",function(){return D(["keyChanged"])})):Se().then(function(b){if(a.h=b)a.g=new vj(new uj(b)),wj(a.g,"ping",null,
-!0).then(function(c){c[0].fulfilled&&Ma(c[0].value,"keyChanged")&&(a.u=!0)}).s(function(){})})}var Bj;function Cj(a){return new C(function(b,c){var d=a.l.deleteDatabase("firebaseLocalStorageDb");d.onsuccess=function(){b()};d.onerror=function(e){c(Error(e.target.error))}})}
-function Dj(a){return new C(function(b,c){var d=a.l.open("firebaseLocalStorageDb",1);d.onerror=function(e){try{e.preventDefault()}catch(f){}c(Error(e.target.error))};d.onupgradeneeded=function(e){e=e.target.result;try{e.createObjectStore("firebaseLocalStorage",{keyPath:"fbase_key"})}catch(f){c(f)}};d.onsuccess=function(e){e=e.target.result;e.objectStoreNames.contains("firebaseLocalStorage")?b(e):Cj(a).then(function(){return Dj(a)}).then(function(f){b(f)}).s(function(f){c(f)})}})}
-function Ej(a){a.o||(a.o=Dj(a));return a.o}function zj(){try{return!!l.indexedDB}catch(a){return!1}}function Fj(a){return a.objectStore("firebaseLocalStorage")}function Gj(a,b){return a.transaction(["firebaseLocalStorage"],b?"readwrite":"readonly")}function Hj(a){return new C(function(b,c){a.onsuccess=function(d){d&&d.target?b(d.target.result):b()};a.onerror=function(d){c(d.target.error)}})}k=yj.prototype;
-k.set=function(a,b){var c=!1,d,e=this;return Ej(this).then(function(f){d=f;f=Fj(Gj(d,!0));return Hj(f.get(a))}).then(function(f){var g=Fj(Gj(d,!0));if(f)return f.value=b,Hj(g.put(f));e.b++;c=!0;f={};f.fbase_key=a;f.value=b;return Hj(g.add(f))}).then(function(){e.c[a]=b;return Ij(e,a)}).ia(function(){c&&e.b--})};function Ij(a,b){return a.g&&a.h&&Re()===a.h?wj(a.g,"keyChanged",{key:b},a.u).then(function(){}).s(function(){}):D()}
-k.get=function(a){return Ej(this).then(function(b){return Hj(Fj(Gj(b,!1)).get(a))}).then(function(b){return b&&b.value})};k.P=function(a){var b=!1,c=this;return Ej(this).then(function(d){b=!0;c.b++;return Hj(Fj(Gj(d,!0))["delete"](a))}).then(function(){delete c.c[a];return Ij(c,a)}).ia(function(){b&&c.b--})};
-function Aj(a){return Ej(a).then(function(b){var c=Fj(Gj(b,!1));return c.getAll?Hj(c.getAll()):new C(function(d,e){var f=[],g=c.openCursor();g.onsuccess=function(h){(h=h.target.result)?(f.push(h.value),h["continue"]()):d(f)};g.onerror=function(h){e(h.target.error)}})}).then(function(b){var c={},d=[];if(0==a.b){for(d=0;d<b.length;d++)c[b[d].fbase_key]=b[d].value;d=ge(a.c,c);a.c=c}return d})}k.Y=function(a){0==this.a.length&&Jj(this);this.a.push(a)};
-k.ca=function(a){y(this.a,function(b){return b==a});0==this.a.length&&Kj(this)};function Jj(a){function b(){a.f=setTimeout(function(){a.i=Aj(a).then(function(c){0<c.length&&x(a.a,function(d){d(c)})}).then(function(){b()}).s(function(c){"STOP_EVENT"!=c.message&&b()})},800)}Kj(a);b()}function Kj(a){a.i&&a.i.cancel("STOP_EVENT");a.f&&(clearTimeout(a.f),a.f=null)};function Lj(a){var b=this,c=null;this.a=[];this.type="indexedDB";this.c=a;this.b=D().then(function(){if(zj()){var d=De(),e="__sak"+d;Bj||(Bj=new yj);c=Bj;return c.set(e,d).then(function(){return c.get(e)}).then(function(f){if(f!==d)throw Error("indexedDB not supported!");return c.P(e)}).then(function(){return c}).s(function(){return b.c})}return b.c}).then(function(d){b.type=d.type;d.Y(function(e){x(b.a,function(f){f(e)})});return d})}k=Lj.prototype;k.get=function(a){return this.b.then(function(b){return b.get(a)})};
-k.set=function(a,b){return this.b.then(function(c){return c.set(a,b)})};k.P=function(a){return this.b.then(function(b){return b.P(a)})};k.Y=function(a){this.a.push(a)};k.ca=function(a){y(this.a,function(b){return b==a})};function Mj(){this.a={};this.type="inMemory"}k=Mj.prototype;k.get=function(a){return D(this.a[a])};k.set=function(a,b){this.a[a]=b;return D()};k.P=function(a){delete this.a[a];return D()};k.Y=function(){};k.ca=function(){};function Nj(){if(!Oj()){if("Node"==xe())throw new M("internal-error","The LocalStorage compatibility library was not found.");throw new M("web-storage-unsupported");}this.a=Pj()||_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node.localStorage;this.type="localStorage"}function Pj(){try{var a=l.localStorage,b=De();a&&(a.setItem(b,"1"),a.removeItem(b));return a}catch(c){return null}}
-function Oj(){var a="Node"==xe();a=Pj()||a&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node.localStorage;if(!a)return!1;try{return a.setItem("__sak","1"),a.removeItem("__sak"),!0}catch(b){return!1}}k=Nj.prototype;k.get=function(a){var b=this;return D().then(function(){var c=b.a.getItem(a);return Je(c)})};k.set=function(a,b){var c=this;return D().then(function(){var d=He(b);null===d?c.P(a):c.a.setItem(a,d)})};k.P=function(a){var b=this;return D().then(function(){b.a.removeItem(a)})};
-k.Y=function(a){l.window&&xc(l.window,"storage",a)};k.ca=function(a){l.window&&Hc(l.window,"storage",a)};function Qj(){this.type="nullStorage"}k=Qj.prototype;k.get=function(){return D(null)};k.set=function(){return D()};k.P=function(){return D()};k.Y=function(){};k.ca=function(){};function Rj(){if(!Sj()){if("Node"==xe())throw new M("internal-error","The SessionStorage compatibility library was not found.");throw new M("web-storage-unsupported");}this.a=Tj()||_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node.sessionStorage;this.type="sessionStorage"}function Tj(){try{var a=l.sessionStorage,b=De();a&&(a.setItem(b,"1"),a.removeItem(b));return a}catch(c){return null}}
-function Sj(){var a="Node"==xe();a=Tj()||a&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.node.sessionStorage;if(!a)return!1;try{return a.setItem("__sak","1"),a.removeItem("__sak"),!0}catch(b){return!1}}k=Rj.prototype;k.get=function(a){var b=this;return D().then(function(){var c=b.a.getItem(a);return Je(c)})};k.set=function(a,b){var c=this;return D().then(function(){var d=He(b);null===d?c.P(a):c.a.setItem(a,d)})};k.P=function(a){var b=this;return D().then(function(){b.a.removeItem(a)})};k.Y=function(){};
-k.ca=function(){};function Uj(){var a={};a.Browser=Vj;a.Node=Wj;a.ReactNative=Xj;a.Worker=Yj;this.a=a[xe()]}var Zj,Vj={B:Nj,Ra:Rj},Wj={B:Nj,Ra:Rj},Xj={B:qj,Ra:Qj},Yj={B:Nj,Ra:Qj};var ak={Xc:"local",NONE:"none",Zc:"session"};function bk(a){var b=new M("invalid-persistence-type"),c=new M("unsupported-persistence-type");a:{for(d in ak)if(ak[d]==a){var d=!0;break a}d=!1}if(!d||"string"!==typeof a)throw b;switch(xe()){case "ReactNative":if("session"===a)throw c;break;case "Node":if("none"!==a)throw c;break;default:if(!Ce()&&"none"!==a)throw c;}}
-function ck(){var a=!Ke(I())&&ve()?!0:!1,b=Ge(),c=Ce();this.o=a;this.h=b;this.m=c;this.a={};Zj||(Zj=new Uj);a=Zj;try{this.g=!de()&&Qe()||!l.indexedDB?new a.a.B:new Lj(we()?new Mj:new a.a.B)}catch(d){this.g=new Mj,this.h=!0}try{this.i=new a.a.Ra}catch(d){this.i=new Mj}this.l=new Mj;this.f=t(this.Ob,this);this.b={}}var dk;function ek(){dk||(dk=new ck);return dk}function fk(a,b){switch(b){case "session":return a.i;case "none":return a.l;default:return a.g}}
-function gk(a,b){return"firebase:"+a.name+(b?":"+b:"")}function hk(a,b,c){var d=gk(b,c),e=fk(a,b.B);return a.get(b,c).then(function(f){var g=null;try{g=Je(l.localStorage.getItem(d))}catch(h){}if(g&&!f)return l.localStorage.removeItem(d),a.set(b,g,c);g&&f&&"localStorage"!=e.type&&l.localStorage.removeItem(d)})}k=ck.prototype;k.get=function(a,b){return fk(this,a.B).get(gk(a,b))};function ik(a,b,c){c=gk(b,c);"local"==b.B&&(a.b[c]=null);return fk(a,b.B).P(c)}
-k.set=function(a,b,c){var d=gk(a,c),e=this,f=fk(this,a.B);return f.set(d,b).then(function(){return f.get(d)}).then(function(g){"local"==a.B&&(e.b[d]=g)})};k.addListener=function(a,b,c){a=gk(a,b);this.m&&(this.b[a]=l.localStorage.getItem(a));cb(this.a)&&(fk(this,"local").Y(this.f),this.h||(de()||!Qe())&&l.indexedDB||!this.m||jk(this));this.a[a]||(this.a[a]=[]);this.a[a].push(c)};
-k.removeListener=function(a,b,c){a=gk(a,b);this.a[a]&&(y(this.a[a],function(d){return d==c}),0==this.a[a].length&&delete this.a[a]);cb(this.a)&&(fk(this,"local").ca(this.f),kk(this))};function jk(a){kk(a);a.c=setInterval(function(){for(var b in a.a){var c=l.localStorage.getItem(b),d=a.b[b];c!=d&&(a.b[b]=c,c=new lc({type:"storage",key:b,target:window,oldValue:d,newValue:c,a:!0}),a.Ob(c))}},1E3)}function kk(a){a.c&&(clearInterval(a.c),a.c=null)}
-k.Ob=function(a){if(a&&a.f){var b=a.a.key;if(null==b)for(var c in this.a){var d=this.b[c];"undefined"===typeof d&&(d=null);var e=l.localStorage.getItem(c);e!==d&&(this.b[c]=e,this.Xa(c))}else if(0==b.indexOf("firebase:")&&this.a[b]){"undefined"!==typeof a.a.a?fk(this,"local").ca(this.f):kk(this);if(this.o)if(c=l.localStorage.getItem(b),d=a.a.newValue,d!==c)null!==d?l.localStorage.setItem(b,d):l.localStorage.removeItem(b);else if(this.b[b]===d&&"undefined"===typeof a.a.a)return;var f=this;c=function(){if("undefined"!==
-typeof a.a.a||f.b[b]!==l.localStorage.getItem(b))f.b[b]=l.localStorage.getItem(b),f.Xa(b)};Ub&&ec&&10==ec&&l.localStorage.getItem(b)!==a.a.newValue&&a.a.newValue!==a.a.oldValue?setTimeout(c,10):c()}}else x(a,t(this.Xa,this))};k.Xa=function(a){this.a[a]&&x(this.a[a],function(b){b()})};function lk(a){this.a=a;this.b=ek()}var mk={name:"authEvent",B:"local"};function nk(a){return a.b.get(mk,a.a).then(function(b){return Og(b)})};function ok(){this.a=ek()};function pk(){this.b=-1};function qk(a,b){this.b=rk;this.f=l.Uint8Array?new Uint8Array(this.b):Array(this.b);this.g=this.c=0;this.a=[];this.i=a;this.h=b;this.m=l.Int32Array?new Int32Array(64):Array(64);void 0!==sk||(l.Int32Array?sk=new Int32Array(tk):sk=tk);this.reset()}var sk;u(qk,pk);for(var rk=64,uk=rk-1,vk=[],wk=0;wk<uk;wk++)vk[wk]=0;var xk=Oa(128,vk);qk.prototype.reset=function(){this.g=this.c=0;this.a=l.Int32Array?new Int32Array(this.h):Pa(this.h)};
-function yk(a){for(var b=a.f,c=a.m,d=0,e=0;e<b.length;)c[d++]=b[e]<<24|b[e+1]<<16|b[e+2]<<8|b[e+3],e=4*d;for(b=16;64>b;b++){e=c[b-15]|0;d=c[b-2]|0;var f=(c[b-16]|0)+((e>>>7|e<<25)^(e>>>18|e<<14)^e>>>3)|0,g=(c[b-7]|0)+((d>>>17|d<<15)^(d>>>19|d<<13)^d>>>10)|0;c[b]=f+g|0}d=a.a[0]|0;e=a.a[1]|0;var h=a.a[2]|0,m=a.a[3]|0,p=a.a[4]|0,v=a.a[5]|0,z=a.a[6]|0;f=a.a[7]|0;for(b=0;64>b;b++){var H=((d>>>2|d<<30)^(d>>>13|d<<19)^(d>>>22|d<<10))+(d&e^d&h^e&h)|0;g=p&v^~p&z;f=f+((p>>>6|p<<26)^(p>>>11|p<<21)^(p>>>25|p<<
-7))|0;g=g+(sk[b]|0)|0;g=f+(g+(c[b]|0)|0)|0;f=z;z=v;v=p;p=m+g|0;m=h;h=e;e=d;d=g+H|0}a.a[0]=a.a[0]+d|0;a.a[1]=a.a[1]+e|0;a.a[2]=a.a[2]+h|0;a.a[3]=a.a[3]+m|0;a.a[4]=a.a[4]+p|0;a.a[5]=a.a[5]+v|0;a.a[6]=a.a[6]+z|0;a.a[7]=a.a[7]+f|0}
-function zk(a,b,c){void 0===c&&(c=b.length);var d=0,e=a.c;if(n(b))for(;d<c;)a.f[e++]=b.charCodeAt(d++),e==a.b&&(yk(a),e=0);else if(oa(b))for(;d<c;){var f=b[d++];if(!("number"==typeof f&&0<=f&&255>=f&&f==(f|0)))throw Error("message must be a byte array");a.f[e++]=f;e==a.b&&(yk(a),e=0)}else throw Error("message must be string or array");a.c=e;a.g+=c}
-var tk=[1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,
-4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298];function Ak(){qk.call(this,8,Bk)}u(Ak,qk);var Bk=[1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225];function Ck(a,b,c,d,e){this.l=a;this.i=b;this.m=c;this.o=d||null;this.u=e||null;this.h=b+":"+c;this.v=new ok;this.g=new lk(this.h);this.f=null;this.b=[];this.a=this.c=null}function Dk(a){return new M("invalid-cordova-configuration",a)}k=Ck.prototype;
-k.ga=function(){return this.za?this.za:this.za=se().then(function(){if("function"!==typeof J("universalLinks.subscribe",l))throw Dk("cordova-universal-links-plugin-fix is not installed");if("undefined"===typeof J("BuildInfo.packageName",l))throw Dk("cordova-plugin-buildinfo is not installed");if("function"!==typeof J("cordova.plugins.browsertab.openUrl",l))throw Dk("cordova-plugin-browsertab is not installed");if("function"!==typeof J("cordova.InAppBrowser.open",l))throw Dk("cordova-plugin-inappbrowser is not installed");
-},function(){throw new M("cordova-not-ready");})};function Ek(){for(var a=20,b=[];0<a;)b.push("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(62*Math.random()))),a--;return b.join("")}function Fk(a){var b=new Ak;zk(b,a);a=[];var c=8*b.g;56>b.c?zk(b,xk,56-b.c):zk(b,xk,b.b-(b.c-56));for(var d=63;56<=d;d--)b.f[d]=c&255,c/=256;yk(b);for(d=c=0;d<b.i;d++)for(var e=24;0<=e;e-=8)a[c++]=b.a[d]>>e&255;return yf(a)}
-k.Ea=function(a,b){b(new M("operation-not-supported-in-this-environment"));return D()};k.Db=function(){return E(new M("operation-not-supported-in-this-environment"))};k.Pb=function(){return!1};k.Mb=function(){return!0};k.Hb=function(){return!0};
-k.Ca=function(a,b,c){if(this.c)return E(new M("redirect-operation-pending"));var d=this,e=l.document,f=null,g=null,h=null,m=null;return this.c=D().then(function(){Mg(b);return Gk(d)}).then(function(){return Hk(d,a,b,c)}).then(function(){return(new C(function(p,v){g=function(){var z=J("cordova.plugins.browsertab.close",l);p();"function"===typeof z&&z();d.a&&"function"===typeof d.a.close&&(d.a.close(),d.a=null);return!1};d.wa(g);h=function(){f||(f=Oc(2E3).then(function(){v(new M("redirect-cancelled-by-user"))}))};
-m=function(){Ne()&&h()};e.addEventListener("resume",h,!1);I().toLowerCase().match(/android/)||e.addEventListener("visibilitychange",m,!1)})).s(function(p){return Ik(d).then(function(){throw p;})})}).ia(function(){h&&e.removeEventListener("resume",h,!1);m&&e.removeEventListener("visibilitychange",m,!1);f&&f.cancel();g&&d.La(g);d.c=null})};
-function Hk(a,b,c,d){var e=Ek(),f=new Ng(b,d,null,e,new M("no-auth-event")),g=J("BuildInfo.packageName",l);if("string"!==typeof g)throw new M("invalid-cordova-configuration");var h=J("BuildInfo.displayName",l),m={};if(I().toLowerCase().match(/iphone|ipad|ipod/))m.ibi=g;else if(I().toLowerCase().match(/android/))m.apn=g;else return E(new M("operation-not-supported-in-this-environment"));h&&(m.appDisplayName=h);e=Fk(e);m.sessionId=e;var p=pj(a.l,a.i,a.m,b,c,null,d,a.o,m,a.u);return a.ga().then(function(){var v=
-a.h;return a.v.a.set(mk,f.w(),v)}).then(function(){var v=J("cordova.plugins.browsertab.isAvailable",l);if("function"!==typeof v)throw new M("invalid-cordova-configuration");var z=null;v(function(H){if(H){z=J("cordova.plugins.browsertab.openUrl",l);if("function"!==typeof z)throw new M("invalid-cordova-configuration");z(p)}else{z=J("cordova.InAppBrowser.open",l);if("function"!==typeof z)throw new M("invalid-cordova-configuration");H=I();a.a=z(p,H.match(/(iPad|iPhone|iPod).*OS 7_\d/i)||H.match(/(iPad|iPhone|iPod).*OS 8_\d/i)?
-"_blank":"_system","location=yes")}})})}function Jk(a,b){for(var c=0;c<a.b.length;c++)try{a.b[c](b)}catch(d){}}function Gk(a){a.f||(a.f=a.ga().then(function(){return new C(function(b){function c(d){b(d);a.La(c);return!1}a.wa(c);Kk(a)})}));return a.f}function Ik(a){var b=null;return nk(a.g).then(function(c){b=c;c=a.g;return ik(c.b,mk,c.a)}).then(function(){return b})}
-function Kk(a){function b(g){d=!0;e&&e.cancel();Ik(a).then(function(h){var m=c;if(h&&g&&g.url){var p=null;m=Yf(g.url);-1!=m.indexOf("/__/auth/callback")&&(p=md(m),p=Je(kd(p,"firebaseError")||null),p=(p="object"===typeof p?mf(p):null)?new Ng(h.c,h.b,null,null,p):new Ng(h.c,h.b,m,h.f));m=p||c}Jk(a,m)})}var c=new Ng("unknown",null,null,null,new M("no-auth-event")),d=!1,e=Oc(500).then(function(){return Ik(a).then(function(){d||Jk(a,c)})}),f=l.handleOpenURL;l.handleOpenURL=function(g){0==g.toLowerCase().indexOf(J("BuildInfo.packageName",
-l).toLowerCase()+"://")&&b({url:g});if("function"===typeof f)try{f(g)}catch(h){console.error(h)}};Qg||(Qg=new Pg);Qg.subscribe(b)}k.wa=function(a){this.b.push(a);Gk(this).s(function(b){"auth/invalid-cordova-configuration"===b.code&&(b=new Ng("unknown",null,null,null,new M("no-auth-event")),a(b))})};k.La=function(a){y(this.b,function(b){return b==a})};function Lk(a){this.a=a;this.b=ek()}var Mk={name:"pendingRedirect",B:"session"};function Nk(a){return a.b.set(Mk,"pending",a.a)}function Ok(a){return ik(a.b,Mk,a.a)}function Pk(a){return a.b.get(Mk,a.a).then(function(b){return"pending"==b})};function Qk(a,b,c){this.i={};this.u=0;this.A=a;this.l=b;this.o=c;this.h=[];this.f=!1;this.m=t(this.bb,this);this.b=new Rk;this.v=new Sk;this.g=new Lk(this.l+":"+this.o);this.c={};this.c.unknown=this.b;this.c.signInViaRedirect=this.b;this.c.linkViaRedirect=this.b;this.c.reauthViaRedirect=this.b;this.c.signInViaPopup=this.v;this.c.linkViaPopup=this.v;this.c.reauthViaPopup=this.v;this.a=Tk(this.A,this.l,this.o,Jf)}
-function Tk(a,b,c,d){var e=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION||null;return te()?new Ck(a,b,c,e,d):new jj(a,b,c,e,d)}k=Qk.prototype;k.reset=function(){this.f=!1;this.a.La(this.m);this.a=Tk(this.A,this.l,this.o);this.i={}};k.Ya=function(){this.b.Ya()};function Uk(a){a.f||(a.f=!0,a.a.wa(a.m));var b=a.a;return a.a.ga().s(function(c){a.a==b&&a.reset();throw c;})}
-function Vk(a){a.a.Mb()&&Uk(a).s(function(b){var c=new Ng("unknown",null,null,null,new M("operation-not-supported-in-this-environment"));Wk(b)&&a.bb(c)});a.a.Hb()||Xk(a.b)}k.subscribe=function(a){Ma(this.h,a)||this.h.push(a);if(!this.f){var b=this;Pk(this.g).then(function(c){c?Ok(b.g).then(function(){Uk(b).s(function(d){var e=new Ng("unknown",null,null,null,new M("operation-not-supported-in-this-environment"));Wk(d)&&b.bb(e)})}):Vk(b)}).s(function(){Vk(b)})}};
-k.unsubscribe=function(a){y(this.h,function(b){return b==a})};k.bb=function(a){if(!a)throw new M("invalid-auth-event");6E5<=va()-this.u&&(this.i={},this.u=0);if(a&&a.getUid()&&this.i.hasOwnProperty(a.getUid()))return!1;for(var b=!1,c=0;c<this.h.length;c++){var d=this.h[c];if(d.xb(a.c,a.b)){if(b=this.c[a.c])b.h(a,d),a&&(a.f||a.b)&&(this.i[a.getUid()]=!0,this.u=va());b=!0;break}}Xk(this.b);return b};var Yk=new Me(2E3,1E4),Zk=new Me(3E4,6E4);Qk.prototype.fa=function(){return this.b.fa()};
-function $k(a,b,c,d,e,f){return a.a.Db(b,c,d,function(){a.f||(a.f=!0,a.a.wa(a.m))},function(){a.reset()},e,f)}function Wk(a){return a&&"auth/cordova-not-ready"==a.code?!0:!1}Qk.prototype.Ca=function(a,b,c){var d=this,e;return Nk(this.g).then(function(){return d.a.Ca(a,b,c).s(function(f){if(Wk(f))throw new M("operation-not-supported-in-this-environment");e=f;return Ok(d.g).then(function(){throw e;})}).then(function(){return d.a.Pb()?new C(function(){}):Ok(d.g).then(function(){return d.fa()}).then(function(){}).s(function(){})})})};
-Qk.prototype.Ea=function(a,b,c,d){return this.a.Ea(c,function(e){a.ha(b,null,e,d)},Yk.get())};var al={};function bl(a,b,c){var d=b+":"+c;al[d]||(al[d]=new Qk(a,b,c));return al[d]}function Rk(){this.b=null;this.f=[];this.c=[];this.a=null;this.i=this.g=!1}Rk.prototype.reset=function(){this.b=null;this.a&&(this.a.cancel(),this.a=null)};
-Rk.prototype.h=function(a,b){if(a){this.reset();this.g=!0;var c=a.c,d=a.b,e=a.a&&"auth/web-storage-unsupported"==a.a.code,f=a.a&&"auth/operation-not-supported-in-this-environment"==a.a.code;this.i=!(!e&&!f);"unknown"!=c||e||f?a.a?(cl(this,!0,null,a.a),D()):b.xa(c,d)?dl(this,a,b):E(new M("invalid-auth-event")):(cl(this,!1,null,null),D())}else E(new M("invalid-auth-event"))};function Xk(a){a.g||(a.g=!0,cl(a,!1,null,null))}Rk.prototype.Ya=function(){this.g&&!this.i&&cl(this,!1,null,null)};
-function dl(a,b,c){c=c.xa(b.c,b.b);var d=b.g,e=b.f,f=b.h,g=!!b.c.match(/Redirect$/);c(d,e,f).then(function(h){cl(a,g,h,null)}).s(function(h){cl(a,g,null,h)})}function el(a,b){a.b=function(){return E(b)};if(a.c.length)for(var c=0;c<a.c.length;c++)a.c[c](b)}function fl(a,b){a.b=function(){return D(b)};if(a.f.length)for(var c=0;c<a.f.length;c++)a.f[c](b)}function cl(a,b,c,d){b?d?el(a,d):fl(a,c):fl(a,{user:null});a.f=[];a.c=[]}
-Rk.prototype.fa=function(){var a=this;return new C(function(b,c){a.b?a.b().then(b,c):(a.f.push(b),a.c.push(c),gl(a))})};function gl(a){var b=new M("timeout");a.a&&a.a.cancel();a.a=Oc(Zk.get()).then(function(){a.b||(a.g=!0,cl(a,!0,null,b))})}function Sk(){}Sk.prototype.h=function(a,b){if(a){var c=a.c,d=a.b;a.a?(b.ha(a.c,null,a.a,a.b),D()):b.xa(c,d)?hl(a,b):E(new M("invalid-auth-event"))}else E(new M("invalid-auth-event"))};
-function hl(a,b){var c=a.b,d=a.c;b.xa(d,c)(a.g,a.f,a.h).then(function(e){b.ha(d,e,null,c)}).s(function(e){b.ha(d,null,e,c)})};function il(){this.ub=!1;Object.defineProperty(this,"appVerificationDisabled",{get:function(){return this.ub},set:function(a){this.ub=a},enumerable:!1})};function jl(a,b){this.a=b;K(this,"verificationId",a)}jl.prototype.confirm=function(a){a=Kg(this.verificationId,a);return this.a(a)};function kl(a,b,c,d){return(new Ig(a)).Ua(b,c).then(function(e){return new jl(e,d)})};function ll(a){var b=Gf(a);if(!(b&&b.exp&&b.auth_time&&b.iat))throw new M("internal-error","An internal error occurred. The token obtained by Firebase appears to be malformed. Please retry the operation.");L(this,{token:a,expirationTime:Pe(1E3*b.exp),authTime:Pe(1E3*b.auth_time),issuedAtTime:Pe(1E3*b.iat),signInProvider:b.firebase&&b.firebase.sign_in_provider?b.firebase.sign_in_provider:null,claims:b})};function ml(a,b,c){this.h=a;this.i=b;this.g=c;this.c=3E4;this.f=96E4;this.b=null;this.a=this.c;if(this.f<this.c)throw Error("Proactive refresh lower bound greater than upper bound!");}ml.prototype.start=function(){this.a=this.c;nl(this,!0)};function ol(a,b){if(b)return a.a=a.c,a.g();b=a.a;a.a*=2;a.a>a.f&&(a.a=a.f);return b}function nl(a,b){a.stop();a.b=Oc(ol(a,b)).then(function(){return Oe()}).then(function(){return a.h()}).then(function(){nl(a,!0)}).s(function(c){a.i(c)&&nl(a,!1)})}
-ml.prototype.stop=function(){this.b&&(this.b.cancel(),this.b=null)};function pl(a){this.f=a;this.b=this.a=null;this.c=0}pl.prototype.w=function(){return{apiKey:this.f.b,refreshToken:this.a,accessToken:this.b,expirationTime:this.c}};function ql(a,b){var c=b[ag],d=b.refreshToken;b=rl(b.expiresIn);a.b=c;a.c=b;a.a=d}function sl(a,b){a.b=b.b;a.a=b.a;a.c=b.c}function rl(a){return va()+1E3*parseInt(a,10)}
-function tl(a,b){return ni(a.f,b).then(function(c){a.b=c.access_token;a.c=rl(c.expires_in);a.a=c.refresh_token;return{accessToken:a.b,expirationTime:a.c,refreshToken:a.a}}).s(function(c){"auth/user-token-expired"==c.code&&(a.a=null);throw c;})}pl.prototype.getToken=function(a){a=!!a;return this.b&&!this.a?E(new M("user-token-expired")):a||!this.b||va()>this.c-3E4?this.a?tl(this,{grant_type:"refresh_token",refresh_token:this.a}):D(null):D({accessToken:this.b,expirationTime:this.c,refreshToken:this.a})};function ul(a,b){this.a=a||null;this.b=b||null;L(this,{lastSignInTime:Pe(b||null),creationTime:Pe(a||null)})}function vl(a){return new ul(a.a,a.b)}ul.prototype.w=function(){return{lastLoginAt:this.b,createdAt:this.a}};function wl(a,b,c,d,e,f){L(this,{uid:a,displayName:d||null,photoURL:e||null,email:c||null,phoneNumber:f||null,providerId:b})}function xl(a,b){kc.call(this,a);for(var c in b)this[c]=b[c]}u(xl,kc);
-function P(a,b,c){this.G=[];this.l=a.apiKey;this.o=a.appName;this.u=a.authDomain||null;a=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION?Be(_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION):null;this.c=new bi(this.l,If(Jf),a);this.h=new pl(this.c);yl(this,b[ag]);ql(this.h,b);K(this,"refreshToken",this.h.a);zl(this,c||{});F.call(this);this.I=!1;this.u&&Ee()&&(this.a=bl(this.u,this.l,this.o));this.N=[];this.i=null;this.A=Al(this);this.V=t(this.Ha,this);var d=this;this.ka=null;this.ta=function(e){d.pa(e.g)};this.X=null;this.O=[];this.sa=function(e){Bl(d,
-e.c)};this.W=null}u(P,F);P.prototype.pa=function(a){this.ka=a;hi(this.c,a)};P.prototype.ea=function(){return this.ka};function Cl(a,b){a.X&&Hc(a.X,"languageCodeChanged",a.ta);(a.X=b)&&xc(b,"languageCodeChanged",a.ta)}function Bl(a,b){a.O=b;ii(a.c,_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION?Be(_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION,a.O):null)}P.prototype.ya=function(){return Pa(this.O)};function Dl(a,b){a.W&&Hc(a.W,"frameworkChanged",a.sa);(a.W=b)&&xc(b,"frameworkChanged",a.sa)}P.prototype.Ha=function(){this.A.b&&(this.A.stop(),this.A.start())};
-function El(a){try{return _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.app(a.o).auth()}catch(b){throw new M("internal-error","No firebase.auth.Auth instance is available for the Firebase App '"+a.o+"'!");}}function Al(a){return new ml(function(){return a.F(!0)},function(b){return b&&"auth/network-request-failed"==b.code?!0:!1},function(){var b=a.h.c-va()-3E5;return 0<b?b:0})}function Fl(a){a.D||a.A.b||(a.A.start(),Hc(a,"tokenChanged",a.V),xc(a,"tokenChanged",a.V))}function Gl(a){Hc(a,"tokenChanged",a.V);a.A.stop()}
-function yl(a,b){a.ra=b;K(a,"_lat",b)}function Hl(a,b){y(a.N,function(c){return c==b})}function Il(a){for(var b=[],c=0;c<a.N.length;c++)b.push(a.N[c](a));return Bb(b).then(function(){return a})}function Jl(a){a.a&&!a.I&&(a.I=!0,a.a.subscribe(a))}
-function zl(a,b){L(a,{uid:b.uid,displayName:b.displayName||null,photoURL:b.photoURL||null,email:b.email||null,emailVerified:b.emailVerified||!1,phoneNumber:b.phoneNumber||null,isAnonymous:b.isAnonymous||!1,metadata:new ul(b.createdAt,b.lastLoginAt),providerData:[]})}K(P.prototype,"providerId","firebase");function Kl(){}function Ll(a){return D().then(function(){if(a.D)throw new M("app-deleted");})}function Ml(a){return Ia(a.providerData,function(b){return b.providerId})}
-function Nl(a,b){b&&(Ol(a,b.providerId),a.providerData.push(b))}function Ol(a,b){y(a.providerData,function(c){return c.providerId==b})}function Pl(a,b,c){("uid"!=b||c)&&a.hasOwnProperty(b)&&K(a,b,c)}
-function Ql(a,b){a!=b&&(L(a,{uid:b.uid,displayName:b.displayName,photoURL:b.photoURL,email:b.email,emailVerified:b.emailVerified,phoneNumber:b.phoneNumber,isAnonymous:b.isAnonymous,providerData:[]}),b.metadata?K(a,"metadata",vl(b.metadata)):K(a,"metadata",new ul),x(b.providerData,function(c){Nl(a,c)}),sl(a.h,b.h),K(a,"refreshToken",a.h.a))}k=P.prototype;k.reload=function(){var a=this;return Q(this,Ll(this).then(function(){return Rl(a).then(function(){return Il(a)}).then(Kl)}))};
-function Rl(a){return a.F().then(function(b){var c=a.isAnonymous;return Sl(a,b).then(function(){c||Pl(a,"isAnonymous",!1);return b})})}k.bc=function(a){return this.F(a).then(function(b){return new ll(b)})};k.F=function(a){var b=this;return Q(this,Ll(this).then(function(){return b.h.getToken(a)}).then(function(c){if(!c)throw new M("internal-error");c.accessToken!=b.ra&&(yl(b,c.accessToken),b.dispatchEvent(new xl("tokenChanged")));Pl(b,"refreshToken",c.refreshToken);return c.accessToken}))};
-function Tl(a,b){b[ag]&&a.ra!=b[ag]&&(ql(a.h,b),a.dispatchEvent(new xl("tokenChanged")),yl(a,b[ag]),Pl(a,"refreshToken",a.h.a))}function Sl(a,b){return O(a.c,Vi,{idToken:b}).then(t(a.xc,a))}
-k.xc=function(a){a=a.users;if(!a||!a.length)throw new M("internal-error");a=a[0];zl(this,{uid:a.localId,displayName:a.displayName,photoURL:a.photoUrl,email:a.email,emailVerified:!!a.emailVerified,phoneNumber:a.phoneNumber,lastLoginAt:a.lastLoginAt,createdAt:a.createdAt});for(var b=Ul(a),c=0;c<b.length;c++)Nl(this,b[c]);Pl(this,"isAnonymous",!(this.email&&a.passwordHash)&&!(this.providerData&&this.providerData.length))};
-function Ul(a){return(a=a.providerUserInfo)&&a.length?Ia(a,function(b){return new wl(b.rawId,b.providerId,b.email,b.displayName,b.photoUrl,b.phoneNumber)}):[]}k.yc=function(a){Ue("firebase.User.prototype.reauthenticateAndRetrieveDataWithCredential is deprecated. Please use firebase.User.prototype.reauthenticateWithCredential instead.");return this.gb(a)};
-k.gb=function(a){var b=this,c=null;return Q(this,a.f(this.c,this.uid).then(function(d){Tl(b,d);c=Vl(b,d,"reauthenticate");b.i=null;return b.reload()}).then(function(){return c}),!0)};function Wl(a,b){return Rl(a).then(function(){if(Ma(Ml(a),b))return Il(a).then(function(){throw new M("provider-already-linked");})})}k.pc=function(a){Ue("firebase.User.prototype.linkAndRetrieveDataWithCredential is deprecated. Please use firebase.User.prototype.linkWithCredential instead.");return this.eb(a)};
-k.eb=function(a){var b=this,c=null;return Q(this,Wl(this,a.providerId).then(function(){return b.F()}).then(function(d){return a.b(b.c,d)}).then(function(d){c=Vl(b,d,"link");return Xl(b,d)}).then(function(){return c}))};k.qc=function(a,b){var c=this;return Q(this,Wl(this,"phone").then(function(){return kl(El(c),a,b,t(c.eb,c))}))};k.zc=function(a,b){var c=this;return Q(this,D().then(function(){return kl(El(c),a,b,t(c.gb,c))}),!0)};
-function Vl(a,b,c){var d=Lg(b);b=Of(b);return Xe({user:a,credential:d,additionalUserInfo:b,operationType:c})}function Xl(a,b){Tl(a,b);return a.reload().then(function(){return a})}k.rb=function(a){var b=this;return Q(this,this.F().then(function(c){return b.c.rb(c,a)}).then(function(c){Tl(b,c);return b.reload()}))};k.Pc=function(a){var b=this;return Q(this,this.F().then(function(c){return a.b(b.c,c)}).then(function(c){Tl(b,c);return b.reload()}))};
-k.sb=function(a){var b=this;return Q(this,this.F().then(function(c){return b.c.sb(c,a)}).then(function(c){Tl(b,c);return b.reload()}))};
-k.tb=function(a){if(void 0===a.displayName&&void 0===a.photoURL)return Ll(this);var b=this;return Q(this,this.F().then(function(c){return b.c.tb(c,{displayName:a.displayName,photoUrl:a.photoURL})}).then(function(c){Tl(b,c);Pl(b,"displayName",c.displayName||null);Pl(b,"photoURL",c.photoUrl||null);x(b.providerData,function(d){"password"===d.providerId&&(K(d,"displayName",b.displayName),K(d,"photoURL",b.photoURL))});return Il(b)}).then(Kl))};
-k.Nc=function(a){var b=this;return Q(this,Rl(this).then(function(c){return Ma(Ml(b),a)?Gi(b.c,c,[a]).then(function(d){var e={};x(d.providerUserInfo||[],function(f){e[f.providerId]=!0});x(Ml(b),function(f){e[f]||Ol(b,f)});e[Ig.PROVIDER_ID]||K(b,"phoneNumber",null);return Il(b)}):Il(b).then(function(){throw new M("no-such-provider");})}))};
-k.delete=function(){var a=this;return Q(this,this.F().then(function(b){return O(a.c,Ui,{idToken:b})}).then(function(){a.dispatchEvent(new xl("userDeleted"))})).then(function(){for(var b=0;b<a.G.length;b++)a.G[b].cancel("app-deleted");Cl(a,null);Dl(a,null);a.G=[];a.D=!0;Gl(a);K(a,"refreshToken",null);a.a&&a.a.unsubscribe(a)})};
-k.xb=function(a,b){return"linkViaPopup"==a&&(this.g||null)==b&&this.f||"reauthViaPopup"==a&&(this.g||null)==b&&this.f||"linkViaRedirect"==a&&(this.aa||null)==b||"reauthViaRedirect"==a&&(this.aa||null)==b?!0:!1};k.ha=function(a,b,c,d){"linkViaPopup"!=a&&"reauthViaPopup"!=a||d!=(this.g||null)||(c&&this.v?this.v(c):b&&!c&&this.f&&this.f(b),this.b&&(this.b.cancel(),this.b=null),delete this.f,delete this.v)};
-k.xa=function(a,b){return"linkViaPopup"==a&&b==(this.g||null)?t(this.Bb,this):"reauthViaPopup"==a&&b==(this.g||null)?t(this.Cb,this):"linkViaRedirect"==a&&(this.aa||null)==b?t(this.Bb,this):"reauthViaRedirect"==a&&(this.aa||null)==b?t(this.Cb,this):null};k.rc=function(a){var b=this;return Yl(this,"linkViaPopup",a,function(){return Wl(b,a.providerId).then(function(){return Il(b)})},!1)};k.Ac=function(a){return Yl(this,"reauthViaPopup",a,function(){return D()},!0)};
-function Yl(a,b,c,d,e){if(!Ee())return E(new M("operation-not-supported-in-this-environment"));if(a.i&&!e)return E(a.i);var f=Nf(c.providerId),g=De(a.uid+":::"),h=null;(!Ge()||ve())&&a.u&&c.isOAuthProvider&&(h=pj(a.u,a.l,a.o,b,c,null,g,_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION||null));var m=me(h,f&&f.Ba,f&&f.Aa);d=d().then(function(){Zl(a);if(!e)return a.F().then(function(){})}).then(function(){return $k(a.a,m,b,c,g,!!h)}).then(function(){return new C(function(p,v){a.ha(b,null,new M("cancelled-popup-request"),a.g||null);
-a.f=p;a.v=v;a.g=g;a.b=a.a.Ea(a,b,m,g)})}).then(function(p){m&&le(m);return p?Xe(p):null}).s(function(p){m&&le(m);throw p;});return Q(a,d,e)}k.sc=function(a){var b=this;return $l(this,"linkViaRedirect",a,function(){return Wl(b,a.providerId)},!1)};k.Bc=function(a){return $l(this,"reauthViaRedirect",a,function(){return D()},!0)};
-function $l(a,b,c,d,e){if(!Ee())return E(new M("operation-not-supported-in-this-environment"));if(a.i&&!e)return E(a.i);var f=null,g=De(a.uid+":::");d=d().then(function(){Zl(a);if(!e)return a.F().then(function(){})}).then(function(){a.aa=g;return Il(a)}).then(function(h){a.ba&&(h=a.ba,h=h.b.set(am,a.w(),h.a));return h}).then(function(){return a.a.Ca(b,c,g)}).s(function(h){f=h;if(a.ba)return bm(a.ba);throw f;}).then(function(){if(f)throw f;});return Q(a,d,e)}
-function Zl(a){if(!a.a||!a.I){if(a.a&&!a.I)throw new M("internal-error");throw new M("auth-domain-config-required");}}k.Bb=function(a,b,c){var d=this;this.b&&(this.b.cancel(),this.b=null);var e=null,f=this.F().then(function(g){return eg(d.c,{requestUri:a,postBody:c,sessionId:b,idToken:g})}).then(function(g){e=Vl(d,g,"link");return Xl(d,g)}).then(function(){return e});return Q(this,f)};
-k.Cb=function(a,b,c){var d=this;this.b&&(this.b.cancel(),this.b=null);var e=null,f=D().then(function(){return $f(fg(d.c,{requestUri:a,sessionId:b,postBody:c}),d.uid)}).then(function(g){e=Vl(d,g,"reauthenticate");Tl(d,g);d.i=null;return d.reload()}).then(function(){return e});return Q(this,f,!0)};k.jb=function(a){var b=this,c=null;return Q(this,this.F().then(function(d){c=d;return"undefined"===typeof a||cb(a)?{}:xf(new nf(a))}).then(function(d){return b.c.jb(c,d)}).then(function(d){if(b.email!=d)return b.reload()}).then(function(){}))};
-function Q(a,b,c){var d=cm(a,b,c);a.G.push(d);d.ia(function(){Na(a.G,d)});return d}function cm(a,b,c){return a.i&&!c?(b.cancel(),E(a.i)):b.s(function(d){!d||"auth/user-disabled"!=d.code&&"auth/user-token-expired"!=d.code||(a.i||a.dispatchEvent(new xl("userInvalidated")),a.i=d);throw d;})}k.toJSON=function(){return this.w()};
-k.w=function(){var a={uid:this.uid,displayName:this.displayName,photoURL:this.photoURL,email:this.email,emailVerified:this.emailVerified,phoneNumber:this.phoneNumber,isAnonymous:this.isAnonymous,providerData:[],apiKey:this.l,appName:this.o,authDomain:this.u,stsTokenManager:this.h.w(),redirectEventId:this.aa||null};this.metadata&&fb(a,this.metadata.w());x(this.providerData,function(b){a.providerData.push(Ye(b))});return a};
-function dm(a){if(!a.apiKey)return null;var b={apiKey:a.apiKey,authDomain:a.authDomain,appName:a.appName},c={};if(a.stsTokenManager&&a.stsTokenManager.accessToken&&a.stsTokenManager.expirationTime)c[ag]=a.stsTokenManager.accessToken,c.refreshToken=a.stsTokenManager.refreshToken||null,c.expiresIn=(a.stsTokenManager.expirationTime-va())/1E3;else return null;var d=new P(b,c,a);a.providerData&&x(a.providerData,function(e){e&&Nl(d,Xe(e))});a.redirectEventId&&(d.aa=a.redirectEventId);return d}
-function em(a,b,c,d){var e=new P(a,b);c&&(e.ba=c);d&&Bl(e,d);return e.reload().then(function(){return e})}function fm(a,b,c,d){b=b||{apiKey:a.l,authDomain:a.u,appName:a.o};var e=a.h,f={};f[ag]=e.b;f.refreshToken=e.a;f.expiresIn=(e.c-va())/1E3;b=new P(b,f);c&&(b.ba=c);d&&Bl(b,d);Ql(b,a);return b};function gm(a){this.a=a;this.b=ek()}var am={name:"redirectUser",B:"session"};function bm(a){return ik(a.b,am,a.a)}function hm(a,b){return a.b.get(am,a.a).then(function(c){c&&b&&(c.authDomain=b);return dm(c||{})})};function im(a){this.a=a;this.b=ek();this.c=null;this.f=jm(this);this.b.addListener(km("local"),this.a,t(this.g,this))}im.prototype.g=function(){var a=this,b=km("local");lm(this,function(){return D().then(function(){return a.c&&"local"!=a.c.B?a.b.get(b,a.a):null}).then(function(c){if(c)return mm(a,"local").then(function(){a.c=b})})})};function mm(a,b){var c=[],d;for(d in ak)ak[d]!==b&&c.push(ik(a.b,km(ak[d]),a.a));c.push(ik(a.b,nm,a.a));return Ab(c)}
-function jm(a){var b=km("local"),c=km("session"),d=km("none");return hk(a.b,b,a.a).then(function(){return a.b.get(c,a.a)}).then(function(e){return e?c:a.b.get(d,a.a).then(function(f){return f?d:a.b.get(b,a.a).then(function(g){return g?b:a.b.get(nm,a.a).then(function(h){return h?km(h):b})})})}).then(function(e){a.c=e;return mm(a,e.B)}).s(function(){a.c||(a.c=b)})}var nm={name:"persistence",B:"session"};function km(a){return{name:"authUser",B:a}}
-im.prototype.mb=function(a){var b=null,c=this;bk(a);return lm(this,function(){return a!=c.c.B?c.b.get(c.c,c.a).then(function(d){b=d;return mm(c,a)}).then(function(){c.c=km(a);if(b)return c.b.set(c.c,b,c.a)}):D()})};function om(a){return lm(a,function(){return a.b.set(nm,a.c.B,a.a)})}function pm(a,b){return lm(a,function(){return a.b.set(a.c,b.w(),a.a)})}function qm(a){return lm(a,function(){return ik(a.b,a.c,a.a)})}
-function rm(a,b){return lm(a,function(){return a.b.get(a.c,a.a).then(function(c){c&&b&&(c.authDomain=b);return dm(c||{})})})}function lm(a,b){a.f=a.f.then(b,b);return a.f};function sm(a){this.l=!1;K(this,"settings",new il);K(this,"app",a);if(R(this).options&&R(this).options.apiKey)a=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION?Be(_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION):null,this.c=new bi(R(this).options&&R(this).options.apiKey,If(Jf),a);else throw new M("invalid-api-key");this.N=[];this.o=[];this.I=[];this.Sb=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.createSubscribe(t(this.mc,this));this.O=void 0;this.Tb=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.createSubscribe(t(this.nc,this));tm(this,null);this.h=new im(R(this).options.apiKey+":"+R(this).name);this.A=
-new gm(R(this).options.apiKey+":"+R(this).name);this.V=S(this,um(this));this.i=S(this,vm(this));this.X=!1;this.ka=t(this.Kc,this);this.Ha=t(this.Z,this);this.ra=t(this.$b,this);this.sa=t(this.jc,this);this.ta=t(this.kc,this);wm(this);this.INTERNAL={};this.INTERNAL["delete"]=t(this.delete,this);this.INTERNAL.logFramework=t(this.tc,this);this.u=0;F.call(this);xm(this);this.G=[]}u(sm,F);function ym(a){kc.call(this,"languageCodeChanged");this.g=a}u(ym,kc);
-function zm(a){kc.call(this,"frameworkChanged");this.c=a}u(zm,kc);k=sm.prototype;k.mb=function(a){a=this.h.mb(a);return S(this,a)};k.pa=function(a){this.W===a||this.l||(this.W=a,hi(this.c,this.W),this.dispatchEvent(new ym(this.ea())))};k.ea=function(){return this.W};k.Qc=function(){var a=l.navigator;this.pa(a?a.languages&&a.languages[0]||a.language||a.userLanguage||null:null)};k.tc=function(a){this.G.push(a);ii(this.c,_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION?Be(_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION,this.G):null);this.dispatchEvent(new zm(this.G))};
-k.ya=function(){return Pa(this.G)};function xm(a){Object.defineProperty(a,"lc",{get:function(){return this.ea()},set:function(b){this.pa(b)},enumerable:!1});a.W=null}k.toJSON=function(){return{apiKey:R(this).options.apiKey,authDomain:R(this).options.authDomain,appName:R(this).name,currentUser:T(this)&&T(this).w()}};function Am(a){return a.Rb||E(new M("auth-domain-config-required"))}
-function wm(a){var b=R(a).options.authDomain,c=R(a).options.apiKey;b&&Ee()&&(a.Rb=a.V.then(function(){if(!a.l){a.a=bl(b,c,R(a).name);a.a.subscribe(a);T(a)&&Jl(T(a));if(a.D){Jl(a.D);var d=a.D;d.pa(a.ea());Cl(d,a);d=a.D;Bl(d,a.G);Dl(d,a);a.D=null}return a.a}}))}k.xb=function(a,b){switch(a){case "unknown":case "signInViaRedirect":return!0;case "signInViaPopup":return this.g==b&&!!this.f;default:return!1}};
-k.ha=function(a,b,c,d){"signInViaPopup"==a&&this.g==d&&(c&&this.v?this.v(c):b&&!c&&this.f&&this.f(b),this.b&&(this.b.cancel(),this.b=null),delete this.f,delete this.v)};k.xa=function(a,b){return"signInViaRedirect"==a||"signInViaPopup"==a&&this.g==b&&this.f?t(this.Zb,this):null};
-k.Zb=function(a,b,c){var d=this;a={requestUri:a,postBody:c,sessionId:b};this.b&&(this.b.cancel(),this.b=null);var e=null,f=null,g=cg(d.c,a).then(function(h){e=Lg(h);f=Of(h);return h});a=d.V.then(function(){return g}).then(function(h){return Bm(d,h)}).then(function(){return Xe({user:T(d),credential:e,additionalUserInfo:f,operationType:"signIn"})});return S(this,a)};
-k.Ic=function(a){if(!Ee())return E(new M("operation-not-supported-in-this-environment"));var b=this,c=Nf(a.providerId),d=De(),e=null;(!Ge()||ve())&&R(this).options.authDomain&&a.isOAuthProvider&&(e=pj(R(this).options.authDomain,R(this).options.apiKey,R(this).name,"signInViaPopup",a,null,d,_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION||null));var f=me(e,c&&c.Ba,c&&c.Aa);c=Am(this).then(function(g){return $k(g,f,"signInViaPopup",a,d,!!e)}).then(function(){return new C(function(g,h){b.ha("signInViaPopup",null,new M("cancelled-popup-request"),
-b.g);b.f=g;b.v=h;b.g=d;b.b=b.a.Ea(b,"signInViaPopup",f,d)})}).then(function(g){f&&le(f);return g?Xe(g):null}).s(function(g){f&&le(f);throw g;});return S(this,c)};k.Jc=function(a){if(!Ee())return E(new M("operation-not-supported-in-this-environment"));var b=this,c=Am(this).then(function(){return om(b.h)}).then(function(){return b.a.Ca("signInViaRedirect",a)});return S(this,c)};
-k.fa=function(){if(!Ee())return E(new M("operation-not-supported-in-this-environment"));var a=this,b=Am(this).then(function(){return a.a.fa()}).then(function(c){return c?Xe(c):null});return S(this,b)};
-k.Oc=function(a){if(!a)return E(new M("null-user"));var b=this,c={};c.apiKey=R(this).options.apiKey;c.authDomain=R(this).options.authDomain;c.appName=R(this).name;var d=fm(a,c,b.A,b.ya());return S(this,this.i.then(function(){if(R(b).options.apiKey!=a.l)return d.reload()}).then(function(){if(T(b)&&a.uid==T(b).uid)return Ql(T(b),a),b.Z(a);tm(b,d);Jl(d);return b.Z(d)}).then(function(){Cm(b)}))};
-function Bm(a,b){var c={};c.apiKey=R(a).options.apiKey;c.authDomain=R(a).options.authDomain;c.appName=R(a).name;return a.V.then(function(){return em(c,b,a.A,a.ya())}).then(function(d){if(T(a)&&d.uid==T(a).uid)return Ql(T(a),d),a.Z(d);tm(a,d);Jl(d);return a.Z(d)}).then(function(){Cm(a)})}
-function tm(a,b){T(a)&&(Hl(T(a),a.Ha),Hc(T(a),"tokenChanged",a.ra),Hc(T(a),"userDeleted",a.sa),Hc(T(a),"userInvalidated",a.ta),Gl(T(a)));b&&(b.N.push(a.Ha),xc(b,"tokenChanged",a.ra),xc(b,"userDeleted",a.sa),xc(b,"userInvalidated",a.ta),0<a.u&&Fl(b));K(a,"currentUser",b);b&&(b.pa(a.ea()),Cl(b,a),Bl(b,a.G),Dl(b,a))}k.pb=function(){var a=this,b=this.i.then(function(){if(!T(a))return D();tm(a,null);return qm(a.h).then(function(){Cm(a)})});return S(this,b)};
-function Dm(a){var b=hm(a.A,R(a).options.authDomain).then(function(c){if(a.D=c)c.ba=a.A;return bm(a.A)});return S(a,b)}function um(a){var b=R(a).options.authDomain,c=Dm(a).then(function(){return rm(a.h,b)}).then(function(d){return d?(d.ba=a.A,a.D&&(a.D.aa||null)==(d.aa||null)?d:d.reload().then(function(){return pm(a.h,d).then(function(){return d})}).s(function(e){return"auth/network-request-failed"==e.code?d:qm(a.h)})):null}).then(function(d){tm(a,d||null)});return S(a,c)}
-function vm(a){return a.V.then(function(){return a.fa()}).s(function(){}).then(function(){if(!a.l)return a.ka()}).s(function(){}).then(function(){if(!a.l){a.X=!0;var b=a.h;b.b.addListener(km("local"),b.a,a.ka)}})}
-k.Kc=function(){var a=this;return rm(this.h,R(this).options.authDomain).then(function(b){if(!a.l){var c;if(c=T(a)&&b){c=T(a).uid;var d=b.uid;c=void 0===c||null===c||""===c||void 0===d||null===d||""===d?!1:c==d}if(c)return Ql(T(a),b),T(a).F();if(T(a)||b)tm(a,b),b&&(Jl(b),b.ba=a.A),a.a&&a.a.subscribe(a),Cm(a)}})};k.Z=function(a){return pm(this.h,a)};k.$b=function(){Cm(this);this.Z(T(this))};k.jc=function(){this.pb()};k.kc=function(){this.pb()};
-function Em(a,b){var c=null,d=null;return S(a,b.then(function(e){c=Lg(e);d=Of(e);return Bm(a,e)}).then(function(){return Xe({user:T(a),credential:c,additionalUserInfo:d,operationType:"signIn"})}))}k.mc=function(a){var b=this;this.addAuthTokenListener(function(){a.next(T(b))})};k.nc=function(a){var b=this;Fm(this,function(){a.next(T(b))})};k.vc=function(a,b,c){var d=this;this.X&&Promise.resolve().then(function(){q(a)?a(T(d)):q(a.next)&&a.next(T(d))});return this.Sb(a,b,c)};
-k.uc=function(a,b,c){var d=this;this.X&&Promise.resolve().then(function(){d.O=d.getUid();q(a)?a(T(d)):q(a.next)&&a.next(T(d))});return this.Tb(a,b,c)};k.ac=function(a){var b=this,c=this.i.then(function(){return T(b)?T(b).F(a).then(function(d){return{accessToken:d}}):null});return S(this,c)};k.Ec=function(a){var b=this;return this.i.then(function(){return Em(b,O(b.c,Xi,{token:a}))}).then(function(c){var d=c.user;Pl(d,"isAnonymous",!1);b.Z(d);return c})};
-k.Fc=function(a,b){var c=this;return this.i.then(function(){return Em(c,O(c.c,xg,{email:a,password:b}))})};k.Vb=function(a,b){var c=this;return this.i.then(function(){return Em(c,O(c.c,Ti,{email:a,password:b}))})};k.Nb=function(a){var b=this;return this.i.then(function(){return Em(b,a.la(b.c))})};k.nb=function(a){Ue("firebase.auth.Auth.prototype.signInAndRetrieveDataWithCredential is deprecated. Please use firebase.auth.Auth.prototype.signInWithCredential instead.");return this.Nb(a)};
-k.ob=function(){var a=this;return this.i.then(function(){var b=T(a);if(b&&b.isAnonymous){var c=Xe({providerId:null,isNewUser:!1});return Xe({user:b,credential:null,additionalUserInfo:c,operationType:"signIn"})}return Em(a,a.c.ob()).then(function(d){var e=d.user;Pl(e,"isAnonymous",!0);a.Z(e);return d})})};function R(a){return a.app}function T(a){return a.currentUser}k.getUid=function(){return T(this)&&T(this).uid||null};function Gm(a){return T(a)&&T(a)._lat||null}
-function Cm(a){if(a.X){for(var b=0;b<a.o.length;b++)if(a.o[b])a.o[b](Gm(a));if(a.O!==a.getUid()&&a.I.length)for(a.O=a.getUid(),b=0;b<a.I.length;b++)if(a.I[b])a.I[b](Gm(a))}}k.Ub=function(a){this.addAuthTokenListener(a);this.u++;0<this.u&&T(this)&&Fl(T(this))};k.Cc=function(a){var b=this;x(this.o,function(c){c==a&&b.u--});0>this.u&&(this.u=0);0==this.u&&T(this)&&Gl(T(this));this.removeAuthTokenListener(a)};
-k.addAuthTokenListener=function(a){var b=this;this.o.push(a);S(this,this.i.then(function(){b.l||Ma(b.o,a)&&a(Gm(b))}))};k.removeAuthTokenListener=function(a){y(this.o,function(b){return b==a})};function Fm(a,b){a.I.push(b);S(a,a.i.then(function(){!a.l&&Ma(a.I,b)&&a.O!==a.getUid()&&(a.O=a.getUid(),b(Gm(a)))}))}
-k.delete=function(){this.l=!0;for(var a=0;a<this.N.length;a++)this.N[a].cancel("app-deleted");this.N=[];this.h&&(a=this.h,a.b.removeListener(km("local"),a.a,this.ka));this.a&&(this.a.unsubscribe(this),this.a.Ya());return Promise.resolve()};function S(a,b){a.N.push(b);b.ia(function(){Na(a.N,b)});return b}k.Yb=function(a){return S(this,si(this.c,a))};k.oc=function(a){return!!Cg(a)};
-k.lb=function(a,b){var c=this;return S(this,D().then(function(){var d=new nf(b);if(!d.c)throw new M("argument-error",vf+" must be true when sending sign in link to email");return xf(d)}).then(function(d){return c.c.lb(a,d)}).then(function(){}))};k.Rc=function(a){return this.Ka(a).then(function(b){return b.data.email})};k.Za=function(a,b){return S(this,this.c.Za(a,b).then(function(){}))};k.Ka=function(a){return S(this,this.c.Ka(a).then(function(b){return new af(b)}))};
-k.Wa=function(a){return S(this,this.c.Wa(a).then(function(){}))};k.kb=function(a,b){var c=this;return S(this,D().then(function(){return"undefined"===typeof b||cb(b)?{}:xf(new nf(b))}).then(function(d){return c.c.kb(a,d)}).then(function(){}))};k.Hc=function(a,b){return S(this,kl(this,a,b,t(this.nb,this)))};k.Gc=function(a,b){var c=this;return S(this,D().then(function(){var d=Bg(a,b||ee());return c.nb(d)}))};function Hm(){}Hm.prototype.render=function(){};Hm.prototype.reset=function(){};Hm.prototype.getResponse=function(){};Hm.prototype.execute=function(){};function Im(){this.a={};this.b=1E12}var Jm=null;Im.prototype.render=function(a,b){this.a[this.b.toString()]=new Km(a,b);return this.b++};Im.prototype.reset=function(a){var b=Lm(this,a);a=Mm(a);b&&a&&(b.delete(),delete this.a[a])};Im.prototype.getResponse=function(a){return(a=Lm(this,a))?a.getResponse():null};Im.prototype.execute=function(a){(a=Lm(this,a))&&a.execute()};function Lm(a,b){return(b=Mm(b))?a.a[b]||null:null}function Mm(a){return(a="undefined"===typeof a?1E12:a)?a.toString():null}
-function Km(a,b){this.g=!1;this.c=b;this.a=this.b=null;this.h="invisible"!==this.c.size;this.f=Sd(a);var c=this;this.i=function(){c.execute()};this.h?this.execute():xc(this.f,"click",this.i)}Km.prototype.getResponse=function(){Nm(this);return this.b};
-Km.prototype.execute=function(){Nm(this);var a=this;this.a||(this.a=setTimeout(function(){a.b=ze();var b=a.c.callback,c=a.c["expired-callback"];if(b)try{b(a.b)}catch(d){}a.a=setTimeout(function(){a.a=null;a.b=null;if(c)try{c()}catch(d){}a.h&&a.execute()},6E4)},500))};Km.prototype.delete=function(){Nm(this);this.g=!0;clearTimeout(this.a);this.a=null;Hc(this.f,"click",this.i)};function Nm(a){if(a.g)throw Error("reCAPTCHA mock was already deleted!");};function Om(){}Om.prototype.g=function(){Jm||(Jm=new Im);return D(Jm)};Om.prototype.c=function(){};var Pm=null;function Qm(){this.b=l.grecaptcha?Infinity:0;this.f=null;this.a="__rcb"+Math.floor(1E6*Math.random()).toString()}var Rm=new wd(xd,"https://www.google.com/recaptcha/api.js?onload=%{onload}&render=explicit&hl=%{hl}"),Sm=new Me(3E4,6E4);
-Qm.prototype.g=function(a){var b=this;return new C(function(c,d){var e=setTimeout(function(){d(new M("network-request-failed"))},Sm.get());if(!l.grecaptcha||a!==b.f&&!b.b){l[b.a]=function(){if(l.grecaptcha){b.f=a;var g=l.grecaptcha.render;l.grecaptcha.render=function(h,m){h=g(h,m);b.b++;return h};clearTimeout(e);c(l.grecaptcha)}else clearTimeout(e),d(new M("internal-error"));delete l[b.a]};var f=Dd(Rm,{onload:b.a,hl:a||""});D(Vh(f)).s(function(){clearTimeout(e);d(new M("internal-error","Unable to load external reCAPTCHA dependencies!"))})}else clearTimeout(e),
-c(l.grecaptcha)})};Qm.prototype.c=function(){this.b--};var Tm=null;function Um(a,b,c,d,e,f,g){K(this,"type","recaptcha");this.c=this.f=null;this.D=!1;this.l=b;this.g=null;g?(Pm||(Pm=new Om),g=Pm):(Tm||(Tm=new Qm),g=Tm);this.o=g;this.a=c||{theme:"light",type:"image"};this.h=[];if(this.a[Vm])throw new M("argument-error","sitekey should not be provided for reCAPTCHA as one is automatically provisioned for the current project.");this.i="invisible"===this.a[Wm];if(!l.document)throw new M("operation-not-supported-in-this-environment","RecaptchaVerifier is only supported in a browser HTTP/HTTPS environment with DOM support.");
-if(!Sd(b)||!this.i&&Sd(b).hasChildNodes())throw new M("argument-error","reCAPTCHA container is either not found or already contains inner elements!");this.u=new bi(a,f||null,e||null);this.v=d||function(){return null};var h=this;this.m=[];var m=this.a[Xm];this.a[Xm]=function(v){Ym(h,v);if("function"===typeof m)m(v);else if("string"===typeof m){var z=J(m,l);"function"===typeof z&&z(v)}};var p=this.a[Zm];this.a[Zm]=function(){Ym(h,null);if("function"===typeof p)p();else if("string"===typeof p){var v=
-J(p,l);"function"===typeof v&&v()}}}var Xm="callback",Zm="expired-callback",Vm="sitekey",Wm="size";function Ym(a,b){for(var c=0;c<a.m.length;c++)try{a.m[c](b)}catch(d){}}function $m(a,b){y(a.m,function(c){return c==b})}function an(a,b){a.h.push(b);b.ia(function(){Na(a.h,b)});return b}k=Um.prototype;
-k.za=function(){var a=this;return this.f?this.f:this.f=an(this,D().then(function(){if(Fe()&&!we())return re();throw new M("operation-not-supported-in-this-environment","RecaptchaVerifier is only supported in a browser HTTP/HTTPS environment.");}).then(function(){return a.o.g(a.v())}).then(function(b){a.g=b;return O(a.u,Wi,{})}).then(function(b){a.a[Vm]=b.recaptchaSiteKey}).s(function(b){a.f=null;throw b;}))};
-k.render=function(){bn(this);var a=this;return an(this,this.za().then(function(){if(null===a.c){var b=a.l;if(!a.i){var c=Sd(b);b=Vd("DIV");c.appendChild(b)}a.c=a.g.render(b,a.a)}return a.c}))};k.verify=function(){bn(this);var a=this;return an(this,this.render().then(function(b){return new C(function(c){var d=a.g.getResponse(b);if(d)c(d);else{var e=function(f){f&&($m(a,e),c(f))};a.m.push(e);a.i&&a.g.execute(a.c)}})}))};k.reset=function(){bn(this);null!==this.c&&this.g.reset(this.c)};
-function bn(a){if(a.D)throw new M("internal-error","RecaptchaVerifier instance has been destroyed.");}k.clear=function(){bn(this);this.D=!0;this.o.c();for(var a=0;a<this.h.length;a++)this.h[a].cancel("RecaptchaVerifier instance has been destroyed.");if(!this.i){a=Sd(this.l);for(var b;b=a.firstChild;)a.removeChild(b)}};
-function cn(a,b,c){var d=!1;try{this.b=c||_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.app()}catch(g){throw new M("argument-error","No firebase.app.App instance is currently initialized.");}if(this.b.options&&this.b.options.apiKey)c=this.b.options.apiKey;else throw new M("invalid-api-key");var e=this,f=null;try{f=this.b.auth().ya()}catch(g){}try{d=this.b.auth().settings.appVerificationDisabledForTesting}catch(g){}f=_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION?Be(_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION,f):null;Um.call(this,c,a,b,function(){try{var g=e.b.auth().ea()}catch(h){g=
-null}return g},f,If(Jf),d)}u(cn,Um);function dn(a,b,c,d){a:{c=Array.prototype.slice.call(c);var e=0;for(var f=!1,g=0;g<b.length;g++)if(b[g].optional)f=!0;else{if(f)throw new M("internal-error","Argument validator encountered a required argument after an optional argument.");e++}f=b.length;if(c.length<e||f<c.length)d="Expected "+(e==f?1==e?"1 argument":e+" arguments":e+"-"+f+" arguments")+" but got "+c.length+".";else{for(e=0;e<c.length;e++)if(f=b[e].optional&&void 0===c[e],!b[e].M(c[e])&&!f){b=b[e];if(0>e||e>=en.length)throw new M("internal-error",
-"Argument validator received an unsupported number of arguments.");c=en[e];d=(d?"":c+" argument ")+(b.name?'"'+b.name+'" ':"")+"must be "+b.K+".";break a}d=null}}if(d)throw new M("argument-error",a+" failed: "+d);}var en="First Second Third Fourth Fifth Sixth Seventh Eighth Ninth".split(" ");function V(a,b){return{name:a||"",K:"a valid string",optional:!!b,M:n}}function fn(a,b){return{name:a||"",K:"a boolean",optional:!!b,M:ha}}
-function W(a,b){return{name:a||"",K:"a valid object",optional:!!b,M:r}}function gn(a,b){return{name:a||"",K:"a function",optional:!!b,M:q}}function hn(a,b){return{name:a||"",K:"null",optional:!!b,M:ma}}function jn(){return{name:"",K:"an HTML element",optional:!1,M:function(a){return!!(a&&a instanceof Element)}}}function kn(){return{name:"auth",K:"an instance of Firebase Auth",optional:!0,M:function(a){return!!(a&&a instanceof sm)}}}
-function ln(){return{name:"app",K:"an instance of Firebase App",optional:!0,M:function(a){return!!(a&&a instanceof _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.app.App)}}}function mn(a){return{name:a?a+"Credential":"credential",K:a?"a valid "+a+" credential":"a valid credential",optional:!1,M:function(b){if(!b)return!1;var c=!a||b.providerId===a;return!(!b.la||!c)}}}
-function nn(){return{name:"authProvider",K:"a valid Auth provider",optional:!1,M:function(a){return!!(a&&a.providerId&&a.hasOwnProperty&&a.hasOwnProperty("isOAuthProvider"))}}}function on(){return{name:"applicationVerifier",K:"an implementation of firebase.auth.ApplicationVerifier",optional:!1,M:function(a){return!!(a&&n(a.type)&&q(a.verify))}}}function X(a,b,c,d){return{name:c||"",K:a.K+" or "+b.K,optional:!!d,M:function(e){return a.M(e)||b.M(e)}}};function Y(a,b){for(var c in b){var d=b[c].name;a[d]=pn(d,a[c],b[c].j)}}function qn(a,b){for(var c in b){var d=b[c].name;d!==c&&Object.defineProperty(a,d,{get:ua(function(e){return this[e]},c),set:ua(function(e,f,g,h){dn(e,[g],[h],!0);this[f]=h},d,c,b[c].vb),enumerable:!0})}}function Z(a,b,c,d){a[b]=pn(b,c,d)}
-function pn(a,b,c){function d(){var g=Array.prototype.slice.call(arguments);dn(e,c,g);return b.apply(this,g)}if(!c)return b;var e=rn(a),f;for(f in b)d[f]=b[f];for(f in b.prototype)d.prototype[f]=b.prototype[f];return d}function rn(a){a=a.split(".");return a[a.length-1]};Y(sm.prototype,{Wa:{name:"applyActionCode",j:[V("code")]},Ka:{name:"checkActionCode",j:[V("code")]},Za:{name:"confirmPasswordReset",j:[V("code"),V("newPassword")]},Vb:{name:"createUserWithEmailAndPassword",j:[V("email"),V("password")]},Yb:{name:"fetchSignInMethodsForEmail",j:[V("email")]},fa:{name:"getRedirectResult",j:[]},oc:{name:"isSignInWithEmailLink",j:[V("emailLink")]},uc:{name:"onAuthStateChanged",j:[X(W(),gn(),"nextOrObserver"),gn("opt_error",!0),gn("opt_completed",!0)]},vc:{name:"onIdTokenChanged",
-j:[X(W(),gn(),"nextOrObserver"),gn("opt_error",!0),gn("opt_completed",!0)]},kb:{name:"sendPasswordResetEmail",j:[V("email"),X(W("opt_actionCodeSettings",!0),hn(null,!0),"opt_actionCodeSettings",!0)]},lb:{name:"sendSignInLinkToEmail",j:[V("email"),W("actionCodeSettings")]},mb:{name:"setPersistence",j:[V("persistence")]},nb:{name:"signInAndRetrieveDataWithCredential",j:[mn()]},ob:{name:"signInAnonymously",j:[]},Nb:{name:"signInWithCredential",j:[mn()]},Ec:{name:"signInWithCustomToken",j:[V("token")]},
-Fc:{name:"signInWithEmailAndPassword",j:[V("email"),V("password")]},Gc:{name:"signInWithEmailLink",j:[V("email"),V("emailLink",!0)]},Hc:{name:"signInWithPhoneNumber",j:[V("phoneNumber"),on()]},Ic:{name:"signInWithPopup",j:[nn()]},Jc:{name:"signInWithRedirect",j:[nn()]},Oc:{name:"updateCurrentUser",j:[X(function(a){return{name:"user",K:"an instance of Firebase User",optional:!!a,M:function(b){return!!(b&&b instanceof P)}}}(),hn(),"user")]},pb:{name:"signOut",j:[]},toJSON:{name:"toJSON",j:[V(null,!0)]},
-Qc:{name:"useDeviceLanguage",j:[]},Rc:{name:"verifyPasswordResetCode",j:[V("code")]}});qn(sm.prototype,{lc:{name:"languageCode",vb:X(V(),hn(),"languageCode")}});sm.Persistence=ak;sm.Persistence.LOCAL="local";sm.Persistence.SESSION="session";sm.Persistence.NONE="none";
-Y(P.prototype,{"delete":{name:"delete",j:[]},bc:{name:"getIdTokenResult",j:[fn("opt_forceRefresh",!0)]},F:{name:"getIdToken",j:[fn("opt_forceRefresh",!0)]},pc:{name:"linkAndRetrieveDataWithCredential",j:[mn()]},eb:{name:"linkWithCredential",j:[mn()]},qc:{name:"linkWithPhoneNumber",j:[V("phoneNumber"),on()]},rc:{name:"linkWithPopup",j:[nn()]},sc:{name:"linkWithRedirect",j:[nn()]},yc:{name:"reauthenticateAndRetrieveDataWithCredential",j:[mn()]},gb:{name:"reauthenticateWithCredential",j:[mn()]},zc:{name:"reauthenticateWithPhoneNumber",
-j:[V("phoneNumber"),on()]},Ac:{name:"reauthenticateWithPopup",j:[nn()]},Bc:{name:"reauthenticateWithRedirect",j:[nn()]},reload:{name:"reload",j:[]},jb:{name:"sendEmailVerification",j:[X(W("opt_actionCodeSettings",!0),hn(null,!0),"opt_actionCodeSettings",!0)]},toJSON:{name:"toJSON",j:[V(null,!0)]},Nc:{name:"unlink",j:[V("provider")]},rb:{name:"updateEmail",j:[V("email")]},sb:{name:"updatePassword",j:[V("password")]},Pc:{name:"updatePhoneNumber",j:[mn("phone")]},tb:{name:"updateProfile",j:[W("profile")]}});
-Y(Im.prototype,{execute:{name:"execute"},render:{name:"render"},reset:{name:"reset"},getResponse:{name:"getResponse"}});Y(Hm.prototype,{execute:{name:"execute"},render:{name:"render"},reset:{name:"reset"},getResponse:{name:"getResponse"}});Y(C.prototype,{ia:{name:"finally"},s:{name:"catch"},then:{name:"then"}});qn(il.prototype,{appVerificationDisabled:{name:"appVerificationDisabledForTesting",vb:fn("appVerificationDisabledForTesting")}});Y(jl.prototype,{confirm:{name:"confirm",j:[V("verificationCode")]}});
-Z(Zf,"fromJSON",function(a){a=n(a)?JSON.parse(a):a;for(var b,c=[jg,Ag,Hg,gg],d=0;d<c.length;d++)if(b=c[d](a))return b;return null},[X(V(),W(),"json")]);Z(vg,"credential",function(a,b){return new ug(a,b)},[V("email"),V("password")]);Y(ug.prototype,{w:{name:"toJSON",j:[V(null,!0)]}});Y(mg.prototype,{ua:{name:"addScope",j:[V("scope")]},Da:{name:"setCustomParameters",j:[W("customOAuthParameters")]}});Z(mg,"credential",ng,[X(V(),W(),"token")]);Z(vg,"credentialWithLink",Bg,[V("email"),V("emailLink")]);
-Y(og.prototype,{ua:{name:"addScope",j:[V("scope")]},Da:{name:"setCustomParameters",j:[W("customOAuthParameters")]}});Z(og,"credential",pg,[X(V(),W(),"token")]);Y(qg.prototype,{ua:{name:"addScope",j:[V("scope")]},Da:{name:"setCustomParameters",j:[W("customOAuthParameters")]}});Z(qg,"credential",rg,[X(V(),X(W(),hn()),"idToken"),X(V(),hn(),"accessToken",!0)]);Y(sg.prototype,{Da:{name:"setCustomParameters",j:[W("customOAuthParameters")]}});Z(sg,"credential",tg,[X(V(),W(),"token"),V("secret",!0)]);
-Y(N.prototype,{ua:{name:"addScope",j:[V("scope")]},credential:{name:"credential",j:[X(V(),X(W(),hn()),"optionsOrIdToken"),X(V(),hn(),"accessToken",!0)]},Da:{name:"setCustomParameters",j:[W("customOAuthParameters")]}});Y(hg.prototype,{w:{name:"toJSON",j:[V(null,!0)]}});Y(bg.prototype,{w:{name:"toJSON",j:[V(null,!0)]}});Z(Ig,"credential",Kg,[V("verificationId"),V("verificationCode")]);Y(Ig.prototype,{Ua:{name:"verifyPhoneNumber",j:[V("phoneNumber"),on()]}});
-Y(Dg.prototype,{w:{name:"toJSON",j:[V(null,!0)]}});Y(M.prototype,{toJSON:{name:"toJSON",j:[V(null,!0)]}});Y(Sg.prototype,{toJSON:{name:"toJSON",j:[V(null,!0)]}});Y(Rg.prototype,{toJSON:{name:"toJSON",j:[V(null,!0)]}});Y(cn.prototype,{clear:{name:"clear",j:[]},render:{name:"render",j:[]},verify:{name:"verify",j:[]}});
-(function(){if("undefined"!==typeof _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL&&_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.registerService){var a={Auth:sm,AuthCredential:Zf,Error:M};Z(a,"EmailAuthProvider",vg,[]);Z(a,"FacebookAuthProvider",mg,[]);Z(a,"GithubAuthProvider",og,[]);Z(a,"GoogleAuthProvider",qg,[]);Z(a,"TwitterAuthProvider",sg,[]);Z(a,"OAuthProvider",N,[V("providerId")]);Z(a,"SAMLAuthProvider",lg,[V("providerId")]);Z(a,"PhoneAuthProvider",Ig,[kn()]);Z(a,"RecaptchaVerifier",cn,[X(V(),jn(),"recaptchaContainer"),W("recaptchaParameters",
-!0),ln()]);_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.registerService("auth",function(b,c){b=new sm(b);c({INTERNAL:{getUid:t(b.getUid,b),getToken:t(b.ac,b),addAuthTokenListener:t(b.Ub,b),removeAuthTokenListener:t(b.Cc,b)}});return b},a,function(b,c){if("create"===b)try{c.auth()}catch(d){}});_firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.INTERNAL.extendNamespace({User:P})}else throw Error("Cannot find the firebase namespace; be sure to include firebase-app.js before this library.");})();}).apply(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : {});
-
-//# sourceMappingURL=auth.esm.js.map
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
-/***/ "./node_modules/@firebase/logger/dist/index.esm.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/@firebase/logger/dist/index.esm.js ***!
-  \*********************************************************/
-/*! exports provided: LogLevel, Logger, setLogLevel */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogLevel", function() { return LogLevel; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Logger", function() { return Logger; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setLogLevel", function() { return setLogLevel; });
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * A container for all of the Logger instances
- */
-var instances = [];
-/**
- * The JS SDK supports 5 log levels and also allows a user the ability to
- * silence the logs altogether.
- *
- * The order is a follows:
- * DEBUG < VERBOSE < INFO < WARN < ERROR
- *
- * All of the log types above the current log level will be captured (i.e. if
- * you set the log level to `INFO`, errors will still be logged, but `DEBUG` and
- * `VERBOSE` logs will not)
- */
-var LogLevel;
-(function (LogLevel) {
-    LogLevel[LogLevel["DEBUG"] = 0] = "DEBUG";
-    LogLevel[LogLevel["VERBOSE"] = 1] = "VERBOSE";
-    LogLevel[LogLevel["INFO"] = 2] = "INFO";
-    LogLevel[LogLevel["WARN"] = 3] = "WARN";
-    LogLevel[LogLevel["ERROR"] = 4] = "ERROR";
-    LogLevel[LogLevel["SILENT"] = 5] = "SILENT";
-})(LogLevel || (LogLevel = {}));
-/**
- * The default log level
- */
-var defaultLogLevel = LogLevel.INFO;
-/**
- * The default log handler will forward DEBUG, VERBOSE, INFO, WARN, and ERROR
- * messages on to their corresponding console counterparts (if the log method
- * is supported by the current log level)
- */
-var defaultLogHandler = function (instance, logType) {
-    var args = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-        args[_i - 2] = arguments[_i];
-    }
-    if (logType < instance.logLevel)
-        return;
-    var now = new Date().toISOString();
-    switch (logType) {
-        /**
-         * By default, `console.debug` is not displayed in the developer console (in
-         * chrome). To avoid forcing users to have to opt-in to these logs twice
-         * (i.e. once for firebase, and once in the console), we are sending `DEBUG`
-         * logs to the `console.log` function.
-         */
-        case LogLevel.DEBUG:
-            console.log.apply(console, ["[" + now + "]  " + instance.name + ":"].concat(args));
-            break;
-        case LogLevel.VERBOSE:
-            console.log.apply(console, ["[" + now + "]  " + instance.name + ":"].concat(args));
-            break;
-        case LogLevel.INFO:
-            console.info.apply(console, ["[" + now + "]  " + instance.name + ":"].concat(args));
-            break;
-        case LogLevel.WARN:
-            console.warn.apply(console, ["[" + now + "]  " + instance.name + ":"].concat(args));
-            break;
-        case LogLevel.ERROR:
-            console.error.apply(console, ["[" + now + "]  " + instance.name + ":"].concat(args));
-            break;
-        default:
-            throw new Error("Attempted to log a message with an invalid logType (value: " + logType + ")");
-    }
-};
-var Logger = /** @class */ (function () {
-    /**
-     * Gives you an instance of a Logger to capture messages according to
-     * Firebase's logging scheme.
-     *
-     * @param name The name that the logs will be associated with
-     */
-    function Logger(name) {
-        this.name = name;
-        /**
-         * The log level of the given Logger instance.
-         */
-        this._logLevel = defaultLogLevel;
-        /**
-         * The log handler for the Logger instance.
-         */
-        this._logHandler = defaultLogHandler;
-        /**
-         * Capture the current instance for later use
-         */
-        instances.push(this);
-    }
-    Object.defineProperty(Logger.prototype, "logLevel", {
-        get: function () {
-            return this._logLevel;
-        },
-        set: function (val) {
-            if (!(val in LogLevel)) {
-                throw new TypeError('Invalid value assigned to `logLevel`');
-            }
-            this._logLevel = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Logger.prototype, "logHandler", {
-        get: function () {
-            return this._logHandler;
-        },
-        set: function (val) {
-            if (typeof val !== 'function') {
-                throw new TypeError('Value assigned to `logHandler` must be a function');
-            }
-            this._logHandler = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * The functions below are all based on the `console` interface
-     */
-    Logger.prototype.debug = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this._logHandler.apply(this, [this, LogLevel.DEBUG].concat(args));
-    };
-    Logger.prototype.log = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this._logHandler.apply(this, [this, LogLevel.VERBOSE].concat(args));
-    };
-    Logger.prototype.info = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this._logHandler.apply(this, [this, LogLevel.INFO].concat(args));
-    };
-    Logger.prototype.warn = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this._logHandler.apply(this, [this, LogLevel.WARN].concat(args));
-    };
-    Logger.prototype.error = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this._logHandler.apply(this, [this, LogLevel.ERROR].concat(args));
-    };
-    return Logger;
-}());
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-function setLogLevel(level) {
-    instances.forEach(function (inst) {
-        inst.logLevel = level;
-    });
-}
-
-
-//# sourceMappingURL=index.esm.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/@firebase/util/dist/index.cjs.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/@firebase/util/dist/index.cjs.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/@firebase/util/node_modules/tslib/tslib.es6.js");
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @fileoverview Firebase constants.  Some of these (@defines) can be overridden at compile-time.
- */
-var CONSTANTS = {
-    /**
-     * @define {boolean} Whether this is the client Node.js SDK.
-     */
-    NODE_CLIENT: false,
-    /**
-     * @define {boolean} Whether this is the Admin Node.js SDK.
-     */
-    NODE_ADMIN: false,
-    /**
-     * Firebase SDK Version
-     */
-    SDK_VERSION: '${JSCORE_VERSION}'
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Throws an error if the provided assertion is falsy
- * @param {*} assertion The assertion to be tested for falsiness
- * @param {!string} message The message to display if the check fails
- */
-var assert = function (assertion, message) {
-    if (!assertion) {
-        throw assertionError(message);
-    }
-};
-/**
- * Returns an Error object suitable for throwing.
- * @param {string} message
- * @return {!Error}
- */
-var assertionError = function (message) {
-    return new Error('Firebase Database (' +
-        CONSTANTS.SDK_VERSION +
-        ') INTERNAL ASSERT FAILED: ' +
-        message);
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var stringToByteArray = function (str) {
-    // TODO(user): Use native implementations if/when available
-    var out = [], p = 0;
-    for (var i = 0; i < str.length; i++) {
-        var c = str.charCodeAt(i);
-        if (c < 128) {
-            out[p++] = c;
-        }
-        else if (c < 2048) {
-            out[p++] = (c >> 6) | 192;
-            out[p++] = (c & 63) | 128;
-        }
-        else if ((c & 0xfc00) == 0xd800 &&
-            i + 1 < str.length &&
-            (str.charCodeAt(i + 1) & 0xfc00) == 0xdc00) {
-            // Surrogate Pair
-            c = 0x10000 + ((c & 0x03ff) << 10) + (str.charCodeAt(++i) & 0x03ff);
-            out[p++] = (c >> 18) | 240;
-            out[p++] = ((c >> 12) & 63) | 128;
-            out[p++] = ((c >> 6) & 63) | 128;
-            out[p++] = (c & 63) | 128;
-        }
-        else {
-            out[p++] = (c >> 12) | 224;
-            out[p++] = ((c >> 6) & 63) | 128;
-            out[p++] = (c & 63) | 128;
-        }
-    }
-    return out;
-};
-/**
- * Turns an array of numbers into the string given by the concatenation of the
- * characters to which the numbers correspond.
- * @param {Array<number>} bytes Array of numbers representing characters.
- * @return {string} Stringification of the array.
- */
-var byteArrayToString = function (bytes) {
-    // TODO(user): Use native implementations if/when available
-    var out = [], pos = 0, c = 0;
-    while (pos < bytes.length) {
-        var c1 = bytes[pos++];
-        if (c1 < 128) {
-            out[c++] = String.fromCharCode(c1);
-        }
-        else if (c1 > 191 && c1 < 224) {
-            var c2 = bytes[pos++];
-            out[c++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
-        }
-        else if (c1 > 239 && c1 < 365) {
-            // Surrogate Pair
-            var c2 = bytes[pos++];
-            var c3 = bytes[pos++];
-            var c4 = bytes[pos++];
-            var u = (((c1 & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63)) -
-                0x10000;
-            out[c++] = String.fromCharCode(0xd800 + (u >> 10));
-            out[c++] = String.fromCharCode(0xdc00 + (u & 1023));
-        }
-        else {
-            var c2 = bytes[pos++];
-            var c3 = bytes[pos++];
-            out[c++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-        }
-    }
-    return out.join('');
-};
-// Static lookup maps, lazily populated by init_()
-var base64 = {
-    /**
-     * Maps bytes to characters.
-     * @type {Object}
-     * @private
-     */
-    byteToCharMap_: null,
-    /**
-     * Maps characters to bytes.
-     * @type {Object}
-     * @private
-     */
-    charToByteMap_: null,
-    /**
-     * Maps bytes to websafe characters.
-     * @type {Object}
-     * @private
-     */
-    byteToCharMapWebSafe_: null,
-    /**
-     * Maps websafe characters to bytes.
-     * @type {Object}
-     * @private
-     */
-    charToByteMapWebSafe_: null,
-    /**
-     * Our default alphabet, shared between
-     * ENCODED_VALS and ENCODED_VALS_WEBSAFE
-     * @type {string}
-     */
-    ENCODED_VALS_BASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'abcdefghijklmnopqrstuvwxyz' + '0123456789',
-    /**
-     * Our default alphabet. Value 64 (=) is special; it means "nothing."
-     * @type {string}
-     */
-    get ENCODED_VALS() {
-        return this.ENCODED_VALS_BASE + '+/=';
-    },
-    /**
-     * Our websafe alphabet.
-     * @type {string}
-     */
-    get ENCODED_VALS_WEBSAFE() {
-        return this.ENCODED_VALS_BASE + '-_.';
-    },
-    /**
-     * Whether this browser supports the atob and btoa functions. This extension
-     * started at Mozilla but is now implemented by many browsers. We use the
-     * ASSUME_* variables to avoid pulling in the full useragent detection library
-     * but still allowing the standard per-browser compilations.
-     *
-     * @type {boolean}
-     */
-    HAS_NATIVE_SUPPORT: typeof atob === 'function',
-    /**
-     * Base64-encode an array of bytes.
-     *
-     * @param {Array<number>|Uint8Array} input An array of bytes (numbers with
-     *     value in [0, 255]) to encode.
-     * @param {boolean=} opt_webSafe Boolean indicating we should use the
-     *     alternative alphabet.
-     * @return {string} The base64 encoded string.
-     */
-    encodeByteArray: function (input, opt_webSafe) {
-        if (!Array.isArray(input)) {
-            throw Error('encodeByteArray takes an array as a parameter');
-        }
-        this.init_();
-        var byteToCharMap = opt_webSafe
-            ? this.byteToCharMapWebSafe_
-            : this.byteToCharMap_;
-        var output = [];
-        for (var i = 0; i < input.length; i += 3) {
-            var byte1 = input[i];
-            var haveByte2 = i + 1 < input.length;
-            var byte2 = haveByte2 ? input[i + 1] : 0;
-            var haveByte3 = i + 2 < input.length;
-            var byte3 = haveByte3 ? input[i + 2] : 0;
-            var outByte1 = byte1 >> 2;
-            var outByte2 = ((byte1 & 0x03) << 4) | (byte2 >> 4);
-            var outByte3 = ((byte2 & 0x0f) << 2) | (byte3 >> 6);
-            var outByte4 = byte3 & 0x3f;
-            if (!haveByte3) {
-                outByte4 = 64;
-                if (!haveByte2) {
-                    outByte3 = 64;
-                }
-            }
-            output.push(byteToCharMap[outByte1], byteToCharMap[outByte2], byteToCharMap[outByte3], byteToCharMap[outByte4]);
-        }
-        return output.join('');
-    },
-    /**
-     * Base64-encode a string.
-     *
-     * @param {string} input A string to encode.
-     * @param {boolean=} opt_webSafe If true, we should use the
-     *     alternative alphabet.
-     * @return {string} The base64 encoded string.
-     */
-    encodeString: function (input, opt_webSafe) {
-        // Shortcut for Mozilla browsers that implement
-        // a native base64 encoder in the form of "btoa/atob"
-        if (this.HAS_NATIVE_SUPPORT && !opt_webSafe) {
-            return btoa(input);
-        }
-        return this.encodeByteArray(stringToByteArray(input), opt_webSafe);
-    },
-    /**
-     * Base64-decode a string.
-     *
-     * @param {string} input to decode.
-     * @param {boolean=} opt_webSafe True if we should use the
-     *     alternative alphabet.
-     * @return {string} string representing the decoded value.
-     */
-    decodeString: function (input, opt_webSafe) {
-        // Shortcut for Mozilla browsers that implement
-        // a native base64 encoder in the form of "btoa/atob"
-        if (this.HAS_NATIVE_SUPPORT && !opt_webSafe) {
-            return atob(input);
-        }
-        return byteArrayToString(this.decodeStringToByteArray(input, opt_webSafe));
-    },
-    /**
-     * Base64-decode a string.
-     *
-     * In base-64 decoding, groups of four characters are converted into three
-     * bytes.  If the encoder did not apply padding, the input length may not
-     * be a multiple of 4.
-     *
-     * In this case, the last group will have fewer than 4 characters, and
-     * padding will be inferred.  If the group has one or two characters, it decodes
-     * to one byte.  If the group has three characters, it decodes to two bytes.
-     *
-     * @param {string} input Input to decode.
-     * @param {boolean=} opt_webSafe True if we should use the web-safe alphabet.
-     * @return {!Array<number>} bytes representing the decoded value.
-     */
-    decodeStringToByteArray: function (input, opt_webSafe) {
-        this.init_();
-        var charToByteMap = opt_webSafe
-            ? this.charToByteMapWebSafe_
-            : this.charToByteMap_;
-        var output = [];
-        for (var i = 0; i < input.length;) {
-            var byte1 = charToByteMap[input.charAt(i++)];
-            var haveByte2 = i < input.length;
-            var byte2 = haveByte2 ? charToByteMap[input.charAt(i)] : 0;
-            ++i;
-            var haveByte3 = i < input.length;
-            var byte3 = haveByte3 ? charToByteMap[input.charAt(i)] : 64;
-            ++i;
-            var haveByte4 = i < input.length;
-            var byte4 = haveByte4 ? charToByteMap[input.charAt(i)] : 64;
-            ++i;
-            if (byte1 == null || byte2 == null || byte3 == null || byte4 == null) {
-                throw Error();
-            }
-            var outByte1 = (byte1 << 2) | (byte2 >> 4);
-            output.push(outByte1);
-            if (byte3 != 64) {
-                var outByte2 = ((byte2 << 4) & 0xf0) | (byte3 >> 2);
-                output.push(outByte2);
-                if (byte4 != 64) {
-                    var outByte3 = ((byte3 << 6) & 0xc0) | byte4;
-                    output.push(outByte3);
-                }
-            }
-        }
-        return output;
-    },
-    /**
-     * Lazy static initialization function. Called before
-     * accessing any of the static map variables.
-     * @private
-     */
-    init_: function () {
-        if (!this.byteToCharMap_) {
-            this.byteToCharMap_ = {};
-            this.charToByteMap_ = {};
-            this.byteToCharMapWebSafe_ = {};
-            this.charToByteMapWebSafe_ = {};
-            // We want quick mappings back and forth, so we precompute two maps.
-            for (var i = 0; i < this.ENCODED_VALS.length; i++) {
-                this.byteToCharMap_[i] = this.ENCODED_VALS.charAt(i);
-                this.charToByteMap_[this.byteToCharMap_[i]] = i;
-                this.byteToCharMapWebSafe_[i] = this.ENCODED_VALS_WEBSAFE.charAt(i);
-                this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[i]] = i;
-                // Be forgiving when decoding and correctly decode both encodings.
-                if (i >= this.ENCODED_VALS_BASE.length) {
-                    this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(i)] = i;
-                    this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(i)] = i;
-                }
-            }
-        }
-    }
-};
-/**
- * URL-safe base64 encoding
- * @param {!string} str
- * @return {!string}
- */
-var base64Encode = function (str) {
-    var utf8Bytes = stringToByteArray(str);
-    return base64.encodeByteArray(utf8Bytes, true);
-};
-/**
- * URL-safe base64 decoding
- *
- * NOTE: DO NOT use the global atob() function - it does NOT support the
- * base64Url variant encoding.
- *
- * @param {string} str To be decoded
- * @return {?string} Decoded result, if possible
- */
-var base64Decode = function (str) {
-    try {
-        return base64.decodeString(str, true);
-    }
-    catch (e) {
-        console.error('base64Decode failed: ', e);
-    }
-    return null;
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Do a deep-copy of basic JavaScript Objects or Arrays.
- */
-function deepCopy(value) {
-    return deepExtend(undefined, value);
-}
-/**
- * Copy properties from source to target (recursively allows extension
- * of Objects and Arrays).  Scalar values in the target are over-written.
- * If target is undefined, an object of the appropriate type will be created
- * (and returned).
- *
- * We recursively copy all child properties of plain Objects in the source- so
- * that namespace- like dictionaries are merged.
- *
- * Note that the target can be a function, in which case the properties in
- * the source Object are copied onto it as static properties of the Function.
- */
-function deepExtend(target, source) {
-    if (!(source instanceof Object)) {
-        return source;
-    }
-    switch (source.constructor) {
-        case Date:
-            // Treat Dates like scalars; if the target date object had any child
-            // properties - they will be lost!
-            var dateValue = source;
-            return new Date(dateValue.getTime());
-        case Object:
-            if (target === undefined) {
-                target = {};
-            }
-            break;
-        case Array:
-            // Always copy the array source and overwrite the target.
-            target = [];
-            break;
-        default:
-            // Not a plain Object - treat it as a scalar.
-            return source;
-    }
-    for (var prop in source) {
-        if (!source.hasOwnProperty(prop)) {
-            continue;
-        }
-        target[prop] = deepExtend(target[prop], source[prop]);
-    }
-    return target;
-}
-// TODO: Really needed (for JSCompiler type checking)?
-function patchProperty(obj, prop, value) {
-    obj[prop] = value;
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var Deferred = /** @class */ (function () {
-    function Deferred() {
-        var _this = this;
-        this.promise = new Promise(function (resolve, reject) {
-            _this.resolve = resolve;
-            _this.reject = reject;
-        });
-    }
-    /**
-     * Our API internals are not promiseified and cannot because our callback APIs have subtle expectations around
-     * invoking promises inline, which Promises are forbidden to do. This method accepts an optional node-style callback
-     * and returns a node-style callback which will resolve or reject the Deferred's promise.
-     * @param {((?function(?(Error)): (?|undefined))| (?function(?(Error),?=): (?|undefined)))=} callback
-     * @return {!function(?(Error), ?=)}
-     */
-    Deferred.prototype.wrapCallback = function (callback) {
-        var _this = this;
-        return function (error, value) {
-            if (error) {
-                _this.reject(error);
-            }
-            else {
-                _this.resolve(value);
-            }
-            if (typeof callback === 'function') {
-                // Attaching noop handler just in case developer wasn't expecting
-                // promises
-                _this.promise.catch(function () { });
-                // Some of our callbacks don't expect a value and our own tests
-                // assert that the parameter length is 1
-                if (callback.length === 1) {
-                    callback(error);
-                }
-                else {
-                    callback(error, value);
-                }
-            }
-        };
-    };
-    return Deferred;
-}());
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Returns navigator.userAgent string or '' if it's not defined.
- * @return user agent string
- */
-function getUA() {
-    if (typeof navigator !== 'undefined' &&
-        typeof navigator['userAgent'] === 'string') {
-        return navigator['userAgent'];
-    }
-    else {
-        return '';
-    }
-}
-/**
- * Detect Cordova / PhoneGap / Ionic frameworks on a mobile device.
- *
- * Deliberately does not rely on checking `file://` URLs (as this fails PhoneGap
- * in the Ripple emulator) nor Cordova `onDeviceReady`, which would normally
- * wait for a callback.
- */
-function isMobileCordova() {
-    return (typeof window !== 'undefined' &&
-        !!(window['cordova'] || window['phonegap'] || window['PhoneGap']) &&
-        /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA()));
-}
-/**
- * Detect Node.js.
- *
- * @return true if Node.js environment is detected.
- */
-// Node detection logic from: https://github.com/iliakan/detect-node/
-function isNode() {
-    try {
-        return (Object.prototype.toString.call(global.process) === '[object process]');
-    }
-    catch (e) {
-        return false;
-    }
-}
-/**
- * Detect Browser Environment
- */
-function isBrowser() {
-    return typeof self === 'object' && self.self === self;
-}
-/**
- * Detect React Native.
- *
- * @return true if ReactNative environment is detected.
- */
-function isReactNative() {
-    return (typeof navigator === 'object' && navigator['product'] === 'ReactNative');
-}
-/**
- * Detect whether the current SDK build is the Node version.
- *
- * @return true if it's the Node SDK build.
- */
-function isNodeSdk() {
-    return CONSTANTS.NODE_CLIENT === true || CONSTANTS.NODE_ADMIN === true;
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var ERROR_NAME = 'FirebaseError';
-// Based on code from:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#Custom_Error_Types
-var FirebaseError = /** @class */ (function (_super) {
-    tslib_1.__extends(FirebaseError, _super);
-    function FirebaseError(code, message) {
-        var _this = _super.call(this, message) || this;
-        _this.code = code;
-        _this.name = ERROR_NAME;
-        // Fix For ES5
-        // https://github.com/Microsoft/TypeScript-wiki/blob/master/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
-        Object.setPrototypeOf(_this, FirebaseError.prototype);
-        // Maintains proper stack trace for where our error was thrown.
-        // Only available on V8.
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(_this, ErrorFactory.prototype.create);
-        }
-        return _this;
-    }
-    return FirebaseError;
-}(Error));
-var ErrorFactory = /** @class */ (function () {
-    function ErrorFactory(service, serviceName, errors) {
-        this.service = service;
-        this.serviceName = serviceName;
-        this.errors = errors;
-    }
-    ErrorFactory.prototype.create = function (code) {
-        var data = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            data[_i - 1] = arguments[_i];
-        }
-        var customData = data[0] || {};
-        var fullCode = this.service + "/" + code;
-        var template = this.errors[code];
-        var message = template ? replaceTemplate(template, customData) : 'Error';
-        // Service Name: Error message (service/code).
-        var fullMessage = this.serviceName + ": " + message + " (" + fullCode + ").";
-        var error = new FirebaseError(fullCode, fullMessage);
-        // Keys with an underscore at the end of their name are not included in
-        // error.data for some reason.
-        // TODO: Replace with Object.entries when lib is updated to es2017.
-        for (var _a = 0, _b = Object.keys(customData); _a < _b.length; _a++) {
-            var key = _b[_a];
-            if (key.slice(-1) !== '_') {
-                if (key in error) {
-                    console.warn("Overwriting FirebaseError base field \"" + key + "\" can cause unexpected behavior.");
-                }
-                error[key] = customData[key];
-            }
-        }
-        return error;
-    };
-    return ErrorFactory;
-}());
-function replaceTemplate(template, data) {
-    return template.replace(PATTERN, function (_, key) {
-        var value = data[key];
-        return value != null ? value.toString() : "<" + key + "?>";
-    });
-}
-var PATTERN = /\{\$([^}]+)}/g;
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Evaluates a JSON string into a javascript object.
- *
- * @param {string} str A string containing JSON.
- * @return {*} The javascript object representing the specified JSON.
- */
-function jsonEval(str) {
-    return JSON.parse(str);
-}
-/**
- * Returns JSON representing a javascript object.
- * @param {*} data Javascript object to be stringified.
- * @return {string} The JSON contents of the object.
- */
-function stringify(data) {
-    return JSON.stringify(data);
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Decodes a Firebase auth. token into constituent parts.
- *
- * Notes:
- * - May return with invalid / incomplete claims if there's no native base64 decoding support.
- * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {{header: *, claims: *, data: *, signature: string}}
- */
-var decode = function (token) {
-    var header = {}, claims = {}, data = {}, signature = '';
-    try {
-        var parts = token.split('.');
-        header = jsonEval(base64Decode(parts[0]) || '');
-        claims = jsonEval(base64Decode(parts[1]) || '');
-        signature = parts[2];
-        data = claims['d'] || {};
-        delete claims['d'];
-    }
-    catch (e) { }
-    return {
-        header: header,
-        claims: claims,
-        data: data,
-        signature: signature
-    };
-};
-/**
- * Decodes a Firebase auth. token and checks the validity of its time-based claims. Will return true if the
- * token is within the time window authorized by the 'nbf' (not-before) and 'iat' (issued-at) claims.
- *
- * Notes:
- * - May return a false negative if there's no native base64 decoding support.
- * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
- */
-var isValidTimestamp = function (token) {
-    var claims = decode(token).claims, now = Math.floor(new Date().getTime() / 1000), validSince, validUntil;
-    if (typeof claims === 'object') {
-        if (claims.hasOwnProperty('nbf')) {
-            validSince = claims['nbf'];
-        }
-        else if (claims.hasOwnProperty('iat')) {
-            validSince = claims['iat'];
-        }
-        if (claims.hasOwnProperty('exp')) {
-            validUntil = claims['exp'];
-        }
-        else {
-            // token will expire after 24h by default
-            validUntil = validSince + 86400;
-        }
-    }
-    return (now && validSince && validUntil && now >= validSince && now <= validUntil);
-};
-/**
- * Decodes a Firebase auth. token and returns its issued at time if valid, null otherwise.
- *
- * Notes:
- * - May return null if there's no native base64 decoding support.
- * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {?number}
- */
-var issuedAtTime = function (token) {
-    var claims = decode(token).claims;
-    if (typeof claims === 'object' && claims.hasOwnProperty('iat')) {
-        return claims['iat'];
-    }
-    return null;
-};
-/**
- * Decodes a Firebase auth. token and checks the validity of its format. Expects a valid issued-at time.
- *
- * Notes:
- * - May return a false negative if there's no native base64 decoding support.
- * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
- */
-var isValidFormat = function (token) {
-    var decoded = decode(token), claims = decoded.claims;
-    return !!claims && typeof claims === 'object' && claims.hasOwnProperty('iat');
-};
-/**
- * Attempts to peer into an auth token and determine if it's an admin auth token by looking at the claims portion.
- *
- * Notes:
- * - May return a false negative if there's no native base64 decoding support.
- * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
- */
-var isAdmin = function (token) {
-    var claims = decode(token).claims;
-    return typeof claims === 'object' && claims['admin'] === true;
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-// See http://www.devthought.com/2012/01/18/an-object-is-not-a-hash/
-var contains = function (obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-};
-var safeGet = function (obj, key) {
-    if (Object.prototype.hasOwnProperty.call(obj, key))
-        return obj[key];
-    // else return undefined.
-};
-/**
- * Enumerates the keys/values in an object, excluding keys defined on the prototype.
- *
- * @param {?Object.<K,V>} obj Object to enumerate.
- * @param {!function(K, V)} fn Function to call for each key and value.
- * @template K,V
- */
-var forEach = function (obj, fn) {
-    for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            fn(key, obj[key]);
-        }
-    }
-};
-/**
- * Copies all the (own) properties from one object to another.
- * @param {!Object} objTo
- * @param {!Object} objFrom
- * @return {!Object} objTo
- */
-var extend = function (objTo, objFrom) {
-    forEach(objFrom, function (key, value) {
-        objTo[key] = value;
-    });
-    return objTo;
-};
-/**
- * Returns a clone of the specified object.
- * @param {!Object} obj
- * @return {!Object} cloned obj.
- */
-var clone = function (obj) {
-    return extend({}, obj);
-};
-/**
- * Returns true if obj has typeof "object" and is not null.  Unlike goog.isObject(), does not return true
- * for functions.
- *
- * @param obj {*} A potential object.
- * @returns {boolean} True if it's an object.
- */
-var isNonNullObject = function (obj) {
-    return typeof obj === 'object' && obj !== null;
-};
-var isEmpty = function (obj) {
-    for (var key in obj) {
-        return false;
-    }
-    return true;
-};
-var getCount = function (obj) {
-    var rv = 0;
-    for (var key in obj) {
-        rv++;
-    }
-    return rv;
-};
-var map = function (obj, f, opt_obj) {
-    var res = {};
-    for (var key in obj) {
-        res[key] = f.call(opt_obj, obj[key], key, obj);
-    }
-    return res;
-};
-var findKey = function (obj, fn, opt_this) {
-    for (var key in obj) {
-        if (fn.call(opt_this, obj[key], key, obj)) {
-            return key;
-        }
-    }
-    return undefined;
-};
-var findValue = function (obj, fn, opt_this) {
-    var key = findKey(obj, fn, opt_this);
-    return key && obj[key];
-};
-var getAnyKey = function (obj) {
-    for (var key in obj) {
-        return key;
-    }
-};
-var getValues = function (obj) {
-    var res = [];
-    var i = 0;
-    for (var key in obj) {
-        res[i++] = obj[key];
-    }
-    return res;
-};
-/**
- * Tests whether every key/value pair in an object pass the test implemented
- * by the provided function
- *
- * @param {?Object.<K,V>} obj Object to test.
- * @param {!function(K, V)} fn Function to call for each key and value.
- * @template K,V
- */
-var every = function (obj, fn) {
-    for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            if (!fn(key, obj[key])) {
-                return false;
-            }
-        }
-    }
-    return true;
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Returns a querystring-formatted string (e.g. &arg=val&arg2=val2) from a params
- * object (e.g. {arg: 'val', arg2: 'val2'})
- * Note: You must prepend it with ? when adding it to a URL.
- *
- * @param {!Object} querystringParams
- * @return {string}
- */
-var querystring = function (querystringParams) {
-    var params = [];
-    forEach(querystringParams, function (key, value) {
-        if (Array.isArray(value)) {
-            value.forEach(function (arrayVal) {
-                params.push(encodeURIComponent(key) + '=' + encodeURIComponent(arrayVal));
-            });
-        }
-        else {
-            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-        }
-    });
-    return params.length ? '&' + params.join('&') : '';
-};
-/**
- * Decodes a querystring (e.g. ?arg=val&arg2=val2) into a params object (e.g. {arg: 'val', arg2: 'val2'})
- *
- * @param {string} querystring
- * @return {!Object}
- */
-var querystringDecode = function (querystring) {
-    var obj = {};
-    var tokens = querystring.replace(/^\?/, '').split('&');
-    tokens.forEach(function (token) {
-        if (token) {
-            var key = token.split('=');
-            obj[key[0]] = key[1];
-        }
-    });
-    return obj;
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @fileoverview SHA-1 cryptographic hash.
- * Variable names follow the notation in FIPS PUB 180-3:
- * http://csrc.nist.gov/publications/fips/fips180-3/fips180-3_final.pdf.
- *
- * Usage:
- *   var sha1 = new sha1();
- *   sha1.update(bytes);
- *   var hash = sha1.digest();
- *
- * Performance:
- *   Chrome 23:   ~400 Mbit/s
- *   Firefox 16:  ~250 Mbit/s
- *
- */
-/**
- * SHA-1 cryptographic hash constructor.
- *
- * The properties declared here are discussed in the above algorithm document.
- * @constructor
- * @final
- * @struct
- */
-var Sha1 = /** @class */ (function () {
-    function Sha1() {
-        /**
-         * Holds the previous values of accumulated variables a-e in the compress_
-         * function.
-         * @type {!Array<number>}
-         * @private
-         */
-        this.chain_ = [];
-        /**
-         * A buffer holding the partially computed hash result.
-         * @type {!Array<number>}
-         * @private
-         */
-        this.buf_ = [];
-        /**
-         * An array of 80 bytes, each a part of the message to be hashed.  Referred to
-         * as the message schedule in the docs.
-         * @type {!Array<number>}
-         * @private
-         */
-        this.W_ = [];
-        /**
-         * Contains data needed to pad messages less than 64 bytes.
-         * @type {!Array<number>}
-         * @private
-         */
-        this.pad_ = [];
-        /**
-         * @private {number}
-         */
-        this.inbuf_ = 0;
-        /**
-         * @private {number}
-         */
-        this.total_ = 0;
-        this.blockSize = 512 / 8;
-        this.pad_[0] = 128;
-        for (var i = 1; i < this.blockSize; ++i) {
-            this.pad_[i] = 0;
-        }
-        this.reset();
-    }
-    Sha1.prototype.reset = function () {
-        this.chain_[0] = 0x67452301;
-        this.chain_[1] = 0xefcdab89;
-        this.chain_[2] = 0x98badcfe;
-        this.chain_[3] = 0x10325476;
-        this.chain_[4] = 0xc3d2e1f0;
-        this.inbuf_ = 0;
-        this.total_ = 0;
-    };
-    /**
-     * Internal compress helper function.
-     * @param {!Array<number>|!Uint8Array|string} buf Block to compress.
-     * @param {number=} opt_offset Offset of the block in the buffer.
-     * @private
-     */
-    Sha1.prototype.compress_ = function (buf, opt_offset) {
-        if (!opt_offset) {
-            opt_offset = 0;
-        }
-        var W = this.W_;
-        // get 16 big endian words
-        if (typeof buf === 'string') {
-            for (var i = 0; i < 16; i++) {
-                // TODO(user): [bug 8140122] Recent versions of Safari for Mac OS and iOS
-                // have a bug that turns the post-increment ++ operator into pre-increment
-                // during JIT compilation.  We have code that depends heavily on SHA-1 for
-                // correctness and which is affected by this bug, so I've removed all uses
-                // of post-increment ++ in which the result value is used.  We can revert
-                // this change once the Safari bug
-                // (https://bugs.webkit.org/show_bug.cgi?id=109036) has been fixed and
-                // most clients have been updated.
-                W[i] =
-                    (buf.charCodeAt(opt_offset) << 24) |
-                        (buf.charCodeAt(opt_offset + 1) << 16) |
-                        (buf.charCodeAt(opt_offset + 2) << 8) |
-                        buf.charCodeAt(opt_offset + 3);
-                opt_offset += 4;
-            }
-        }
-        else {
-            for (var i = 0; i < 16; i++) {
-                W[i] =
-                    (buf[opt_offset] << 24) |
-                        (buf[opt_offset + 1] << 16) |
-                        (buf[opt_offset + 2] << 8) |
-                        buf[opt_offset + 3];
-                opt_offset += 4;
-            }
-        }
-        // expand to 80 words
-        for (var i = 16; i < 80; i++) {
-            var t = W[i - 3] ^ W[i - 8] ^ W[i - 14] ^ W[i - 16];
-            W[i] = ((t << 1) | (t >>> 31)) & 0xffffffff;
-        }
-        var a = this.chain_[0];
-        var b = this.chain_[1];
-        var c = this.chain_[2];
-        var d = this.chain_[3];
-        var e = this.chain_[4];
-        var f, k;
-        // TODO(user): Try to unroll this loop to speed up the computation.
-        for (var i = 0; i < 80; i++) {
-            if (i < 40) {
-                if (i < 20) {
-                    f = d ^ (b & (c ^ d));
-                    k = 0x5a827999;
-                }
-                else {
-                    f = b ^ c ^ d;
-                    k = 0x6ed9eba1;
-                }
-            }
-            else {
-                if (i < 60) {
-                    f = (b & c) | (d & (b | c));
-                    k = 0x8f1bbcdc;
-                }
-                else {
-                    f = b ^ c ^ d;
-                    k = 0xca62c1d6;
-                }
-            }
-            var t = (((a << 5) | (a >>> 27)) + f + e + k + W[i]) & 0xffffffff;
-            e = d;
-            d = c;
-            c = ((b << 30) | (b >>> 2)) & 0xffffffff;
-            b = a;
-            a = t;
-        }
-        this.chain_[0] = (this.chain_[0] + a) & 0xffffffff;
-        this.chain_[1] = (this.chain_[1] + b) & 0xffffffff;
-        this.chain_[2] = (this.chain_[2] + c) & 0xffffffff;
-        this.chain_[3] = (this.chain_[3] + d) & 0xffffffff;
-        this.chain_[4] = (this.chain_[4] + e) & 0xffffffff;
-    };
-    Sha1.prototype.update = function (bytes, opt_length) {
-        // TODO(johnlenz): tighten the function signature and remove this check
-        if (bytes == null) {
-            return;
-        }
-        if (opt_length === undefined) {
-            opt_length = bytes.length;
-        }
-        var lengthMinusBlock = opt_length - this.blockSize;
-        var n = 0;
-        // Using local instead of member variables gives ~5% speedup on Firefox 16.
-        var buf = this.buf_;
-        var inbuf = this.inbuf_;
-        // The outer while loop should execute at most twice.
-        while (n < opt_length) {
-            // When we have no data in the block to top up, we can directly process the
-            // input buffer (assuming it contains sufficient data). This gives ~25%
-            // speedup on Chrome 23 and ~15% speedup on Firefox 16, but requires that
-            // the data is provided in large chunks (or in multiples of 64 bytes).
-            if (inbuf == 0) {
-                while (n <= lengthMinusBlock) {
-                    this.compress_(bytes, n);
-                    n += this.blockSize;
-                }
-            }
-            if (typeof bytes === 'string') {
-                while (n < opt_length) {
-                    buf[inbuf] = bytes.charCodeAt(n);
-                    ++inbuf;
-                    ++n;
-                    if (inbuf == this.blockSize) {
-                        this.compress_(buf);
-                        inbuf = 0;
-                        // Jump to the outer loop so we use the full-block optimization.
-                        break;
-                    }
-                }
-            }
-            else {
-                while (n < opt_length) {
-                    buf[inbuf] = bytes[n];
-                    ++inbuf;
-                    ++n;
-                    if (inbuf == this.blockSize) {
-                        this.compress_(buf);
-                        inbuf = 0;
-                        // Jump to the outer loop so we use the full-block optimization.
-                        break;
-                    }
-                }
-            }
-        }
-        this.inbuf_ = inbuf;
-        this.total_ += opt_length;
-    };
-    /** @override */
-    Sha1.prototype.digest = function () {
-        var digest = [];
-        var totalBits = this.total_ * 8;
-        // Add pad 0x80 0x00*.
-        if (this.inbuf_ < 56) {
-            this.update(this.pad_, 56 - this.inbuf_);
-        }
-        else {
-            this.update(this.pad_, this.blockSize - (this.inbuf_ - 56));
-        }
-        // Add # bits.
-        for (var i = this.blockSize - 1; i >= 56; i--) {
-            this.buf_[i] = totalBits & 255;
-            totalBits /= 256; // Don't use bit-shifting here!
-        }
-        this.compress_(this.buf_);
-        var n = 0;
-        for (var i = 0; i < 5; i++) {
-            for (var j = 24; j >= 0; j -= 8) {
-                digest[n] = (this.chain_[i] >> j) & 255;
-                ++n;
-            }
-        }
-        return digest;
-    };
-    return Sha1;
-}());
-
-/**
- * Helper to make a Subscribe function (just like Promise helps make a
- * Thenable).
- *
- * @param executor Function which can make calls to a single Observer
- *     as a proxy.
- * @param onNoObservers Callback when count of Observers goes to zero.
- */
-function createSubscribe(executor, onNoObservers) {
-    var proxy = new ObserverProxy(executor, onNoObservers);
-    return proxy.subscribe.bind(proxy);
-}
-/**
- * Implement fan-out for any number of Observers attached via a subscribe
- * function.
- */
-var ObserverProxy = /** @class */ (function () {
-    /**
-     * @param executor Function which can make calls to a single Observer
-     *     as a proxy.
-     * @param onNoObservers Callback when count of Observers goes to zero.
-     */
-    function ObserverProxy(executor, onNoObservers) {
-        var _this = this;
-        this.observers = [];
-        this.unsubscribes = [];
-        this.observerCount = 0;
-        // Micro-task scheduling by calling task.then().
-        this.task = Promise.resolve();
-        this.finalized = false;
-        this.onNoObservers = onNoObservers;
-        // Call the executor asynchronously so subscribers that are called
-        // synchronously after the creation of the subscribe function
-        // can still receive the very first value generated in the executor.
-        this.task
-            .then(function () {
-            executor(_this);
-        })
-            .catch(function (e) {
-            _this.error(e);
-        });
-    }
-    ObserverProxy.prototype.next = function (value) {
-        this.forEachObserver(function (observer) {
-            observer.next(value);
-        });
-    };
-    ObserverProxy.prototype.error = function (error) {
-        this.forEachObserver(function (observer) {
-            observer.error(error);
-        });
-        this.close(error);
-    };
-    ObserverProxy.prototype.complete = function () {
-        this.forEachObserver(function (observer) {
-            observer.complete();
-        });
-        this.close();
-    };
-    /**
-     * Subscribe function that can be used to add an Observer to the fan-out list.
-     *
-     * - We require that no event is sent to a subscriber sychronously to their
-     *   call to subscribe().
-     */
-    ObserverProxy.prototype.subscribe = function (nextOrObserver, error, complete) {
-        var _this = this;
-        var observer;
-        if (nextOrObserver === undefined &&
-            error === undefined &&
-            complete === undefined) {
-            throw new Error('Missing Observer.');
-        }
-        // Assemble an Observer object when passed as callback functions.
-        if (implementsAnyMethods(nextOrObserver, ['next', 'error', 'complete'])) {
-            observer = nextOrObserver;
-        }
-        else {
-            observer = {
-                next: nextOrObserver,
-                error: error,
-                complete: complete
-            };
-        }
-        if (observer.next === undefined) {
-            observer.next = noop;
-        }
-        if (observer.error === undefined) {
-            observer.error = noop;
-        }
-        if (observer.complete === undefined) {
-            observer.complete = noop;
-        }
-        var unsub = this.unsubscribeOne.bind(this, this.observers.length);
-        // Attempt to subscribe to a terminated Observable - we
-        // just respond to the Observer with the final error or complete
-        // event.
-        if (this.finalized) {
-            this.task.then(function () {
-                try {
-                    if (_this.finalError) {
-                        observer.error(_this.finalError);
-                    }
-                    else {
-                        observer.complete();
-                    }
-                }
-                catch (e) {
-                    // nothing
-                }
-                return;
-            });
-        }
-        this.observers.push(observer);
-        return unsub;
-    };
-    // Unsubscribe is synchronous - we guarantee that no events are sent to
-    // any unsubscribed Observer.
-    ObserverProxy.prototype.unsubscribeOne = function (i) {
-        if (this.observers === undefined || this.observers[i] === undefined) {
-            return;
-        }
-        delete this.observers[i];
-        this.observerCount -= 1;
-        if (this.observerCount === 0 && this.onNoObservers !== undefined) {
-            this.onNoObservers(this);
-        }
-    };
-    ObserverProxy.prototype.forEachObserver = function (fn) {
-        if (this.finalized) {
-            // Already closed by previous event....just eat the additional values.
-            return;
-        }
-        // Since sendOne calls asynchronously - there is no chance that
-        // this.observers will become undefined.
-        for (var i = 0; i < this.observers.length; i++) {
-            this.sendOne(i, fn);
-        }
-    };
-    // Call the Observer via one of it's callback function. We are careful to
-    // confirm that the observe has not been unsubscribed since this asynchronous
-    // function had been queued.
-    ObserverProxy.prototype.sendOne = function (i, fn) {
-        var _this = this;
-        // Execute the callback asynchronously
-        this.task.then(function () {
-            if (_this.observers !== undefined && _this.observers[i] !== undefined) {
-                try {
-                    fn(_this.observers[i]);
-                }
-                catch (e) {
-                    // Ignore exceptions raised in Observers or missing methods of an
-                    // Observer.
-                    // Log error to console. b/31404806
-                    if (typeof console !== 'undefined' && console.error) {
-                        console.error(e);
-                    }
-                }
-            }
-        });
-    };
-    ObserverProxy.prototype.close = function (err) {
-        var _this = this;
-        if (this.finalized) {
-            return;
-        }
-        this.finalized = true;
-        if (err !== undefined) {
-            this.finalError = err;
-        }
-        // Proxy is no longer needed - garbage collect references
-        this.task.then(function () {
-            _this.observers = undefined;
-            _this.onNoObservers = undefined;
-        });
-    };
-    return ObserverProxy;
-}());
-/** Turn synchronous function into one called asynchronously. */
-function async(fn, onError) {
-    return function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        Promise.resolve(true)
-            .then(function () {
-            fn.apply(void 0, args);
-        })
-            .catch(function (error) {
-            if (onError) {
-                onError(error);
-            }
-        });
-    };
-}
-/**
- * Return true if the object passed in implements any of the named methods.
- */
-function implementsAnyMethods(obj, methods) {
-    if (typeof obj !== 'object' || obj === null) {
-        return false;
-    }
-    for (var _i = 0, methods_1 = methods; _i < methods_1.length; _i++) {
-        var method = methods_1[_i];
-        if (method in obj && typeof obj[method] === 'function') {
-            return true;
-        }
-    }
-    return false;
-}
-function noop() {
-    // do nothing
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Check to make sure the appropriate number of arguments are provided for a public function.
- * Throws an error if it fails.
- *
- * @param {!string} fnName The function name
- * @param {!number} minCount The minimum number of arguments to allow for the function call
- * @param {!number} maxCount The maximum number of argument to allow for the function call
- * @param {!number} argCount The actual number of arguments provided.
- */
-var validateArgCount = function (fnName, minCount, maxCount, argCount) {
-    var argError;
-    if (argCount < minCount) {
-        argError = 'at least ' + minCount;
-    }
-    else if (argCount > maxCount) {
-        argError = maxCount === 0 ? 'none' : 'no more than ' + maxCount;
-    }
-    if (argError) {
-        var error = fnName +
-            ' failed: Was called with ' +
-            argCount +
-            (argCount === 1 ? ' argument.' : ' arguments.') +
-            ' Expects ' +
-            argError +
-            '.';
-        throw new Error(error);
-    }
-};
-/**
- * Generates a string to prefix an error message about failed argument validation
- *
- * @param {!string} fnName The function name
- * @param {!number} argumentNumber The index of the argument
- * @param {boolean} optional Whether or not the argument is optional
- * @return {!string} The prefix to add to the error thrown for validation.
- */
-function errorPrefix(fnName, argumentNumber, optional) {
-    var argName = '';
-    switch (argumentNumber) {
-        case 1:
-            argName = optional ? 'first' : 'First';
-            break;
-        case 2:
-            argName = optional ? 'second' : 'Second';
-            break;
-        case 3:
-            argName = optional ? 'third' : 'Third';
-            break;
-        case 4:
-            argName = optional ? 'fourth' : 'Fourth';
-            break;
-        default:
-            throw new Error('errorPrefix called with argumentNumber > 4.  Need to update it?');
-    }
-    var error = fnName + ' failed: ';
-    error += argName + ' argument ';
-    return error;
-}
-/**
- * @param {!string} fnName
- * @param {!number} argumentNumber
- * @param {!string} namespace
- * @param {boolean} optional
- */
-function validateNamespace(fnName, argumentNumber, namespace, optional) {
-    if (optional && !namespace)
-        return;
-    if (typeof namespace !== 'string') {
-        //TODO: I should do more validation here. We only allow certain chars in namespaces.
-        throw new Error(errorPrefix(fnName, argumentNumber, optional) +
-            'must be a valid firebase namespace.');
-    }
-}
-function validateCallback(fnName, argumentNumber, callback, optional) {
-    if (optional && !callback)
-        return;
-    if (typeof callback !== 'function')
-        throw new Error(errorPrefix(fnName, argumentNumber, optional) +
-            'must be a valid function.');
-}
-function validateContextObject(fnName, argumentNumber, context, optional) {
-    if (optional && !context)
-        return;
-    if (typeof context !== 'object' || context === null)
-        throw new Error(errorPrefix(fnName, argumentNumber, optional) +
-            'must be a valid context object.');
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-// Code originally came from goog.crypt.stringToUtf8ByteArray, but for some reason they
-// automatically replaced '\r\n' with '\n', and they didn't handle surrogate pairs,
-// so it's been modified.
-// Note that not all Unicode characters appear as single characters in JavaScript strings.
-// fromCharCode returns the UTF-16 encoding of a character - so some Unicode characters
-// use 2 characters in Javascript.  All 4-byte UTF-8 characters begin with a first
-// character in the range 0xD800 - 0xDBFF (the first character of a so-called surrogate
-// pair).
-// See http://www.ecma-international.org/ecma-262/5.1/#sec-15.1.3
-/**
- * @param {string} str
- * @return {Array}
- */
-var stringToByteArray$1 = function (str) {
-    var out = [], p = 0;
-    for (var i = 0; i < str.length; i++) {
-        var c = str.charCodeAt(i);
-        // Is this the lead surrogate in a surrogate pair?
-        if (c >= 0xd800 && c <= 0xdbff) {
-            var high = c - 0xd800; // the high 10 bits.
-            i++;
-            assert(i < str.length, 'Surrogate pair missing trail surrogate.');
-            var low = str.charCodeAt(i) - 0xdc00; // the low 10 bits.
-            c = 0x10000 + (high << 10) + low;
-        }
-        if (c < 128) {
-            out[p++] = c;
-        }
-        else if (c < 2048) {
-            out[p++] = (c >> 6) | 192;
-            out[p++] = (c & 63) | 128;
-        }
-        else if (c < 65536) {
-            out[p++] = (c >> 12) | 224;
-            out[p++] = ((c >> 6) & 63) | 128;
-            out[p++] = (c & 63) | 128;
-        }
-        else {
-            out[p++] = (c >> 18) | 240;
-            out[p++] = ((c >> 12) & 63) | 128;
-            out[p++] = ((c >> 6) & 63) | 128;
-            out[p++] = (c & 63) | 128;
-        }
-    }
-    return out;
-};
-/**
- * Calculate length without actually converting; useful for doing cheaper validation.
- * @param {string} str
- * @return {number}
- */
-var stringLength = function (str) {
-    var p = 0;
-    for (var i = 0; i < str.length; i++) {
-        var c = str.charCodeAt(i);
-        if (c < 128) {
-            p++;
-        }
-        else if (c < 2048) {
-            p += 2;
-        }
-        else if (c >= 0xd800 && c <= 0xdbff) {
-            // Lead surrogate of a surrogate pair.  The pair together will take 4 bytes to represent.
-            p += 4;
-            i++; // skip trail surrogate.
-        }
-        else {
-            p += 3;
-        }
-    }
-    return p;
-};
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-exports.CONSTANTS = CONSTANTS;
-exports.Deferred = Deferred;
-exports.ErrorFactory = ErrorFactory;
-exports.FirebaseError = FirebaseError;
-exports.Sha1 = Sha1;
-exports.assert = assert;
-exports.assertionError = assertionError;
-exports.async = async;
-exports.base64 = base64;
-exports.base64Decode = base64Decode;
-exports.base64Encode = base64Encode;
-exports.clone = clone;
-exports.contains = contains;
-exports.createSubscribe = createSubscribe;
-exports.decode = decode;
-exports.deepCopy = deepCopy;
-exports.deepExtend = deepExtend;
-exports.errorPrefix = errorPrefix;
-exports.every = every;
-exports.extend = extend;
-exports.findKey = findKey;
-exports.findValue = findValue;
-exports.forEach = forEach;
-exports.getAnyKey = getAnyKey;
-exports.getCount = getCount;
-exports.getUA = getUA;
-exports.getValues = getValues;
-exports.isAdmin = isAdmin;
-exports.isBrowser = isBrowser;
-exports.isEmpty = isEmpty;
-exports.isMobileCordova = isMobileCordova;
-exports.isNode = isNode;
-exports.isNodeSdk = isNodeSdk;
-exports.isNonNullObject = isNonNullObject;
-exports.isReactNative = isReactNative;
-exports.isValidFormat = isValidFormat;
-exports.isValidTimestamp = isValidTimestamp;
-exports.issuedAtTime = issuedAtTime;
-exports.jsonEval = jsonEval;
-exports.map = map;
-exports.patchProperty = patchProperty;
-exports.querystring = querystring;
-exports.querystringDecode = querystringDecode;
-exports.safeGet = safeGet;
-exports.stringLength = stringLength;
-exports.stringToByteArray = stringToByteArray$1;
-exports.stringify = stringify;
-exports.validateArgCount = validateArgCount;
-exports.validateCallback = validateCallback;
-exports.validateContextObject = validateContextObject;
-exports.validateNamespace = validateNamespace;
-//# sourceMappingURL=index.cjs.js.map
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
-/***/ "./node_modules/@firebase/util/node_modules/tslib/tslib.es6.js":
-/*!*********************************************************************!*\
-  !*** ./node_modules/@firebase/util/node_modules/tslib/tslib.es6.js ***!
-  \*********************************************************************/
-/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __values, __read, __spread, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__extends", function() { return __extends; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__assign", function() { return __assign; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__rest", function() { return __rest; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__decorate", function() { return __decorate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__param", function() { return __param; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__metadata", function() { return __metadata; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__awaiter", function() { return __awaiter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__generator", function() { return __generator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__exportStar", function() { return __exportStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncValues", function() { return __asyncValues; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__makeTemplateObject", function() { return __makeTemplateObject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importStar", function() { return __importStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importDefault", function() { return __importDefault; });
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
-
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
-
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    }
-    return __assign.apply(this, arguments);
-}
-
-function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
-    return t;
-}
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __param(paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-}
-
-function __metadata(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __exportStar(m, exports) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
-function __values(o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-}
-
-function __read(o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-}
-
-function __spread() {
-    for (var ar = [], i = 0; i < arguments.length; i++)
-        ar = ar.concat(__read(arguments[i]));
-    return ar;
-}
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
-function __asyncDelegator(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
-function __makeTemplateObject(cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
-
-function __importStar(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result.default = mod;
-    return result;
-}
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/asn1.js/lib/asn1.js":
 /*!******************************************!*\
   !*** ./node_modules/asn1.js/lib/asn1.js ***!
@@ -8265,27 +4964,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               dir = this.$vs.rtl ? "rtl" : "ltr";
               document.documentElement.setAttribute("dir", dir);
               window.addEventListener('resize', this.handleWindowResize);
-              window.addEventListener('scroll', this.handleScroll); // Auth0
+              window.addEventListener('scroll', this.handleScroll); // // Auth0
+              // try       { await this.$auth.renewTokens() }
+              // catch (e) { console.error(e) }
 
-              _context.prev = 5;
-              _context.next = 8;
-              return this.$auth.renewTokens();
-
-            case 8:
-              _context.next = 13;
-              break;
-
-            case 10:
-              _context.prev = 10;
-              _context.t0 = _context["catch"](5);
-              console.error(_context.t0);
-
-            case 13:
+            case 5:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, this, [[5, 10]]);
+      }, _callee, this);
     }));
 
     function created() {
@@ -12575,6 +9263,36 @@ function fromByteArray (uint8) {
 })( false || module, this);
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./node_modules/bootstrap/dist/css/bootstrap.css":
+/*!*******************************************************!*\
+  !*** ./node_modules/bootstrap/dist/css/bootstrap.css ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../css-loader??ref--7-1!../../../postcss-loader/src??ref--7-2!./bootstrap.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/bootstrap/dist/css/bootstrap.css");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
 
 /***/ }),
 
@@ -17639,7 +14357,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: featherIcon.scss\n    Description: Feather icon component's scss. Imported in FeatherIcon.vue file\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.feather-icon {\n  display: inline-flex;\n  align-items: center;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: featherIcon.scss\r\n    Description: Feather icon component's scss. Imported in FeatherIcon.vue file\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.feather-icon {\n  display: inline-flex;\n  align-items: center;\n}", ""]);
 
 // exports
 
@@ -17658,7 +14376,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: vxCard.scss\n    Description: Styles for vx-card component. Imported in VxCard.vue file\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.vx-card {\n  width: 100%;\n  background: #fff;\n  border-radius: 0.5rem;\n  display: block;\n  box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.1);\n  position: relative;\n  transition: all 0.3s ease-in-out;\n}\n.vx-card.no-shadow {\n  box-shadow: none;\n}\n.vx-card.card-border {\n  border: 1px solid #e4e4e4;\n}\n.vx-card .vx-card__header {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  justify-content: space-between;\n  padding: 1.5rem 1.5rem 0;\n}\n.vx-card .vx-card__header .vx-card__title h4 + h6 {\n  margin-top: 0.3rem;\n}\n.vx-card .vx-card__header .vx-card__title h6 {\n  font-weight: 400;\n}\n.vx-card .vx-card__header .vx-card__actions .vx-card__action-buttons {\n  display: flex;\n}\n.vx-card .vx-card__header .vx-card__actions .vx-card__action-buttons .feather-icon {\n  margin-left: 0.5rem;\n}\n.vx-card .vx-card__header .vx-card__actions svg {\n  transition: all 0.25s ease-out;\n  height: 1rem;\n  width: 1rem;\n  cursor: pointer;\n}\n.vx-card .vx-card__header .vx-card__actions .rotate180 > svg {\n  transform: rotate(180deg) !important;\n}\n.vx-card img.card-img-top {\n  border-top-left-radius: 0.5rem;\n  border-top-right-radius: 0.5rem;\n}\n.vx-card .vx-card__collapsible-content {\n  transition: all 0.3s ease-in-out;\n}\n.vx-card .vx-card__collapsible-content.vs-con-loading__container {\n  overflow: unset;\n}\n.vx-card .vx-card__collapsible-content.collapsed {\n  opacity: 0;\n  transform: scale(0.99);\n}\n.vx-card .vx-card__collapsible-content .card-overlay {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  padding: 1.25rem;\n}\n.vx-card .vx-card__collapsible-content .card-overlay > * {\n  position: relative;\n  z-index: 1;\n}\n.vx-card .vx-card__collapsible-content .card-overlay::after {\n  position: absolute;\n  content: \"\";\n  top: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  height: 100%;\n  width: 100%;\n  background: rgba(0, 0, 0, 0.6);\n  z-index: 0;\n}\n.vx-card .vx-card__collapsible-content .vx-card__body {\n  padding: 1.5rem;\n}\n.vx-card .vx-card__collapsible-content .vx-card__body img + .vx-card__title > h4 {\n  margin-top: 1.5rem;\n}\n.vx-card .vx-card__collapsible-content img {\n  display: block;\n}\n.vx-card .vx-card__code-container {\n  overflow: hidden;\n  transition: transform 0.35s, opacity 0.15s, max-height 0.3s ease-out;\n}\n.vx-card .vx-card__code-container.collapsed {\n  opacity: 0;\n  transform: translateY(100%);\n}\n.vx-card .vx-card__code-container .code-content {\n  margin: 1.5rem;\n}\n.vx-card .vx-card__code-container .code-content pre[class^=language-] {\n  max-height: 350px;\n  border-radius: 0.5rem;\n  margin-bottom: 0;\n}\n.vx-card .vx-card__footer {\n  padding: 0 1.5rem 1.5rem;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: vxCard.scss\r\n    Description: Styles for vx-card component. Imported in VxCard.vue file\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.vx-card {\n  width: 100%;\n  background: #fff;\n  border-radius: 0.5rem;\n  display: block;\n  box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.1);\n  position: relative;\n  transition: all 0.3s ease-in-out;\n}\n.vx-card.no-shadow {\n  box-shadow: none;\n}\n.vx-card.card-border {\n  border: 1px solid #e4e4e4;\n}\n.vx-card .vx-card__header {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  justify-content: space-between;\n  padding: 1.5rem 1.5rem 0;\n}\n.vx-card .vx-card__header .vx-card__title h4 + h6 {\n  margin-top: 0.3rem;\n}\n.vx-card .vx-card__header .vx-card__title h6 {\n  font-weight: 400;\n}\n.vx-card .vx-card__header .vx-card__actions .vx-card__action-buttons {\n  display: flex;\n}\n.vx-card .vx-card__header .vx-card__actions .vx-card__action-buttons .feather-icon {\n  margin-left: 0.5rem;\n}\n.vx-card .vx-card__header .vx-card__actions svg {\n  transition: all 0.25s ease-out;\n  height: 1rem;\n  width: 1rem;\n  cursor: pointer;\n}\n.vx-card .vx-card__header .vx-card__actions .rotate180 > svg {\n  transform: rotate(180deg) !important;\n}\n.vx-card img.card-img-top {\n  border-top-left-radius: 0.5rem;\n  border-top-right-radius: 0.5rem;\n}\n.vx-card .vx-card__collapsible-content {\n  transition: all 0.3s ease-in-out;\n}\n.vx-card .vx-card__collapsible-content.vs-con-loading__container {\n  overflow: unset;\n}\n.vx-card .vx-card__collapsible-content.collapsed {\n  opacity: 0;\n  transform: scale(0.99);\n}\n.vx-card .vx-card__collapsible-content .card-overlay {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  padding: 1.25rem;\n}\n.vx-card .vx-card__collapsible-content .card-overlay > * {\n  position: relative;\n  z-index: 1;\n}\n.vx-card .vx-card__collapsible-content .card-overlay::after {\n  position: absolute;\n  content: \"\";\n  top: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  height: 100%;\n  width: 100%;\n  background: rgba(0, 0, 0, 0.6);\n  z-index: 0;\n}\n.vx-card .vx-card__collapsible-content .vx-card__body {\n  padding: 1.5rem;\n}\n.vx-card .vx-card__collapsible-content .vx-card__body img + .vx-card__title > h4 {\n  margin-top: 1.5rem;\n}\n.vx-card .vx-card__collapsible-content img {\n  display: block;\n}\n.vx-card .vx-card__code-container {\n  overflow: hidden;\n  transition: transform 0.35s, opacity 0.15s, max-height 0.3s ease-out;\n}\n.vx-card .vx-card__code-container.collapsed {\n  opacity: 0;\n  transform: translateY(100%);\n}\n.vx-card .vx-card__code-container .code-content {\n  margin: 1.5rem;\n}\n.vx-card .vx-card__code-container .code-content pre[class^=language-] {\n  max-height: 350px;\n  border-radius: 0.5rem;\n  margin-bottom: 0;\n}\n.vx-card .vx-card__footer {\n  padding: 0 1.5rem 1.5rem;\n}", ""]);
 
 // exports
 
@@ -17677,7 +14395,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.vx-input-group .vs-con-textarea {\n  margin-bottom: 0;\n}\n.vx-input-group .vx-input-group-prepend {\n  border-top-left-radius: 5px;\n  border-bottom-left-radius: 5px;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text {\n  display: flex;\n  align-items: center;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:first-child) {\n  border-left: 1px solid rgba(0, 0, 0, 0.18);\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:first-child {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:last-child {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text.btn-addon .vs-button {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text.btn-addon .vs-button:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  border-left: none;\n}\n.vx-input-group .vx-input-group-append {\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n.vx-input-group .vx-input-group-append .append-text {\n  display: flex;\n  align-items: center;\n}\n.vx-input-group .vx-input-group-append .append-text:not(:first-child) {\n  border-left: 1px solid rgba(0, 0, 0, 0.18);\n}\n.vx-input-group .vx-input-group-append .append-text:first-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text:last-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text.btn-addon .vs-button {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text.btn-addon .vs-button:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n  border-right: none;\n}\n.vx-input-group .prepend-text,\n.vx-input-group .append-text {\n  color: #fff;\n}\n.vx-input-group .prepend-text:not(.btn-addon),\n.vx-input-group .append-text:not(.btn-addon) {\n  border-radius: 6px;\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.vx-input-group .prepend-text.btn-addon .vs-button,\n.vx-input-group .append-text.btn-addon .vs-button {\n  height: 100%;\n  padding: 0 1.5rem !important;\n}\n.vx-input-group .vx-input-group-default:not(:first-child) input,\n.vx-input-group .vx-input-group-default:not(:first-child) .vs-con-textarea {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-default .vs-input {\n  width: 100%;\n}\n.vx-input-group .vx-input-group-default:not(:last-child) input {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.vx-input-group .vs-con-textarea {\n  margin-bottom: 0;\n}\n.vx-input-group .vx-input-group-prepend {\n  border-top-left-radius: 5px;\n  border-bottom-left-radius: 5px;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text {\n  display: flex;\n  align-items: center;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:first-child) {\n  border-left: 1px solid rgba(0, 0, 0, 0.18);\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:first-child {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text:last-child {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text.btn-addon .vs-button {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-prepend .prepend-text.btn-addon .vs-button:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n  border-left: none;\n}\n.vx-input-group .vx-input-group-append {\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n.vx-input-group .vx-input-group-append .append-text {\n  display: flex;\n  align-items: center;\n}\n.vx-input-group .vx-input-group-append .append-text:not(:first-child) {\n  border-left: 1px solid rgba(0, 0, 0, 0.18);\n}\n.vx-input-group .vx-input-group-append .append-text:first-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text:last-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text.btn-addon .vs-button {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-append .append-text.btn-addon .vs-button:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n  border-right: none;\n}\n.vx-input-group .prepend-text,\n.vx-input-group .append-text {\n  color: #fff;\n}\n.vx-input-group .prepend-text:not(.btn-addon),\n.vx-input-group .append-text:not(.btn-addon) {\n  border-radius: 6px;\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.vx-input-group .prepend-text.btn-addon .vs-button,\n.vx-input-group .append-text.btn-addon .vs-button {\n  height: 100%;\n  padding: 0 1.5rem !important;\n}\n.vx-input-group .vx-input-group-default:not(:first-child) input,\n.vx-input-group .vx-input-group-default:not(:first-child) .vs-con-textarea {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.vx-input-group .vx-input-group-default .vs-input {\n  width: 100%;\n}\n.vx-input-group .vx-input-group-default:not(:last-child) input {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}", ""]);
 
 // exports
 
@@ -17696,7 +14414,26 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: vxList.scss\n    Description: Styles for vx-list component. Imported in VxList.vue file\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.list .list__item {\n  display: flex;\n  padding: 0.4rem;\n  align-items: flex-start;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: vxList.scss\r\n    Description: Styles for vx-list component. Imported in VxList.vue file\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.list .list__item {\n  display: flex;\n  padding: 0.4rem;\n  align-items: flex-start;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/bootstrap/dist/css/bootstrap.css":
+/*!***************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/postcss-loader/src??ref--7-2!./node_modules/bootstrap/dist/css/bootstrap.css ***!
+  \***************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "/*!\n * Bootstrap v4.4.1 (https://getbootstrap.com/)\n * Copyright 2011-2019 The Bootstrap Authors\n * Copyright 2011-2019 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n\n:root {\n  --blue: #007bff;\n  --indigo: #6610f2;\n  --purple: #6f42c1;\n  --pink: #e83e8c;\n  --red: #dc3545;\n  --orange: #fd7e14;\n  --yellow: #ffc107;\n  --green: #28a745;\n  --teal: #20c997;\n  --cyan: #17a2b8;\n  --white: #fff;\n  --gray: #6c757d;\n  --gray-dark: #343a40;\n  --primary: #007bff;\n  --secondary: #6c757d;\n  --success: #28a745;\n  --info: #17a2b8;\n  --warning: #ffc107;\n  --danger: #dc3545;\n  --light: #f8f9fa;\n  --dark: #343a40;\n  --breakpoint-xs: 0;\n  --breakpoint-sm: 576px;\n  --breakpoint-md: 768px;\n  --breakpoint-lg: 992px;\n  --breakpoint-xl: 1200px;\n  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\nhtml {\n  font-family: sans-serif;\n  line-height: 1.15;\n  -webkit-text-size-adjust: 100%;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\narticle, aside, figcaption, figure, footer, header, hgroup, main, nav, section {\n  display: block;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #212529;\n}\n\n[dir] body {\n  margin: 0;\n  background-color: #fff;\n}\n\n[dir=ltr] body {\n  text-align: left;\n}\n\n[dir=rtl] body {\n  text-align: right;\n}\n\n[tabindex=\"-1\"]:focus:not(:focus-visible) {\n  outline: 0 !important;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\n[dir] h1, [dir] h2, [dir] h3, [dir] h4, [dir] h5, [dir] h6 {\n  margin-top: 0;\n  margin-bottom: 0.5rem;\n}\n\n[dir] p {\n  margin-top: 0;\n  margin-bottom: 1rem;\n}\n\nabbr[title],\nabbr[data-original-title] {\n  text-decoration: underline;\n  -webkit-text-decoration: underline dotted;\n  text-decoration: underline dotted;\n  -webkit-text-decoration-skip-ink: none;\n  text-decoration-skip-ink: none;\n}\n\n[dir] abbr[title], [dir] abbr[data-original-title] {\n  cursor: help;\n  border-bottom: 0;\n}\n\naddress {\n  font-style: normal;\n  line-height: inherit;\n}\n\n[dir] address {\n  margin-bottom: 1rem;\n}\n\n[dir] ol, [dir] ul, [dir] dl {\n  margin-top: 0;\n  margin-bottom: 1rem;\n}\n\n[dir] ol ol, [dir] ul ul, [dir] ol ul, [dir] ul ol {\n  margin-bottom: 0;\n}\n\ndt {\n  font-weight: 700;\n}\n\n[dir] dd {\n  margin-bottom: .5rem;\n}\n\n[dir=ltr] dd {\n  margin-left: 0;\n}\n\n[dir=rtl] dd {\n  margin-right: 0;\n}\n\n[dir] blockquote {\n  margin: 0 0 1rem;\n}\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\nsmall {\n  font-size: 80%;\n}\n\nsub,\nsup {\n  position: relative;\n  font-size: 75%;\n  line-height: 0;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -.25em;\n}\n\nsup {\n  top: -.5em;\n}\n\na {\n  color: #007bff;\n  text-decoration: none;\n}\n\n[dir] a {\n  background-color: transparent;\n}\n\na:hover {\n  color: #0056b3;\n  text-decoration: underline;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\na:not([href]):hover {\n  color: inherit;\n  text-decoration: none;\n}\n\npre,\ncode,\nkbd,\nsamp {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  font-size: 1em;\n}\n\npre {\n  overflow: auto;\n}\n\n[dir] pre {\n  margin-top: 0;\n  margin-bottom: 1rem;\n}\n\n[dir] figure {\n  margin: 0 0 1rem;\n}\n\nimg {\n  vertical-align: middle;\n}\n\n[dir] img {\n  border-style: none;\n}\n\nsvg {\n  overflow: hidden;\n  vertical-align: middle;\n}\n\ntable {\n  border-collapse: collapse;\n}\n\ncaption {\n  color: #6c757d;\n  caption-side: bottom;\n}\n\n[dir] caption {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n}\n\n[dir=ltr] caption {\n  text-align: left;\n}\n\n[dir=rtl] caption {\n  text-align: right;\n}\n\n[dir] th {\n  text-align: inherit;\n}\n\nlabel {\n  display: inline-block;\n}\n\n[dir] label {\n  margin-bottom: 0.5rem;\n}\n\n[dir] button {\n  border-radius: 0;\n}\n\nbutton:focus {\n  outline: 1px dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n}\n\ninput,\nbutton,\nselect,\noptgroup,\ntextarea {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\n[dir] input, [dir] button, [dir] select, [dir] optgroup, [dir] textarea {\n  margin: 0;\n}\n\nbutton,\ninput {\n  overflow: visible;\n}\n\nbutton,\nselect {\n  text-transform: none;\n}\n\nselect {\n  word-wrap: normal;\n}\n\nbutton,\n[type=\"button\"],\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button;\n}\n\n[dir] button:not(:disabled), [dir] [type=\"button\"]:not(:disabled), [dir] [type=\"reset\"]:not(:disabled), [dir] [type=\"submit\"]:not(:disabled) {\n  cursor: pointer;\n}\n\n[dir] button::-moz-focus-inner, [dir] [type=\"button\"]::-moz-focus-inner, [dir] [type=\"reset\"]::-moz-focus-inner, [dir] [type=\"submit\"]::-moz-focus-inner {\n  padding: 0;\n  border-style: none;\n}\n\ninput[type=\"radio\"],\ninput[type=\"checkbox\"] {\n  box-sizing: border-box;\n}\n\n[dir] input[type=\"radio\"], [dir] input[type=\"checkbox\"] {\n  padding: 0;\n}\n\ninput[type=\"date\"],\ninput[type=\"time\"],\ninput[type=\"datetime-local\"],\ninput[type=\"month\"] {\n  -webkit-appearance: listbox;\n}\n\ntextarea {\n  overflow: auto;\n  resize: vertical;\n}\n\nfieldset {\n  min-width: 0;\n}\n\n[dir] fieldset {\n  padding: 0;\n  margin: 0;\n  border: 0;\n}\n\nlegend {\n  display: block;\n  width: 100%;\n  max-width: 100%;\n  font-size: 1.5rem;\n  line-height: inherit;\n  color: inherit;\n  white-space: normal;\n}\n\n[dir] legend {\n  padding: 0;\n  margin-bottom: .5rem;\n}\n\nprogress {\n  vertical-align: baseline;\n}\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n[type=\"search\"] {\n  outline-offset: -2px;\n  -webkit-appearance: none;\n}\n\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n::-webkit-file-upload-button {\n  font: inherit;\n  -webkit-appearance: button;\n}\n\noutput {\n  display: inline-block;\n}\n\nsummary {\n  display: list-item;\n}\n\n[dir] summary {\n  cursor: pointer;\n}\n\ntemplate {\n  display: none;\n}\n\n[hidden] {\n  display: none !important;\n}\n\nh1, h2, h3, h4, h5, h6,\n.h1, .h2, .h3, .h4, .h5, .h6 {\n  font-weight: 500;\n  line-height: 1.2;\n}\n\n[dir] h1, [dir] h2, [dir] h3, [dir] h4, [dir] h5, [dir] h6, [dir] .h1, [dir] .h2, [dir] .h3, [dir] .h4, [dir] .h5, [dir] .h6 {\n  margin-bottom: 0.5rem;\n}\n\nh1, .h1 {\n  font-size: 2.5rem;\n}\n\nh2, .h2 {\n  font-size: 2rem;\n}\n\nh3, .h3 {\n  font-size: 1.75rem;\n}\n\nh4, .h4 {\n  font-size: 1.5rem;\n}\n\nh5, .h5 {\n  font-size: 1.25rem;\n}\n\nh6, .h6 {\n  font-size: 1rem;\n}\n\n.lead {\n  font-size: 1.25rem;\n  font-weight: 300;\n}\n\n.display-1 {\n  font-size: 6rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-2 {\n  font-size: 5.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-3 {\n  font-size: 4.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-4 {\n  font-size: 3.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n[dir] hr {\n  margin-top: 1rem;\n  margin-bottom: 1rem;\n  border: 0;\n  border-top: 1px solid rgba(0, 0, 0, 0.1);\n}\n\nsmall,\n.small {\n  font-size: 80%;\n  font-weight: 400;\n}\n\n[dir] mark, [dir] .mark {\n  padding: 0.2em;\n  background-color: #fcf8e3;\n}\n\n.list-unstyled {\n  list-style: none;\n}\n\n[dir=ltr] .list-unstyled {\n  padding-left: 0;\n}\n\n[dir=rtl] .list-unstyled {\n  padding-right: 0;\n}\n\n.list-inline {\n  list-style: none;\n}\n\n[dir=ltr] .list-inline {\n  padding-left: 0;\n}\n\n[dir=rtl] .list-inline {\n  padding-right: 0;\n}\n\n.list-inline-item {\n  display: inline-block;\n}\n\n[dir=ltr] .list-inline-item:not(:last-child) {\n  margin-right: 0.5rem;\n}\n\n[dir=rtl] .list-inline-item:not(:last-child) {\n  margin-left: 0.5rem;\n}\n\n.initialism {\n  font-size: 90%;\n  text-transform: uppercase;\n}\n\n.blockquote {\n  font-size: 1.25rem;\n}\n\n[dir] .blockquote {\n  margin-bottom: 1rem;\n}\n\n.blockquote-footer {\n  display: block;\n  font-size: 80%;\n  color: #6c757d;\n}\n\n.blockquote-footer::before {\n  content: \"\\2014\\A0\";\n}\n\n.img-fluid {\n  max-width: 100%;\n  height: auto;\n}\n\n.img-thumbnail {\n  max-width: 100%;\n  height: auto;\n}\n\n[dir] .img-thumbnail {\n  padding: 0.25rem;\n  background-color: #fff;\n  border: 1px solid #dee2e6;\n  border-radius: 0.25rem;\n}\n\n.figure {\n  display: inline-block;\n}\n\n.figure-img {\n  line-height: 1;\n}\n\n[dir] .figure-img {\n  margin-bottom: 0.5rem;\n}\n\n.figure-caption {\n  font-size: 90%;\n  color: #6c757d;\n}\n\ncode {\n  font-size: 87.5%;\n  color: #e83e8c;\n  word-wrap: break-word;\n}\n\na > code {\n  color: inherit;\n}\n\nkbd {\n  font-size: 87.5%;\n  color: #fff;\n}\n\n[dir] kbd {\n  padding: 0.2rem 0.4rem;\n  background-color: #212529;\n  border-radius: 0.2rem;\n}\n\nkbd kbd {\n  font-size: 100%;\n  font-weight: 700;\n}\n\n[dir] kbd kbd {\n  padding: 0;\n}\n\npre {\n  display: block;\n  font-size: 87.5%;\n  color: #212529;\n}\n\npre code {\n  font-size: inherit;\n  color: inherit;\n  word-break: normal;\n}\n\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll;\n}\n\n.container {\n  width: 100%;\n}\n\n[dir=ltr] .container {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n\n[dir=rtl] .container {\n  padding-left: 15px;\n  padding-right: 15px;\n  margin-left: auto;\n  margin-right: auto;\n}\n\n@media (min-width: 576px) {\n  .container {\n    max-width: 540px;\n  }\n}\n\n@media (min-width: 768px) {\n  .container {\n    max-width: 720px;\n  }\n}\n\n@media (min-width: 992px) {\n  .container {\n    max-width: 960px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .container {\n    max-width: 1140px;\n  }\n}\n\n.container-fluid, .container-sm, .container-md, .container-lg, .container-xl {\n  width: 100%;\n}\n\n[dir=ltr] .container-fluid, [dir=ltr] .container-sm, [dir=ltr] .container-md, [dir=ltr] .container-lg, [dir=ltr] .container-xl {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n\n[dir=rtl] .container-fluid, [dir=rtl] .container-sm, [dir=rtl] .container-md, [dir=rtl] .container-lg, [dir=rtl] .container-xl {\n  padding-left: 15px;\n  padding-right: 15px;\n  margin-left: auto;\n  margin-right: auto;\n}\n\n@media (min-width: 576px) {\n  .container, .container-sm {\n    max-width: 540px;\n  }\n}\n\n@media (min-width: 768px) {\n  .container, .container-sm, .container-md {\n    max-width: 720px;\n  }\n}\n\n@media (min-width: 992px) {\n  .container, .container-sm, .container-md, .container-lg {\n    max-width: 960px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .container, .container-sm, .container-md, .container-lg, .container-xl {\n    max-width: 1140px;\n  }\n}\n\n.row {\n  display: flex;\n  flex-wrap: wrap;\n}\n\n[dir=ltr] .row {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n\n[dir=rtl] .row {\n  margin-left: -15px;\n  margin-right: -15px;\n}\n\n[dir=ltr] .no-gutters {\n  margin-right: 0;\n  margin-left: 0;\n}\n\n[dir=rtl] .no-gutters {\n  margin-left: 0;\n  margin-right: 0;\n}\n\n[dir=ltr] .no-gutters > .col, [dir=ltr] .no-gutters > [class*=\"col-\"] {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n[dir=rtl] .no-gutters > .col, [dir=rtl] .no-gutters > [class*=\"col-\"] {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col,\n.col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm,\n.col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md,\n.col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg,\n.col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,\n.col-xl-auto {\n  position: relative;\n  width: 100%;\n}\n\n[dir=ltr] .col-1, [dir=ltr] .col-2, [dir=ltr] .col-3, [dir=ltr] .col-4, [dir=ltr] .col-5, [dir=ltr] .col-6, [dir=ltr] .col-7, [dir=ltr] .col-8, [dir=ltr] .col-9, [dir=ltr] .col-10, [dir=ltr] .col-11, [dir=ltr] .col-12, [dir=ltr] .col, [dir=ltr] .col-auto, [dir=ltr] .col-sm-1, [dir=ltr] .col-sm-2, [dir=ltr] .col-sm-3, [dir=ltr] .col-sm-4, [dir=ltr] .col-sm-5, [dir=ltr] .col-sm-6, [dir=ltr] .col-sm-7, [dir=ltr] .col-sm-8, [dir=ltr] .col-sm-9, [dir=ltr] .col-sm-10, [dir=ltr] .col-sm-11, [dir=ltr] .col-sm-12, [dir=ltr] .col-sm, [dir=ltr] .col-sm-auto, [dir=ltr] .col-md-1, [dir=ltr] .col-md-2, [dir=ltr] .col-md-3, [dir=ltr] .col-md-4, [dir=ltr] .col-md-5, [dir=ltr] .col-md-6, [dir=ltr] .col-md-7, [dir=ltr] .col-md-8, [dir=ltr] .col-md-9, [dir=ltr] .col-md-10, [dir=ltr] .col-md-11, [dir=ltr] .col-md-12, [dir=ltr] .col-md, [dir=ltr] .col-md-auto, [dir=ltr] .col-lg-1, [dir=ltr] .col-lg-2, [dir=ltr] .col-lg-3, [dir=ltr] .col-lg-4, [dir=ltr] .col-lg-5, [dir=ltr] .col-lg-6, [dir=ltr] .col-lg-7, [dir=ltr] .col-lg-8, [dir=ltr] .col-lg-9, [dir=ltr] .col-lg-10, [dir=ltr] .col-lg-11, [dir=ltr] .col-lg-12, [dir=ltr] .col-lg, [dir=ltr] .col-lg-auto, [dir=ltr] .col-xl-1, [dir=ltr] .col-xl-2, [dir=ltr] .col-xl-3, [dir=ltr] .col-xl-4, [dir=ltr] .col-xl-5, [dir=ltr] .col-xl-6, [dir=ltr] .col-xl-7, [dir=ltr] .col-xl-8, [dir=ltr] .col-xl-9, [dir=ltr] .col-xl-10, [dir=ltr] .col-xl-11, [dir=ltr] .col-xl-12, [dir=ltr] .col-xl, [dir=ltr] .col-xl-auto {\n  padding-right: 15px;\n  padding-left: 15px;\n}\n\n[dir=rtl] .col-1, [dir=rtl] .col-2, [dir=rtl] .col-3, [dir=rtl] .col-4, [dir=rtl] .col-5, [dir=rtl] .col-6, [dir=rtl] .col-7, [dir=rtl] .col-8, [dir=rtl] .col-9, [dir=rtl] .col-10, [dir=rtl] .col-11, [dir=rtl] .col-12, [dir=rtl] .col, [dir=rtl] .col-auto, [dir=rtl] .col-sm-1, [dir=rtl] .col-sm-2, [dir=rtl] .col-sm-3, [dir=rtl] .col-sm-4, [dir=rtl] .col-sm-5, [dir=rtl] .col-sm-6, [dir=rtl] .col-sm-7, [dir=rtl] .col-sm-8, [dir=rtl] .col-sm-9, [dir=rtl] .col-sm-10, [dir=rtl] .col-sm-11, [dir=rtl] .col-sm-12, [dir=rtl] .col-sm, [dir=rtl] .col-sm-auto, [dir=rtl] .col-md-1, [dir=rtl] .col-md-2, [dir=rtl] .col-md-3, [dir=rtl] .col-md-4, [dir=rtl] .col-md-5, [dir=rtl] .col-md-6, [dir=rtl] .col-md-7, [dir=rtl] .col-md-8, [dir=rtl] .col-md-9, [dir=rtl] .col-md-10, [dir=rtl] .col-md-11, [dir=rtl] .col-md-12, [dir=rtl] .col-md, [dir=rtl] .col-md-auto, [dir=rtl] .col-lg-1, [dir=rtl] .col-lg-2, [dir=rtl] .col-lg-3, [dir=rtl] .col-lg-4, [dir=rtl] .col-lg-5, [dir=rtl] .col-lg-6, [dir=rtl] .col-lg-7, [dir=rtl] .col-lg-8, [dir=rtl] .col-lg-9, [dir=rtl] .col-lg-10, [dir=rtl] .col-lg-11, [dir=rtl] .col-lg-12, [dir=rtl] .col-lg, [dir=rtl] .col-lg-auto, [dir=rtl] .col-xl-1, [dir=rtl] .col-xl-2, [dir=rtl] .col-xl-3, [dir=rtl] .col-xl-4, [dir=rtl] .col-xl-5, [dir=rtl] .col-xl-6, [dir=rtl] .col-xl-7, [dir=rtl] .col-xl-8, [dir=rtl] .col-xl-9, [dir=rtl] .col-xl-10, [dir=rtl] .col-xl-11, [dir=rtl] .col-xl-12, [dir=rtl] .col-xl, [dir=rtl] .col-xl-auto {\n  padding-left: 15px;\n  padding-right: 15px;\n}\n\n.col {\n  flex-basis: 0;\n  flex-grow: 1;\n  max-width: 100%;\n}\n\n.row-cols-1 > * {\n  flex: 0 0 100%;\n  max-width: 100%;\n}\n\n.row-cols-2 > * {\n  flex: 0 0 50%;\n  max-width: 50%;\n}\n\n.row-cols-3 > * {\n  flex: 0 0 33.333333%;\n  max-width: 33.333333%;\n}\n\n.row-cols-4 > * {\n  flex: 0 0 25%;\n  max-width: 25%;\n}\n\n.row-cols-5 > * {\n  flex: 0 0 20%;\n  max-width: 20%;\n}\n\n.row-cols-6 > * {\n  flex: 0 0 16.666667%;\n  max-width: 16.666667%;\n}\n\n.col-auto {\n  flex: 0 0 auto;\n  width: auto;\n  max-width: 100%;\n}\n\n.col-1 {\n  flex: 0 0 8.333333%;\n  max-width: 8.333333%;\n}\n\n.col-2 {\n  flex: 0 0 16.666667%;\n  max-width: 16.666667%;\n}\n\n.col-3 {\n  flex: 0 0 25%;\n  max-width: 25%;\n}\n\n.col-4 {\n  flex: 0 0 33.333333%;\n  max-width: 33.333333%;\n}\n\n.col-5 {\n  flex: 0 0 41.666667%;\n  max-width: 41.666667%;\n}\n\n.col-6 {\n  flex: 0 0 50%;\n  max-width: 50%;\n}\n\n.col-7 {\n  flex: 0 0 58.333333%;\n  max-width: 58.333333%;\n}\n\n.col-8 {\n  flex: 0 0 66.666667%;\n  max-width: 66.666667%;\n}\n\n.col-9 {\n  flex: 0 0 75%;\n  max-width: 75%;\n}\n\n.col-10 {\n  flex: 0 0 83.333333%;\n  max-width: 83.333333%;\n}\n\n.col-11 {\n  flex: 0 0 91.666667%;\n  max-width: 91.666667%;\n}\n\n.col-12 {\n  flex: 0 0 100%;\n  max-width: 100%;\n}\n\n.order-first {\n  order: -1;\n}\n\n.order-last {\n  order: 13;\n}\n\n.order-0 {\n  order: 0;\n}\n\n.order-1 {\n  order: 1;\n}\n\n.order-2 {\n  order: 2;\n}\n\n.order-3 {\n  order: 3;\n}\n\n.order-4 {\n  order: 4;\n}\n\n.order-5 {\n  order: 5;\n}\n\n.order-6 {\n  order: 6;\n}\n\n.order-7 {\n  order: 7;\n}\n\n.order-8 {\n  order: 8;\n}\n\n.order-9 {\n  order: 9;\n}\n\n.order-10 {\n  order: 10;\n}\n\n.order-11 {\n  order: 11;\n}\n\n.order-12 {\n  order: 12;\n}\n\n[dir=ltr] .offset-1 {\n  margin-left: 8.333333%;\n}\n\n[dir=rtl] .offset-1 {\n  margin-right: 8.333333%;\n}\n\n[dir=ltr] .offset-2 {\n  margin-left: 16.666667%;\n}\n\n[dir=rtl] .offset-2 {\n  margin-right: 16.666667%;\n}\n\n[dir=ltr] .offset-3 {\n  margin-left: 25%;\n}\n\n[dir=rtl] .offset-3 {\n  margin-right: 25%;\n}\n\n[dir=ltr] .offset-4 {\n  margin-left: 33.333333%;\n}\n\n[dir=rtl] .offset-4 {\n  margin-right: 33.333333%;\n}\n\n[dir=ltr] .offset-5 {\n  margin-left: 41.666667%;\n}\n\n[dir=rtl] .offset-5 {\n  margin-right: 41.666667%;\n}\n\n[dir=ltr] .offset-6 {\n  margin-left: 50%;\n}\n\n[dir=rtl] .offset-6 {\n  margin-right: 50%;\n}\n\n[dir=ltr] .offset-7 {\n  margin-left: 58.333333%;\n}\n\n[dir=rtl] .offset-7 {\n  margin-right: 58.333333%;\n}\n\n[dir=ltr] .offset-8 {\n  margin-left: 66.666667%;\n}\n\n[dir=rtl] .offset-8 {\n  margin-right: 66.666667%;\n}\n\n[dir=ltr] .offset-9 {\n  margin-left: 75%;\n}\n\n[dir=rtl] .offset-9 {\n  margin-right: 75%;\n}\n\n[dir=ltr] .offset-10 {\n  margin-left: 83.333333%;\n}\n\n[dir=rtl] .offset-10 {\n  margin-right: 83.333333%;\n}\n\n[dir=ltr] .offset-11 {\n  margin-left: 91.666667%;\n}\n\n[dir=rtl] .offset-11 {\n  margin-right: 91.666667%;\n}\n\n@media (min-width: 576px) {\n  .col-sm {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n\n  .row-cols-sm-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .row-cols-sm-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .row-cols-sm-3 > * {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .row-cols-sm-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .row-cols-sm-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n\n  .row-cols-sm-6 > * {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-sm-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n\n  .col-sm-1 {\n    flex: 0 0 8.333333%;\n    max-width: 8.333333%;\n  }\n\n  .col-sm-2 {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-sm-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .col-sm-4 {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .col-sm-5 {\n    flex: 0 0 41.666667%;\n    max-width: 41.666667%;\n  }\n\n  .col-sm-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .col-sm-7 {\n    flex: 0 0 58.333333%;\n    max-width: 58.333333%;\n  }\n\n  .col-sm-8 {\n    flex: 0 0 66.666667%;\n    max-width: 66.666667%;\n  }\n\n  .col-sm-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n\n  .col-sm-10 {\n    flex: 0 0 83.333333%;\n    max-width: 83.333333%;\n  }\n\n  .col-sm-11 {\n    flex: 0 0 91.666667%;\n    max-width: 91.666667%;\n  }\n\n  .col-sm-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .order-sm-first {\n    order: -1;\n  }\n\n  .order-sm-last {\n    order: 13;\n  }\n\n  .order-sm-0 {\n    order: 0;\n  }\n\n  .order-sm-1 {\n    order: 1;\n  }\n\n  .order-sm-2 {\n    order: 2;\n  }\n\n  .order-sm-3 {\n    order: 3;\n  }\n\n  .order-sm-4 {\n    order: 4;\n  }\n\n  .order-sm-5 {\n    order: 5;\n  }\n\n  .order-sm-6 {\n    order: 6;\n  }\n\n  .order-sm-7 {\n    order: 7;\n  }\n\n  .order-sm-8 {\n    order: 8;\n  }\n\n  .order-sm-9 {\n    order: 9;\n  }\n\n  .order-sm-10 {\n    order: 10;\n  }\n\n  .order-sm-11 {\n    order: 11;\n  }\n\n  .order-sm-12 {\n    order: 12;\n  }\n\n  [dir=ltr] .offset-sm-0 {\n    margin-left: 0;\n  }\n\n  [dir=rtl] .offset-sm-0 {\n    margin-right: 0;\n  }\n\n  [dir=ltr] .offset-sm-1 {\n    margin-left: 8.333333%;\n  }\n\n  [dir=rtl] .offset-sm-1 {\n    margin-right: 8.333333%;\n  }\n\n  [dir=ltr] .offset-sm-2 {\n    margin-left: 16.666667%;\n  }\n\n  [dir=rtl] .offset-sm-2 {\n    margin-right: 16.666667%;\n  }\n\n  [dir=ltr] .offset-sm-3 {\n    margin-left: 25%;\n  }\n\n  [dir=rtl] .offset-sm-3 {\n    margin-right: 25%;\n  }\n\n  [dir=ltr] .offset-sm-4 {\n    margin-left: 33.333333%;\n  }\n\n  [dir=rtl] .offset-sm-4 {\n    margin-right: 33.333333%;\n  }\n\n  [dir=ltr] .offset-sm-5 {\n    margin-left: 41.666667%;\n  }\n\n  [dir=rtl] .offset-sm-5 {\n    margin-right: 41.666667%;\n  }\n\n  [dir=ltr] .offset-sm-6 {\n    margin-left: 50%;\n  }\n\n  [dir=rtl] .offset-sm-6 {\n    margin-right: 50%;\n  }\n\n  [dir=ltr] .offset-sm-7 {\n    margin-left: 58.333333%;\n  }\n\n  [dir=rtl] .offset-sm-7 {\n    margin-right: 58.333333%;\n  }\n\n  [dir=ltr] .offset-sm-8 {\n    margin-left: 66.666667%;\n  }\n\n  [dir=rtl] .offset-sm-8 {\n    margin-right: 66.666667%;\n  }\n\n  [dir=ltr] .offset-sm-9 {\n    margin-left: 75%;\n  }\n\n  [dir=rtl] .offset-sm-9 {\n    margin-right: 75%;\n  }\n\n  [dir=ltr] .offset-sm-10 {\n    margin-left: 83.333333%;\n  }\n\n  [dir=rtl] .offset-sm-10 {\n    margin-right: 83.333333%;\n  }\n\n  [dir=ltr] .offset-sm-11 {\n    margin-left: 91.666667%;\n  }\n\n  [dir=rtl] .offset-sm-11 {\n    margin-right: 91.666667%;\n  }\n}\n\n@media (min-width: 768px) {\n  .col-md {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n\n  .row-cols-md-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .row-cols-md-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .row-cols-md-3 > * {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .row-cols-md-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .row-cols-md-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n\n  .row-cols-md-6 > * {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-md-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n\n  .col-md-1 {\n    flex: 0 0 8.333333%;\n    max-width: 8.333333%;\n  }\n\n  .col-md-2 {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-md-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .col-md-4 {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .col-md-5 {\n    flex: 0 0 41.666667%;\n    max-width: 41.666667%;\n  }\n\n  .col-md-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .col-md-7 {\n    flex: 0 0 58.333333%;\n    max-width: 58.333333%;\n  }\n\n  .col-md-8 {\n    flex: 0 0 66.666667%;\n    max-width: 66.666667%;\n  }\n\n  .col-md-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n\n  .col-md-10 {\n    flex: 0 0 83.333333%;\n    max-width: 83.333333%;\n  }\n\n  .col-md-11 {\n    flex: 0 0 91.666667%;\n    max-width: 91.666667%;\n  }\n\n  .col-md-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .order-md-first {\n    order: -1;\n  }\n\n  .order-md-last {\n    order: 13;\n  }\n\n  .order-md-0 {\n    order: 0;\n  }\n\n  .order-md-1 {\n    order: 1;\n  }\n\n  .order-md-2 {\n    order: 2;\n  }\n\n  .order-md-3 {\n    order: 3;\n  }\n\n  .order-md-4 {\n    order: 4;\n  }\n\n  .order-md-5 {\n    order: 5;\n  }\n\n  .order-md-6 {\n    order: 6;\n  }\n\n  .order-md-7 {\n    order: 7;\n  }\n\n  .order-md-8 {\n    order: 8;\n  }\n\n  .order-md-9 {\n    order: 9;\n  }\n\n  .order-md-10 {\n    order: 10;\n  }\n\n  .order-md-11 {\n    order: 11;\n  }\n\n  .order-md-12 {\n    order: 12;\n  }\n\n  [dir=ltr] .offset-md-0 {\n    margin-left: 0;\n  }\n\n  [dir=rtl] .offset-md-0 {\n    margin-right: 0;\n  }\n\n  [dir=ltr] .offset-md-1 {\n    margin-left: 8.333333%;\n  }\n\n  [dir=rtl] .offset-md-1 {\n    margin-right: 8.333333%;\n  }\n\n  [dir=ltr] .offset-md-2 {\n    margin-left: 16.666667%;\n  }\n\n  [dir=rtl] .offset-md-2 {\n    margin-right: 16.666667%;\n  }\n\n  [dir=ltr] .offset-md-3 {\n    margin-left: 25%;\n  }\n\n  [dir=rtl] .offset-md-3 {\n    margin-right: 25%;\n  }\n\n  [dir=ltr] .offset-md-4 {\n    margin-left: 33.333333%;\n  }\n\n  [dir=rtl] .offset-md-4 {\n    margin-right: 33.333333%;\n  }\n\n  [dir=ltr] .offset-md-5 {\n    margin-left: 41.666667%;\n  }\n\n  [dir=rtl] .offset-md-5 {\n    margin-right: 41.666667%;\n  }\n\n  [dir=ltr] .offset-md-6 {\n    margin-left: 50%;\n  }\n\n  [dir=rtl] .offset-md-6 {\n    margin-right: 50%;\n  }\n\n  [dir=ltr] .offset-md-7 {\n    margin-left: 58.333333%;\n  }\n\n  [dir=rtl] .offset-md-7 {\n    margin-right: 58.333333%;\n  }\n\n  [dir=ltr] .offset-md-8 {\n    margin-left: 66.666667%;\n  }\n\n  [dir=rtl] .offset-md-8 {\n    margin-right: 66.666667%;\n  }\n\n  [dir=ltr] .offset-md-9 {\n    margin-left: 75%;\n  }\n\n  [dir=rtl] .offset-md-9 {\n    margin-right: 75%;\n  }\n\n  [dir=ltr] .offset-md-10 {\n    margin-left: 83.333333%;\n  }\n\n  [dir=rtl] .offset-md-10 {\n    margin-right: 83.333333%;\n  }\n\n  [dir=ltr] .offset-md-11 {\n    margin-left: 91.666667%;\n  }\n\n  [dir=rtl] .offset-md-11 {\n    margin-right: 91.666667%;\n  }\n}\n\n@media (min-width: 992px) {\n  .col-lg {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n\n  .row-cols-lg-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .row-cols-lg-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .row-cols-lg-3 > * {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .row-cols-lg-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .row-cols-lg-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n\n  .row-cols-lg-6 > * {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-lg-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n\n  .col-lg-1 {\n    flex: 0 0 8.333333%;\n    max-width: 8.333333%;\n  }\n\n  .col-lg-2 {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-lg-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .col-lg-4 {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .col-lg-5 {\n    flex: 0 0 41.666667%;\n    max-width: 41.666667%;\n  }\n\n  .col-lg-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .col-lg-7 {\n    flex: 0 0 58.333333%;\n    max-width: 58.333333%;\n  }\n\n  .col-lg-8 {\n    flex: 0 0 66.666667%;\n    max-width: 66.666667%;\n  }\n\n  .col-lg-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n\n  .col-lg-10 {\n    flex: 0 0 83.333333%;\n    max-width: 83.333333%;\n  }\n\n  .col-lg-11 {\n    flex: 0 0 91.666667%;\n    max-width: 91.666667%;\n  }\n\n  .col-lg-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .order-lg-first {\n    order: -1;\n  }\n\n  .order-lg-last {\n    order: 13;\n  }\n\n  .order-lg-0 {\n    order: 0;\n  }\n\n  .order-lg-1 {\n    order: 1;\n  }\n\n  .order-lg-2 {\n    order: 2;\n  }\n\n  .order-lg-3 {\n    order: 3;\n  }\n\n  .order-lg-4 {\n    order: 4;\n  }\n\n  .order-lg-5 {\n    order: 5;\n  }\n\n  .order-lg-6 {\n    order: 6;\n  }\n\n  .order-lg-7 {\n    order: 7;\n  }\n\n  .order-lg-8 {\n    order: 8;\n  }\n\n  .order-lg-9 {\n    order: 9;\n  }\n\n  .order-lg-10 {\n    order: 10;\n  }\n\n  .order-lg-11 {\n    order: 11;\n  }\n\n  .order-lg-12 {\n    order: 12;\n  }\n\n  [dir=ltr] .offset-lg-0 {\n    margin-left: 0;\n  }\n\n  [dir=rtl] .offset-lg-0 {\n    margin-right: 0;\n  }\n\n  [dir=ltr] .offset-lg-1 {\n    margin-left: 8.333333%;\n  }\n\n  [dir=rtl] .offset-lg-1 {\n    margin-right: 8.333333%;\n  }\n\n  [dir=ltr] .offset-lg-2 {\n    margin-left: 16.666667%;\n  }\n\n  [dir=rtl] .offset-lg-2 {\n    margin-right: 16.666667%;\n  }\n\n  [dir=ltr] .offset-lg-3 {\n    margin-left: 25%;\n  }\n\n  [dir=rtl] .offset-lg-3 {\n    margin-right: 25%;\n  }\n\n  [dir=ltr] .offset-lg-4 {\n    margin-left: 33.333333%;\n  }\n\n  [dir=rtl] .offset-lg-4 {\n    margin-right: 33.333333%;\n  }\n\n  [dir=ltr] .offset-lg-5 {\n    margin-left: 41.666667%;\n  }\n\n  [dir=rtl] .offset-lg-5 {\n    margin-right: 41.666667%;\n  }\n\n  [dir=ltr] .offset-lg-6 {\n    margin-left: 50%;\n  }\n\n  [dir=rtl] .offset-lg-6 {\n    margin-right: 50%;\n  }\n\n  [dir=ltr] .offset-lg-7 {\n    margin-left: 58.333333%;\n  }\n\n  [dir=rtl] .offset-lg-7 {\n    margin-right: 58.333333%;\n  }\n\n  [dir=ltr] .offset-lg-8 {\n    margin-left: 66.666667%;\n  }\n\n  [dir=rtl] .offset-lg-8 {\n    margin-right: 66.666667%;\n  }\n\n  [dir=ltr] .offset-lg-9 {\n    margin-left: 75%;\n  }\n\n  [dir=rtl] .offset-lg-9 {\n    margin-right: 75%;\n  }\n\n  [dir=ltr] .offset-lg-10 {\n    margin-left: 83.333333%;\n  }\n\n  [dir=rtl] .offset-lg-10 {\n    margin-right: 83.333333%;\n  }\n\n  [dir=ltr] .offset-lg-11 {\n    margin-left: 91.666667%;\n  }\n\n  [dir=rtl] .offset-lg-11 {\n    margin-right: 91.666667%;\n  }\n}\n\n@media (min-width: 1200px) {\n  .col-xl {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n\n  .row-cols-xl-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .row-cols-xl-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .row-cols-xl-3 > * {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .row-cols-xl-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .row-cols-xl-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n\n  .row-cols-xl-6 > * {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-xl-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n\n  .col-xl-1 {\n    flex: 0 0 8.333333%;\n    max-width: 8.333333%;\n  }\n\n  .col-xl-2 {\n    flex: 0 0 16.666667%;\n    max-width: 16.666667%;\n  }\n\n  .col-xl-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n\n  .col-xl-4 {\n    flex: 0 0 33.333333%;\n    max-width: 33.333333%;\n  }\n\n  .col-xl-5 {\n    flex: 0 0 41.666667%;\n    max-width: 41.666667%;\n  }\n\n  .col-xl-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n\n  .col-xl-7 {\n    flex: 0 0 58.333333%;\n    max-width: 58.333333%;\n  }\n\n  .col-xl-8 {\n    flex: 0 0 66.666667%;\n    max-width: 66.666667%;\n  }\n\n  .col-xl-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n\n  .col-xl-10 {\n    flex: 0 0 83.333333%;\n    max-width: 83.333333%;\n  }\n\n  .col-xl-11 {\n    flex: 0 0 91.666667%;\n    max-width: 91.666667%;\n  }\n\n  .col-xl-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n\n  .order-xl-first {\n    order: -1;\n  }\n\n  .order-xl-last {\n    order: 13;\n  }\n\n  .order-xl-0 {\n    order: 0;\n  }\n\n  .order-xl-1 {\n    order: 1;\n  }\n\n  .order-xl-2 {\n    order: 2;\n  }\n\n  .order-xl-3 {\n    order: 3;\n  }\n\n  .order-xl-4 {\n    order: 4;\n  }\n\n  .order-xl-5 {\n    order: 5;\n  }\n\n  .order-xl-6 {\n    order: 6;\n  }\n\n  .order-xl-7 {\n    order: 7;\n  }\n\n  .order-xl-8 {\n    order: 8;\n  }\n\n  .order-xl-9 {\n    order: 9;\n  }\n\n  .order-xl-10 {\n    order: 10;\n  }\n\n  .order-xl-11 {\n    order: 11;\n  }\n\n  .order-xl-12 {\n    order: 12;\n  }\n\n  [dir=ltr] .offset-xl-0 {\n    margin-left: 0;\n  }\n\n  [dir=rtl] .offset-xl-0 {\n    margin-right: 0;\n  }\n\n  [dir=ltr] .offset-xl-1 {\n    margin-left: 8.333333%;\n  }\n\n  [dir=rtl] .offset-xl-1 {\n    margin-right: 8.333333%;\n  }\n\n  [dir=ltr] .offset-xl-2 {\n    margin-left: 16.666667%;\n  }\n\n  [dir=rtl] .offset-xl-2 {\n    margin-right: 16.666667%;\n  }\n\n  [dir=ltr] .offset-xl-3 {\n    margin-left: 25%;\n  }\n\n  [dir=rtl] .offset-xl-3 {\n    margin-right: 25%;\n  }\n\n  [dir=ltr] .offset-xl-4 {\n    margin-left: 33.333333%;\n  }\n\n  [dir=rtl] .offset-xl-4 {\n    margin-right: 33.333333%;\n  }\n\n  [dir=ltr] .offset-xl-5 {\n    margin-left: 41.666667%;\n  }\n\n  [dir=rtl] .offset-xl-5 {\n    margin-right: 41.666667%;\n  }\n\n  [dir=ltr] .offset-xl-6 {\n    margin-left: 50%;\n  }\n\n  [dir=rtl] .offset-xl-6 {\n    margin-right: 50%;\n  }\n\n  [dir=ltr] .offset-xl-7 {\n    margin-left: 58.333333%;\n  }\n\n  [dir=rtl] .offset-xl-7 {\n    margin-right: 58.333333%;\n  }\n\n  [dir=ltr] .offset-xl-8 {\n    margin-left: 66.666667%;\n  }\n\n  [dir=rtl] .offset-xl-8 {\n    margin-right: 66.666667%;\n  }\n\n  [dir=ltr] .offset-xl-9 {\n    margin-left: 75%;\n  }\n\n  [dir=rtl] .offset-xl-9 {\n    margin-right: 75%;\n  }\n\n  [dir=ltr] .offset-xl-10 {\n    margin-left: 83.333333%;\n  }\n\n  [dir=rtl] .offset-xl-10 {\n    margin-right: 83.333333%;\n  }\n\n  [dir=ltr] .offset-xl-11 {\n    margin-left: 91.666667%;\n  }\n\n  [dir=rtl] .offset-xl-11 {\n    margin-right: 91.666667%;\n  }\n}\n\n.table {\n  width: 100%;\n  color: #212529;\n}\n\n[dir] .table {\n  margin-bottom: 1rem;\n}\n\n.table th,\n.table td {\n  vertical-align: top;\n}\n\n[dir] .table th, [dir] .table td {\n  padding: 0.75rem;\n  border-top: 1px solid #dee2e6;\n}\n\n.table thead th {\n  vertical-align: bottom;\n}\n\n[dir] .table thead th {\n  border-bottom: 2px solid #dee2e6;\n}\n\n[dir] .table tbody + tbody {\n  border-top: 2px solid #dee2e6;\n}\n\n[dir] .table-sm th, [dir] .table-sm td {\n  padding: 0.3rem;\n}\n\n[dir] .table-bordered {\n  border: 1px solid #dee2e6;\n}\n\n[dir] .table-bordered th, [dir] .table-bordered td {\n  border: 1px solid #dee2e6;\n}\n\n[dir] .table-bordered thead th, [dir] .table-bordered thead td {\n  border-bottom-width: 2px;\n}\n\n[dir] .table-borderless th, [dir] .table-borderless td, [dir] .table-borderless thead th, [dir] .table-borderless tbody + tbody {\n  border: 0;\n}\n\n[dir] .table-striped tbody tr:nth-of-type(odd) {\n  background-color: rgba(0, 0, 0, 0.05);\n}\n\n.table-hover tbody tr:hover {\n  color: #212529;\n}\n\n[dir] .table-hover tbody tr:hover {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n[dir] .table-primary, [dir] .table-primary > th, [dir] .table-primary > td {\n  background-color: #b8daff;\n}\n\n[dir] .table-primary th, [dir] .table-primary td, [dir] .table-primary thead th, [dir] .table-primary tbody + tbody {\n  border-color: #7abaff;\n}\n\n[dir] .table-hover .table-primary:hover {\n  background-color: #9fcdff;\n}\n\n[dir] .table-hover .table-primary:hover > td, [dir] .table-hover .table-primary:hover > th {\n  background-color: #9fcdff;\n}\n\n[dir] .table-secondary, [dir] .table-secondary > th, [dir] .table-secondary > td {\n  background-color: #d6d8db;\n}\n\n[dir] .table-secondary th, [dir] .table-secondary td, [dir] .table-secondary thead th, [dir] .table-secondary tbody + tbody {\n  border-color: #b3b7bb;\n}\n\n[dir] .table-hover .table-secondary:hover {\n  background-color: #c8cbcf;\n}\n\n[dir] .table-hover .table-secondary:hover > td, [dir] .table-hover .table-secondary:hover > th {\n  background-color: #c8cbcf;\n}\n\n[dir] .table-success, [dir] .table-success > th, [dir] .table-success > td {\n  background-color: #c3e6cb;\n}\n\n[dir] .table-success th, [dir] .table-success td, [dir] .table-success thead th, [dir] .table-success tbody + tbody {\n  border-color: #8fd19e;\n}\n\n[dir] .table-hover .table-success:hover {\n  background-color: #b1dfbb;\n}\n\n[dir] .table-hover .table-success:hover > td, [dir] .table-hover .table-success:hover > th {\n  background-color: #b1dfbb;\n}\n\n[dir] .table-info, [dir] .table-info > th, [dir] .table-info > td {\n  background-color: #bee5eb;\n}\n\n[dir] .table-info th, [dir] .table-info td, [dir] .table-info thead th, [dir] .table-info tbody + tbody {\n  border-color: #86cfda;\n}\n\n[dir] .table-hover .table-info:hover {\n  background-color: #abdde5;\n}\n\n[dir] .table-hover .table-info:hover > td, [dir] .table-hover .table-info:hover > th {\n  background-color: #abdde5;\n}\n\n[dir] .table-warning, [dir] .table-warning > th, [dir] .table-warning > td {\n  background-color: #ffeeba;\n}\n\n[dir] .table-warning th, [dir] .table-warning td, [dir] .table-warning thead th, [dir] .table-warning tbody + tbody {\n  border-color: #ffdf7e;\n}\n\n[dir] .table-hover .table-warning:hover {\n  background-color: #ffe8a1;\n}\n\n[dir] .table-hover .table-warning:hover > td, [dir] .table-hover .table-warning:hover > th {\n  background-color: #ffe8a1;\n}\n\n[dir] .table-danger, [dir] .table-danger > th, [dir] .table-danger > td {\n  background-color: #f5c6cb;\n}\n\n[dir] .table-danger th, [dir] .table-danger td, [dir] .table-danger thead th, [dir] .table-danger tbody + tbody {\n  border-color: #ed969e;\n}\n\n[dir] .table-hover .table-danger:hover {\n  background-color: #f1b0b7;\n}\n\n[dir] .table-hover .table-danger:hover > td, [dir] .table-hover .table-danger:hover > th {\n  background-color: #f1b0b7;\n}\n\n[dir] .table-light, [dir] .table-light > th, [dir] .table-light > td {\n  background-color: #fdfdfe;\n}\n\n[dir] .table-light th, [dir] .table-light td, [dir] .table-light thead th, [dir] .table-light tbody + tbody {\n  border-color: #fbfcfc;\n}\n\n[dir] .table-hover .table-light:hover {\n  background-color: #ececf6;\n}\n\n[dir] .table-hover .table-light:hover > td, [dir] .table-hover .table-light:hover > th {\n  background-color: #ececf6;\n}\n\n[dir] .table-dark, [dir] .table-dark > th, [dir] .table-dark > td {\n  background-color: #c6c8ca;\n}\n\n[dir] .table-dark th, [dir] .table-dark td, [dir] .table-dark thead th, [dir] .table-dark tbody + tbody {\n  border-color: #95999c;\n}\n\n[dir] .table-hover .table-dark:hover {\n  background-color: #b9bbbe;\n}\n\n[dir] .table-hover .table-dark:hover > td, [dir] .table-hover .table-dark:hover > th {\n  background-color: #b9bbbe;\n}\n\n[dir] .table-active, [dir] .table-active > th, [dir] .table-active > td {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n[dir] .table-hover .table-active:hover {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n[dir] .table-hover .table-active:hover > td, [dir] .table-hover .table-active:hover > th {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n.table .thead-dark th {\n  color: #fff;\n}\n\n[dir] .table .thead-dark th {\n  background-color: #343a40;\n  border-color: #454d55;\n}\n\n.table .thead-light th {\n  color: #495057;\n}\n\n[dir] .table .thead-light th {\n  background-color: #e9ecef;\n  border-color: #dee2e6;\n}\n\n.table-dark {\n  color: #fff;\n}\n\n[dir] .table-dark {\n  background-color: #343a40;\n}\n\n[dir] .table-dark th, [dir] .table-dark td, [dir] .table-dark thead th {\n  border-color: #454d55;\n}\n\n[dir] .table-dark.table-bordered {\n  border: 0;\n}\n\n[dir] .table-dark.table-striped tbody tr:nth-of-type(odd) {\n  background-color: rgba(255, 255, 255, 0.05);\n}\n\n.table-dark.table-hover tbody tr:hover {\n  color: #fff;\n}\n\n[dir] .table-dark.table-hover tbody tr:hover {\n  background-color: rgba(255, 255, 255, 0.075);\n}\n\n@media (max-width: 575.98px) {\n  .table-responsive-sm {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n\n  [dir] .table-responsive-sm > .table-bordered {\n    border: 0;\n  }\n}\n\n@media (max-width: 767.98px) {\n  .table-responsive-md {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n\n  [dir] .table-responsive-md > .table-bordered {\n    border: 0;\n  }\n}\n\n@media (max-width: 991.98px) {\n  .table-responsive-lg {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n\n  [dir] .table-responsive-lg > .table-bordered {\n    border: 0;\n  }\n}\n\n@media (max-width: 1199.98px) {\n  .table-responsive-xl {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n\n  [dir] .table-responsive-xl > .table-bordered {\n    border: 0;\n  }\n}\n\n.table-responsive {\n  display: block;\n  width: 100%;\n  overflow-x: auto;\n  -webkit-overflow-scrolling: touch;\n}\n\n[dir] .table-responsive > .table-bordered {\n  border: 0;\n}\n\n.form-control {\n  display: block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n[dir] .form-control {\n  padding: 0.375rem 0.75rem;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .form-control {\n    transition: none;\n  }\n}\n\n[dir] .form-control::-ms-expand {\n  background-color: transparent;\n  border: 0;\n}\n\n.form-control:-moz-focusring {\n  color: transparent;\n}\n\n[dir] .form-control:-moz-focusring {\n  text-shadow: 0 0 0 #495057;\n}\n\n.form-control:focus {\n  color: #495057;\n  outline: 0;\n}\n\n[dir] .form-control:focus {\n  background-color: #fff;\n  border-color: #80bdff;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n.form-control::-webkit-input-placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n\n.form-control::-moz-placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n\n.form-control:-ms-input-placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n\n.form-control::-ms-input-placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n\n.form-control::placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n\n.form-control:disabled, .form-control[readonly] {\n  opacity: 1;\n}\n\n[dir] .form-control:disabled, [dir] .form-control[readonly] {\n  background-color: #e9ecef;\n}\n\nselect.form-control:focus::-ms-value {\n  color: #495057;\n}\n\n[dir] select.form-control:focus::-ms-value {\n  background-color: #fff;\n}\n\n.form-control-file,\n.form-control-range {\n  display: block;\n  width: 100%;\n}\n\n.col-form-label {\n  font-size: inherit;\n  line-height: 1.5;\n}\n\n[dir] .col-form-label {\n  padding-top: calc(0.375rem + 1px);\n  padding-bottom: calc(0.375rem + 1px);\n  margin-bottom: 0;\n}\n\n.col-form-label-lg {\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n[dir] .col-form-label-lg {\n  padding-top: calc(0.5rem + 1px);\n  padding-bottom: calc(0.5rem + 1px);\n}\n\n.col-form-label-sm {\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n[dir] .col-form-label-sm {\n  padding-top: calc(0.25rem + 1px);\n  padding-bottom: calc(0.25rem + 1px);\n}\n\n.form-control-plaintext {\n  display: block;\n  width: 100%;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #212529;\n}\n\n[dir] .form-control-plaintext {\n  padding: 0.375rem 0;\n  margin-bottom: 0;\n  background-color: transparent;\n  border: solid transparent;\n  border-width: 1px 0;\n}\n\n[dir=ltr] .form-control-plaintext.form-control-sm, [dir=ltr] .form-control-plaintext.form-control-lg {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n[dir=rtl] .form-control-plaintext.form-control-sm, [dir=rtl] .form-control-plaintext.form-control-lg {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.form-control-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n[dir] .form-control-sm {\n  padding: 0.25rem 0.5rem;\n  border-radius: 0.2rem;\n}\n\n.form-control-lg {\n  height: calc(1.5em + 1rem + 2px);\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n[dir] .form-control-lg {\n  padding: 0.5rem 1rem;\n  border-radius: 0.3rem;\n}\n\nselect.form-control[size], select.form-control[multiple] {\n  height: auto;\n}\n\ntextarea.form-control {\n  height: auto;\n}\n\n[dir] .form-group {\n  margin-bottom: 1rem;\n}\n\n.form-text {\n  display: block;\n}\n\n[dir] .form-text {\n  margin-top: 0.25rem;\n}\n\n.form-row {\n  display: flex;\n  flex-wrap: wrap;\n}\n\n[dir=ltr] .form-row {\n  margin-right: -5px;\n  margin-left: -5px;\n}\n\n[dir=rtl] .form-row {\n  margin-left: -5px;\n  margin-right: -5px;\n}\n\n[dir=ltr] .form-row > .col, [dir=ltr] .form-row > [class*=\"col-\"] {\n  padding-right: 5px;\n  padding-left: 5px;\n}\n\n[dir=rtl] .form-row > .col, [dir=rtl] .form-row > [class*=\"col-\"] {\n  padding-left: 5px;\n  padding-right: 5px;\n}\n\n.form-check {\n  position: relative;\n  display: block;\n}\n\n[dir=ltr] .form-check {\n  padding-left: 1.25rem;\n}\n\n[dir=rtl] .form-check {\n  padding-right: 1.25rem;\n}\n\n.form-check-input {\n  position: absolute;\n}\n\n[dir] .form-check-input {\n  margin-top: 0.3rem;\n}\n\n[dir=ltr] .form-check-input {\n  margin-left: -1.25rem;\n}\n\n[dir=rtl] .form-check-input {\n  margin-right: -1.25rem;\n}\n\n.form-check-input[disabled] ~ .form-check-label,\n.form-check-input:disabled ~ .form-check-label {\n  color: #6c757d;\n}\n\n[dir] .form-check-label {\n  margin-bottom: 0;\n}\n\n.form-check-inline {\n  display: inline-flex;\n  align-items: center;\n}\n\n[dir=ltr] .form-check-inline {\n  padding-left: 0;\n  margin-right: 0.75rem;\n}\n\n[dir=rtl] .form-check-inline {\n  padding-right: 0;\n  margin-left: 0.75rem;\n}\n\n.form-check-inline .form-check-input {\n  position: static;\n}\n\n[dir] .form-check-inline .form-check-input {\n  margin-top: 0;\n}\n\n[dir=ltr] .form-check-inline .form-check-input {\n  margin-right: 0.3125rem;\n  margin-left: 0;\n}\n\n[dir=rtl] .form-check-inline .form-check-input {\n  margin-left: 0.3125rem;\n  margin-right: 0;\n}\n\n.valid-feedback {\n  display: none;\n  width: 100%;\n  font-size: 80%;\n  color: #28a745;\n}\n\n[dir] .valid-feedback {\n  margin-top: 0.25rem;\n}\n\n.valid-tooltip {\n  position: absolute;\n  top: 100%;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n}\n\n[dir] .valid-tooltip {\n  padding: 0.25rem 0.5rem;\n  margin-top: .1rem;\n  background-color: rgba(40, 167, 69, 0.9);\n  border-radius: 0.25rem;\n}\n\n.was-validated :valid ~ .valid-feedback,\n.was-validated :valid ~ .valid-tooltip,\n.is-valid ~ .valid-feedback,\n.is-valid ~ .valid-tooltip {\n  display: block;\n}\n\n[dir] .was-validated .form-control:valid, [dir] .form-control.is-valid {\n  border-color: #28a745;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir=ltr] .was-validated .form-control:valid, [dir=ltr] .form-control.is-valid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: right calc(0.375em + 0.1875rem) center;\n}\n\n[dir=rtl] .was-validated .form-control:valid, [dir=rtl] .form-control.is-valid {\n  padding-left: calc(1.5em + 0.75rem);\n  background-position: left calc(0.375em + 0.1875rem) center;\n}\n\n[dir] .was-validated .form-control:valid:focus, [dir] .form-control.is-valid:focus {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n[dir=ltr] .was-validated textarea.form-control:valid, [dir=ltr] textarea.form-control.is-valid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);\n}\n\n[dir=rtl] .was-validated textarea.form-control:valid, [dir=rtl] textarea.form-control.is-valid {\n  padding-left: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) left calc(0.375em + 0.1875rem);\n}\n\n[dir] .was-validated .custom-select:valid, [dir] .custom-select.is-valid {\n  border-color: #28a745;\n}\n\n[dir=ltr] .was-validated .custom-select:valid, [dir=ltr] .custom-select.is-valid {\n  padding-right: calc(0.75em + 2.3125rem);\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat right 0.75rem center/8px 10px, url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\") #fff no-repeat center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir=rtl] .was-validated .custom-select:valid, [dir=rtl] .custom-select.is-valid {\n  padding-left: calc(0.75em + 2.3125rem);\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat left 0.75rem center/8px 10px, url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\") #fff no-repeat center left 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir] .was-validated .custom-select:valid:focus, [dir] .custom-select.is-valid:focus {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n.was-validated .form-check-input:valid ~ .form-check-label, .form-check-input.is-valid ~ .form-check-label {\n  color: #28a745;\n}\n\n.was-validated .form-check-input:valid ~ .valid-feedback,\n.was-validated .form-check-input:valid ~ .valid-tooltip, .form-check-input.is-valid ~ .valid-feedback,\n.form-check-input.is-valid ~ .valid-tooltip {\n  display: block;\n}\n\n.was-validated .custom-control-input:valid ~ .custom-control-label, .custom-control-input.is-valid ~ .custom-control-label {\n  color: #28a745;\n}\n\n[dir] .was-validated .custom-control-input:valid ~ .custom-control-label::before, [dir] .custom-control-input.is-valid ~ .custom-control-label::before {\n  border-color: #28a745;\n}\n\n[dir] .was-validated .custom-control-input:valid:checked ~ .custom-control-label::before, [dir] .custom-control-input.is-valid:checked ~ .custom-control-label::before {\n  border-color: #34ce57;\n  background-color: #34ce57;\n}\n\n[dir] .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, [dir] .custom-control-input.is-valid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n[dir] .was-validated .custom-control-input:valid:focus:not(:checked) ~ .custom-control-label::before, [dir] .custom-control-input.is-valid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #28a745;\n}\n\n[dir] .was-validated .custom-file-input:valid ~ .custom-file-label, [dir] .custom-file-input.is-valid ~ .custom-file-label {\n  border-color: #28a745;\n}\n\n[dir] .was-validated .custom-file-input:valid:focus ~ .custom-file-label, [dir] .custom-file-input.is-valid:focus ~ .custom-file-label {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n.invalid-feedback {\n  display: none;\n  width: 100%;\n  font-size: 80%;\n  color: #dc3545;\n}\n\n[dir] .invalid-feedback {\n  margin-top: 0.25rem;\n}\n\n.invalid-tooltip {\n  position: absolute;\n  top: 100%;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n}\n\n[dir] .invalid-tooltip {\n  padding: 0.25rem 0.5rem;\n  margin-top: .1rem;\n  background-color: rgba(220, 53, 69, 0.9);\n  border-radius: 0.25rem;\n}\n\n.was-validated :invalid ~ .invalid-feedback,\n.was-validated :invalid ~ .invalid-tooltip,\n.is-invalid ~ .invalid-feedback,\n.is-invalid ~ .invalid-tooltip {\n  display: block;\n}\n\n[dir] .was-validated .form-control:invalid, [dir] .form-control.is-invalid {\n  border-color: #dc3545;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir=ltr] .was-validated .form-control:invalid, [dir=ltr] .form-control.is-invalid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: right calc(0.375em + 0.1875rem) center;\n}\n\n[dir=rtl] .was-validated .form-control:invalid, [dir=rtl] .form-control.is-invalid {\n  padding-left: calc(1.5em + 0.75rem);\n  background-position: left calc(0.375em + 0.1875rem) center;\n}\n\n[dir] .was-validated .form-control:invalid:focus, [dir] .form-control.is-invalid:focus {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n[dir=ltr] .was-validated textarea.form-control:invalid, [dir=ltr] textarea.form-control.is-invalid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);\n}\n\n[dir=rtl] .was-validated textarea.form-control:invalid, [dir=rtl] textarea.form-control.is-invalid {\n  padding-left: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) left calc(0.375em + 0.1875rem);\n}\n\n[dir] .was-validated .custom-select:invalid, [dir] .custom-select.is-invalid {\n  border-color: #dc3545;\n}\n\n[dir=ltr] .was-validated .custom-select:invalid, [dir=ltr] .custom-select.is-invalid {\n  padding-right: calc(0.75em + 2.3125rem);\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat right 0.75rem center/8px 10px, url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\") #fff no-repeat center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir=rtl] .was-validated .custom-select:invalid, [dir=rtl] .custom-select.is-invalid {\n  padding-left: calc(0.75em + 2.3125rem);\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat left 0.75rem center/8px 10px, url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\") #fff no-repeat center left 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n\n[dir] .was-validated .custom-select:invalid:focus, [dir] .custom-select.is-invalid:focus {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n.was-validated .form-check-input:invalid ~ .form-check-label, .form-check-input.is-invalid ~ .form-check-label {\n  color: #dc3545;\n}\n\n.was-validated .form-check-input:invalid ~ .invalid-feedback,\n.was-validated .form-check-input:invalid ~ .invalid-tooltip, .form-check-input.is-invalid ~ .invalid-feedback,\n.form-check-input.is-invalid ~ .invalid-tooltip {\n  display: block;\n}\n\n.was-validated .custom-control-input:invalid ~ .custom-control-label, .custom-control-input.is-invalid ~ .custom-control-label {\n  color: #dc3545;\n}\n\n[dir] .was-validated .custom-control-input:invalid ~ .custom-control-label::before, [dir] .custom-control-input.is-invalid ~ .custom-control-label::before {\n  border-color: #dc3545;\n}\n\n[dir] .was-validated .custom-control-input:invalid:checked ~ .custom-control-label::before, [dir] .custom-control-input.is-invalid:checked ~ .custom-control-label::before {\n  border-color: #e4606d;\n  background-color: #e4606d;\n}\n\n[dir] .was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before, [dir] .custom-control-input.is-invalid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n[dir] .was-validated .custom-control-input:invalid:focus:not(:checked) ~ .custom-control-label::before, [dir] .custom-control-input.is-invalid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #dc3545;\n}\n\n[dir] .was-validated .custom-file-input:invalid ~ .custom-file-label, [dir] .custom-file-input.is-invalid ~ .custom-file-label {\n  border-color: #dc3545;\n}\n\n[dir] .was-validated .custom-file-input:invalid:focus ~ .custom-file-label, [dir] .custom-file-input.is-invalid:focus ~ .custom-file-label {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n.form-inline {\n  display: flex;\n  flex-flow: row wrap;\n  align-items: center;\n}\n\n.form-inline .form-check {\n  width: 100%;\n}\n\n@media (min-width: 576px) {\n  .form-inline label {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n  [dir] .form-inline label {\n    margin-bottom: 0;\n  }\n\n  .form-inline .form-group {\n    display: flex;\n    flex: 0 0 auto;\n    flex-flow: row wrap;\n    align-items: center;\n  }\n\n  [dir] .form-inline .form-group {\n    margin-bottom: 0;\n  }\n\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n\n  .form-inline .form-control-plaintext {\n    display: inline-block;\n  }\n\n  .form-inline .input-group,\n  .form-inline .custom-select {\n    width: auto;\n  }\n\n  .form-inline .form-check {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    width: auto;\n  }\n\n  [dir=ltr] .form-inline .form-check {\n    padding-left: 0;\n  }\n\n  [dir=rtl] .form-inline .form-check {\n    padding-right: 0;\n  }\n\n  .form-inline .form-check-input {\n    position: relative;\n    flex-shrink: 0;\n  }\n\n  [dir] .form-inline .form-check-input {\n    margin-top: 0;\n  }\n\n  [dir=ltr] .form-inline .form-check-input {\n    margin-right: 0.25rem;\n    margin-left: 0;\n  }\n\n  [dir=rtl] .form-inline .form-check-input {\n    margin-left: 0.25rem;\n    margin-right: 0;\n  }\n\n  .form-inline .custom-control {\n    align-items: center;\n    justify-content: center;\n  }\n\n  [dir] .form-inline .custom-control-label {\n    margin-bottom: 0;\n  }\n}\n\n.btn {\n  display: inline-block;\n  font-weight: 400;\n  color: #212529;\n  vertical-align: middle;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  font-size: 1rem;\n  line-height: 1.5;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n[dir] .btn {\n  text-align: center;\n  cursor: pointer;\n  background-color: transparent;\n  border: 1px solid transparent;\n  padding: 0.375rem 0.75rem;\n  border-radius: 0.25rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .btn {\n    transition: none;\n  }\n}\n\n.btn:hover {\n  color: #212529;\n  text-decoration: none;\n}\n\n.btn:focus, .btn.focus {\n  outline: 0;\n}\n\n[dir] .btn:focus, [dir] .btn.focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n.btn.disabled, .btn:disabled {\n  opacity: 0.65;\n}\n\na.btn.disabled,\nfieldset:disabled a.btn {\n  pointer-events: none;\n}\n\n.btn-primary {\n  color: #fff;\n}\n\n[dir] .btn-primary {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n.btn-primary:hover {\n  color: #fff;\n}\n\n[dir] .btn-primary:hover {\n  background-color: #0069d9;\n  border-color: #0062cc;\n}\n\n.btn-primary:focus, .btn-primary.focus {\n  color: #fff;\n}\n\n[dir] .btn-primary:focus, [dir] .btn-primary.focus {\n  background-color: #0069d9;\n  border-color: #0062cc;\n  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);\n}\n\n.btn-primary.disabled, .btn-primary:disabled {\n  color: #fff;\n}\n\n[dir] .btn-primary.disabled, [dir] .btn-primary:disabled {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,\n.show > .btn-primary.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-primary:not(:disabled):not(.disabled):active, [dir] .btn-primary:not(:disabled):not(.disabled).active, [dir] .show > .btn-primary.dropdown-toggle {\n  background-color: #0062cc;\n  border-color: #005cbf;\n}\n\n[dir] .btn-primary:not(:disabled):not(.disabled):active:focus, [dir] .btn-primary:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-primary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);\n}\n\n.btn-secondary {\n  color: #fff;\n}\n\n[dir] .btn-secondary {\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n\n.btn-secondary:hover {\n  color: #fff;\n}\n\n[dir] .btn-secondary:hover {\n  background-color: #5a6268;\n  border-color: #545b62;\n}\n\n.btn-secondary:focus, .btn-secondary.focus {\n  color: #fff;\n}\n\n[dir] .btn-secondary:focus, [dir] .btn-secondary.focus {\n  background-color: #5a6268;\n  border-color: #545b62;\n  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);\n}\n\n.btn-secondary.disabled, .btn-secondary:disabled {\n  color: #fff;\n}\n\n[dir] .btn-secondary.disabled, [dir] .btn-secondary:disabled {\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n\n.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,\n.show > .btn-secondary.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-secondary:not(:disabled):not(.disabled):active, [dir] .btn-secondary:not(:disabled):not(.disabled).active, [dir] .show > .btn-secondary.dropdown-toggle {\n  background-color: #545b62;\n  border-color: #4e555b;\n}\n\n[dir] .btn-secondary:not(:disabled):not(.disabled):active:focus, [dir] .btn-secondary:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-secondary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);\n}\n\n.btn-success {\n  color: #fff;\n}\n\n[dir] .btn-success {\n  background-color: #28a745;\n  border-color: #28a745;\n}\n\n.btn-success:hover {\n  color: #fff;\n}\n\n[dir] .btn-success:hover {\n  background-color: #218838;\n  border-color: #1e7e34;\n}\n\n.btn-success:focus, .btn-success.focus {\n  color: #fff;\n}\n\n[dir] .btn-success:focus, [dir] .btn-success.focus {\n  background-color: #218838;\n  border-color: #1e7e34;\n  box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5);\n}\n\n.btn-success.disabled, .btn-success:disabled {\n  color: #fff;\n}\n\n[dir] .btn-success.disabled, [dir] .btn-success:disabled {\n  background-color: #28a745;\n  border-color: #28a745;\n}\n\n.btn-success:not(:disabled):not(.disabled):active, .btn-success:not(:disabled):not(.disabled).active,\n.show > .btn-success.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-success:not(:disabled):not(.disabled):active, [dir] .btn-success:not(:disabled):not(.disabled).active, [dir] .show > .btn-success.dropdown-toggle {\n  background-color: #1e7e34;\n  border-color: #1c7430;\n}\n\n[dir] .btn-success:not(:disabled):not(.disabled):active:focus, [dir] .btn-success:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-success.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5);\n}\n\n.btn-info {\n  color: #fff;\n}\n\n[dir] .btn-info {\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n\n.btn-info:hover {\n  color: #fff;\n}\n\n[dir] .btn-info:hover {\n  background-color: #138496;\n  border-color: #117a8b;\n}\n\n.btn-info:focus, .btn-info.focus {\n  color: #fff;\n}\n\n[dir] .btn-info:focus, [dir] .btn-info.focus {\n  background-color: #138496;\n  border-color: #117a8b;\n  box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5);\n}\n\n.btn-info.disabled, .btn-info:disabled {\n  color: #fff;\n}\n\n[dir] .btn-info.disabled, [dir] .btn-info:disabled {\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n\n.btn-info:not(:disabled):not(.disabled):active, .btn-info:not(:disabled):not(.disabled).active,\n.show > .btn-info.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-info:not(:disabled):not(.disabled):active, [dir] .btn-info:not(:disabled):not(.disabled).active, [dir] .show > .btn-info.dropdown-toggle {\n  background-color: #117a8b;\n  border-color: #10707f;\n}\n\n[dir] .btn-info:not(:disabled):not(.disabled):active:focus, [dir] .btn-info:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-info.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5);\n}\n\n.btn-warning {\n  color: #212529;\n}\n\n[dir] .btn-warning {\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n\n.btn-warning:hover {\n  color: #212529;\n}\n\n[dir] .btn-warning:hover {\n  background-color: #e0a800;\n  border-color: #d39e00;\n}\n\n.btn-warning:focus, .btn-warning.focus {\n  color: #212529;\n}\n\n[dir] .btn-warning:focus, [dir] .btn-warning.focus {\n  background-color: #e0a800;\n  border-color: #d39e00;\n  box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);\n}\n\n.btn-warning.disabled, .btn-warning:disabled {\n  color: #212529;\n}\n\n[dir] .btn-warning.disabled, [dir] .btn-warning:disabled {\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n\n.btn-warning:not(:disabled):not(.disabled):active, .btn-warning:not(:disabled):not(.disabled).active,\n.show > .btn-warning.dropdown-toggle {\n  color: #212529;\n}\n\n[dir] .btn-warning:not(:disabled):not(.disabled):active, [dir] .btn-warning:not(:disabled):not(.disabled).active, [dir] .show > .btn-warning.dropdown-toggle {\n  background-color: #d39e00;\n  border-color: #c69500;\n}\n\n[dir] .btn-warning:not(:disabled):not(.disabled):active:focus, [dir] .btn-warning:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-warning.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);\n}\n\n.btn-danger {\n  color: #fff;\n}\n\n[dir] .btn-danger {\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n\n.btn-danger:hover {\n  color: #fff;\n}\n\n[dir] .btn-danger:hover {\n  background-color: #c82333;\n  border-color: #bd2130;\n}\n\n.btn-danger:focus, .btn-danger.focus {\n  color: #fff;\n}\n\n[dir] .btn-danger:focus, [dir] .btn-danger.focus {\n  background-color: #c82333;\n  border-color: #bd2130;\n  box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5);\n}\n\n.btn-danger.disabled, .btn-danger:disabled {\n  color: #fff;\n}\n\n[dir] .btn-danger.disabled, [dir] .btn-danger:disabled {\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n\n.btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active,\n.show > .btn-danger.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-danger:not(:disabled):not(.disabled):active, [dir] .btn-danger:not(:disabled):not(.disabled).active, [dir] .show > .btn-danger.dropdown-toggle {\n  background-color: #bd2130;\n  border-color: #b21f2d;\n}\n\n[dir] .btn-danger:not(:disabled):not(.disabled):active:focus, [dir] .btn-danger:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-danger.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5);\n}\n\n.btn-light {\n  color: #212529;\n}\n\n[dir] .btn-light {\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n\n.btn-light:hover {\n  color: #212529;\n}\n\n[dir] .btn-light:hover {\n  background-color: #e2e6ea;\n  border-color: #dae0e5;\n}\n\n.btn-light:focus, .btn-light.focus {\n  color: #212529;\n}\n\n[dir] .btn-light:focus, [dir] .btn-light.focus {\n  background-color: #e2e6ea;\n  border-color: #dae0e5;\n  box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5);\n}\n\n.btn-light.disabled, .btn-light:disabled {\n  color: #212529;\n}\n\n[dir] .btn-light.disabled, [dir] .btn-light:disabled {\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n\n.btn-light:not(:disabled):not(.disabled):active, .btn-light:not(:disabled):not(.disabled).active,\n.show > .btn-light.dropdown-toggle {\n  color: #212529;\n}\n\n[dir] .btn-light:not(:disabled):not(.disabled):active, [dir] .btn-light:not(:disabled):not(.disabled).active, [dir] .show > .btn-light.dropdown-toggle {\n  background-color: #dae0e5;\n  border-color: #d3d9df;\n}\n\n[dir] .btn-light:not(:disabled):not(.disabled):active:focus, [dir] .btn-light:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-light.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5);\n}\n\n.btn-dark {\n  color: #fff;\n}\n\n[dir] .btn-dark {\n  background-color: #343a40;\n  border-color: #343a40;\n}\n\n.btn-dark:hover {\n  color: #fff;\n}\n\n[dir] .btn-dark:hover {\n  background-color: #23272b;\n  border-color: #1d2124;\n}\n\n.btn-dark:focus, .btn-dark.focus {\n  color: #fff;\n}\n\n[dir] .btn-dark:focus, [dir] .btn-dark.focus {\n  background-color: #23272b;\n  border-color: #1d2124;\n  box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);\n}\n\n.btn-dark.disabled, .btn-dark:disabled {\n  color: #fff;\n}\n\n[dir] .btn-dark.disabled, [dir] .btn-dark:disabled {\n  background-color: #343a40;\n  border-color: #343a40;\n}\n\n.btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active,\n.show > .btn-dark.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-dark:not(:disabled):not(.disabled):active, [dir] .btn-dark:not(:disabled):not(.disabled).active, [dir] .show > .btn-dark.dropdown-toggle {\n  background-color: #1d2124;\n  border-color: #171a1d;\n}\n\n[dir] .btn-dark:not(:disabled):not(.disabled):active:focus, [dir] .btn-dark:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-dark.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);\n}\n\n.btn-outline-primary {\n  color: #007bff;\n}\n\n[dir] .btn-outline-primary {\n  border-color: #007bff;\n}\n\n.btn-outline-primary:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-primary:hover {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n[dir] .btn-outline-primary:focus, [dir] .btn-outline-primary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n\n.btn-outline-primary.disabled, .btn-outline-primary:disabled {\n  color: #007bff;\n}\n\n[dir] .btn-outline-primary.disabled, [dir] .btn-outline-primary:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active,\n.show > .btn-outline-primary.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-primary:not(:disabled):not(.disabled):active, [dir] .btn-outline-primary:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-primary.dropdown-toggle {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n[dir] .btn-outline-primary:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-primary:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-primary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n\n.btn-outline-secondary {\n  color: #6c757d;\n}\n\n[dir] .btn-outline-secondary {\n  border-color: #6c757d;\n}\n\n.btn-outline-secondary:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-secondary:hover {\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n\n[dir] .btn-outline-secondary:focus, [dir] .btn-outline-secondary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n\n.btn-outline-secondary.disabled, .btn-outline-secondary:disabled {\n  color: #6c757d;\n}\n\n[dir] .btn-outline-secondary.disabled, [dir] .btn-outline-secondary:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active,\n.show > .btn-outline-secondary.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-secondary:not(:disabled):not(.disabled):active, [dir] .btn-outline-secondary:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-secondary.dropdown-toggle {\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n\n[dir] .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-secondary:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-secondary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n\n.btn-outline-success {\n  color: #28a745;\n}\n\n[dir] .btn-outline-success {\n  border-color: #28a745;\n}\n\n.btn-outline-success:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-success:hover {\n  background-color: #28a745;\n  border-color: #28a745;\n}\n\n[dir] .btn-outline-success:focus, [dir] .btn-outline-success.focus {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n\n.btn-outline-success.disabled, .btn-outline-success:disabled {\n  color: #28a745;\n}\n\n[dir] .btn-outline-success.disabled, [dir] .btn-outline-success:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-success:not(:disabled):not(.disabled):active, .btn-outline-success:not(:disabled):not(.disabled).active,\n.show > .btn-outline-success.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-success:not(:disabled):not(.disabled):active, [dir] .btn-outline-success:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-success.dropdown-toggle {\n  background-color: #28a745;\n  border-color: #28a745;\n}\n\n[dir] .btn-outline-success:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-success:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-success.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n\n.btn-outline-info {\n  color: #17a2b8;\n}\n\n[dir] .btn-outline-info {\n  border-color: #17a2b8;\n}\n\n.btn-outline-info:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-info:hover {\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n\n[dir] .btn-outline-info:focus, [dir] .btn-outline-info.focus {\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n\n.btn-outline-info.disabled, .btn-outline-info:disabled {\n  color: #17a2b8;\n}\n\n[dir] .btn-outline-info.disabled, [dir] .btn-outline-info:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-info:not(:disabled):not(.disabled):active, .btn-outline-info:not(:disabled):not(.disabled).active,\n.show > .btn-outline-info.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-info:not(:disabled):not(.disabled):active, [dir] .btn-outline-info:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-info.dropdown-toggle {\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n\n[dir] .btn-outline-info:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-info:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-info.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n\n.btn-outline-warning {\n  color: #ffc107;\n}\n\n[dir] .btn-outline-warning {\n  border-color: #ffc107;\n}\n\n.btn-outline-warning:hover {\n  color: #212529;\n}\n\n[dir] .btn-outline-warning:hover {\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n\n[dir] .btn-outline-warning:focus, [dir] .btn-outline-warning.focus {\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n\n.btn-outline-warning.disabled, .btn-outline-warning:disabled {\n  color: #ffc107;\n}\n\n[dir] .btn-outline-warning.disabled, [dir] .btn-outline-warning:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-warning:not(:disabled):not(.disabled):active, .btn-outline-warning:not(:disabled):not(.disabled).active,\n.show > .btn-outline-warning.dropdown-toggle {\n  color: #212529;\n}\n\n[dir] .btn-outline-warning:not(:disabled):not(.disabled):active, [dir] .btn-outline-warning:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-warning.dropdown-toggle {\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n\n[dir] .btn-outline-warning:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-warning:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-warning.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n\n.btn-outline-danger {\n  color: #dc3545;\n}\n\n[dir] .btn-outline-danger {\n  border-color: #dc3545;\n}\n\n.btn-outline-danger:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-danger:hover {\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n\n[dir] .btn-outline-danger:focus, [dir] .btn-outline-danger.focus {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n\n.btn-outline-danger.disabled, .btn-outline-danger:disabled {\n  color: #dc3545;\n}\n\n[dir] .btn-outline-danger.disabled, [dir] .btn-outline-danger:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-danger:not(:disabled):not(.disabled):active, .btn-outline-danger:not(:disabled):not(.disabled).active,\n.show > .btn-outline-danger.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-danger:not(:disabled):not(.disabled):active, [dir] .btn-outline-danger:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-danger.dropdown-toggle {\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n\n[dir] .btn-outline-danger:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-danger:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-danger.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n\n.btn-outline-light {\n  color: #f8f9fa;\n}\n\n[dir] .btn-outline-light {\n  border-color: #f8f9fa;\n}\n\n.btn-outline-light:hover {\n  color: #212529;\n}\n\n[dir] .btn-outline-light:hover {\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n\n[dir] .btn-outline-light:focus, [dir] .btn-outline-light.focus {\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n\n.btn-outline-light.disabled, .btn-outline-light:disabled {\n  color: #f8f9fa;\n}\n\n[dir] .btn-outline-light.disabled, [dir] .btn-outline-light:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-light:not(:disabled):not(.disabled):active, .btn-outline-light:not(:disabled):not(.disabled).active,\n.show > .btn-outline-light.dropdown-toggle {\n  color: #212529;\n}\n\n[dir] .btn-outline-light:not(:disabled):not(.disabled):active, [dir] .btn-outline-light:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-light.dropdown-toggle {\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n\n[dir] .btn-outline-light:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-light:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-light.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n\n.btn-outline-dark {\n  color: #343a40;\n}\n\n[dir] .btn-outline-dark {\n  border-color: #343a40;\n}\n\n.btn-outline-dark:hover {\n  color: #fff;\n}\n\n[dir] .btn-outline-dark:hover {\n  background-color: #343a40;\n  border-color: #343a40;\n}\n\n[dir] .btn-outline-dark:focus, [dir] .btn-outline-dark.focus {\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n\n.btn-outline-dark.disabled, .btn-outline-dark:disabled {\n  color: #343a40;\n}\n\n[dir] .btn-outline-dark.disabled, [dir] .btn-outline-dark:disabled {\n  background-color: transparent;\n}\n\n.btn-outline-dark:not(:disabled):not(.disabled):active, .btn-outline-dark:not(:disabled):not(.disabled).active,\n.show > .btn-outline-dark.dropdown-toggle {\n  color: #fff;\n}\n\n[dir] .btn-outline-dark:not(:disabled):not(.disabled):active, [dir] .btn-outline-dark:not(:disabled):not(.disabled).active, [dir] .show > .btn-outline-dark.dropdown-toggle {\n  background-color: #343a40;\n  border-color: #343a40;\n}\n\n[dir] .btn-outline-dark:not(:disabled):not(.disabled):active:focus, [dir] .btn-outline-dark:not(:disabled):not(.disabled).active:focus, [dir] .show > .btn-outline-dark.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n\n.btn-link {\n  font-weight: 400;\n  color: #007bff;\n  text-decoration: none;\n}\n\n.btn-link:hover {\n  color: #0056b3;\n  text-decoration: underline;\n}\n\n.btn-link:focus, .btn-link.focus {\n  text-decoration: underline;\n}\n\n[dir] .btn-link:focus, [dir] .btn-link.focus {\n  box-shadow: none;\n}\n\n.btn-link:disabled, .btn-link.disabled {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n.btn-lg, .btn-group-lg > .btn {\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n[dir] .btn-lg, [dir] .btn-group-lg > .btn {\n  padding: 0.5rem 1rem;\n  border-radius: 0.3rem;\n}\n\n.btn-sm, .btn-group-sm > .btn {\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n[dir] .btn-sm, [dir] .btn-group-sm > .btn {\n  padding: 0.25rem 0.5rem;\n  border-radius: 0.2rem;\n}\n\n.btn-block {\n  display: block;\n  width: 100%;\n}\n\n[dir] .btn-block + .btn-block {\n  margin-top: 0.5rem;\n}\n\ninput[type=\"submit\"].btn-block,\ninput[type=\"reset\"].btn-block,\ninput[type=\"button\"].btn-block {\n  width: 100%;\n}\n\n.fade {\n  transition: opacity 0.15s linear;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .fade {\n    transition: none;\n  }\n}\n\n.fade:not(.show) {\n  opacity: 0;\n}\n\n.collapse:not(.show) {\n  display: none;\n}\n\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  transition: height 0.35s ease;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .collapsing {\n    transition: none;\n  }\n}\n\n.dropup,\n.dropright,\n.dropdown,\n.dropleft {\n  position: relative;\n}\n\n.dropdown-toggle {\n  white-space: nowrap;\n}\n\n.dropdown-toggle::after {\n  display: inline-block;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n\n[dir] .dropdown-toggle::after {\n  border-top: 0.3em solid;\n  border-bottom: 0;\n}\n\n[dir=ltr] .dropdown-toggle::after {\n  margin-left: 0.255em;\n  border-right: 0.3em solid transparent;\n  border-left: 0.3em solid transparent;\n}\n\n[dir=rtl] .dropdown-toggle::after {\n  margin-right: 0.255em;\n  border-left: 0.3em solid transparent;\n  border-right: 0.3em solid transparent;\n}\n\n[dir=ltr] .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n[dir=rtl] .dropdown-toggle:empty::after {\n  margin-right: 0;\n}\n\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  z-index: 1000;\n  display: none;\n  min-width: 10rem;\n  font-size: 1rem;\n  color: #212529;\n  list-style: none;\n}\n\n[dir] .dropdown-menu {\n  padding: 0.5rem 0;\n  margin: 0.125rem 0 0;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .dropdown-menu {\n  left: 0;\n  float: left;\n  text-align: left;\n}\n\n[dir=rtl] .dropdown-menu {\n  right: 0;\n  float: right;\n  text-align: right;\n}\n\n[dir=ltr] .dropdown-menu-left {\n  right: auto;\n  left: 0;\n}\n\n[dir=rtl] .dropdown-menu-left {\n  left: auto;\n  right: 0;\n}\n\n[dir=ltr] .dropdown-menu-right {\n  right: 0;\n  left: auto;\n}\n\n[dir=rtl] .dropdown-menu-right {\n  left: 0;\n  right: auto;\n}\n\n@media (min-width: 576px) {\n  [dir=ltr] .dropdown-menu-sm-left {\n    right: auto;\n    left: 0;\n  }\n  [dir=rtl] .dropdown-menu-sm-left {\n    left: auto;\n    right: 0;\n  }\n\n  [dir=ltr] .dropdown-menu-sm-right {\n    right: 0;\n    left: auto;\n  }\n\n  [dir=rtl] .dropdown-menu-sm-right {\n    left: 0;\n    right: auto;\n  }\n}\n\n@media (min-width: 768px) {\n  [dir=ltr] .dropdown-menu-md-left {\n    right: auto;\n    left: 0;\n  }\n  [dir=rtl] .dropdown-menu-md-left {\n    left: auto;\n    right: 0;\n  }\n\n  [dir=ltr] .dropdown-menu-md-right {\n    right: 0;\n    left: auto;\n  }\n\n  [dir=rtl] .dropdown-menu-md-right {\n    left: 0;\n    right: auto;\n  }\n}\n\n@media (min-width: 992px) {\n  [dir=ltr] .dropdown-menu-lg-left {\n    right: auto;\n    left: 0;\n  }\n  [dir=rtl] .dropdown-menu-lg-left {\n    left: auto;\n    right: 0;\n  }\n\n  [dir=ltr] .dropdown-menu-lg-right {\n    right: 0;\n    left: auto;\n  }\n\n  [dir=rtl] .dropdown-menu-lg-right {\n    left: 0;\n    right: auto;\n  }\n}\n\n@media (min-width: 1200px) {\n  [dir=ltr] .dropdown-menu-xl-left {\n    right: auto;\n    left: 0;\n  }\n  [dir=rtl] .dropdown-menu-xl-left {\n    left: auto;\n    right: 0;\n  }\n\n  [dir=ltr] .dropdown-menu-xl-right {\n    right: 0;\n    left: auto;\n  }\n\n  [dir=rtl] .dropdown-menu-xl-right {\n    left: 0;\n    right: auto;\n  }\n}\n\n.dropup .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n}\n\n[dir] .dropup .dropdown-menu {\n  margin-top: 0;\n  margin-bottom: 0.125rem;\n}\n\n.dropup .dropdown-toggle::after {\n  display: inline-block;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n\n[dir] .dropup .dropdown-toggle::after {\n  border-top: 0;\n  border-bottom: 0.3em solid;\n}\n\n[dir=ltr] .dropup .dropdown-toggle::after {\n  margin-left: 0.255em;\n  border-right: 0.3em solid transparent;\n  border-left: 0.3em solid transparent;\n}\n\n[dir=rtl] .dropup .dropdown-toggle::after {\n  margin-right: 0.255em;\n  border-left: 0.3em solid transparent;\n  border-right: 0.3em solid transparent;\n}\n\n[dir=ltr] .dropup .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n[dir=rtl] .dropup .dropdown-toggle:empty::after {\n  margin-right: 0;\n}\n\n.dropright .dropdown-menu {\n  top: 0;\n}\n\n[dir] .dropright .dropdown-menu {\n  margin-top: 0;\n}\n\n[dir=ltr] .dropright .dropdown-menu {\n  right: auto;\n  left: 100%;\n  margin-left: 0.125rem;\n}\n\n[dir=rtl] .dropright .dropdown-menu {\n  left: auto;\n  right: 100%;\n  margin-right: 0.125rem;\n}\n\n.dropright .dropdown-toggle::after {\n  display: inline-block;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n\n[dir] .dropright .dropdown-toggle::after {\n  border-top: 0.3em solid transparent;\n  border-bottom: 0.3em solid transparent;\n}\n\n[dir=ltr] .dropright .dropdown-toggle::after {\n  margin-left: 0.255em;\n  border-right: 0;\n  border-left: 0.3em solid;\n}\n\n[dir=rtl] .dropright .dropdown-toggle::after {\n  margin-right: 0.255em;\n  border-left: 0;\n  border-right: 0.3em solid;\n}\n\n[dir=ltr] .dropright .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n[dir=rtl] .dropright .dropdown-toggle:empty::after {\n  margin-right: 0;\n}\n\n.dropright .dropdown-toggle::after {\n  vertical-align: 0;\n}\n\n.dropleft .dropdown-menu {\n  top: 0;\n}\n\n[dir] .dropleft .dropdown-menu {\n  margin-top: 0;\n}\n\n[dir=ltr] .dropleft .dropdown-menu {\n  right: 100%;\n  left: auto;\n  margin-right: 0.125rem;\n}\n\n[dir=rtl] .dropleft .dropdown-menu {\n  left: 100%;\n  right: auto;\n  margin-left: 0.125rem;\n}\n\n.dropleft .dropdown-toggle::after {\n  display: inline-block;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n\n[dir=ltr] .dropleft .dropdown-toggle::after {\n  margin-left: 0.255em;\n}\n\n[dir=rtl] .dropleft .dropdown-toggle::after {\n  margin-right: 0.255em;\n}\n\n.dropleft .dropdown-toggle::after {\n  display: none;\n}\n\n.dropleft .dropdown-toggle::before {\n  display: inline-block;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n\n[dir] .dropleft .dropdown-toggle::before {\n  border-top: 0.3em solid transparent;\n  border-bottom: 0.3em solid transparent;\n}\n\n[dir=ltr] .dropleft .dropdown-toggle::before {\n  margin-right: 0.255em;\n  border-right: 0.3em solid;\n}\n\n[dir=rtl] .dropleft .dropdown-toggle::before {\n  margin-left: 0.255em;\n  border-left: 0.3em solid;\n}\n\n[dir=ltr] .dropleft .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n[dir=rtl] .dropleft .dropdown-toggle:empty::after {\n  margin-right: 0;\n}\n\n.dropleft .dropdown-toggle::before {\n  vertical-align: 0;\n}\n\n.dropdown-menu[x-placement^=\"top\"], .dropdown-menu[x-placement^=\"right\"], .dropdown-menu[x-placement^=\"bottom\"], .dropdown-menu[x-placement^=\"left\"] {\n  bottom: auto;\n}\n\n[dir=ltr] .dropdown-menu[x-placement^=\"top\"], [dir=ltr] .dropdown-menu[x-placement^=\"right\"], [dir=ltr] .dropdown-menu[x-placement^=\"bottom\"], [dir=ltr] .dropdown-menu[x-placement^=\"left\"] {\n  right: auto;\n}\n\n[dir=rtl] .dropdown-menu[x-placement^=\"top\"], [dir=rtl] .dropdown-menu[x-placement^=\"right\"], [dir=rtl] .dropdown-menu[x-placement^=\"bottom\"], [dir=rtl] .dropdown-menu[x-placement^=\"left\"] {\n  left: auto;\n}\n\n.dropdown-divider {\n  height: 0;\n  overflow: hidden;\n}\n\n[dir] .dropdown-divider {\n  margin: 0.5rem 0;\n  border-top: 1px solid #e9ecef;\n}\n\n.dropdown-item {\n  display: block;\n  width: 100%;\n  font-weight: 400;\n  color: #212529;\n  white-space: nowrap;\n}\n\n[dir] .dropdown-item {\n  padding: 0.25rem 1.5rem;\n  clear: both;\n  text-align: inherit;\n  background-color: transparent;\n  border: 0;\n}\n\n.dropdown-item:hover, .dropdown-item:focus {\n  color: #16181b;\n  text-decoration: none;\n}\n\n[dir] .dropdown-item:hover, [dir] .dropdown-item:focus {\n  background-color: #f8f9fa;\n}\n\n.dropdown-item.active, .dropdown-item:active {\n  color: #fff;\n  text-decoration: none;\n}\n\n[dir] .dropdown-item.active, [dir] .dropdown-item:active {\n  background-color: #007bff;\n}\n\n.dropdown-item.disabled, .dropdown-item:disabled {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n[dir] .dropdown-item.disabled, [dir] .dropdown-item:disabled {\n  background-color: transparent;\n}\n\n.dropdown-menu.show {\n  display: block;\n}\n\n.dropdown-header {\n  display: block;\n  font-size: 0.875rem;\n  color: #6c757d;\n  white-space: nowrap;\n}\n\n[dir] .dropdown-header {\n  padding: 0.5rem 1.5rem;\n  margin-bottom: 0;\n}\n\n.dropdown-item-text {\n  display: block;\n  color: #212529;\n}\n\n[dir] .dropdown-item-text {\n  padding: 0.25rem 1.5rem;\n}\n\n.btn-group,\n.btn-group-vertical {\n  position: relative;\n  display: inline-flex;\n  vertical-align: middle;\n}\n\n.btn-group > .btn,\n.btn-group-vertical > .btn {\n  position: relative;\n  flex: 1 1 auto;\n}\n\n.btn-group > .btn:hover,\n.btn-group-vertical > .btn:hover {\n  z-index: 1;\n}\n\n.btn-group > .btn:focus, .btn-group > .btn:active, .btn-group > .btn.active,\n.btn-group-vertical > .btn:focus,\n.btn-group-vertical > .btn:active,\n.btn-group-vertical > .btn.active {\n  z-index: 1;\n}\n\n.btn-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-start;\n}\n\n.btn-toolbar .input-group {\n  width: auto;\n}\n\n[dir=ltr] .btn-group > .btn:not(:first-child), [dir=ltr] .btn-group > .btn-group:not(:first-child) {\n  margin-left: -1px;\n}\n\n[dir=rtl] .btn-group > .btn:not(:first-child), [dir=rtl] .btn-group > .btn-group:not(:first-child) {\n  margin-right: -1px;\n}\n\n[dir=ltr] .btn-group > .btn:not(:last-child):not(.dropdown-toggle), [dir=ltr] .btn-group > .btn-group:not(:last-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=rtl] .btn-group > .btn:not(:last-child):not(.dropdown-toggle), [dir=rtl] .btn-group > .btn-group:not(:last-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=ltr] .btn-group > .btn:not(:first-child), [dir=ltr] .btn-group > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .btn-group > .btn:not(:first-child), [dir=rtl] .btn-group > .btn-group:not(:first-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=ltr] .dropdown-toggle-split {\n  padding-right: 0.5625rem;\n  padding-left: 0.5625rem;\n}\n\n[dir=rtl] .dropdown-toggle-split {\n  padding-left: 0.5625rem;\n  padding-right: 0.5625rem;\n}\n\n[dir=ltr] .dropdown-toggle-split::after, [dir=ltr] .dropup .dropdown-toggle-split::after, [dir=ltr] .dropright .dropdown-toggle-split::after {\n  margin-left: 0;\n}\n\n[dir=rtl] .dropdown-toggle-split::after, [dir=rtl] .dropup .dropdown-toggle-split::after, [dir=rtl] .dropright .dropdown-toggle-split::after {\n  margin-right: 0;\n}\n\n[dir=ltr] .dropleft .dropdown-toggle-split::before {\n  margin-right: 0;\n}\n\n[dir=rtl] .dropleft .dropdown-toggle-split::before {\n  margin-left: 0;\n}\n\n[dir=ltr] .btn-sm + .dropdown-toggle-split, [dir=ltr] .btn-group-sm > .btn + .dropdown-toggle-split {\n  padding-right: 0.375rem;\n  padding-left: 0.375rem;\n}\n\n[dir=rtl] .btn-sm + .dropdown-toggle-split, [dir=rtl] .btn-group-sm > .btn + .dropdown-toggle-split {\n  padding-left: 0.375rem;\n  padding-right: 0.375rem;\n}\n\n[dir=ltr] .btn-lg + .dropdown-toggle-split, [dir=ltr] .btn-group-lg > .btn + .dropdown-toggle-split {\n  padding-right: 0.75rem;\n  padding-left: 0.75rem;\n}\n\n[dir=rtl] .btn-lg + .dropdown-toggle-split, [dir=rtl] .btn-group-lg > .btn + .dropdown-toggle-split {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\n\n.btn-group-vertical {\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n}\n\n.btn-group-vertical > .btn,\n.btn-group-vertical > .btn-group {\n  width: 100%;\n}\n\n[dir] .btn-group-vertical > .btn:not(:first-child), [dir] .btn-group-vertical > .btn-group:not(:first-child) {\n  margin-top: -1px;\n}\n\n[dir=ltr] .btn-group-vertical > .btn:not(:last-child):not(.dropdown-toggle), [dir=ltr] .btn-group-vertical > .btn-group:not(:last-child) > .btn {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .btn-group-vertical > .btn:not(:last-child):not(.dropdown-toggle), [dir=rtl] .btn-group-vertical > .btn-group:not(:last-child) > .btn {\n  border-bottom-left-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=ltr] .btn-group-vertical > .btn:not(:first-child), [dir=ltr] .btn-group-vertical > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n[dir=rtl] .btn-group-vertical > .btn:not(:first-child), [dir=rtl] .btn-group-vertical > .btn-group:not(:first-child) > .btn {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n}\n\n[dir] .btn-group-toggle > .btn, [dir] .btn-group-toggle > .btn-group > .btn {\n  margin-bottom: 0;\n}\n\n.btn-group-toggle > .btn input[type=\"radio\"],\n.btn-group-toggle > .btn input[type=\"checkbox\"],\n.btn-group-toggle > .btn-group > .btn input[type=\"radio\"],\n.btn-group-toggle > .btn-group > .btn input[type=\"checkbox\"] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none;\n}\n\n.input-group {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: stretch;\n  width: 100%;\n}\n\n.input-group > .form-control,\n.input-group > .form-control-plaintext,\n.input-group > .custom-select,\n.input-group > .custom-file {\n  position: relative;\n  flex: 1 1 0%;\n  min-width: 0;\n}\n\n[dir] .input-group > .form-control, [dir] .input-group > .form-control-plaintext, [dir] .input-group > .custom-select, [dir] .input-group > .custom-file {\n  margin-bottom: 0;\n}\n\n[dir=ltr] .input-group > .form-control + .form-control, [dir=ltr] .input-group > .form-control + .custom-select, [dir=ltr] .input-group > .form-control + .custom-file, [dir=ltr] .input-group > .form-control-plaintext + .form-control, [dir=ltr] .input-group > .form-control-plaintext + .custom-select, [dir=ltr] .input-group > .form-control-plaintext + .custom-file, [dir=ltr] .input-group > .custom-select + .form-control, [dir=ltr] .input-group > .custom-select + .custom-select, [dir=ltr] .input-group > .custom-select + .custom-file, [dir=ltr] .input-group > .custom-file + .form-control, [dir=ltr] .input-group > .custom-file + .custom-select, [dir=ltr] .input-group > .custom-file + .custom-file {\n  margin-left: -1px;\n}\n\n[dir=rtl] .input-group > .form-control + .form-control, [dir=rtl] .input-group > .form-control + .custom-select, [dir=rtl] .input-group > .form-control + .custom-file, [dir=rtl] .input-group > .form-control-plaintext + .form-control, [dir=rtl] .input-group > .form-control-plaintext + .custom-select, [dir=rtl] .input-group > .form-control-plaintext + .custom-file, [dir=rtl] .input-group > .custom-select + .form-control, [dir=rtl] .input-group > .custom-select + .custom-select, [dir=rtl] .input-group > .custom-select + .custom-file, [dir=rtl] .input-group > .custom-file + .form-control, [dir=rtl] .input-group > .custom-file + .custom-select, [dir=rtl] .input-group > .custom-file + .custom-file {\n  margin-right: -1px;\n}\n\n.input-group > .form-control:focus,\n.input-group > .custom-select:focus,\n.input-group > .custom-file .custom-file-input:focus ~ .custom-file-label {\n  z-index: 3;\n}\n\n.input-group > .custom-file .custom-file-input:focus {\n  z-index: 4;\n}\n\n[dir=ltr] .input-group > .form-control:not(:last-child), [dir=ltr] .input-group > .custom-select:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=rtl] .input-group > .form-control:not(:last-child), [dir=rtl] .input-group > .custom-select:not(:last-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=ltr] .input-group > .form-control:not(:first-child), [dir=ltr] .input-group > .custom-select:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .input-group > .form-control:not(:first-child), [dir=rtl] .input-group > .custom-select:not(:first-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.input-group > .custom-file {\n  display: flex;\n  align-items: center;\n}\n\n[dir=ltr] .input-group > .custom-file:not(:last-child) .custom-file-label, [dir=ltr] .input-group > .custom-file:not(:last-child) .custom-file-label::after {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=rtl] .input-group > .custom-file:not(:last-child) .custom-file-label, [dir=rtl] .input-group > .custom-file:not(:last-child) .custom-file-label::after {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=ltr] .input-group > .custom-file:not(:first-child) .custom-file-label {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .input-group > .custom-file:not(:first-child) .custom-file-label {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.input-group-prepend,\n.input-group-append {\n  display: flex;\n}\n\n.input-group-prepend .btn,\n.input-group-append .btn {\n  position: relative;\n  z-index: 2;\n}\n\n.input-group-prepend .btn:focus,\n.input-group-append .btn:focus {\n  z-index: 3;\n}\n\n[dir=ltr] .input-group-prepend .btn + .btn, [dir=ltr] .input-group-prepend .btn + .input-group-text, [dir=ltr] .input-group-prepend .input-group-text + .input-group-text, [dir=ltr] .input-group-prepend .input-group-text + .btn, [dir=ltr] .input-group-append .btn + .btn, [dir=ltr] .input-group-append .btn + .input-group-text, [dir=ltr] .input-group-append .input-group-text + .input-group-text, [dir=ltr] .input-group-append .input-group-text + .btn {\n  margin-left: -1px;\n}\n\n[dir=rtl] .input-group-prepend .btn + .btn, [dir=rtl] .input-group-prepend .btn + .input-group-text, [dir=rtl] .input-group-prepend .input-group-text + .input-group-text, [dir=rtl] .input-group-prepend .input-group-text + .btn, [dir=rtl] .input-group-append .btn + .btn, [dir=rtl] .input-group-append .btn + .input-group-text, [dir=rtl] .input-group-append .input-group-text + .input-group-text, [dir=rtl] .input-group-append .input-group-text + .btn {\n  margin-right: -1px;\n}\n\n[dir=ltr] .input-group-prepend {\n  margin-right: -1px;\n}\n\n[dir=rtl] .input-group-prepend {\n  margin-left: -1px;\n}\n\n[dir=ltr] .input-group-append {\n  margin-left: -1px;\n}\n\n[dir=rtl] .input-group-append {\n  margin-right: -1px;\n}\n\n.input-group-text {\n  display: flex;\n  align-items: center;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  white-space: nowrap;\n}\n\n[dir] .input-group-text {\n  padding: 0.375rem 0.75rem;\n  margin-bottom: 0;\n  text-align: center;\n  background-color: #e9ecef;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n\n[dir] .input-group-text input[type=\"radio\"], [dir] .input-group-text input[type=\"checkbox\"] {\n  margin-top: 0;\n}\n\n.input-group-lg > .form-control:not(textarea),\n.input-group-lg > .custom-select {\n  height: calc(1.5em + 1rem + 2px);\n}\n\n.input-group-lg > .form-control,\n.input-group-lg > .custom-select,\n.input-group-lg > .input-group-prepend > .input-group-text,\n.input-group-lg > .input-group-append > .input-group-text,\n.input-group-lg > .input-group-prepend > .btn,\n.input-group-lg > .input-group-append > .btn {\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n[dir] .input-group-lg > .form-control, [dir] .input-group-lg > .custom-select, [dir] .input-group-lg > .input-group-prepend > .input-group-text, [dir] .input-group-lg > .input-group-append > .input-group-text, [dir] .input-group-lg > .input-group-prepend > .btn, [dir] .input-group-lg > .input-group-append > .btn {\n  padding: 0.5rem 1rem;\n  border-radius: 0.3rem;\n}\n\n.input-group-sm > .form-control:not(textarea),\n.input-group-sm > .custom-select {\n  height: calc(1.5em + 0.5rem + 2px);\n}\n\n.input-group-sm > .form-control,\n.input-group-sm > .custom-select,\n.input-group-sm > .input-group-prepend > .input-group-text,\n.input-group-sm > .input-group-append > .input-group-text,\n.input-group-sm > .input-group-prepend > .btn,\n.input-group-sm > .input-group-append > .btn {\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n[dir] .input-group-sm > .form-control, [dir] .input-group-sm > .custom-select, [dir] .input-group-sm > .input-group-prepend > .input-group-text, [dir] .input-group-sm > .input-group-append > .input-group-text, [dir] .input-group-sm > .input-group-prepend > .btn, [dir] .input-group-sm > .input-group-append > .btn {\n  padding: 0.25rem 0.5rem;\n  border-radius: 0.2rem;\n}\n\n[dir=ltr] .input-group-lg > .custom-select, [dir=ltr] .input-group-sm > .custom-select {\n  padding-right: 1.75rem;\n}\n\n[dir=rtl] .input-group-lg > .custom-select, [dir=rtl] .input-group-sm > .custom-select {\n  padding-left: 1.75rem;\n}\n\n[dir=ltr] .input-group > .input-group-prepend > .btn, [dir=ltr] .input-group > .input-group-prepend > .input-group-text, [dir=ltr] .input-group > .input-group-append:not(:last-child) > .btn, [dir=ltr] .input-group > .input-group-append:not(:last-child) > .input-group-text, [dir=ltr] .input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle), [dir=ltr] .input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=rtl] .input-group > .input-group-prepend > .btn, [dir=rtl] .input-group > .input-group-prepend > .input-group-text, [dir=rtl] .input-group > .input-group-append:not(:last-child) > .btn, [dir=rtl] .input-group > .input-group-append:not(:last-child) > .input-group-text, [dir=rtl] .input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle), [dir=rtl] .input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=ltr] .input-group > .input-group-append > .btn, [dir=ltr] .input-group > .input-group-append > .input-group-text, [dir=ltr] .input-group > .input-group-prepend:not(:first-child) > .btn, [dir=ltr] .input-group > .input-group-prepend:not(:first-child) > .input-group-text, [dir=ltr] .input-group > .input-group-prepend:first-child > .btn:not(:first-child), [dir=ltr] .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .input-group > .input-group-append > .btn, [dir=rtl] .input-group > .input-group-append > .input-group-text, [dir=rtl] .input-group > .input-group-prepend:not(:first-child) > .btn, [dir=rtl] .input-group > .input-group-prepend:not(:first-child) > .input-group-text, [dir=rtl] .input-group > .input-group-prepend:first-child > .btn:not(:first-child), [dir=rtl] .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.custom-control {\n  position: relative;\n  display: block;\n  min-height: 1.5rem;\n}\n\n[dir=ltr] .custom-control {\n  padding-left: 1.5rem;\n}\n\n[dir=rtl] .custom-control {\n  padding-right: 1.5rem;\n}\n\n.custom-control-inline {\n  display: inline-flex;\n}\n\n[dir=ltr] .custom-control-inline {\n  margin-right: 1rem;\n}\n\n[dir=rtl] .custom-control-inline {\n  margin-left: 1rem;\n}\n\n.custom-control-input {\n  position: absolute;\n  z-index: -1;\n  width: 1rem;\n  height: 1.25rem;\n  opacity: 0;\n}\n\n[dir=ltr] .custom-control-input {\n  left: 0;\n}\n\n[dir=rtl] .custom-control-input {\n  right: 0;\n}\n\n.custom-control-input:checked ~ .custom-control-label::before {\n  color: #fff;\n}\n\n[dir] .custom-control-input:checked ~ .custom-control-label::before {\n  border-color: #007bff;\n  background-color: #007bff;\n}\n\n[dir] .custom-control-input:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir] .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #80bdff;\n}\n\n.custom-control-input:not(:disabled):active ~ .custom-control-label::before {\n  color: #fff;\n}\n\n[dir] .custom-control-input:not(:disabled):active ~ .custom-control-label::before {\n  background-color: #b3d7ff;\n  border-color: #b3d7ff;\n}\n\n.custom-control-input[disabled] ~ .custom-control-label, .custom-control-input:disabled ~ .custom-control-label {\n  color: #6c757d;\n}\n\n[dir] .custom-control-input[disabled] ~ .custom-control-label::before, [dir] .custom-control-input:disabled ~ .custom-control-label::before {\n  background-color: #e9ecef;\n}\n\n.custom-control-label {\n  position: relative;\n  vertical-align: top;\n}\n\n[dir] .custom-control-label {\n  margin-bottom: 0;\n}\n\n.custom-control-label::before {\n  position: absolute;\n  top: 0.25rem;\n  display: block;\n  width: 1rem;\n  height: 1rem;\n  pointer-events: none;\n  content: \"\";\n}\n\n[dir] .custom-control-label::before {\n  background-color: #fff;\n  border: #adb5bd solid 1px;\n}\n\n[dir=ltr] .custom-control-label::before {\n  left: -1.5rem;\n}\n\n[dir=rtl] .custom-control-label::before {\n  right: -1.5rem;\n}\n\n.custom-control-label::after {\n  position: absolute;\n  top: 0.25rem;\n  display: block;\n  width: 1rem;\n  height: 1rem;\n  content: \"\";\n}\n\n[dir] .custom-control-label::after {\n  background: no-repeat 50% / 50% 50%;\n}\n\n[dir=ltr] .custom-control-label::after {\n  left: -1.5rem;\n}\n\n[dir=rtl] .custom-control-label::after {\n  right: -1.5rem;\n}\n\n[dir] .custom-checkbox .custom-control-label::before {\n  border-radius: 0.25rem;\n}\n\n[dir] .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e\");\n}\n\n[dir] .custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::before {\n  border-color: #007bff;\n  background-color: #007bff;\n}\n\n[dir] .custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3e%3cpath stroke='%23fff' d='M0 2h4'/%3e%3c/svg%3e\");\n}\n\n[dir] .custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n[dir] .custom-checkbox .custom-control-input:disabled:indeterminate ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n[dir] .custom-radio .custom-control-label::before {\n  border-radius: 50%;\n}\n\n[dir] .custom-radio .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e\");\n}\n\n[dir] .custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n[dir=ltr] .custom-switch {\n  padding-left: 2.25rem;\n}\n\n[dir=rtl] .custom-switch {\n  padding-right: 2.25rem;\n}\n\n.custom-switch .custom-control-label::before {\n  width: 1.75rem;\n  pointer-events: all;\n}\n\n[dir] .custom-switch .custom-control-label::before {\n  border-radius: 0.5rem;\n}\n\n[dir=ltr] .custom-switch .custom-control-label::before {\n  left: -2.25rem;\n}\n\n[dir=rtl] .custom-switch .custom-control-label::before {\n  right: -2.25rem;\n}\n\n.custom-switch .custom-control-label::after {\n  top: calc(0.25rem + 2px);\n  width: calc(1rem - 4px);\n  height: calc(1rem - 4px);\n  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n[dir] .custom-switch .custom-control-label::after {\n  background-color: #adb5bd;\n  border-radius: 0.5rem;\n}\n\n[dir=ltr] .custom-switch .custom-control-label::after {\n  left: calc(-2.25rem + 2px);\n}\n\n[dir=rtl] .custom-switch .custom-control-label::after {\n  right: calc(-2.25rem + 2px);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .custom-switch .custom-control-label::after {\n    transition: none;\n  }\n}\n\n[dir] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {\n  background-color: #fff;\n}\n\n[dir=ltr] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {\n  transform: translateX(0.75rem);\n}\n\n[dir=rtl] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {\n  transform: translateX(-0.75rem);\n}\n\n[dir] .custom-switch .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n.custom-select {\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  vertical-align: middle;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n}\n\n[dir] .custom-select {\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .custom-select {\n  padding: 0.375rem 1.75rem 0.375rem 0.75rem;\n  background: #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat right 0.75rem center/8px 10px;\n}\n\n[dir=rtl] .custom-select {\n  padding: 0.375rem 0.75rem 0.375rem 1.75rem;\n  background: #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") no-repeat left 0.75rem center/8px 10px;\n}\n\n.custom-select:focus {\n  outline: 0;\n}\n\n[dir] .custom-select:focus {\n  border-color: #80bdff;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n.custom-select:focus::-ms-value {\n  color: #495057;\n}\n\n[dir] .custom-select:focus::-ms-value {\n  background-color: #fff;\n}\n\n.custom-select[multiple], .custom-select[size]:not([size=\"1\"]) {\n  height: auto;\n}\n\n[dir] .custom-select[multiple], [dir] .custom-select[size]:not([size=\"1\"]) {\n  background-image: none;\n}\n\n[dir=ltr] .custom-select[multiple], [dir=ltr] .custom-select[size]:not([size=\"1\"]) {\n  padding-right: 0.75rem;\n}\n\n[dir=rtl] .custom-select[multiple], [dir=rtl] .custom-select[size]:not([size=\"1\"]) {\n  padding-left: 0.75rem;\n}\n\n.custom-select:disabled {\n  color: #6c757d;\n}\n\n[dir] .custom-select:disabled {\n  background-color: #e9ecef;\n}\n\n.custom-select::-ms-expand {\n  display: none;\n}\n\n.custom-select:-moz-focusring {\n  color: transparent;\n}\n\n[dir] .custom-select:-moz-focusring {\n  text-shadow: 0 0 0 #495057;\n}\n\n.custom-select-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  font-size: 0.875rem;\n}\n\n[dir] .custom-select-sm {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n\n[dir=ltr] .custom-select-sm {\n  padding-left: 0.5rem;\n}\n\n[dir=rtl] .custom-select-sm {\n  padding-right: 0.5rem;\n}\n\n.custom-select-lg {\n  height: calc(1.5em + 1rem + 2px);\n  font-size: 1.25rem;\n}\n\n[dir] .custom-select-lg {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n[dir=ltr] .custom-select-lg {\n  padding-left: 1rem;\n}\n\n[dir=rtl] .custom-select-lg {\n  padding-right: 1rem;\n}\n\n.custom-file {\n  position: relative;\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n}\n\n[dir] .custom-file {\n  margin-bottom: 0;\n}\n\n.custom-file-input {\n  position: relative;\n  z-index: 2;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  opacity: 0;\n}\n\n[dir] .custom-file-input {\n  margin: 0;\n}\n\n[dir] .custom-file-input:focus ~ .custom-file-label {\n  border-color: #80bdff;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir] .custom-file-input[disabled] ~ .custom-file-label, [dir] .custom-file-input:disabled ~ .custom-file-label {\n  background-color: #e9ecef;\n}\n\n.custom-file-input:lang(en) ~ .custom-file-label::after {\n  content: \"Browse\";\n}\n\n.custom-file-input ~ .custom-file-label[data-browse]::after {\n  content: attr(data-browse);\n}\n\n.custom-file-label {\n  position: absolute;\n  top: 0;\n  z-index: 1;\n  height: calc(1.5em + 0.75rem + 2px);\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n}\n\n[dir] .custom-file-label {\n  padding: 0.375rem 0.75rem;\n  background-color: #fff;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .custom-file-label {\n  right: 0;\n  left: 0;\n}\n\n[dir=rtl] .custom-file-label {\n  left: 0;\n  right: 0;\n}\n\n.custom-file-label::after {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 3;\n  display: block;\n  height: calc(1.5em + 0.75rem);\n  line-height: 1.5;\n  color: #495057;\n  content: \"Browse\";\n}\n\n[dir] .custom-file-label::after {\n  padding: 0.375rem 0.75rem;\n  background-color: #e9ecef;\n}\n\n[dir=ltr] .custom-file-label::after {\n  right: 0;\n  border-left: inherit;\n  border-radius: 0 0.25rem 0.25rem 0;\n}\n\n[dir=rtl] .custom-file-label::after {\n  left: 0;\n  border-right: inherit;\n  border-radius: 0.25rem 0 0 0.25rem;\n}\n\n.custom-range {\n  width: 100%;\n  height: 1.4rem;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n}\n\n[dir] .custom-range {\n  padding: 0;\n  background-color: transparent;\n}\n\n.custom-range:focus {\n  outline: none;\n}\n\n[dir] .custom-range:focus::-webkit-slider-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir] .custom-range:focus::-moz-range-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir] .custom-range:focus::-ms-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir] .custom-range::-moz-focus-outer {\n  border: 0;\n}\n\n.custom-range::-webkit-slider-thumb {\n  width: 1rem;\n  height: 1rem;\n  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  -webkit-appearance: none;\n  appearance: none;\n}\n\n[dir] .custom-range::-webkit-slider-thumb {\n  margin-top: -0.25rem;\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-webkit-slider-thumb {\n    -webkit-transition: none;\n    transition: none;\n  }\n  [dir] .custom-range::-webkit-slider-thumb {\n    -webkit-transition: none;\n  }\n}\n\n[dir] .custom-range::-webkit-slider-thumb:active {\n  background-color: #b3d7ff;\n}\n\n.custom-range::-webkit-slider-runnable-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n}\n\n[dir] .custom-range::-webkit-slider-runnable-track {\n  cursor: pointer;\n  background-color: #dee2e6;\n  border-color: transparent;\n  border-radius: 1rem;\n}\n\n.custom-range::-moz-range-thumb {\n  width: 1rem;\n  height: 1rem;\n  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  -moz-appearance: none;\n  appearance: none;\n}\n\n[dir] .custom-range::-moz-range-thumb {\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-moz-range-thumb {\n    -moz-transition: none;\n    transition: none;\n  }\n}\n\n[dir] .custom-range::-moz-range-thumb:active {\n  background-color: #b3d7ff;\n}\n\n.custom-range::-moz-range-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n}\n\n[dir] .custom-range::-moz-range-track {\n  cursor: pointer;\n  background-color: #dee2e6;\n  border-color: transparent;\n  border-radius: 1rem;\n}\n\n.custom-range::-ms-thumb {\n  width: 1rem;\n  height: 1rem;\n  -ms-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  appearance: none;\n}\n\n[dir] .custom-range::-ms-thumb {\n  margin-top: 0;\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n}\n\n[dir=ltr] .custom-range::-ms-thumb {\n  margin-right: 0.2rem;\n  margin-left: 0.2rem;\n}\n\n[dir=rtl] .custom-range::-ms-thumb {\n  margin-left: 0.2rem;\n  margin-right: 0.2rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-ms-thumb {\n    -ms-transition: none;\n    transition: none;\n  }\n}\n\n[dir] .custom-range::-ms-thumb:active {\n  background-color: #b3d7ff;\n}\n\n.custom-range::-ms-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n}\n\n[dir] .custom-range::-ms-track {\n  cursor: pointer;\n  background-color: transparent;\n  border-color: transparent;\n  border-width: 0.5rem;\n}\n\n[dir] .custom-range::-ms-fill-lower {\n  background-color: #dee2e6;\n  border-radius: 1rem;\n}\n\n[dir] .custom-range::-ms-fill-upper {\n  background-color: #dee2e6;\n  border-radius: 1rem;\n}\n\n[dir=ltr] .custom-range::-ms-fill-upper {\n  margin-right: 15px;\n}\n\n[dir=rtl] .custom-range::-ms-fill-upper {\n  margin-left: 15px;\n}\n\n[dir] .custom-range:disabled::-webkit-slider-thumb {\n  background-color: #adb5bd;\n}\n\n[dir] .custom-range:disabled::-webkit-slider-runnable-track {\n  cursor: default;\n}\n\n[dir] .custom-range:disabled::-moz-range-thumb {\n  background-color: #adb5bd;\n}\n\n[dir] .custom-range:disabled::-moz-range-track {\n  cursor: default;\n}\n\n[dir] .custom-range:disabled::-ms-thumb {\n  background-color: #adb5bd;\n}\n\n.custom-control-label::before,\n.custom-file-label,\n.custom-select {\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .custom-control-label::before,\n  .custom-file-label,\n  .custom-select {\n    transition: none;\n  }\n}\n\n.nav {\n  display: flex;\n  flex-wrap: wrap;\n  list-style: none;\n}\n\n[dir] .nav {\n  margin-bottom: 0;\n}\n\n[dir=ltr] .nav {\n  padding-left: 0;\n}\n\n[dir=rtl] .nav {\n  padding-right: 0;\n}\n\n.nav-link {\n  display: block;\n}\n\n[dir] .nav-link {\n  padding: 0.5rem 1rem;\n}\n\n.nav-link:hover, .nav-link:focus {\n  text-decoration: none;\n}\n\n.nav-link.disabled {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n[dir] .nav-link.disabled {\n  cursor: default;\n}\n\n[dir] .nav-tabs {\n  border-bottom: 1px solid #dee2e6;\n}\n\n[dir] .nav-tabs .nav-item {\n  margin-bottom: -1px;\n}\n\n[dir] .nav-tabs .nav-link {\n  border: 1px solid transparent;\n}\n\n[dir=ltr] .nav-tabs .nav-link {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n[dir=rtl] .nav-tabs .nav-link {\n  border-top-right-radius: 0.25rem;\n  border-top-left-radius: 0.25rem;\n}\n\n[dir] .nav-tabs .nav-link:hover, [dir] .nav-tabs .nav-link:focus {\n  border-color: #e9ecef #e9ecef #dee2e6;\n}\n\n.nav-tabs .nav-link.disabled {\n  color: #6c757d;\n}\n\n[dir] .nav-tabs .nav-link.disabled {\n  background-color: transparent;\n  border-color: transparent;\n}\n\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n  color: #495057;\n}\n\n[dir] .nav-tabs .nav-link.active, [dir] .nav-tabs .nav-item.show .nav-link {\n  background-color: #fff;\n  border-color: #dee2e6 #dee2e6 #fff;\n}\n\n[dir] .nav-tabs .dropdown-menu {\n  margin-top: -1px;\n}\n\n[dir=ltr] .nav-tabs .dropdown-menu {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n[dir=rtl] .nav-tabs .dropdown-menu {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n}\n\n[dir] .nav-pills .nav-link {\n  border-radius: 0.25rem;\n}\n\n.nav-pills .nav-link.active,\n.nav-pills .show > .nav-link {\n  color: #fff;\n}\n\n[dir] .nav-pills .nav-link.active, [dir] .nav-pills .show > .nav-link {\n  background-color: #007bff;\n}\n\n.nav-fill .nav-item {\n  flex: 1 1 auto;\n}\n\n[dir] .nav-fill .nav-item {\n  text-align: center;\n}\n\n.nav-justified .nav-item {\n  flex-basis: 0;\n  flex-grow: 1;\n}\n\n[dir] .nav-justified .nav-item {\n  text-align: center;\n}\n\n.tab-content > .tab-pane {\n  display: none;\n}\n\n.tab-content > .active {\n  display: block;\n}\n\n.navbar {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n}\n\n[dir] .navbar {\n  padding: 0.5rem 1rem;\n}\n\n.navbar .container,\n.navbar .container-fluid, .navbar .container-sm, .navbar .container-md, .navbar .container-lg, .navbar .container-xl {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.navbar-brand {\n  display: inline-block;\n  font-size: 1.25rem;\n  line-height: inherit;\n  white-space: nowrap;\n}\n\n[dir] .navbar-brand {\n  padding-top: 0.3125rem;\n  padding-bottom: 0.3125rem;\n}\n\n[dir=ltr] .navbar-brand {\n  margin-right: 1rem;\n}\n\n[dir=rtl] .navbar-brand {\n  margin-left: 1rem;\n}\n\n.navbar-brand:hover, .navbar-brand:focus {\n  text-decoration: none;\n}\n\n.navbar-nav {\n  display: flex;\n  flex-direction: column;\n  list-style: none;\n}\n\n[dir] .navbar-nav {\n  margin-bottom: 0;\n}\n\n[dir=ltr] .navbar-nav {\n  padding-left: 0;\n}\n\n[dir=rtl] .navbar-nav {\n  padding-right: 0;\n}\n\n[dir=ltr] .navbar-nav .nav-link {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n[dir=rtl] .navbar-nav .nav-link {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.navbar-nav .dropdown-menu {\n  position: static;\n}\n\n[dir] .navbar-nav .dropdown-menu {\n  float: none;\n}\n\n.navbar-text {\n  display: inline-block;\n}\n\n[dir] .navbar-text {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n.navbar-collapse {\n  flex-basis: 100%;\n  flex-grow: 1;\n  align-items: center;\n}\n\n.navbar-toggler {\n  font-size: 1.25rem;\n  line-height: 1;\n}\n\n[dir] .navbar-toggler {\n  padding: 0.25rem 0.75rem;\n  background-color: transparent;\n  border: 1px solid transparent;\n  border-radius: 0.25rem;\n}\n\n.navbar-toggler:hover, .navbar-toggler:focus {\n  text-decoration: none;\n}\n\n.navbar-toggler-icon {\n  display: inline-block;\n  width: 1.5em;\n  height: 1.5em;\n  vertical-align: middle;\n  content: \"\";\n}\n\n[dir] .navbar-toggler-icon {\n  background: no-repeat center center;\n  background-size: 100% 100%;\n}\n\n@media (max-width: 575.98px) {\n  [dir=ltr] .navbar-expand-sm > .container, [dir=ltr] .navbar-expand-sm > .container-fluid, [dir=ltr] .navbar-expand-sm > .container-sm, [dir=ltr] .navbar-expand-sm > .container-md, [dir=ltr] .navbar-expand-sm > .container-lg, [dir=ltr] .navbar-expand-sm > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n  [dir=rtl] .navbar-expand-sm > .container, [dir=rtl] .navbar-expand-sm > .container-fluid, [dir=rtl] .navbar-expand-sm > .container-sm, [dir=rtl] .navbar-expand-sm > .container-md, [dir=rtl] .navbar-expand-sm > .container-lg, [dir=rtl] .navbar-expand-sm > .container-xl {\n    padding-left: 0;\n    padding-right: 0;\n  }\n}\n\n@media (min-width: 576px) {\n  .navbar-expand-sm {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n\n  .navbar-expand-sm .navbar-nav {\n    flex-direction: row;\n  }\n\n  .navbar-expand-sm .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n\n  [dir=ltr] .navbar-expand-sm .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n\n  [dir=rtl] .navbar-expand-sm .navbar-nav .nav-link {\n    padding-left: 0.5rem;\n    padding-right: 0.5rem;\n  }\n\n  .navbar-expand-sm > .container,\n  .navbar-expand-sm > .container-fluid, .navbar-expand-sm > .container-sm, .navbar-expand-sm > .container-md, .navbar-expand-sm > .container-lg, .navbar-expand-sm > .container-xl {\n    flex-wrap: nowrap;\n  }\n\n  .navbar-expand-sm .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n\n  .navbar-expand-sm .navbar-toggler {\n    display: none;\n  }\n}\n\n@media (max-width: 767.98px) {\n  [dir=ltr] .navbar-expand-md > .container, [dir=ltr] .navbar-expand-md > .container-fluid, [dir=ltr] .navbar-expand-md > .container-sm, [dir=ltr] .navbar-expand-md > .container-md, [dir=ltr] .navbar-expand-md > .container-lg, [dir=ltr] .navbar-expand-md > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n  [dir=rtl] .navbar-expand-md > .container, [dir=rtl] .navbar-expand-md > .container-fluid, [dir=rtl] .navbar-expand-md > .container-sm, [dir=rtl] .navbar-expand-md > .container-md, [dir=rtl] .navbar-expand-md > .container-lg, [dir=rtl] .navbar-expand-md > .container-xl {\n    padding-left: 0;\n    padding-right: 0;\n  }\n}\n\n@media (min-width: 768px) {\n  .navbar-expand-md {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n\n  .navbar-expand-md .navbar-nav {\n    flex-direction: row;\n  }\n\n  .navbar-expand-md .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n\n  [dir=ltr] .navbar-expand-md .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n\n  [dir=rtl] .navbar-expand-md .navbar-nav .nav-link {\n    padding-left: 0.5rem;\n    padding-right: 0.5rem;\n  }\n\n  .navbar-expand-md > .container,\n  .navbar-expand-md > .container-fluid, .navbar-expand-md > .container-sm, .navbar-expand-md > .container-md, .navbar-expand-md > .container-lg, .navbar-expand-md > .container-xl {\n    flex-wrap: nowrap;\n  }\n\n  .navbar-expand-md .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n\n  .navbar-expand-md .navbar-toggler {\n    display: none;\n  }\n}\n\n@media (max-width: 991.98px) {\n  [dir=ltr] .navbar-expand-lg > .container, [dir=ltr] .navbar-expand-lg > .container-fluid, [dir=ltr] .navbar-expand-lg > .container-sm, [dir=ltr] .navbar-expand-lg > .container-md, [dir=ltr] .navbar-expand-lg > .container-lg, [dir=ltr] .navbar-expand-lg > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n  [dir=rtl] .navbar-expand-lg > .container, [dir=rtl] .navbar-expand-lg > .container-fluid, [dir=rtl] .navbar-expand-lg > .container-sm, [dir=rtl] .navbar-expand-lg > .container-md, [dir=rtl] .navbar-expand-lg > .container-lg, [dir=rtl] .navbar-expand-lg > .container-xl {\n    padding-left: 0;\n    padding-right: 0;\n  }\n}\n\n@media (min-width: 992px) {\n  .navbar-expand-lg {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n\n  .navbar-expand-lg .navbar-nav {\n    flex-direction: row;\n  }\n\n  .navbar-expand-lg .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n\n  [dir=ltr] .navbar-expand-lg .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n\n  [dir=rtl] .navbar-expand-lg .navbar-nav .nav-link {\n    padding-left: 0.5rem;\n    padding-right: 0.5rem;\n  }\n\n  .navbar-expand-lg > .container,\n  .navbar-expand-lg > .container-fluid, .navbar-expand-lg > .container-sm, .navbar-expand-lg > .container-md, .navbar-expand-lg > .container-lg, .navbar-expand-lg > .container-xl {\n    flex-wrap: nowrap;\n  }\n\n  .navbar-expand-lg .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n\n  .navbar-expand-lg .navbar-toggler {\n    display: none;\n  }\n}\n\n@media (max-width: 1199.98px) {\n  [dir=ltr] .navbar-expand-xl > .container, [dir=ltr] .navbar-expand-xl > .container-fluid, [dir=ltr] .navbar-expand-xl > .container-sm, [dir=ltr] .navbar-expand-xl > .container-md, [dir=ltr] .navbar-expand-xl > .container-lg, [dir=ltr] .navbar-expand-xl > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n  [dir=rtl] .navbar-expand-xl > .container, [dir=rtl] .navbar-expand-xl > .container-fluid, [dir=rtl] .navbar-expand-xl > .container-sm, [dir=rtl] .navbar-expand-xl > .container-md, [dir=rtl] .navbar-expand-xl > .container-lg, [dir=rtl] .navbar-expand-xl > .container-xl {\n    padding-left: 0;\n    padding-right: 0;\n  }\n}\n\n@media (min-width: 1200px) {\n  .navbar-expand-xl {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n\n  .navbar-expand-xl .navbar-nav {\n    flex-direction: row;\n  }\n\n  .navbar-expand-xl .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n\n  [dir=ltr] .navbar-expand-xl .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n\n  [dir=rtl] .navbar-expand-xl .navbar-nav .nav-link {\n    padding-left: 0.5rem;\n    padding-right: 0.5rem;\n  }\n\n  .navbar-expand-xl > .container,\n  .navbar-expand-xl > .container-fluid, .navbar-expand-xl > .container-sm, .navbar-expand-xl > .container-md, .navbar-expand-xl > .container-lg, .navbar-expand-xl > .container-xl {\n    flex-wrap: nowrap;\n  }\n\n  .navbar-expand-xl .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n\n  .navbar-expand-xl .navbar-toggler {\n    display: none;\n  }\n}\n\n.navbar-expand {\n  flex-flow: row nowrap;\n  justify-content: flex-start;\n}\n\n[dir=ltr] .navbar-expand > .container, [dir=ltr] .navbar-expand > .container-fluid, [dir=ltr] .navbar-expand > .container-sm, [dir=ltr] .navbar-expand > .container-md, [dir=ltr] .navbar-expand > .container-lg, [dir=ltr] .navbar-expand > .container-xl {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n[dir=rtl] .navbar-expand > .container, [dir=rtl] .navbar-expand > .container-fluid, [dir=rtl] .navbar-expand > .container-sm, [dir=rtl] .navbar-expand > .container-md, [dir=rtl] .navbar-expand > .container-lg, [dir=rtl] .navbar-expand > .container-xl {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.navbar-expand .navbar-nav {\n  flex-direction: row;\n}\n\n.navbar-expand .navbar-nav .dropdown-menu {\n  position: absolute;\n}\n\n[dir=ltr] .navbar-expand .navbar-nav .nav-link {\n  padding-right: 0.5rem;\n  padding-left: 0.5rem;\n}\n\n[dir=rtl] .navbar-expand .navbar-nav .nav-link {\n  padding-left: 0.5rem;\n  padding-right: 0.5rem;\n}\n\n.navbar-expand > .container,\n.navbar-expand > .container-fluid, .navbar-expand > .container-sm, .navbar-expand > .container-md, .navbar-expand > .container-lg, .navbar-expand > .container-xl {\n  flex-wrap: nowrap;\n}\n\n.navbar-expand .navbar-collapse {\n  display: flex !important;\n  flex-basis: auto;\n}\n\n.navbar-expand .navbar-toggler {\n  display: none;\n}\n\n.navbar-light .navbar-brand {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-light .navbar-nav .nav-link {\n  color: rgba(0, 0, 0, 0.5);\n}\n\n.navbar-light .navbar-nav .nav-link:hover, .navbar-light .navbar-nav .nav-link:focus {\n  color: rgba(0, 0, 0, 0.7);\n}\n\n.navbar-light .navbar-nav .nav-link.disabled {\n  color: rgba(0, 0, 0, 0.3);\n}\n\n.navbar-light .navbar-nav .show > .nav-link,\n.navbar-light .navbar-nav .active > .nav-link,\n.navbar-light .navbar-nav .nav-link.show,\n.navbar-light .navbar-nav .nav-link.active {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-light .navbar-toggler {\n  color: rgba(0, 0, 0, 0.5);\n}\n\n[dir] .navbar-light .navbar-toggler {\n  border-color: rgba(0, 0, 0, 0.1);\n}\n\n[dir] .navbar-light .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\");\n}\n\n.navbar-light .navbar-text {\n  color: rgba(0, 0, 0, 0.5);\n}\n\n.navbar-light .navbar-text a {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-dark .navbar-brand {\n  color: #fff;\n}\n\n.navbar-dark .navbar-brand:hover, .navbar-dark .navbar-brand:focus {\n  color: #fff;\n}\n\n.navbar-dark .navbar-nav .nav-link {\n  color: rgba(255, 255, 255, 0.5);\n}\n\n.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {\n  color: rgba(255, 255, 255, 0.75);\n}\n\n.navbar-dark .navbar-nav .nav-link.disabled {\n  color: rgba(255, 255, 255, 0.25);\n}\n\n.navbar-dark .navbar-nav .show > .nav-link,\n.navbar-dark .navbar-nav .active > .nav-link,\n.navbar-dark .navbar-nav .nav-link.show,\n.navbar-dark .navbar-nav .nav-link.active {\n  color: #fff;\n}\n\n.navbar-dark .navbar-toggler {\n  color: rgba(255, 255, 255, 0.5);\n}\n\n[dir] .navbar-dark .navbar-toggler {\n  border-color: rgba(255, 255, 255, 0.1);\n}\n\n[dir] .navbar-dark .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\");\n}\n\n.navbar-dark .navbar-text {\n  color: rgba(255, 255, 255, 0.5);\n}\n\n.navbar-dark .navbar-text a {\n  color: #fff;\n}\n\n.navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {\n  color: #fff;\n}\n\n.card {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  word-wrap: break-word;\n}\n\n[dir] .card {\n  background-color: #fff;\n  background-clip: border-box;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .card > hr {\n  margin-right: 0;\n  margin-left: 0;\n}\n\n[dir=rtl] .card > hr {\n  margin-left: 0;\n  margin-right: 0;\n}\n\n[dir=ltr] .card > .list-group:first-child .list-group-item:first-child {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n[dir=rtl] .card > .list-group:first-child .list-group-item:first-child {\n  border-top-right-radius: 0.25rem;\n  border-top-left-radius: 0.25rem;\n}\n\n[dir=ltr] .card > .list-group:last-child .list-group-item:last-child {\n  border-bottom-right-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n[dir=rtl] .card > .list-group:last-child .list-group-item:last-child {\n  border-bottom-left-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem;\n}\n\n.card-body {\n  flex: 1 1 auto;\n  min-height: 1px;\n}\n\n[dir] .card-body {\n  padding: 1.25rem;\n}\n\n[dir] .card-title {\n  margin-bottom: 0.75rem;\n}\n\n[dir] .card-subtitle {\n  margin-top: -0.375rem;\n  margin-bottom: 0;\n}\n\n[dir] .card-text:last-child {\n  margin-bottom: 0;\n}\n\n.card-link:hover {\n  text-decoration: none;\n}\n\n[dir=ltr] .card-link + .card-link {\n  margin-left: 1.25rem;\n}\n\n[dir=rtl] .card-link + .card-link {\n  margin-right: 1.25rem;\n}\n\n[dir] .card-header {\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 0;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-bottom: 1px solid rgba(0, 0, 0, 0.125);\n}\n\n[dir] .card-header:first-child {\n  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;\n}\n\n[dir] .card-header + .list-group .list-group-item:first-child {\n  border-top: 0;\n}\n\n[dir] .card-footer {\n  padding: 0.75rem 1.25rem;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-top: 1px solid rgba(0, 0, 0, 0.125);\n}\n\n[dir] .card-footer:last-child {\n  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);\n}\n\n[dir] .card-header-tabs {\n  margin-bottom: -0.75rem;\n  border-bottom: 0;\n}\n\n[dir=ltr] .card-header-tabs {\n  margin-right: -0.625rem;\n  margin-left: -0.625rem;\n}\n\n[dir=rtl] .card-header-tabs {\n  margin-left: -0.625rem;\n  margin-right: -0.625rem;\n}\n\n[dir=ltr] .card-header-pills {\n  margin-right: -0.625rem;\n  margin-left: -0.625rem;\n}\n\n[dir=rtl] .card-header-pills {\n  margin-left: -0.625rem;\n  margin-right: -0.625rem;\n}\n\n.card-img-overlay {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n}\n\n[dir] .card-img-overlay {\n  padding: 1.25rem;\n}\n\n[dir=ltr] .card-img-overlay {\n  right: 0;\n  left: 0;\n}\n\n[dir=rtl] .card-img-overlay {\n  left: 0;\n  right: 0;\n}\n\n.card-img,\n.card-img-top,\n.card-img-bottom {\n  flex-shrink: 0;\n  width: 100%;\n}\n\n[dir=ltr] .card-img, [dir=ltr] .card-img-top {\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px);\n}\n\n[dir=rtl] .card-img, [dir=rtl] .card-img-top {\n  border-top-right-radius: calc(0.25rem - 1px);\n  border-top-left-radius: calc(0.25rem - 1px);\n}\n\n[dir=ltr] .card-img, [dir=ltr] .card-img-bottom {\n  border-bottom-right-radius: calc(0.25rem - 1px);\n  border-bottom-left-radius: calc(0.25rem - 1px);\n}\n\n[dir=rtl] .card-img, [dir=rtl] .card-img-bottom {\n  border-bottom-left-radius: calc(0.25rem - 1px);\n  border-bottom-right-radius: calc(0.25rem - 1px);\n}\n\n[dir] .card-deck .card {\n  margin-bottom: 15px;\n}\n\n@media (min-width: 576px) {\n  .card-deck {\n    display: flex;\n    flex-flow: row wrap;\n  }\n  [dir=ltr] .card-deck {\n    margin-right: -15px;\n    margin-left: -15px;\n  }\n  [dir=rtl] .card-deck {\n    margin-left: -15px;\n    margin-right: -15px;\n  }\n\n  .card-deck .card {\n    flex: 1 0 0%;\n  }\n\n  [dir] .card-deck .card {\n    margin-bottom: 0;\n  }\n\n  [dir=ltr] .card-deck .card {\n    margin-right: 15px;\n    margin-left: 15px;\n  }\n\n  [dir=rtl] .card-deck .card {\n    margin-left: 15px;\n    margin-right: 15px;\n  }\n}\n\n[dir] .card-group > .card {\n  margin-bottom: 15px;\n}\n\n@media (min-width: 576px) {\n  .card-group {\n    display: flex;\n    flex-flow: row wrap;\n  }\n\n  .card-group > .card {\n    flex: 1 0 0%;\n  }\n\n  [dir] .card-group > .card {\n    margin-bottom: 0;\n  }\n\n  [dir=ltr] .card-group > .card + .card {\n    margin-left: 0;\n    border-left: 0;\n  }\n\n  [dir=rtl] .card-group > .card + .card {\n    margin-right: 0;\n    border-right: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:last-child) {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:last-child) {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:last-child) .card-img-top, [dir=ltr] .card-group > .card:not(:last-child) .card-header {\n    border-top-right-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:last-child) .card-img-top, [dir=rtl] .card-group > .card:not(:last-child) .card-header {\n    border-top-left-radius: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:last-child) .card-img-bottom, [dir=ltr] .card-group > .card:not(:last-child) .card-footer {\n    border-bottom-right-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:last-child) .card-img-bottom, [dir=rtl] .card-group > .card:not(:last-child) .card-footer {\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:first-child) {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:first-child) {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:first-child) .card-img-top, [dir=ltr] .card-group > .card:not(:first-child) .card-header {\n    border-top-left-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:first-child) .card-img-top, [dir=rtl] .card-group > .card:not(:first-child) .card-header {\n    border-top-right-radius: 0;\n  }\n\n  [dir=ltr] .card-group > .card:not(:first-child) .card-img-bottom, [dir=ltr] .card-group > .card:not(:first-child) .card-footer {\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .card-group > .card:not(:first-child) .card-img-bottom, [dir=rtl] .card-group > .card:not(:first-child) .card-footer {\n    border-bottom-right-radius: 0;\n  }\n}\n\n[dir] .card-columns .card {\n  margin-bottom: 0.75rem;\n}\n\n@media (min-width: 576px) {\n  .card-columns {\n    -webkit-column-count: 3;\n    -moz-column-count: 3;\n    column-count: 3;\n    -webkit-column-gap: 1.25rem;\n    -moz-column-gap: 1.25rem;\n    column-gap: 1.25rem;\n    orphans: 1;\n    widows: 1;\n  }\n\n  .card-columns .card {\n    display: inline-block;\n    width: 100%;\n  }\n}\n\n.accordion > .card {\n  overflow: hidden;\n}\n\n[dir] .accordion > .card:not(:last-of-type) {\n  border-bottom: 0;\n}\n\n[dir=ltr] .accordion > .card:not(:last-of-type) {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .accordion > .card:not(:last-of-type) {\n  border-bottom-left-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n[dir=ltr] .accordion > .card:not(:first-of-type) {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n[dir=rtl] .accordion > .card:not(:first-of-type) {\n  border-top-right-radius: 0;\n  border-top-left-radius: 0;\n}\n\n[dir] .accordion > .card > .card-header {\n  border-radius: 0;\n  margin-bottom: -1px;\n}\n\n.breadcrumb {\n  display: flex;\n  flex-wrap: wrap;\n  list-style: none;\n}\n\n[dir] .breadcrumb {\n  padding: 0.75rem 1rem;\n  margin-bottom: 1rem;\n  background-color: #e9ecef;\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .breadcrumb-item + .breadcrumb-item {\n  padding-left: 0.5rem;\n}\n\n[dir=rtl] .breadcrumb-item + .breadcrumb-item {\n  padding-right: 0.5rem;\n}\n\n.breadcrumb-item + .breadcrumb-item::before {\n  display: inline-block;\n  color: #6c757d;\n  content: \"/\";\n}\n\n[dir=ltr] .breadcrumb-item + .breadcrumb-item::before {\n  padding-right: 0.5rem;\n}\n\n[dir=rtl] .breadcrumb-item + .breadcrumb-item::before {\n  padding-left: 0.5rem;\n}\n\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: underline;\n}\n\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: none;\n}\n\n.breadcrumb-item.active {\n  color: #6c757d;\n}\n\n.pagination {\n  display: flex;\n  list-style: none;\n}\n\n[dir] .pagination {\n  border-radius: 0.25rem;\n}\n\n[dir=ltr] .pagination {\n  padding-left: 0;\n}\n\n[dir=rtl] .pagination {\n  padding-right: 0;\n}\n\n.page-link {\n  position: relative;\n  display: block;\n  line-height: 1.25;\n  color: #007bff;\n}\n\n[dir] .page-link {\n  padding: 0.5rem 0.75rem;\n  background-color: #fff;\n  border: 1px solid #dee2e6;\n}\n\n[dir=ltr] .page-link {\n  margin-left: -1px;\n}\n\n[dir=rtl] .page-link {\n  margin-right: -1px;\n}\n\n.page-link:hover {\n  z-index: 2;\n  color: #0056b3;\n  text-decoration: none;\n}\n\n[dir] .page-link:hover {\n  background-color: #e9ecef;\n  border-color: #dee2e6;\n}\n\n.page-link:focus {\n  z-index: 3;\n  outline: 0;\n}\n\n[dir] .page-link:focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n[dir=ltr] .page-item:first-child .page-link {\n  margin-left: 0;\n  border-top-left-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n[dir=rtl] .page-item:first-child .page-link {\n  margin-right: 0;\n  border-top-right-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem;\n}\n\n[dir=ltr] .page-item:last-child .page-link {\n  border-top-right-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem;\n}\n\n[dir=rtl] .page-item:last-child .page-link {\n  border-top-left-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n.page-item.active .page-link {\n  z-index: 3;\n  color: #fff;\n}\n\n[dir] .page-item.active .page-link {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n.page-item.disabled .page-link {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n[dir] .page-item.disabled .page-link {\n  cursor: auto;\n  background-color: #fff;\n  border-color: #dee2e6;\n}\n\n.pagination-lg .page-link {\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n[dir] .pagination-lg .page-link {\n  padding: 0.75rem 1.5rem;\n}\n\n[dir=ltr] .pagination-lg .page-item:first-child .page-link {\n  border-top-left-radius: 0.3rem;\n  border-bottom-left-radius: 0.3rem;\n}\n\n[dir=rtl] .pagination-lg .page-item:first-child .page-link {\n  border-top-right-radius: 0.3rem;\n  border-bottom-right-radius: 0.3rem;\n}\n\n[dir=ltr] .pagination-lg .page-item:last-child .page-link {\n  border-top-right-radius: 0.3rem;\n  border-bottom-right-radius: 0.3rem;\n}\n\n[dir=rtl] .pagination-lg .page-item:last-child .page-link {\n  border-top-left-radius: 0.3rem;\n  border-bottom-left-radius: 0.3rem;\n}\n\n.pagination-sm .page-link {\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n[dir] .pagination-sm .page-link {\n  padding: 0.25rem 0.5rem;\n}\n\n[dir=ltr] .pagination-sm .page-item:first-child .page-link {\n  border-top-left-radius: 0.2rem;\n  border-bottom-left-radius: 0.2rem;\n}\n\n[dir=rtl] .pagination-sm .page-item:first-child .page-link {\n  border-top-right-radius: 0.2rem;\n  border-bottom-right-radius: 0.2rem;\n}\n\n[dir=ltr] .pagination-sm .page-item:last-child .page-link {\n  border-top-right-radius: 0.2rem;\n  border-bottom-right-radius: 0.2rem;\n}\n\n[dir=rtl] .pagination-sm .page-item:last-child .page-link {\n  border-top-left-radius: 0.2rem;\n  border-bottom-left-radius: 0.2rem;\n}\n\n.badge {\n  display: inline-block;\n  font-size: 75%;\n  font-weight: 700;\n  line-height: 1;\n  white-space: nowrap;\n  vertical-align: baseline;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n[dir] .badge {\n  padding: 0.25em 0.4em;\n  text-align: center;\n  border-radius: 0.25rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .badge {\n    transition: none;\n  }\n}\n\na.badge:hover, a.badge:focus {\n  text-decoration: none;\n}\n\n.badge:empty {\n  display: none;\n}\n\n.btn .badge {\n  position: relative;\n  top: -1px;\n}\n\n[dir] .badge-pill {\n  border-radius: 10rem;\n}\n\n[dir=ltr] .badge-pill {\n  padding-right: 0.6em;\n  padding-left: 0.6em;\n}\n\n[dir=rtl] .badge-pill {\n  padding-left: 0.6em;\n  padding-right: 0.6em;\n}\n\n.badge-primary {\n  color: #fff;\n}\n\n[dir] .badge-primary {\n  background-color: #007bff;\n}\n\na.badge-primary:hover, a.badge-primary:focus {\n  color: #fff;\n}\n\n[dir] a.badge-primary:hover, [dir] a.badge-primary:focus {\n  background-color: #0062cc;\n}\n\na.badge-primary:focus, a.badge-primary.focus {\n  outline: 0;\n}\n\n[dir] a.badge-primary:focus, [dir] a.badge-primary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n\n.badge-secondary {\n  color: #fff;\n}\n\n[dir] .badge-secondary {\n  background-color: #6c757d;\n}\n\na.badge-secondary:hover, a.badge-secondary:focus {\n  color: #fff;\n}\n\n[dir] a.badge-secondary:hover, [dir] a.badge-secondary:focus {\n  background-color: #545b62;\n}\n\na.badge-secondary:focus, a.badge-secondary.focus {\n  outline: 0;\n}\n\n[dir] a.badge-secondary:focus, [dir] a.badge-secondary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n\n.badge-success {\n  color: #fff;\n}\n\n[dir] .badge-success {\n  background-color: #28a745;\n}\n\na.badge-success:hover, a.badge-success:focus {\n  color: #fff;\n}\n\n[dir] a.badge-success:hover, [dir] a.badge-success:focus {\n  background-color: #1e7e34;\n}\n\na.badge-success:focus, a.badge-success.focus {\n  outline: 0;\n}\n\n[dir] a.badge-success:focus, [dir] a.badge-success.focus {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n\n.badge-info {\n  color: #fff;\n}\n\n[dir] .badge-info {\n  background-color: #17a2b8;\n}\n\na.badge-info:hover, a.badge-info:focus {\n  color: #fff;\n}\n\n[dir] a.badge-info:hover, [dir] a.badge-info:focus {\n  background-color: #117a8b;\n}\n\na.badge-info:focus, a.badge-info.focus {\n  outline: 0;\n}\n\n[dir] a.badge-info:focus, [dir] a.badge-info.focus {\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n\n.badge-warning {\n  color: #212529;\n}\n\n[dir] .badge-warning {\n  background-color: #ffc107;\n}\n\na.badge-warning:hover, a.badge-warning:focus {\n  color: #212529;\n}\n\n[dir] a.badge-warning:hover, [dir] a.badge-warning:focus {\n  background-color: #d39e00;\n}\n\na.badge-warning:focus, a.badge-warning.focus {\n  outline: 0;\n}\n\n[dir] a.badge-warning:focus, [dir] a.badge-warning.focus {\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n\n.badge-danger {\n  color: #fff;\n}\n\n[dir] .badge-danger {\n  background-color: #dc3545;\n}\n\na.badge-danger:hover, a.badge-danger:focus {\n  color: #fff;\n}\n\n[dir] a.badge-danger:hover, [dir] a.badge-danger:focus {\n  background-color: #bd2130;\n}\n\na.badge-danger:focus, a.badge-danger.focus {\n  outline: 0;\n}\n\n[dir] a.badge-danger:focus, [dir] a.badge-danger.focus {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n\n.badge-light {\n  color: #212529;\n}\n\n[dir] .badge-light {\n  background-color: #f8f9fa;\n}\n\na.badge-light:hover, a.badge-light:focus {\n  color: #212529;\n}\n\n[dir] a.badge-light:hover, [dir] a.badge-light:focus {\n  background-color: #dae0e5;\n}\n\na.badge-light:focus, a.badge-light.focus {\n  outline: 0;\n}\n\n[dir] a.badge-light:focus, [dir] a.badge-light.focus {\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n\n.badge-dark {\n  color: #fff;\n}\n\n[dir] .badge-dark {\n  background-color: #343a40;\n}\n\na.badge-dark:hover, a.badge-dark:focus {\n  color: #fff;\n}\n\n[dir] a.badge-dark:hover, [dir] a.badge-dark:focus {\n  background-color: #1d2124;\n}\n\na.badge-dark:focus, a.badge-dark.focus {\n  outline: 0;\n}\n\n[dir] a.badge-dark:focus, [dir] a.badge-dark.focus {\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n\n[dir] .jumbotron {\n  padding: 2rem 1rem;\n  margin-bottom: 2rem;\n  background-color: #e9ecef;\n  border-radius: 0.3rem;\n}\n\n@media (min-width: 576px) {\n  [dir] .jumbotron {\n    padding: 4rem 2rem;\n  }\n}\n\n[dir] .jumbotron-fluid {\n  border-radius: 0;\n}\n\n[dir=ltr] .jumbotron-fluid {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n[dir=rtl] .jumbotron-fluid {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.alert {\n  position: relative;\n}\n\n[dir] .alert {\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 1rem;\n  border: 1px solid transparent;\n  border-radius: 0.25rem;\n}\n\n.alert-heading {\n  color: inherit;\n}\n\n.alert-link {\n  font-weight: 700;\n}\n\n[dir=ltr] .alert-dismissible {\n  padding-right: 4rem;\n}\n\n[dir=rtl] .alert-dismissible {\n  padding-left: 4rem;\n}\n\n.alert-dismissible .close {\n  position: absolute;\n  top: 0;\n  color: inherit;\n}\n\n[dir] .alert-dismissible .close {\n  padding: 0.75rem 1.25rem;\n}\n\n[dir=ltr] .alert-dismissible .close {\n  right: 0;\n}\n\n[dir=rtl] .alert-dismissible .close {\n  left: 0;\n}\n\n.alert-primary {\n  color: #004085;\n}\n\n[dir] .alert-primary {\n  background-color: #cce5ff;\n  border-color: #b8daff;\n}\n\n[dir] .alert-primary hr {\n  border-top-color: #9fcdff;\n}\n\n.alert-primary .alert-link {\n  color: #002752;\n}\n\n.alert-secondary {\n  color: #383d41;\n}\n\n[dir] .alert-secondary {\n  background-color: #e2e3e5;\n  border-color: #d6d8db;\n}\n\n[dir] .alert-secondary hr {\n  border-top-color: #c8cbcf;\n}\n\n.alert-secondary .alert-link {\n  color: #202326;\n}\n\n.alert-success {\n  color: #155724;\n}\n\n[dir] .alert-success {\n  background-color: #d4edda;\n  border-color: #c3e6cb;\n}\n\n[dir] .alert-success hr {\n  border-top-color: #b1dfbb;\n}\n\n.alert-success .alert-link {\n  color: #0b2e13;\n}\n\n.alert-info {\n  color: #0c5460;\n}\n\n[dir] .alert-info {\n  background-color: #d1ecf1;\n  border-color: #bee5eb;\n}\n\n[dir] .alert-info hr {\n  border-top-color: #abdde5;\n}\n\n.alert-info .alert-link {\n  color: #062c33;\n}\n\n.alert-warning {\n  color: #856404;\n}\n\n[dir] .alert-warning {\n  background-color: #fff3cd;\n  border-color: #ffeeba;\n}\n\n[dir] .alert-warning hr {\n  border-top-color: #ffe8a1;\n}\n\n.alert-warning .alert-link {\n  color: #533f03;\n}\n\n.alert-danger {\n  color: #721c24;\n}\n\n[dir] .alert-danger {\n  background-color: #f8d7da;\n  border-color: #f5c6cb;\n}\n\n[dir] .alert-danger hr {\n  border-top-color: #f1b0b7;\n}\n\n.alert-danger .alert-link {\n  color: #491217;\n}\n\n.alert-light {\n  color: #818182;\n}\n\n[dir] .alert-light {\n  background-color: #fefefe;\n  border-color: #fdfdfe;\n}\n\n[dir] .alert-light hr {\n  border-top-color: #ececf6;\n}\n\n.alert-light .alert-link {\n  color: #686868;\n}\n\n.alert-dark {\n  color: #1b1e21;\n}\n\n[dir] .alert-dark {\n  background-color: #d6d8d9;\n  border-color: #c6c8ca;\n}\n\n[dir] .alert-dark hr {\n  border-top-color: #b9bbbe;\n}\n\n.alert-dark .alert-link {\n  color: #040505;\n}\n\n@-webkit-keyframes progress-bar-stripes-ltr {\n  from {\n    background-position: 1rem 0;\n  }\n\n  to {\n    background-position: 0 0;\n  }\n}\n\n@-webkit-keyframes progress-bar-stripes-rtl {\n  from {\n    background-position: 1rem 0;\n  }\n\n  to {\n    background-position: 100% 0;\n  }\n}\n\n@keyframes progress-bar-stripes-ltr {\n  from {\n    background-position: 1rem 0;\n  }\n\n  to {\n    background-position: 0 0;\n  }\n}\n\n@keyframes progress-bar-stripes-rtl {\n  from {\n    background-position: 1rem 0;\n  }\n\n  to {\n    background-position: 100% 0;\n  }\n}\n\n.progress {\n  display: flex;\n  height: 1rem;\n  overflow: hidden;\n  font-size: 0.75rem;\n}\n\n[dir] .progress {\n  background-color: #e9ecef;\n  border-radius: 0.25rem;\n}\n\n.progress-bar {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  overflow: hidden;\n  color: #fff;\n  white-space: nowrap;\n  transition: width 0.6s ease;\n}\n\n[dir] .progress-bar {\n  text-align: center;\n  background-color: #007bff;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .progress-bar {\n    transition: none;\n  }\n}\n\n[dir] .progress-bar-striped {\n  background-size: 1rem 1rem;\n}\n\n[dir=ltr] .progress-bar-striped {\n  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n}\n\n[dir=rtl] .progress-bar-striped {\n  background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n}\n\n[dir=ltr] .progress-bar-animated {\n  -webkit-animation:  progress-bar-stripes-ltr 1s linear infinite;\n  animation:  progress-bar-stripes-ltr 1s linear infinite;\n}\n\n[dir=rtl] .progress-bar-animated {\n  -webkit-animation:  progress-bar-stripes-rtl 1s linear infinite;\n  animation:  progress-bar-stripes-rtl 1s linear infinite;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  [dir=ltr] .progress-bar-animated {\n    -webkit-animation: none;\n    animation: none;\n  }\n  [dir=rtl] .progress-bar-animated {\n    -webkit-animation: none;\n    animation: none;\n  }\n}\n\n.media {\n  display: flex;\n  align-items: flex-start;\n}\n\n.media-body {\n  flex: 1;\n}\n\n.list-group {\n  display: flex;\n  flex-direction: column;\n}\n\n[dir] .list-group {\n  margin-bottom: 0;\n}\n\n[dir=ltr] .list-group {\n  padding-left: 0;\n}\n\n[dir=rtl] .list-group {\n  padding-right: 0;\n}\n\n.list-group-item-action {\n  width: 100%;\n  color: #495057;\n}\n\n[dir] .list-group-item-action {\n  text-align: inherit;\n}\n\n.list-group-item-action:hover, .list-group-item-action:focus {\n  z-index: 1;\n  color: #495057;\n  text-decoration: none;\n}\n\n[dir] .list-group-item-action:hover, [dir] .list-group-item-action:focus {\n  background-color: #f8f9fa;\n}\n\n.list-group-item-action:active {\n  color: #212529;\n}\n\n[dir] .list-group-item-action:active {\n  background-color: #e9ecef;\n}\n\n.list-group-item {\n  position: relative;\n  display: block;\n}\n\n[dir] .list-group-item {\n  padding: 0.75rem 1.25rem;\n  background-color: #fff;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n}\n\n[dir=ltr] .list-group-item:first-child {\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n\n[dir=rtl] .list-group-item:first-child {\n  border-top-right-radius: 0.25rem;\n  border-top-left-radius: 0.25rem;\n}\n\n[dir=ltr] .list-group-item:last-child {\n  border-bottom-right-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n\n[dir=rtl] .list-group-item:last-child {\n  border-bottom-left-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem;\n}\n\n.list-group-item.disabled, .list-group-item:disabled {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n[dir] .list-group-item.disabled, [dir] .list-group-item:disabled {\n  background-color: #fff;\n}\n\n.list-group-item.active {\n  z-index: 2;\n  color: #fff;\n}\n\n[dir] .list-group-item.active {\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n[dir] .list-group-item + .list-group-item {\n  border-top-width: 0;\n}\n\n[dir] .list-group-item + .list-group-item.active {\n  margin-top: -1px;\n  border-top-width: 1px;\n}\n\n.list-group-horizontal {\n  flex-direction: row;\n}\n\n[dir=ltr] .list-group-horizontal .list-group-item:first-child {\n  border-bottom-left-radius: 0.25rem;\n  border-top-right-radius: 0;\n}\n\n[dir=rtl] .list-group-horizontal .list-group-item:first-child {\n  border-bottom-right-radius: 0.25rem;\n  border-top-left-radius: 0;\n}\n\n[dir=ltr] .list-group-horizontal .list-group-item:last-child {\n  border-top-right-radius: 0.25rem;\n  border-bottom-left-radius: 0;\n}\n\n[dir=rtl] .list-group-horizontal .list-group-item:last-child {\n  border-top-left-radius: 0.25rem;\n  border-bottom-right-radius: 0;\n}\n\n[dir] .list-group-horizontal .list-group-item.active {\n  margin-top: 0;\n}\n\n[dir] .list-group-horizontal .list-group-item + .list-group-item {\n  border-top-width: 1px;\n}\n\n[dir=ltr] .list-group-horizontal .list-group-item + .list-group-item {\n  border-left-width: 0;\n}\n\n[dir=rtl] .list-group-horizontal .list-group-item + .list-group-item {\n  border-right-width: 0;\n}\n\n[dir=ltr] .list-group-horizontal .list-group-item + .list-group-item.active {\n  margin-left: -1px;\n  border-left-width: 1px;\n}\n\n[dir=rtl] .list-group-horizontal .list-group-item + .list-group-item.active {\n  margin-right: -1px;\n  border-right-width: 1px;\n}\n\n@media (min-width: 576px) {\n  .list-group-horizontal-sm {\n    flex-direction: row;\n  }\n\n  [dir=ltr] .list-group-horizontal-sm .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-sm .list-group-item:first-child {\n    border-bottom-right-radius: 0.25rem;\n    border-top-left-radius: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-sm .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-sm .list-group-item:last-child {\n    border-top-left-radius: 0.25rem;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir] .list-group-horizontal-sm .list-group-item.active {\n    margin-top: 0;\n  }\n\n  [dir] .list-group-horizontal-sm .list-group-item + .list-group-item {\n    border-top-width: 1px;\n  }\n\n  [dir=ltr] .list-group-horizontal-sm .list-group-item + .list-group-item {\n    border-left-width: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-sm .list-group-item + .list-group-item {\n    border-right-width: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-sm .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n\n  [dir=rtl] .list-group-horizontal-sm .list-group-item + .list-group-item.active {\n    margin-right: -1px;\n    border-right-width: 1px;\n  }\n}\n\n@media (min-width: 768px) {\n  .list-group-horizontal-md {\n    flex-direction: row;\n  }\n\n  [dir=ltr] .list-group-horizontal-md .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-md .list-group-item:first-child {\n    border-bottom-right-radius: 0.25rem;\n    border-top-left-radius: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-md .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-md .list-group-item:last-child {\n    border-top-left-radius: 0.25rem;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir] .list-group-horizontal-md .list-group-item.active {\n    margin-top: 0;\n  }\n\n  [dir] .list-group-horizontal-md .list-group-item + .list-group-item {\n    border-top-width: 1px;\n  }\n\n  [dir=ltr] .list-group-horizontal-md .list-group-item + .list-group-item {\n    border-left-width: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-md .list-group-item + .list-group-item {\n    border-right-width: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-md .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n\n  [dir=rtl] .list-group-horizontal-md .list-group-item + .list-group-item.active {\n    margin-right: -1px;\n    border-right-width: 1px;\n  }\n}\n\n@media (min-width: 992px) {\n  .list-group-horizontal-lg {\n    flex-direction: row;\n  }\n\n  [dir=ltr] .list-group-horizontal-lg .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-lg .list-group-item:first-child {\n    border-bottom-right-radius: 0.25rem;\n    border-top-left-radius: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-lg .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-lg .list-group-item:last-child {\n    border-top-left-radius: 0.25rem;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir] .list-group-horizontal-lg .list-group-item.active {\n    margin-top: 0;\n  }\n\n  [dir] .list-group-horizontal-lg .list-group-item + .list-group-item {\n    border-top-width: 1px;\n  }\n\n  [dir=ltr] .list-group-horizontal-lg .list-group-item + .list-group-item {\n    border-left-width: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-lg .list-group-item + .list-group-item {\n    border-right-width: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-lg .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n\n  [dir=rtl] .list-group-horizontal-lg .list-group-item + .list-group-item.active {\n    margin-right: -1px;\n    border-right-width: 1px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .list-group-horizontal-xl {\n    flex-direction: row;\n  }\n\n  [dir=ltr] .list-group-horizontal-xl .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-xl .list-group-item:first-child {\n    border-bottom-right-radius: 0.25rem;\n    border-top-left-radius: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-xl .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-xl .list-group-item:last-child {\n    border-top-left-radius: 0.25rem;\n    border-bottom-right-radius: 0;\n  }\n\n  [dir] .list-group-horizontal-xl .list-group-item.active {\n    margin-top: 0;\n  }\n\n  [dir] .list-group-horizontal-xl .list-group-item + .list-group-item {\n    border-top-width: 1px;\n  }\n\n  [dir=ltr] .list-group-horizontal-xl .list-group-item + .list-group-item {\n    border-left-width: 0;\n  }\n\n  [dir=rtl] .list-group-horizontal-xl .list-group-item + .list-group-item {\n    border-right-width: 0;\n  }\n\n  [dir=ltr] .list-group-horizontal-xl .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n\n  [dir=rtl] .list-group-horizontal-xl .list-group-item + .list-group-item.active {\n    margin-right: -1px;\n    border-right-width: 1px;\n  }\n}\n\n[dir] .list-group-flush .list-group-item {\n  border-radius: 0;\n}\n\n[dir=ltr] .list-group-flush .list-group-item {\n  border-right-width: 0;\n  border-left-width: 0;\n}\n\n[dir=rtl] .list-group-flush .list-group-item {\n  border-left-width: 0;\n  border-right-width: 0;\n}\n\n[dir] .list-group-flush .list-group-item:first-child {\n  border-top-width: 0;\n}\n\n[dir] .list-group-flush:last-child .list-group-item:last-child {\n  border-bottom-width: 0;\n}\n\n.list-group-item-primary {\n  color: #004085;\n}\n\n[dir] .list-group-item-primary {\n  background-color: #b8daff;\n}\n\n.list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {\n  color: #004085;\n}\n\n[dir] .list-group-item-primary.list-group-item-action:hover, [dir] .list-group-item-primary.list-group-item-action:focus {\n  background-color: #9fcdff;\n}\n\n.list-group-item-primary.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-primary.list-group-item-action.active {\n  background-color: #004085;\n  border-color: #004085;\n}\n\n.list-group-item-secondary {\n  color: #383d41;\n}\n\n[dir] .list-group-item-secondary {\n  background-color: #d6d8db;\n}\n\n.list-group-item-secondary.list-group-item-action:hover, .list-group-item-secondary.list-group-item-action:focus {\n  color: #383d41;\n}\n\n[dir] .list-group-item-secondary.list-group-item-action:hover, [dir] .list-group-item-secondary.list-group-item-action:focus {\n  background-color: #c8cbcf;\n}\n\n.list-group-item-secondary.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-secondary.list-group-item-action.active {\n  background-color: #383d41;\n  border-color: #383d41;\n}\n\n.list-group-item-success {\n  color: #155724;\n}\n\n[dir] .list-group-item-success {\n  background-color: #c3e6cb;\n}\n\n.list-group-item-success.list-group-item-action:hover, .list-group-item-success.list-group-item-action:focus {\n  color: #155724;\n}\n\n[dir] .list-group-item-success.list-group-item-action:hover, [dir] .list-group-item-success.list-group-item-action:focus {\n  background-color: #b1dfbb;\n}\n\n.list-group-item-success.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-success.list-group-item-action.active {\n  background-color: #155724;\n  border-color: #155724;\n}\n\n.list-group-item-info {\n  color: #0c5460;\n}\n\n[dir] .list-group-item-info {\n  background-color: #bee5eb;\n}\n\n.list-group-item-info.list-group-item-action:hover, .list-group-item-info.list-group-item-action:focus {\n  color: #0c5460;\n}\n\n[dir] .list-group-item-info.list-group-item-action:hover, [dir] .list-group-item-info.list-group-item-action:focus {\n  background-color: #abdde5;\n}\n\n.list-group-item-info.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-info.list-group-item-action.active {\n  background-color: #0c5460;\n  border-color: #0c5460;\n}\n\n.list-group-item-warning {\n  color: #856404;\n}\n\n[dir] .list-group-item-warning {\n  background-color: #ffeeba;\n}\n\n.list-group-item-warning.list-group-item-action:hover, .list-group-item-warning.list-group-item-action:focus {\n  color: #856404;\n}\n\n[dir] .list-group-item-warning.list-group-item-action:hover, [dir] .list-group-item-warning.list-group-item-action:focus {\n  background-color: #ffe8a1;\n}\n\n.list-group-item-warning.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-warning.list-group-item-action.active {\n  background-color: #856404;\n  border-color: #856404;\n}\n\n.list-group-item-danger {\n  color: #721c24;\n}\n\n[dir] .list-group-item-danger {\n  background-color: #f5c6cb;\n}\n\n.list-group-item-danger.list-group-item-action:hover, .list-group-item-danger.list-group-item-action:focus {\n  color: #721c24;\n}\n\n[dir] .list-group-item-danger.list-group-item-action:hover, [dir] .list-group-item-danger.list-group-item-action:focus {\n  background-color: #f1b0b7;\n}\n\n.list-group-item-danger.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-danger.list-group-item-action.active {\n  background-color: #721c24;\n  border-color: #721c24;\n}\n\n.list-group-item-light {\n  color: #818182;\n}\n\n[dir] .list-group-item-light {\n  background-color: #fdfdfe;\n}\n\n.list-group-item-light.list-group-item-action:hover, .list-group-item-light.list-group-item-action:focus {\n  color: #818182;\n}\n\n[dir] .list-group-item-light.list-group-item-action:hover, [dir] .list-group-item-light.list-group-item-action:focus {\n  background-color: #ececf6;\n}\n\n.list-group-item-light.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-light.list-group-item-action.active {\n  background-color: #818182;\n  border-color: #818182;\n}\n\n.list-group-item-dark {\n  color: #1b1e21;\n}\n\n[dir] .list-group-item-dark {\n  background-color: #c6c8ca;\n}\n\n.list-group-item-dark.list-group-item-action:hover, .list-group-item-dark.list-group-item-action:focus {\n  color: #1b1e21;\n}\n\n[dir] .list-group-item-dark.list-group-item-action:hover, [dir] .list-group-item-dark.list-group-item-action:focus {\n  background-color: #b9bbbe;\n}\n\n.list-group-item-dark.list-group-item-action.active {\n  color: #fff;\n}\n\n[dir] .list-group-item-dark.list-group-item-action.active {\n  background-color: #1b1e21;\n  border-color: #1b1e21;\n}\n\n.close {\n  font-size: 1.5rem;\n  font-weight: 700;\n  line-height: 1;\n  color: #000;\n  opacity: .5;\n}\n\n[dir] .close {\n  text-shadow: 0 1px 0 #fff;\n}\n\n[dir=ltr] .close {\n  float: right;\n}\n\n[dir=rtl] .close {\n  float: left;\n}\n\n.close:hover {\n  color: #000;\n  text-decoration: none;\n}\n\n.close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {\n  opacity: .75;\n}\n\nbutton.close {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n}\n\n[dir] button.close {\n  padding: 0;\n  background-color: transparent;\n  border: 0;\n}\n\na.close.disabled {\n  pointer-events: none;\n}\n\n.toast {\n  max-width: 350px;\n  overflow: hidden;\n  font-size: 0.875rem;\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  opacity: 0;\n}\n\n[dir] .toast {\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);\n  border-radius: 0.25rem;\n}\n\n[dir] .toast:not(:last-child) {\n  margin-bottom: 0.75rem;\n}\n\n.toast.showing {\n  opacity: 1;\n}\n\n.toast.show {\n  display: block;\n  opacity: 1;\n}\n\n.toast.hide {\n  display: none;\n}\n\n.toast-header {\n  display: flex;\n  align-items: center;\n  color: #6c757d;\n}\n\n[dir] .toast-header {\n  padding: 0.25rem 0.75rem;\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border-bottom: 1px solid rgba(0, 0, 0, 0.05);\n}\n\n[dir] .toast-body {\n  padding: 0.75rem;\n}\n\n.modal-open {\n  overflow: hidden;\n}\n\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n.modal {\n  position: fixed;\n  top: 0;\n  z-index: 1050;\n  display: none;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  outline: 0;\n}\n\n[dir=ltr] .modal {\n  left: 0;\n}\n\n[dir=rtl] .modal {\n  right: 0;\n}\n\n.modal-dialog {\n  position: relative;\n  width: auto;\n  pointer-events: none;\n}\n\n[dir] .modal-dialog {\n  margin: 0.5rem;\n}\n\n.modal.fade .modal-dialog {\n  transition: transform 0.3s ease-out;\n  -webkit-transform: translate(0, -50px);\n}\n\n[dir] .modal.fade .modal-dialog {\n  transform: translate(0, -50px);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .modal.fade .modal-dialog {\n    transition: none;\n  }\n}\n\n.modal.show .modal-dialog {\n  -webkit-transform: none;\n}\n\n[dir] .modal.show .modal-dialog {\n  transform: none;\n}\n\n.modal.modal-static .modal-dialog {\n  -webkit-transform: scale(1.02);\n}\n\n[dir] .modal.modal-static .modal-dialog {\n  transform: scale(1.02);\n}\n\n.modal-dialog-scrollable {\n  display: flex;\n  max-height: calc(100% - 1rem);\n}\n\n.modal-dialog-scrollable .modal-content {\n  max-height: calc(100vh - 1rem);\n  overflow: hidden;\n}\n\n.modal-dialog-scrollable .modal-header,\n.modal-dialog-scrollable .modal-footer {\n  flex-shrink: 0;\n}\n\n.modal-dialog-scrollable .modal-body {\n  overflow-y: auto;\n}\n\n.modal-dialog-centered {\n  display: flex;\n  align-items: center;\n  min-height: calc(100% - 1rem);\n}\n\n.modal-dialog-centered::before {\n  display: block;\n  height: calc(100vh - 1rem);\n  content: \"\";\n}\n\n.modal-dialog-centered.modal-dialog-scrollable {\n  flex-direction: column;\n  justify-content: center;\n  height: 100%;\n}\n\n.modal-dialog-centered.modal-dialog-scrollable .modal-content {\n  max-height: none;\n}\n\n.modal-dialog-centered.modal-dialog-scrollable::before {\n  content: none;\n}\n\n.modal-content {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  pointer-events: auto;\n  outline: 0;\n}\n\n[dir] .modal-content {\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem;\n}\n\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  z-index: 1040;\n  width: 100vw;\n  height: 100vh;\n}\n\n[dir] .modal-backdrop {\n  background-color: #000;\n}\n\n[dir=ltr] .modal-backdrop {\n  left: 0;\n}\n\n[dir=rtl] .modal-backdrop {\n  right: 0;\n}\n\n.modal-backdrop.fade {\n  opacity: 0;\n}\n\n.modal-backdrop.show {\n  opacity: 0.5;\n}\n\n.modal-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n}\n\n[dir] .modal-header {\n  padding: 1rem 1rem;\n  border-bottom: 1px solid #dee2e6;\n}\n\n[dir=ltr] .modal-header {\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px);\n}\n\n[dir=rtl] .modal-header {\n  border-top-right-radius: calc(0.3rem - 1px);\n  border-top-left-radius: calc(0.3rem - 1px);\n}\n\n[dir] .modal-header .close {\n  padding: 1rem 1rem;\n}\n\n[dir=ltr] .modal-header .close {\n  margin: -1rem -1rem -1rem auto;\n}\n\n[dir=rtl] .modal-header .close {\n  margin: -1rem auto -1rem -1rem;\n}\n\n.modal-title {\n  line-height: 1.5;\n}\n\n[dir] .modal-title {\n  margin-bottom: 0;\n}\n\n.modal-body {\n  position: relative;\n  flex: 1 1 auto;\n}\n\n[dir] .modal-body {\n  padding: 1rem;\n}\n\n.modal-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n}\n\n[dir] .modal-footer {\n  padding: 0.75rem;\n  border-top: 1px solid #dee2e6;\n}\n\n[dir=ltr] .modal-footer {\n  border-bottom-right-radius: calc(0.3rem - 1px);\n  border-bottom-left-radius: calc(0.3rem - 1px);\n}\n\n[dir=rtl] .modal-footer {\n  border-bottom-left-radius: calc(0.3rem - 1px);\n  border-bottom-right-radius: calc(0.3rem - 1px);\n}\n\n[dir] .modal-footer > * {\n  margin: 0.25rem;\n}\n\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll;\n}\n\n@media (min-width: 576px) {\n  .modal-dialog {\n    max-width: 500px;\n  }\n  [dir] .modal-dialog {\n    margin: 1.75rem auto;\n  }\n\n  .modal-dialog-scrollable {\n    max-height: calc(100% - 3.5rem);\n  }\n\n  .modal-dialog-scrollable .modal-content {\n    max-height: calc(100vh - 3.5rem);\n  }\n\n  .modal-dialog-centered {\n    min-height: calc(100% - 3.5rem);\n  }\n\n  .modal-dialog-centered::before {\n    height: calc(100vh - 3.5rem);\n  }\n\n  .modal-sm {\n    max-width: 300px;\n  }\n}\n\n@media (min-width: 992px) {\n  .modal-lg,\n  .modal-xl {\n    max-width: 800px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .modal-xl {\n    max-width: 1140px;\n  }\n}\n\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-decoration: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  white-space: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n  opacity: 0;\n}\n\n[dir] .tooltip {\n  margin: 0;\n  text-align: start;\n  text-shadow: none;\n}\n\n[dir=ltr] .tooltip {\n  text-align: left;\n}\n\n[dir=rtl] .tooltip {\n  text-align: right;\n}\n\n.tooltip.show {\n  opacity: 0.9;\n}\n\n.tooltip .arrow {\n  position: absolute;\n  display: block;\n  width: 0.8rem;\n  height: 0.4rem;\n}\n\n.tooltip .arrow::before {\n  position: absolute;\n  content: \"\";\n}\n\n[dir] .tooltip .arrow::before {\n  border-color: transparent;\n  border-style: solid;\n}\n\n[dir] .bs-tooltip-top, [dir] .bs-tooltip-auto[x-placement^=\"top\"] {\n  padding: 0.4rem 0;\n}\n\n.bs-tooltip-top .arrow, .bs-tooltip-auto[x-placement^=\"top\"] .arrow {\n  bottom: 0;\n}\n\n.bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^=\"top\"] .arrow::before {\n  top: 0;\n}\n\n[dir] .bs-tooltip-top .arrow::before, [dir] .bs-tooltip-auto[x-placement^=\"top\"] .arrow::before {\n  border-width: 0.4rem 0.4rem 0;\n  border-top-color: #000;\n}\n\n[dir] .bs-tooltip-right, [dir] .bs-tooltip-auto[x-placement^=\"right\"] {\n  padding: 0 0.4rem;\n}\n\n.bs-tooltip-right .arrow, .bs-tooltip-auto[x-placement^=\"right\"] .arrow {\n  width: 0.4rem;\n  height: 0.8rem;\n}\n\n[dir=ltr] .bs-tooltip-right .arrow, [dir=ltr] .bs-tooltip-auto[x-placement^=\"right\"] .arrow {\n  left: 0;\n}\n\n[dir=rtl] .bs-tooltip-right .arrow, [dir=rtl] .bs-tooltip-auto[x-placement^=\"right\"] .arrow {\n  right: 0;\n}\n\n[dir=ltr] .bs-tooltip-right .arrow::before, [dir=ltr] .bs-tooltip-auto[x-placement^=\"right\"] .arrow::before {\n  right: 0;\n  border-width: 0.4rem 0.4rem 0.4rem 0;\n  border-right-color: #000;\n}\n\n[dir=rtl] .bs-tooltip-right .arrow::before, [dir=rtl] .bs-tooltip-auto[x-placement^=\"right\"] .arrow::before {\n  left: 0;\n  border-width: 0.4rem 0 0.4rem 0.4rem;\n  border-left-color: #000;\n}\n\n[dir] .bs-tooltip-bottom, [dir] .bs-tooltip-auto[x-placement^=\"bottom\"] {\n  padding: 0.4rem 0;\n}\n\n.bs-tooltip-bottom .arrow, .bs-tooltip-auto[x-placement^=\"bottom\"] .arrow {\n  top: 0;\n}\n\n.bs-tooltip-bottom .arrow::before, .bs-tooltip-auto[x-placement^=\"bottom\"] .arrow::before {\n  bottom: 0;\n}\n\n[dir] .bs-tooltip-bottom .arrow::before, [dir] .bs-tooltip-auto[x-placement^=\"bottom\"] .arrow::before {\n  border-width: 0 0.4rem 0.4rem;\n  border-bottom-color: #000;\n}\n\n[dir] .bs-tooltip-left, [dir] .bs-tooltip-auto[x-placement^=\"left\"] {\n  padding: 0 0.4rem;\n}\n\n.bs-tooltip-left .arrow, .bs-tooltip-auto[x-placement^=\"left\"] .arrow {\n  width: 0.4rem;\n  height: 0.8rem;\n}\n\n[dir=ltr] .bs-tooltip-left .arrow, [dir=ltr] .bs-tooltip-auto[x-placement^=\"left\"] .arrow {\n  right: 0;\n}\n\n[dir=rtl] .bs-tooltip-left .arrow, [dir=rtl] .bs-tooltip-auto[x-placement^=\"left\"] .arrow {\n  left: 0;\n}\n\n[dir=ltr] .bs-tooltip-left .arrow::before, [dir=ltr] .bs-tooltip-auto[x-placement^=\"left\"] .arrow::before {\n  left: 0;\n  border-width: 0.4rem 0 0.4rem 0.4rem;\n  border-left-color: #000;\n}\n\n[dir=rtl] .bs-tooltip-left .arrow::before, [dir=rtl] .bs-tooltip-auto[x-placement^=\"left\"] .arrow::before {\n  right: 0;\n  border-width: 0.4rem 0.4rem 0.4rem 0;\n  border-right-color: #000;\n}\n\n.tooltip-inner {\n  max-width: 200px;\n  color: #fff;\n}\n\n[dir] .tooltip-inner {\n  padding: 0.25rem 0.5rem;\n  text-align: center;\n  background-color: #000;\n  border-radius: 0.25rem;\n}\n\n.popover {\n  position: absolute;\n  top: 0;\n  z-index: 1060;\n  display: block;\n  max-width: 276px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-decoration: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  white-space: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n}\n\n[dir] .popover {\n  text-align: start;\n  text-shadow: none;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem;\n}\n\n[dir=ltr] .popover {\n  left: 0;\n  text-align: left;\n}\n\n[dir=rtl] .popover {\n  right: 0;\n  text-align: right;\n}\n\n.popover .arrow {\n  position: absolute;\n  display: block;\n  width: 1rem;\n  height: 0.5rem;\n}\n\n[dir] .popover .arrow {\n  margin: 0 0.3rem;\n}\n\n.popover .arrow::before, .popover .arrow::after {\n  position: absolute;\n  display: block;\n  content: \"\";\n}\n\n[dir] .popover .arrow::before, [dir] .popover .arrow::after {\n  border-color: transparent;\n  border-style: solid;\n}\n\n[dir] .bs-popover-top, [dir] .bs-popover-auto[x-placement^=\"top\"] {\n  margin-bottom: 0.5rem;\n}\n\n.bs-popover-top > .arrow, .bs-popover-auto[x-placement^=\"top\"] > .arrow {\n  bottom: calc(-0.5rem - 1px);\n}\n\n.bs-popover-top > .arrow::before, .bs-popover-auto[x-placement^=\"top\"] > .arrow::before {\n  bottom: 0;\n}\n\n[dir] .bs-popover-top > .arrow::before, [dir] .bs-popover-auto[x-placement^=\"top\"] > .arrow::before {\n  border-width: 0.5rem 0.5rem 0;\n  border-top-color: rgba(0, 0, 0, 0.25);\n}\n\n.bs-popover-top > .arrow::after, .bs-popover-auto[x-placement^=\"top\"] > .arrow::after {\n  bottom: 1px;\n}\n\n[dir] .bs-popover-top > .arrow::after, [dir] .bs-popover-auto[x-placement^=\"top\"] > .arrow::after {\n  border-width: 0.5rem 0.5rem 0;\n  border-top-color: #fff;\n}\n\n[dir=ltr] .bs-popover-right, [dir=ltr] .bs-popover-auto[x-placement^=\"right\"] {\n  margin-left: 0.5rem;\n}\n\n[dir=rtl] .bs-popover-right, [dir=rtl] .bs-popover-auto[x-placement^=\"right\"] {\n  margin-right: 0.5rem;\n}\n\n.bs-popover-right > .arrow, .bs-popover-auto[x-placement^=\"right\"] > .arrow {\n  width: 0.5rem;\n  height: 1rem;\n}\n\n[dir] .bs-popover-right > .arrow, [dir] .bs-popover-auto[x-placement^=\"right\"] > .arrow {\n  margin: 0.3rem 0;\n}\n\n[dir=ltr] .bs-popover-right > .arrow, [dir=ltr] .bs-popover-auto[x-placement^=\"right\"] > .arrow {\n  left: calc(-0.5rem - 1px);\n}\n\n[dir=rtl] .bs-popover-right > .arrow, [dir=rtl] .bs-popover-auto[x-placement^=\"right\"] > .arrow {\n  right: calc(-0.5rem - 1px);\n}\n\n[dir=ltr] .bs-popover-right > .arrow::before, [dir=ltr] .bs-popover-auto[x-placement^=\"right\"] > .arrow::before {\n  left: 0;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: rgba(0, 0, 0, 0.25);\n}\n\n[dir=rtl] .bs-popover-right > .arrow::before, [dir=rtl] .bs-popover-auto[x-placement^=\"right\"] > .arrow::before {\n  right: 0;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: rgba(0, 0, 0, 0.25);\n}\n\n[dir=ltr] .bs-popover-right > .arrow::after, [dir=ltr] .bs-popover-auto[x-placement^=\"right\"] > .arrow::after {\n  left: 1px;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: #fff;\n}\n\n[dir=rtl] .bs-popover-right > .arrow::after, [dir=rtl] .bs-popover-auto[x-placement^=\"right\"] > .arrow::after {\n  right: 1px;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: #fff;\n}\n\n[dir] .bs-popover-bottom, [dir] .bs-popover-auto[x-placement^=\"bottom\"] {\n  margin-top: 0.5rem;\n}\n\n.bs-popover-bottom > .arrow, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow {\n  top: calc(-0.5rem - 1px);\n}\n\n.bs-popover-bottom > .arrow::before, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::before {\n  top: 0;\n}\n\n[dir] .bs-popover-bottom > .arrow::before, [dir] .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::before {\n  border-width: 0 0.5rem 0.5rem 0.5rem;\n  border-bottom-color: rgba(0, 0, 0, 0.25);\n}\n\n.bs-popover-bottom > .arrow::after, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::after {\n  top: 1px;\n}\n\n[dir] .bs-popover-bottom > .arrow::after, [dir] .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::after {\n  border-width: 0 0.5rem 0.5rem 0.5rem;\n  border-bottom-color: #fff;\n}\n\n.bs-popover-bottom .popover-header::before, .bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n  position: absolute;\n  top: 0;\n  display: block;\n  width: 1rem;\n  content: \"\";\n}\n\n[dir] .bs-popover-bottom .popover-header::before, [dir] .bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n  border-bottom: 1px solid #f7f7f7;\n}\n\n[dir=ltr] .bs-popover-bottom .popover-header::before, [dir=ltr] .bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n  left: 50%;\n  margin-left: -0.5rem;\n}\n\n[dir=rtl] .bs-popover-bottom .popover-header::before, [dir=rtl] .bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n  right: 50%;\n  margin-right: -0.5rem;\n}\n\n[dir=ltr] .bs-popover-left, [dir=ltr] .bs-popover-auto[x-placement^=\"left\"] {\n  margin-right: 0.5rem;\n}\n\n[dir=rtl] .bs-popover-left, [dir=rtl] .bs-popover-auto[x-placement^=\"left\"] {\n  margin-left: 0.5rem;\n}\n\n.bs-popover-left > .arrow, .bs-popover-auto[x-placement^=\"left\"] > .arrow {\n  width: 0.5rem;\n  height: 1rem;\n}\n\n[dir] .bs-popover-left > .arrow, [dir] .bs-popover-auto[x-placement^=\"left\"] > .arrow {\n  margin: 0.3rem 0;\n}\n\n[dir=ltr] .bs-popover-left > .arrow, [dir=ltr] .bs-popover-auto[x-placement^=\"left\"] > .arrow {\n  right: calc(-0.5rem - 1px);\n}\n\n[dir=rtl] .bs-popover-left > .arrow, [dir=rtl] .bs-popover-auto[x-placement^=\"left\"] > .arrow {\n  left: calc(-0.5rem - 1px);\n}\n\n[dir=ltr] .bs-popover-left > .arrow::before, [dir=ltr] .bs-popover-auto[x-placement^=\"left\"] > .arrow::before {\n  right: 0;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: rgba(0, 0, 0, 0.25);\n}\n\n[dir=rtl] .bs-popover-left > .arrow::before, [dir=rtl] .bs-popover-auto[x-placement^=\"left\"] > .arrow::before {\n  left: 0;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: rgba(0, 0, 0, 0.25);\n}\n\n[dir=ltr] .bs-popover-left > .arrow::after, [dir=ltr] .bs-popover-auto[x-placement^=\"left\"] > .arrow::after {\n  right: 1px;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: #fff;\n}\n\n[dir=rtl] .bs-popover-left > .arrow::after, [dir=rtl] .bs-popover-auto[x-placement^=\"left\"] > .arrow::after {\n  left: 1px;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: #fff;\n}\n\n.popover-header {\n  font-size: 1rem;\n}\n\n[dir] .popover-header {\n  padding: 0.5rem 0.75rem;\n  margin-bottom: 0;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n}\n\n[dir=ltr] .popover-header {\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px);\n}\n\n[dir=rtl] .popover-header {\n  border-top-right-radius: calc(0.3rem - 1px);\n  border-top-left-radius: calc(0.3rem - 1px);\n}\n\n.popover-header:empty {\n  display: none;\n}\n\n.popover-body {\n  color: #212529;\n}\n\n[dir] .popover-body {\n  padding: 0.5rem 0.75rem;\n}\n\n.carousel {\n  position: relative;\n}\n\n.carousel.pointer-event {\n  touch-action: pan-y;\n}\n\n.carousel-inner {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n}\n\n.carousel-inner::after {\n  display: block;\n  content: \"\";\n}\n\n[dir] .carousel-inner::after {\n  clear: both;\n}\n\n.carousel-item {\n  position: relative;\n  display: none;\n  width: 100%;\n  -webkit-backface-visibility: hidden;\n  backface-visibility: hidden;\n  transition: transform 0.6s ease-in-out;\n}\n\n[dir=ltr] .carousel-item {\n  float: left;\n  margin-right: -100%;\n}\n\n[dir=rtl] .carousel-item {\n  float: right;\n  margin-left: -100%;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .carousel-item {\n    transition: none;\n  }\n}\n\n.carousel-item.active,\n.carousel-item-next,\n.carousel-item-prev {\n  display: block;\n}\n\n[dir=ltr] .carousel-item-next:not(.carousel-item-left), [dir=ltr] .active.carousel-item-right {\n  transform: translateX(100%);\n}\n\n[dir=rtl] .carousel-item-next:not(.carousel-item-left), [dir=rtl] .active.carousel-item-right {\n  transform: translateX(-100%);\n}\n\n[dir=ltr] .carousel-item-prev:not(.carousel-item-right), [dir=ltr] .active.carousel-item-left {\n  transform: translateX(-100%);\n}\n\n[dir=rtl] .carousel-item-prev:not(.carousel-item-right), [dir=rtl] .active.carousel-item-left {\n  transform: translateX(100%);\n}\n\n.carousel-fade .carousel-item {\n  opacity: 0;\n  -webkit-transform: none;\n}\n\n[dir] .carousel-fade .carousel-item {\n  transition-property: opacity;\n  transform: none;\n}\n\n.carousel-fade .carousel-item.active,\n.carousel-fade .carousel-item-next.carousel-item-left,\n.carousel-fade .carousel-item-prev.carousel-item-right {\n  z-index: 1;\n  opacity: 1;\n}\n\n.carousel-fade .active.carousel-item-left,\n.carousel-fade .active.carousel-item-right {\n  z-index: 0;\n  opacity: 0;\n  transition: opacity 0s 0.6s;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .carousel-fade .active.carousel-item-left,\n  .carousel-fade .active.carousel-item-right {\n    transition: none;\n  }\n}\n\n.carousel-control-prev,\n.carousel-control-next {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 15%;\n  color: #fff;\n  opacity: 0.5;\n  transition: opacity 0.15s ease;\n}\n\n[dir] .carousel-control-prev, [dir] .carousel-control-next {\n  text-align: center;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .carousel-control-prev,\n  .carousel-control-next {\n    transition: none;\n  }\n}\n\n.carousel-control-prev:hover, .carousel-control-prev:focus,\n.carousel-control-next:hover,\n.carousel-control-next:focus {\n  color: #fff;\n  text-decoration: none;\n  outline: 0;\n  opacity: 0.9;\n}\n\n[dir=ltr] .carousel-control-prev {\n  left: 0;\n}\n\n[dir=rtl] .carousel-control-prev {\n  right: 0;\n}\n\n[dir=ltr] .carousel-control-next {\n  right: 0;\n}\n\n[dir=rtl] .carousel-control-next {\n  left: 0;\n}\n\n.carousel-control-prev-icon,\n.carousel-control-next-icon {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n}\n\n[dir] .carousel-control-prev-icon, [dir] .carousel-control-next-icon {\n  background: no-repeat 50% / 100% 100%;\n}\n\n[dir] .carousel-control-prev-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z'/%3e%3c/svg%3e\");\n}\n\n[dir] .carousel-control-next-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M2.75 0l-1.5 1.5L3.75 4l-2.5 2.5L2.75 8l4-4-4-4z'/%3e%3c/svg%3e\");\n}\n\n.carousel-indicators {\n  position: absolute;\n  bottom: 0;\n  z-index: 15;\n  display: flex;\n  justify-content: center;\n  list-style: none;\n}\n\n[dir=ltr] .carousel-indicators {\n  right: 0;\n  left: 0;\n  padding-left: 0;\n  margin-right: 15%;\n  margin-left: 15%;\n}\n\n[dir=rtl] .carousel-indicators {\n  left: 0;\n  right: 0;\n  padding-right: 0;\n  margin-left: 15%;\n  margin-right: 15%;\n}\n\n.carousel-indicators li {\n  box-sizing: content-box;\n  flex: 0 1 auto;\n  width: 30px;\n  height: 3px;\n  text-indent: -999px;\n  opacity: .5;\n  transition: opacity 0.6s ease;\n}\n\n[dir] .carousel-indicators li {\n  cursor: pointer;\n  background-color: #fff;\n  background-clip: padding-box;\n  border-top: 10px solid transparent;\n  border-bottom: 10px solid transparent;\n}\n\n[dir=ltr] .carousel-indicators li {\n  margin-right: 3px;\n  margin-left: 3px;\n}\n\n[dir=rtl] .carousel-indicators li {\n  margin-left: 3px;\n  margin-right: 3px;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .carousel-indicators li {\n    transition: none;\n  }\n}\n\n.carousel-indicators .active {\n  opacity: 1;\n}\n\n.carousel-caption {\n  position: absolute;\n  bottom: 20px;\n  z-index: 10;\n  color: #fff;\n}\n\n[dir] .carousel-caption {\n  padding-top: 20px;\n  padding-bottom: 20px;\n  text-align: center;\n}\n\n[dir=ltr] .carousel-caption {\n  right: 15%;\n  left: 15%;\n}\n\n[dir=rtl] .carousel-caption {\n  left: 15%;\n  right: 15%;\n}\n\n@-webkit-keyframes spinner-border-ltr {\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n@-webkit-keyframes spinner-border-rtl {\n  to {\n    transform: rotate(-360deg);\n  }\n}\n\n@keyframes spinner-border-ltr {\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n@keyframes spinner-border-rtl {\n  to {\n    transform: rotate(-360deg);\n  }\n}\n\n.spinner-border {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: text-bottom;\n}\n\n[dir] .spinner-border {\n  border: 0.25em solid currentColor;\n  border-radius: 50%;\n}\n\n[dir=ltr] .spinner-border {\n  border-right-color: transparent;\n  -webkit-animation:  spinner-border-ltr .75s linear infinite;\n  animation:  spinner-border-ltr .75s linear infinite;\n}\n\n[dir=rtl] .spinner-border {\n  border-left-color: transparent;\n  -webkit-animation:  spinner-border-rtl .75s linear infinite;\n  animation:  spinner-border-rtl .75s linear infinite;\n}\n\n.spinner-border-sm {\n  width: 1rem;\n  height: 1rem;\n}\n\n[dir] .spinner-border-sm {\n  border-width: 0.2em;\n}\n\n@-webkit-keyframes spinner-grow {\n  0% {\n    transform: scale(0);\n  }\n\n  50% {\n    opacity: 1;\n  }\n}\n\n@keyframes spinner-grow {\n  0% {\n    transform: scale(0);\n  }\n\n  50% {\n    opacity: 1;\n  }\n}\n\n.spinner-grow {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: text-bottom;\n  opacity: 0;\n}\n\n[dir] .spinner-grow {\n  background-color: currentColor;\n  border-radius: 50%;\n}\n\n[dir=ltr] .spinner-grow {\n  -webkit-animation: spinner-grow .75s linear infinite;\n  animation: spinner-grow .75s linear infinite;\n}\n\n[dir=rtl] .spinner-grow {\n  -webkit-animation: spinner-grow .75s linear infinite;\n  animation: spinner-grow .75s linear infinite;\n}\n\n.spinner-grow-sm {\n  width: 1rem;\n  height: 1rem;\n}\n\n.align-baseline {\n  vertical-align: baseline !important;\n}\n\n.align-top {\n  vertical-align: top !important;\n}\n\n.align-middle {\n  vertical-align: middle !important;\n}\n\n.align-bottom {\n  vertical-align: bottom !important;\n}\n\n.align-text-bottom {\n  vertical-align: text-bottom !important;\n}\n\n.align-text-top {\n  vertical-align: text-top !important;\n}\n\n[dir] .bg-primary {\n  background-color: #007bff !important;\n}\n\n[dir] a.bg-primary:hover, [dir] a.bg-primary:focus, [dir] button.bg-primary:hover, [dir] button.bg-primary:focus {\n  background-color: #0062cc !important;\n}\n\n[dir] .bg-secondary {\n  background-color: #6c757d !important;\n}\n\n[dir] a.bg-secondary:hover, [dir] a.bg-secondary:focus, [dir] button.bg-secondary:hover, [dir] button.bg-secondary:focus {\n  background-color: #545b62 !important;\n}\n\n[dir] .bg-success {\n  background-color: #28a745 !important;\n}\n\n[dir] a.bg-success:hover, [dir] a.bg-success:focus, [dir] button.bg-success:hover, [dir] button.bg-success:focus {\n  background-color: #1e7e34 !important;\n}\n\n[dir] .bg-info {\n  background-color: #17a2b8 !important;\n}\n\n[dir] a.bg-info:hover, [dir] a.bg-info:focus, [dir] button.bg-info:hover, [dir] button.bg-info:focus {\n  background-color: #117a8b !important;\n}\n\n[dir] .bg-warning {\n  background-color: #ffc107 !important;\n}\n\n[dir] a.bg-warning:hover, [dir] a.bg-warning:focus, [dir] button.bg-warning:hover, [dir] button.bg-warning:focus {\n  background-color: #d39e00 !important;\n}\n\n[dir] .bg-danger {\n  background-color: #dc3545 !important;\n}\n\n[dir] a.bg-danger:hover, [dir] a.bg-danger:focus, [dir] button.bg-danger:hover, [dir] button.bg-danger:focus {\n  background-color: #bd2130 !important;\n}\n\n[dir] .bg-light {\n  background-color: #f8f9fa !important;\n}\n\n[dir] a.bg-light:hover, [dir] a.bg-light:focus, [dir] button.bg-light:hover, [dir] button.bg-light:focus {\n  background-color: #dae0e5 !important;\n}\n\n[dir] .bg-dark {\n  background-color: #343a40 !important;\n}\n\n[dir] a.bg-dark:hover, [dir] a.bg-dark:focus, [dir] button.bg-dark:hover, [dir] button.bg-dark:focus {\n  background-color: #1d2124 !important;\n}\n\n[dir] .bg-white {\n  background-color: #fff !important;\n}\n\n[dir] .bg-transparent {\n  background-color: transparent !important;\n}\n\n[dir] .border {\n  border: 1px solid #dee2e6 !important;\n}\n\n[dir] .border-top {\n  border-top: 1px solid #dee2e6 !important;\n}\n\n[dir=ltr] .border-right {\n  border-right: 1px solid #dee2e6 !important;\n}\n\n[dir=rtl] .border-right {\n  border-left: 1px solid #dee2e6 !important;\n}\n\n[dir] .border-bottom {\n  border-bottom: 1px solid #dee2e6 !important;\n}\n\n[dir=ltr] .border-left {\n  border-left: 1px solid #dee2e6 !important;\n}\n\n[dir=rtl] .border-left {\n  border-right: 1px solid #dee2e6 !important;\n}\n\n[dir] .border-0 {\n  border: 0 !important;\n}\n\n[dir] .border-top-0 {\n  border-top: 0 !important;\n}\n\n[dir=ltr] .border-right-0 {\n  border-right: 0 !important;\n}\n\n[dir=rtl] .border-right-0 {\n  border-left: 0 !important;\n}\n\n[dir] .border-bottom-0 {\n  border-bottom: 0 !important;\n}\n\n[dir=ltr] .border-left-0 {\n  border-left: 0 !important;\n}\n\n[dir=rtl] .border-left-0 {\n  border-right: 0 !important;\n}\n\n[dir] .border-primary {\n  border-color: #007bff !important;\n}\n\n[dir] .border-secondary {\n  border-color: #6c757d !important;\n}\n\n[dir] .border-success {\n  border-color: #28a745 !important;\n}\n\n[dir] .border-info {\n  border-color: #17a2b8 !important;\n}\n\n[dir] .border-warning {\n  border-color: #ffc107 !important;\n}\n\n[dir] .border-danger {\n  border-color: #dc3545 !important;\n}\n\n[dir] .border-light {\n  border-color: #f8f9fa !important;\n}\n\n[dir] .border-dark {\n  border-color: #343a40 !important;\n}\n\n[dir] .border-white {\n  border-color: #fff !important;\n}\n\n[dir] .rounded-sm {\n  border-radius: 0.2rem !important;\n}\n\n[dir] .rounded {\n  border-radius: 0.25rem !important;\n}\n\n[dir=ltr] .rounded-top {\n  border-top-left-radius: 0.25rem !important;\n  border-top-right-radius: 0.25rem !important;\n}\n\n[dir=rtl] .rounded-top {\n  border-top-right-radius: 0.25rem !important;\n  border-top-left-radius: 0.25rem !important;\n}\n\n[dir=ltr] .rounded-right {\n  border-top-right-radius: 0.25rem !important;\n  border-bottom-right-radius: 0.25rem !important;\n}\n\n[dir=rtl] .rounded-right {\n  border-top-left-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important;\n}\n\n[dir=ltr] .rounded-bottom {\n  border-bottom-right-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important;\n}\n\n[dir=rtl] .rounded-bottom {\n  border-bottom-left-radius: 0.25rem !important;\n  border-bottom-right-radius: 0.25rem !important;\n}\n\n[dir=ltr] .rounded-left {\n  border-top-left-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important;\n}\n\n[dir=rtl] .rounded-left {\n  border-top-right-radius: 0.25rem !important;\n  border-bottom-right-radius: 0.25rem !important;\n}\n\n[dir] .rounded-lg {\n  border-radius: 0.3rem !important;\n}\n\n[dir] .rounded-circle {\n  border-radius: 50% !important;\n}\n\n[dir] .rounded-pill {\n  border-radius: 50rem !important;\n}\n\n[dir] .rounded-0 {\n  border-radius: 0 !important;\n}\n\n.clearfix::after {\n  display: block;\n  content: \"\";\n}\n\n[dir] .clearfix::after {\n  clear: both;\n}\n\n.d-none {\n  display: none !important;\n}\n\n.d-inline {\n  display: inline !important;\n}\n\n.d-inline-block {\n  display: inline-block !important;\n}\n\n.d-block {\n  display: block !important;\n}\n\n.d-table {\n  display: table !important;\n}\n\n.d-table-row {\n  display: table-row !important;\n}\n\n.d-table-cell {\n  display: table-cell !important;\n}\n\n.d-flex {\n  display: flex !important;\n}\n\n.d-inline-flex {\n  display: inline-flex !important;\n}\n\n@media (min-width: 576px) {\n  .d-sm-none {\n    display: none !important;\n  }\n\n  .d-sm-inline {\n    display: inline !important;\n  }\n\n  .d-sm-inline-block {\n    display: inline-block !important;\n  }\n\n  .d-sm-block {\n    display: block !important;\n  }\n\n  .d-sm-table {\n    display: table !important;\n  }\n\n  .d-sm-table-row {\n    display: table-row !important;\n  }\n\n  .d-sm-table-cell {\n    display: table-cell !important;\n  }\n\n  .d-sm-flex {\n    display: flex !important;\n  }\n\n  .d-sm-inline-flex {\n    display: inline-flex !important;\n  }\n}\n\n@media (min-width: 768px) {\n  .d-md-none {\n    display: none !important;\n  }\n\n  .d-md-inline {\n    display: inline !important;\n  }\n\n  .d-md-inline-block {\n    display: inline-block !important;\n  }\n\n  .d-md-block {\n    display: block !important;\n  }\n\n  .d-md-table {\n    display: table !important;\n  }\n\n  .d-md-table-row {\n    display: table-row !important;\n  }\n\n  .d-md-table-cell {\n    display: table-cell !important;\n  }\n\n  .d-md-flex {\n    display: flex !important;\n  }\n\n  .d-md-inline-flex {\n    display: inline-flex !important;\n  }\n}\n\n@media (min-width: 992px) {\n  .d-lg-none {\n    display: none !important;\n  }\n\n  .d-lg-inline {\n    display: inline !important;\n  }\n\n  .d-lg-inline-block {\n    display: inline-block !important;\n  }\n\n  .d-lg-block {\n    display: block !important;\n  }\n\n  .d-lg-table {\n    display: table !important;\n  }\n\n  .d-lg-table-row {\n    display: table-row !important;\n  }\n\n  .d-lg-table-cell {\n    display: table-cell !important;\n  }\n\n  .d-lg-flex {\n    display: flex !important;\n  }\n\n  .d-lg-inline-flex {\n    display: inline-flex !important;\n  }\n}\n\n@media (min-width: 1200px) {\n  .d-xl-none {\n    display: none !important;\n  }\n\n  .d-xl-inline {\n    display: inline !important;\n  }\n\n  .d-xl-inline-block {\n    display: inline-block !important;\n  }\n\n  .d-xl-block {\n    display: block !important;\n  }\n\n  .d-xl-table {\n    display: table !important;\n  }\n\n  .d-xl-table-row {\n    display: table-row !important;\n  }\n\n  .d-xl-table-cell {\n    display: table-cell !important;\n  }\n\n  .d-xl-flex {\n    display: flex !important;\n  }\n\n  .d-xl-inline-flex {\n    display: inline-flex !important;\n  }\n}\n\n@media print {\n  .d-print-none {\n    display: none !important;\n  }\n\n  .d-print-inline {\n    display: inline !important;\n  }\n\n  .d-print-inline-block {\n    display: inline-block !important;\n  }\n\n  .d-print-block {\n    display: block !important;\n  }\n\n  .d-print-table {\n    display: table !important;\n  }\n\n  .d-print-table-row {\n    display: table-row !important;\n  }\n\n  .d-print-table-cell {\n    display: table-cell !important;\n  }\n\n  .d-print-flex {\n    display: flex !important;\n  }\n\n  .d-print-inline-flex {\n    display: inline-flex !important;\n  }\n}\n\n.embed-responsive {\n  position: relative;\n  display: block;\n  width: 100%;\n  overflow: hidden;\n}\n\n[dir] .embed-responsive {\n  padding: 0;\n}\n\n.embed-responsive::before {\n  display: block;\n  content: \"\";\n}\n\n.embed-responsive .embed-responsive-item,\n.embed-responsive iframe,\n.embed-responsive embed,\n.embed-responsive object,\n.embed-responsive video {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  width: 100%;\n  height: 100%;\n}\n\n[dir] .embed-responsive .embed-responsive-item, [dir] .embed-responsive iframe, [dir] .embed-responsive embed, [dir] .embed-responsive object, [dir] .embed-responsive video {\n  border: 0;\n}\n\n[dir=ltr] .embed-responsive .embed-responsive-item, [dir=ltr] .embed-responsive iframe, [dir=ltr] .embed-responsive embed, [dir=ltr] .embed-responsive object, [dir=ltr] .embed-responsive video {\n  left: 0;\n}\n\n[dir=rtl] .embed-responsive .embed-responsive-item, [dir=rtl] .embed-responsive iframe, [dir=rtl] .embed-responsive embed, [dir=rtl] .embed-responsive object, [dir=rtl] .embed-responsive video {\n  right: 0;\n}\n\n[dir] .embed-responsive-21by9::before {\n  padding-top: 42.857143%;\n}\n\n[dir] .embed-responsive-16by9::before {\n  padding-top: 56.25%;\n}\n\n[dir] .embed-responsive-4by3::before {\n  padding-top: 75%;\n}\n\n[dir] .embed-responsive-1by1::before {\n  padding-top: 100%;\n}\n\n.flex-row {\n  flex-direction: row !important;\n}\n\n.flex-column {\n  flex-direction: column !important;\n}\n\n.flex-row-reverse {\n  flex-direction: row-reverse !important;\n}\n\n.flex-column-reverse {\n  flex-direction: column-reverse !important;\n}\n\n.flex-wrap {\n  flex-wrap: wrap !important;\n}\n\n.flex-nowrap {\n  flex-wrap: nowrap !important;\n}\n\n.flex-wrap-reverse {\n  flex-wrap: wrap-reverse !important;\n}\n\n.flex-fill {\n  flex: 1 1 auto !important;\n}\n\n.flex-grow-0 {\n  flex-grow: 0 !important;\n}\n\n.flex-grow-1 {\n  flex-grow: 1 !important;\n}\n\n.flex-shrink-0 {\n  flex-shrink: 0 !important;\n}\n\n.flex-shrink-1 {\n  flex-shrink: 1 !important;\n}\n\n.justify-content-start {\n  justify-content: flex-start !important;\n}\n\n.justify-content-end {\n  justify-content: flex-end !important;\n}\n\n.justify-content-center {\n  justify-content: center !important;\n}\n\n.justify-content-between {\n  justify-content: space-between !important;\n}\n\n.justify-content-around {\n  justify-content: space-around !important;\n}\n\n.align-items-start {\n  align-items: flex-start !important;\n}\n\n.align-items-end {\n  align-items: flex-end !important;\n}\n\n.align-items-center {\n  align-items: center !important;\n}\n\n.align-items-baseline {\n  align-items: baseline !important;\n}\n\n.align-items-stretch {\n  align-items: stretch !important;\n}\n\n.align-content-start {\n  align-content: flex-start !important;\n}\n\n.align-content-end {\n  align-content: flex-end !important;\n}\n\n.align-content-center {\n  align-content: center !important;\n}\n\n.align-content-between {\n  align-content: space-between !important;\n}\n\n.align-content-around {\n  align-content: space-around !important;\n}\n\n.align-content-stretch {\n  align-content: stretch !important;\n}\n\n.align-self-auto {\n  align-self: auto !important;\n}\n\n.align-self-start {\n  align-self: flex-start !important;\n}\n\n.align-self-end {\n  align-self: flex-end !important;\n}\n\n.align-self-center {\n  align-self: center !important;\n}\n\n.align-self-baseline {\n  align-self: baseline !important;\n}\n\n.align-self-stretch {\n  align-self: stretch !important;\n}\n\n@media (min-width: 576px) {\n  .flex-sm-row {\n    flex-direction: row !important;\n  }\n\n  .flex-sm-column {\n    flex-direction: column !important;\n  }\n\n  .flex-sm-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n\n  .flex-sm-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n\n  .flex-sm-wrap {\n    flex-wrap: wrap !important;\n  }\n\n  .flex-sm-nowrap {\n    flex-wrap: nowrap !important;\n  }\n\n  .flex-sm-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n\n  .flex-sm-fill {\n    flex: 1 1 auto !important;\n  }\n\n  .flex-sm-grow-0 {\n    flex-grow: 0 !important;\n  }\n\n  .flex-sm-grow-1 {\n    flex-grow: 1 !important;\n  }\n\n  .flex-sm-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n\n  .flex-sm-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n\n  .justify-content-sm-start {\n    justify-content: flex-start !important;\n  }\n\n  .justify-content-sm-end {\n    justify-content: flex-end !important;\n  }\n\n  .justify-content-sm-center {\n    justify-content: center !important;\n  }\n\n  .justify-content-sm-between {\n    justify-content: space-between !important;\n  }\n\n  .justify-content-sm-around {\n    justify-content: space-around !important;\n  }\n\n  .align-items-sm-start {\n    align-items: flex-start !important;\n  }\n\n  .align-items-sm-end {\n    align-items: flex-end !important;\n  }\n\n  .align-items-sm-center {\n    align-items: center !important;\n  }\n\n  .align-items-sm-baseline {\n    align-items: baseline !important;\n  }\n\n  .align-items-sm-stretch {\n    align-items: stretch !important;\n  }\n\n  .align-content-sm-start {\n    align-content: flex-start !important;\n  }\n\n  .align-content-sm-end {\n    align-content: flex-end !important;\n  }\n\n  .align-content-sm-center {\n    align-content: center !important;\n  }\n\n  .align-content-sm-between {\n    align-content: space-between !important;\n  }\n\n  .align-content-sm-around {\n    align-content: space-around !important;\n  }\n\n  .align-content-sm-stretch {\n    align-content: stretch !important;\n  }\n\n  .align-self-sm-auto {\n    align-self: auto !important;\n  }\n\n  .align-self-sm-start {\n    align-self: flex-start !important;\n  }\n\n  .align-self-sm-end {\n    align-self: flex-end !important;\n  }\n\n  .align-self-sm-center {\n    align-self: center !important;\n  }\n\n  .align-self-sm-baseline {\n    align-self: baseline !important;\n  }\n\n  .align-self-sm-stretch {\n    align-self: stretch !important;\n  }\n}\n\n@media (min-width: 768px) {\n  .flex-md-row {\n    flex-direction: row !important;\n  }\n\n  .flex-md-column {\n    flex-direction: column !important;\n  }\n\n  .flex-md-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n\n  .flex-md-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n\n  .flex-md-wrap {\n    flex-wrap: wrap !important;\n  }\n\n  .flex-md-nowrap {\n    flex-wrap: nowrap !important;\n  }\n\n  .flex-md-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n\n  .flex-md-fill {\n    flex: 1 1 auto !important;\n  }\n\n  .flex-md-grow-0 {\n    flex-grow: 0 !important;\n  }\n\n  .flex-md-grow-1 {\n    flex-grow: 1 !important;\n  }\n\n  .flex-md-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n\n  .flex-md-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n\n  .justify-content-md-start {\n    justify-content: flex-start !important;\n  }\n\n  .justify-content-md-end {\n    justify-content: flex-end !important;\n  }\n\n  .justify-content-md-center {\n    justify-content: center !important;\n  }\n\n  .justify-content-md-between {\n    justify-content: space-between !important;\n  }\n\n  .justify-content-md-around {\n    justify-content: space-around !important;\n  }\n\n  .align-items-md-start {\n    align-items: flex-start !important;\n  }\n\n  .align-items-md-end {\n    align-items: flex-end !important;\n  }\n\n  .align-items-md-center {\n    align-items: center !important;\n  }\n\n  .align-items-md-baseline {\n    align-items: baseline !important;\n  }\n\n  .align-items-md-stretch {\n    align-items: stretch !important;\n  }\n\n  .align-content-md-start {\n    align-content: flex-start !important;\n  }\n\n  .align-content-md-end {\n    align-content: flex-end !important;\n  }\n\n  .align-content-md-center {\n    align-content: center !important;\n  }\n\n  .align-content-md-between {\n    align-content: space-between !important;\n  }\n\n  .align-content-md-around {\n    align-content: space-around !important;\n  }\n\n  .align-content-md-stretch {\n    align-content: stretch !important;\n  }\n\n  .align-self-md-auto {\n    align-self: auto !important;\n  }\n\n  .align-self-md-start {\n    align-self: flex-start !important;\n  }\n\n  .align-self-md-end {\n    align-self: flex-end !important;\n  }\n\n  .align-self-md-center {\n    align-self: center !important;\n  }\n\n  .align-self-md-baseline {\n    align-self: baseline !important;\n  }\n\n  .align-self-md-stretch {\n    align-self: stretch !important;\n  }\n}\n\n@media (min-width: 992px) {\n  .flex-lg-row {\n    flex-direction: row !important;\n  }\n\n  .flex-lg-column {\n    flex-direction: column !important;\n  }\n\n  .flex-lg-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n\n  .flex-lg-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n\n  .flex-lg-wrap {\n    flex-wrap: wrap !important;\n  }\n\n  .flex-lg-nowrap {\n    flex-wrap: nowrap !important;\n  }\n\n  .flex-lg-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n\n  .flex-lg-fill {\n    flex: 1 1 auto !important;\n  }\n\n  .flex-lg-grow-0 {\n    flex-grow: 0 !important;\n  }\n\n  .flex-lg-grow-1 {\n    flex-grow: 1 !important;\n  }\n\n  .flex-lg-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n\n  .flex-lg-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n\n  .justify-content-lg-start {\n    justify-content: flex-start !important;\n  }\n\n  .justify-content-lg-end {\n    justify-content: flex-end !important;\n  }\n\n  .justify-content-lg-center {\n    justify-content: center !important;\n  }\n\n  .justify-content-lg-between {\n    justify-content: space-between !important;\n  }\n\n  .justify-content-lg-around {\n    justify-content: space-around !important;\n  }\n\n  .align-items-lg-start {\n    align-items: flex-start !important;\n  }\n\n  .align-items-lg-end {\n    align-items: flex-end !important;\n  }\n\n  .align-items-lg-center {\n    align-items: center !important;\n  }\n\n  .align-items-lg-baseline {\n    align-items: baseline !important;\n  }\n\n  .align-items-lg-stretch {\n    align-items: stretch !important;\n  }\n\n  .align-content-lg-start {\n    align-content: flex-start !important;\n  }\n\n  .align-content-lg-end {\n    align-content: flex-end !important;\n  }\n\n  .align-content-lg-center {\n    align-content: center !important;\n  }\n\n  .align-content-lg-between {\n    align-content: space-between !important;\n  }\n\n  .align-content-lg-around {\n    align-content: space-around !important;\n  }\n\n  .align-content-lg-stretch {\n    align-content: stretch !important;\n  }\n\n  .align-self-lg-auto {\n    align-self: auto !important;\n  }\n\n  .align-self-lg-start {\n    align-self: flex-start !important;\n  }\n\n  .align-self-lg-end {\n    align-self: flex-end !important;\n  }\n\n  .align-self-lg-center {\n    align-self: center !important;\n  }\n\n  .align-self-lg-baseline {\n    align-self: baseline !important;\n  }\n\n  .align-self-lg-stretch {\n    align-self: stretch !important;\n  }\n}\n\n@media (min-width: 1200px) {\n  .flex-xl-row {\n    flex-direction: row !important;\n  }\n\n  .flex-xl-column {\n    flex-direction: column !important;\n  }\n\n  .flex-xl-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n\n  .flex-xl-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n\n  .flex-xl-wrap {\n    flex-wrap: wrap !important;\n  }\n\n  .flex-xl-nowrap {\n    flex-wrap: nowrap !important;\n  }\n\n  .flex-xl-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n\n  .flex-xl-fill {\n    flex: 1 1 auto !important;\n  }\n\n  .flex-xl-grow-0 {\n    flex-grow: 0 !important;\n  }\n\n  .flex-xl-grow-1 {\n    flex-grow: 1 !important;\n  }\n\n  .flex-xl-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n\n  .flex-xl-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n\n  .justify-content-xl-start {\n    justify-content: flex-start !important;\n  }\n\n  .justify-content-xl-end {\n    justify-content: flex-end !important;\n  }\n\n  .justify-content-xl-center {\n    justify-content: center !important;\n  }\n\n  .justify-content-xl-between {\n    justify-content: space-between !important;\n  }\n\n  .justify-content-xl-around {\n    justify-content: space-around !important;\n  }\n\n  .align-items-xl-start {\n    align-items: flex-start !important;\n  }\n\n  .align-items-xl-end {\n    align-items: flex-end !important;\n  }\n\n  .align-items-xl-center {\n    align-items: center !important;\n  }\n\n  .align-items-xl-baseline {\n    align-items: baseline !important;\n  }\n\n  .align-items-xl-stretch {\n    align-items: stretch !important;\n  }\n\n  .align-content-xl-start {\n    align-content: flex-start !important;\n  }\n\n  .align-content-xl-end {\n    align-content: flex-end !important;\n  }\n\n  .align-content-xl-center {\n    align-content: center !important;\n  }\n\n  .align-content-xl-between {\n    align-content: space-between !important;\n  }\n\n  .align-content-xl-around {\n    align-content: space-around !important;\n  }\n\n  .align-content-xl-stretch {\n    align-content: stretch !important;\n  }\n\n  .align-self-xl-auto {\n    align-self: auto !important;\n  }\n\n  .align-self-xl-start {\n    align-self: flex-start !important;\n  }\n\n  .align-self-xl-end {\n    align-self: flex-end !important;\n  }\n\n  .align-self-xl-center {\n    align-self: center !important;\n  }\n\n  .align-self-xl-baseline {\n    align-self: baseline !important;\n  }\n\n  .align-self-xl-stretch {\n    align-self: stretch !important;\n  }\n}\n\n[dir=ltr] .float-left {\n  float: left !important;\n}\n\n[dir=rtl] .float-left {\n  float: right !important;\n}\n\n[dir=ltr] .float-right {\n  float: right !important;\n}\n\n[dir=rtl] .float-right {\n  float: left !important;\n}\n\n[dir] .float-none {\n  float: none !important;\n}\n\n@media (min-width: 576px) {\n  [dir=ltr] .float-sm-left {\n    float: left !important;\n  }\n  [dir=rtl] .float-sm-left {\n    float: right !important;\n  }\n\n  [dir=ltr] .float-sm-right {\n    float: right !important;\n  }\n\n  [dir=rtl] .float-sm-right {\n    float: left !important;\n  }\n\n  [dir] .float-sm-none {\n    float: none !important;\n  }\n}\n\n@media (min-width: 768px) {\n  [dir=ltr] .float-md-left {\n    float: left !important;\n  }\n  [dir=rtl] .float-md-left {\n    float: right !important;\n  }\n\n  [dir=ltr] .float-md-right {\n    float: right !important;\n  }\n\n  [dir=rtl] .float-md-right {\n    float: left !important;\n  }\n\n  [dir] .float-md-none {\n    float: none !important;\n  }\n}\n\n@media (min-width: 992px) {\n  [dir=ltr] .float-lg-left {\n    float: left !important;\n  }\n  [dir=rtl] .float-lg-left {\n    float: right !important;\n  }\n\n  [dir=ltr] .float-lg-right {\n    float: right !important;\n  }\n\n  [dir=rtl] .float-lg-right {\n    float: left !important;\n  }\n\n  [dir] .float-lg-none {\n    float: none !important;\n  }\n}\n\n@media (min-width: 1200px) {\n  [dir=ltr] .float-xl-left {\n    float: left !important;\n  }\n  [dir=rtl] .float-xl-left {\n    float: right !important;\n  }\n\n  [dir=ltr] .float-xl-right {\n    float: right !important;\n  }\n\n  [dir=rtl] .float-xl-right {\n    float: left !important;\n  }\n\n  [dir] .float-xl-none {\n    float: none !important;\n  }\n}\n\n.overflow-auto {\n  overflow: auto !important;\n}\n\n.overflow-hidden {\n  overflow: hidden !important;\n}\n\n.position-static {\n  position: static !important;\n}\n\n.position-relative {\n  position: relative !important;\n}\n\n.position-absolute {\n  position: absolute !important;\n}\n\n.position-fixed {\n  position: fixed !important;\n}\n\n.position-sticky {\n  position: -webkit-sticky !important;\n  position: sticky !important;\n}\n\n.fixed-top {\n  position: fixed;\n  top: 0;\n  z-index: 1030;\n}\n\n[dir=ltr] .fixed-top {\n  right: 0;\n  left: 0;\n}\n\n[dir=rtl] .fixed-top {\n  left: 0;\n  right: 0;\n}\n\n.fixed-bottom {\n  position: fixed;\n  bottom: 0;\n  z-index: 1030;\n}\n\n[dir=ltr] .fixed-bottom {\n  right: 0;\n  left: 0;\n}\n\n[dir=rtl] .fixed-bottom {\n  left: 0;\n  right: 0;\n}\n\n@supports ((position: -webkit-sticky) or (position: sticky)) {\n  .sticky-top {\n    position: -webkit-sticky;\n    position: sticky;\n    top: 0;\n    z-index: 1020;\n  }\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n}\n\n[dir] .sr-only {\n  padding: 0;\n  margin: -1px;\n  border: 0;\n}\n\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  overflow: visible;\n  clip: auto;\n  white-space: normal;\n}\n\n[dir] .shadow-sm {\n  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;\n}\n\n[dir] .shadow {\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;\n}\n\n[dir] .shadow-lg {\n  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;\n}\n\n[dir] .shadow-none {\n  box-shadow: none !important;\n}\n\n.w-25 {\n  width: 25% !important;\n}\n\n.w-50 {\n  width: 50% !important;\n}\n\n.w-75 {\n  width: 75% !important;\n}\n\n.w-100 {\n  width: 100% !important;\n}\n\n.w-auto {\n  width: auto !important;\n}\n\n.h-25 {\n  height: 25% !important;\n}\n\n.h-50 {\n  height: 50% !important;\n}\n\n.h-75 {\n  height: 75% !important;\n}\n\n.h-100 {\n  height: 100% !important;\n}\n\n.h-auto {\n  height: auto !important;\n}\n\n.mw-100 {\n  max-width: 100% !important;\n}\n\n.mh-100 {\n  max-height: 100% !important;\n}\n\n.min-vw-100 {\n  min-width: 100vw !important;\n}\n\n.min-vh-100 {\n  min-height: 100vh !important;\n}\n\n.vw-100 {\n  width: 100vw !important;\n}\n\n.vh-100 {\n  height: 100vh !important;\n}\n\n.stretched-link::after {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 1;\n  pointer-events: auto;\n  content: \"\";\n}\n\n[dir] .stretched-link::after {\n  background-color: rgba(0, 0, 0, 0);\n}\n\n[dir=ltr] .stretched-link::after {\n  right: 0;\n  left: 0;\n}\n\n[dir=rtl] .stretched-link::after {\n  left: 0;\n  right: 0;\n}\n\n[dir] .m-0 {\n  margin: 0 !important;\n}\n\n[dir] .mt-0, [dir] .my-0 {\n  margin-top: 0 !important;\n}\n\n[dir=ltr] .mr-0, [dir=ltr] .mx-0 {\n  margin-right: 0 !important;\n}\n\n[dir=rtl] .mr-0, [dir=rtl] .mx-0 {\n  margin-left: 0 !important;\n}\n\n[dir] .mb-0, [dir] .my-0 {\n  margin-bottom: 0 !important;\n}\n\n[dir=ltr] .ml-0, [dir=ltr] .mx-0 {\n  margin-left: 0 !important;\n}\n\n[dir=rtl] .ml-0, [dir=rtl] .mx-0 {\n  margin-right: 0 !important;\n}\n\n[dir] .m-1 {\n  margin: 0.25rem !important;\n}\n\n[dir] .mt-1, [dir] .my-1 {\n  margin-top: 0.25rem !important;\n}\n\n[dir=ltr] .mr-1, [dir=ltr] .mx-1 {\n  margin-right: 0.25rem !important;\n}\n\n[dir=rtl] .mr-1, [dir=rtl] .mx-1 {\n  margin-left: 0.25rem !important;\n}\n\n[dir] .mb-1, [dir] .my-1 {\n  margin-bottom: 0.25rem !important;\n}\n\n[dir=ltr] .ml-1, [dir=ltr] .mx-1 {\n  margin-left: 0.25rem !important;\n}\n\n[dir=rtl] .ml-1, [dir=rtl] .mx-1 {\n  margin-right: 0.25rem !important;\n}\n\n[dir] .m-2 {\n  margin: 0.5rem !important;\n}\n\n[dir] .mt-2, [dir] .my-2 {\n  margin-top: 0.5rem !important;\n}\n\n[dir=ltr] .mr-2, [dir=ltr] .mx-2 {\n  margin-right: 0.5rem !important;\n}\n\n[dir=rtl] .mr-2, [dir=rtl] .mx-2 {\n  margin-left: 0.5rem !important;\n}\n\n[dir] .mb-2, [dir] .my-2 {\n  margin-bottom: 0.5rem !important;\n}\n\n[dir=ltr] .ml-2, [dir=ltr] .mx-2 {\n  margin-left: 0.5rem !important;\n}\n\n[dir=rtl] .ml-2, [dir=rtl] .mx-2 {\n  margin-right: 0.5rem !important;\n}\n\n[dir] .m-3 {\n  margin: 1rem !important;\n}\n\n[dir] .mt-3, [dir] .my-3 {\n  margin-top: 1rem !important;\n}\n\n[dir=ltr] .mr-3, [dir=ltr] .mx-3 {\n  margin-right: 1rem !important;\n}\n\n[dir=rtl] .mr-3, [dir=rtl] .mx-3 {\n  margin-left: 1rem !important;\n}\n\n[dir] .mb-3, [dir] .my-3 {\n  margin-bottom: 1rem !important;\n}\n\n[dir=ltr] .ml-3, [dir=ltr] .mx-3 {\n  margin-left: 1rem !important;\n}\n\n[dir=rtl] .ml-3, [dir=rtl] .mx-3 {\n  margin-right: 1rem !important;\n}\n\n[dir] .m-4 {\n  margin: 1.5rem !important;\n}\n\n[dir] .mt-4, [dir] .my-4 {\n  margin-top: 1.5rem !important;\n}\n\n[dir=ltr] .mr-4, [dir=ltr] .mx-4 {\n  margin-right: 1.5rem !important;\n}\n\n[dir=rtl] .mr-4, [dir=rtl] .mx-4 {\n  margin-left: 1.5rem !important;\n}\n\n[dir] .mb-4, [dir] .my-4 {\n  margin-bottom: 1.5rem !important;\n}\n\n[dir=ltr] .ml-4, [dir=ltr] .mx-4 {\n  margin-left: 1.5rem !important;\n}\n\n[dir=rtl] .ml-4, [dir=rtl] .mx-4 {\n  margin-right: 1.5rem !important;\n}\n\n[dir] .m-5 {\n  margin: 3rem !important;\n}\n\n[dir] .mt-5, [dir] .my-5 {\n  margin-top: 3rem !important;\n}\n\n[dir=ltr] .mr-5, [dir=ltr] .mx-5 {\n  margin-right: 3rem !important;\n}\n\n[dir=rtl] .mr-5, [dir=rtl] .mx-5 {\n  margin-left: 3rem !important;\n}\n\n[dir] .mb-5, [dir] .my-5 {\n  margin-bottom: 3rem !important;\n}\n\n[dir=ltr] .ml-5, [dir=ltr] .mx-5 {\n  margin-left: 3rem !important;\n}\n\n[dir=rtl] .ml-5, [dir=rtl] .mx-5 {\n  margin-right: 3rem !important;\n}\n\n[dir] .p-0 {\n  padding: 0 !important;\n}\n\n[dir] .pt-0, [dir] .py-0 {\n  padding-top: 0 !important;\n}\n\n[dir=ltr] .pr-0, [dir=ltr] .px-0 {\n  padding-right: 0 !important;\n}\n\n[dir=rtl] .pr-0, [dir=rtl] .px-0 {\n  padding-left: 0 !important;\n}\n\n[dir] .pb-0, [dir] .py-0 {\n  padding-bottom: 0 !important;\n}\n\n[dir=ltr] .pl-0, [dir=ltr] .px-0 {\n  padding-left: 0 !important;\n}\n\n[dir=rtl] .pl-0, [dir=rtl] .px-0 {\n  padding-right: 0 !important;\n}\n\n[dir] .p-1 {\n  padding: 0.25rem !important;\n}\n\n[dir] .pt-1, [dir] .py-1 {\n  padding-top: 0.25rem !important;\n}\n\n[dir=ltr] .pr-1, [dir=ltr] .px-1 {\n  padding-right: 0.25rem !important;\n}\n\n[dir=rtl] .pr-1, [dir=rtl] .px-1 {\n  padding-left: 0.25rem !important;\n}\n\n[dir] .pb-1, [dir] .py-1 {\n  padding-bottom: 0.25rem !important;\n}\n\n[dir=ltr] .pl-1, [dir=ltr] .px-1 {\n  padding-left: 0.25rem !important;\n}\n\n[dir=rtl] .pl-1, [dir=rtl] .px-1 {\n  padding-right: 0.25rem !important;\n}\n\n[dir] .p-2 {\n  padding: 0.5rem !important;\n}\n\n[dir] .pt-2, [dir] .py-2 {\n  padding-top: 0.5rem !important;\n}\n\n[dir=ltr] .pr-2, [dir=ltr] .px-2 {\n  padding-right: 0.5rem !important;\n}\n\n[dir=rtl] .pr-2, [dir=rtl] .px-2 {\n  padding-left: 0.5rem !important;\n}\n\n[dir] .pb-2, [dir] .py-2 {\n  padding-bottom: 0.5rem !important;\n}\n\n[dir=ltr] .pl-2, [dir=ltr] .px-2 {\n  padding-left: 0.5rem !important;\n}\n\n[dir=rtl] .pl-2, [dir=rtl] .px-2 {\n  padding-right: 0.5rem !important;\n}\n\n[dir] .p-3 {\n  padding: 1rem !important;\n}\n\n[dir] .pt-3, [dir] .py-3 {\n  padding-top: 1rem !important;\n}\n\n[dir=ltr] .pr-3, [dir=ltr] .px-3 {\n  padding-right: 1rem !important;\n}\n\n[dir=rtl] .pr-3, [dir=rtl] .px-3 {\n  padding-left: 1rem !important;\n}\n\n[dir] .pb-3, [dir] .py-3 {\n  padding-bottom: 1rem !important;\n}\n\n[dir=ltr] .pl-3, [dir=ltr] .px-3 {\n  padding-left: 1rem !important;\n}\n\n[dir=rtl] .pl-3, [dir=rtl] .px-3 {\n  padding-right: 1rem !important;\n}\n\n[dir] .p-4 {\n  padding: 1.5rem !important;\n}\n\n[dir] .pt-4, [dir] .py-4 {\n  padding-top: 1.5rem !important;\n}\n\n[dir=ltr] .pr-4, [dir=ltr] .px-4 {\n  padding-right: 1.5rem !important;\n}\n\n[dir=rtl] .pr-4, [dir=rtl] .px-4 {\n  padding-left: 1.5rem !important;\n}\n\n[dir] .pb-4, [dir] .py-4 {\n  padding-bottom: 1.5rem !important;\n}\n\n[dir=ltr] .pl-4, [dir=ltr] .px-4 {\n  padding-left: 1.5rem !important;\n}\n\n[dir=rtl] .pl-4, [dir=rtl] .px-4 {\n  padding-right: 1.5rem !important;\n}\n\n[dir] .p-5 {\n  padding: 3rem !important;\n}\n\n[dir] .pt-5, [dir] .py-5 {\n  padding-top: 3rem !important;\n}\n\n[dir=ltr] .pr-5, [dir=ltr] .px-5 {\n  padding-right: 3rem !important;\n}\n\n[dir=rtl] .pr-5, [dir=rtl] .px-5 {\n  padding-left: 3rem !important;\n}\n\n[dir] .pb-5, [dir] .py-5 {\n  padding-bottom: 3rem !important;\n}\n\n[dir=ltr] .pl-5, [dir=ltr] .px-5 {\n  padding-left: 3rem !important;\n}\n\n[dir=rtl] .pl-5, [dir=rtl] .px-5 {\n  padding-right: 3rem !important;\n}\n\n[dir] .m-n1 {\n  margin: -0.25rem !important;\n}\n\n[dir] .mt-n1, [dir] .my-n1 {\n  margin-top: -0.25rem !important;\n}\n\n[dir=ltr] .mr-n1, [dir=ltr] .mx-n1 {\n  margin-right: -0.25rem !important;\n}\n\n[dir=rtl] .mr-n1, [dir=rtl] .mx-n1 {\n  margin-left: -0.25rem !important;\n}\n\n[dir] .mb-n1, [dir] .my-n1 {\n  margin-bottom: -0.25rem !important;\n}\n\n[dir=ltr] .ml-n1, [dir=ltr] .mx-n1 {\n  margin-left: -0.25rem !important;\n}\n\n[dir=rtl] .ml-n1, [dir=rtl] .mx-n1 {\n  margin-right: -0.25rem !important;\n}\n\n[dir] .m-n2 {\n  margin: -0.5rem !important;\n}\n\n[dir] .mt-n2, [dir] .my-n2 {\n  margin-top: -0.5rem !important;\n}\n\n[dir=ltr] .mr-n2, [dir=ltr] .mx-n2 {\n  margin-right: -0.5rem !important;\n}\n\n[dir=rtl] .mr-n2, [dir=rtl] .mx-n2 {\n  margin-left: -0.5rem !important;\n}\n\n[dir] .mb-n2, [dir] .my-n2 {\n  margin-bottom: -0.5rem !important;\n}\n\n[dir=ltr] .ml-n2, [dir=ltr] .mx-n2 {\n  margin-left: -0.5rem !important;\n}\n\n[dir=rtl] .ml-n2, [dir=rtl] .mx-n2 {\n  margin-right: -0.5rem !important;\n}\n\n[dir] .m-n3 {\n  margin: -1rem !important;\n}\n\n[dir] .mt-n3, [dir] .my-n3 {\n  margin-top: -1rem !important;\n}\n\n[dir=ltr] .mr-n3, [dir=ltr] .mx-n3 {\n  margin-right: -1rem !important;\n}\n\n[dir=rtl] .mr-n3, [dir=rtl] .mx-n3 {\n  margin-left: -1rem !important;\n}\n\n[dir] .mb-n3, [dir] .my-n3 {\n  margin-bottom: -1rem !important;\n}\n\n[dir=ltr] .ml-n3, [dir=ltr] .mx-n3 {\n  margin-left: -1rem !important;\n}\n\n[dir=rtl] .ml-n3, [dir=rtl] .mx-n3 {\n  margin-right: -1rem !important;\n}\n\n[dir] .m-n4 {\n  margin: -1.5rem !important;\n}\n\n[dir] .mt-n4, [dir] .my-n4 {\n  margin-top: -1.5rem !important;\n}\n\n[dir=ltr] .mr-n4, [dir=ltr] .mx-n4 {\n  margin-right: -1.5rem !important;\n}\n\n[dir=rtl] .mr-n4, [dir=rtl] .mx-n4 {\n  margin-left: -1.5rem !important;\n}\n\n[dir] .mb-n4, [dir] .my-n4 {\n  margin-bottom: -1.5rem !important;\n}\n\n[dir=ltr] .ml-n4, [dir=ltr] .mx-n4 {\n  margin-left: -1.5rem !important;\n}\n\n[dir=rtl] .ml-n4, [dir=rtl] .mx-n4 {\n  margin-right: -1.5rem !important;\n}\n\n[dir] .m-n5 {\n  margin: -3rem !important;\n}\n\n[dir] .mt-n5, [dir] .my-n5 {\n  margin-top: -3rem !important;\n}\n\n[dir=ltr] .mr-n5, [dir=ltr] .mx-n5 {\n  margin-right: -3rem !important;\n}\n\n[dir=rtl] .mr-n5, [dir=rtl] .mx-n5 {\n  margin-left: -3rem !important;\n}\n\n[dir] .mb-n5, [dir] .my-n5 {\n  margin-bottom: -3rem !important;\n}\n\n[dir=ltr] .ml-n5, [dir=ltr] .mx-n5 {\n  margin-left: -3rem !important;\n}\n\n[dir=rtl] .ml-n5, [dir=rtl] .mx-n5 {\n  margin-right: -3rem !important;\n}\n\n[dir] .m-auto {\n  margin: auto !important;\n}\n\n[dir] .mt-auto, [dir] .my-auto {\n  margin-top: auto !important;\n}\n\n[dir=ltr] .mr-auto, [dir=ltr] .mx-auto {\n  margin-right: auto !important;\n}\n\n[dir=rtl] .mr-auto, [dir=rtl] .mx-auto {\n  margin-left: auto !important;\n}\n\n[dir] .mb-auto, [dir] .my-auto {\n  margin-bottom: auto !important;\n}\n\n[dir=ltr] .ml-auto, [dir=ltr] .mx-auto {\n  margin-left: auto !important;\n}\n\n[dir=rtl] .ml-auto, [dir=rtl] .mx-auto {\n  margin-right: auto !important;\n}\n\n@media (min-width: 576px) {\n  [dir] .m-sm-0 {\n    margin: 0 !important;\n  }\n\n  [dir] .mt-sm-0, [dir] .my-sm-0 {\n    margin-top: 0 !important;\n  }\n\n  [dir=ltr] .mr-sm-0, [dir=ltr] .mx-sm-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir=rtl] .mr-sm-0, [dir=rtl] .mx-sm-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir] .mb-sm-0, [dir] .my-sm-0 {\n    margin-bottom: 0 !important;\n  }\n\n  [dir=ltr] .ml-sm-0, [dir=ltr] .mx-sm-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir=rtl] .ml-sm-0, [dir=rtl] .mx-sm-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir] .m-sm-1 {\n    margin: 0.25rem !important;\n  }\n\n  [dir] .mt-sm-1, [dir] .my-sm-1 {\n    margin-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .mr-sm-1, [dir=ltr] .mx-sm-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .mr-sm-1, [dir=rtl] .mx-sm-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir] .mb-sm-1, [dir] .my-sm-1 {\n    margin-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .ml-sm-1, [dir=ltr] .mx-sm-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .ml-sm-1, [dir=rtl] .mx-sm-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir] .m-sm-2 {\n    margin: 0.5rem !important;\n  }\n\n  [dir] .mt-sm-2, [dir] .my-sm-2 {\n    margin-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .mr-sm-2, [dir=ltr] .mx-sm-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .mr-sm-2, [dir=rtl] .mx-sm-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir] .mb-sm-2, [dir] .my-sm-2 {\n    margin-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .ml-sm-2, [dir=ltr] .mx-sm-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .ml-sm-2, [dir=rtl] .mx-sm-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir] .m-sm-3 {\n    margin: 1rem !important;\n  }\n\n  [dir] .mt-sm-3, [dir] .my-sm-3 {\n    margin-top: 1rem !important;\n  }\n\n  [dir=ltr] .mr-sm-3, [dir=ltr] .mx-sm-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir=rtl] .mr-sm-3, [dir=rtl] .mx-sm-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir] .mb-sm-3, [dir] .my-sm-3 {\n    margin-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .ml-sm-3, [dir=ltr] .mx-sm-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir=rtl] .ml-sm-3, [dir=rtl] .mx-sm-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir] .m-sm-4 {\n    margin: 1.5rem !important;\n  }\n\n  [dir] .mt-sm-4, [dir] .my-sm-4 {\n    margin-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .mr-sm-4, [dir=ltr] .mx-sm-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .mr-sm-4, [dir=rtl] .mx-sm-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir] .mb-sm-4, [dir] .my-sm-4 {\n    margin-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .ml-sm-4, [dir=ltr] .mx-sm-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .ml-sm-4, [dir=rtl] .mx-sm-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir] .m-sm-5 {\n    margin: 3rem !important;\n  }\n\n  [dir] .mt-sm-5, [dir] .my-sm-5 {\n    margin-top: 3rem !important;\n  }\n\n  [dir=ltr] .mr-sm-5, [dir=ltr] .mx-sm-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir=rtl] .mr-sm-5, [dir=rtl] .mx-sm-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir] .mb-sm-5, [dir] .my-sm-5 {\n    margin-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .ml-sm-5, [dir=ltr] .mx-sm-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir=rtl] .ml-sm-5, [dir=rtl] .mx-sm-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir] .p-sm-0 {\n    padding: 0 !important;\n  }\n\n  [dir] .pt-sm-0, [dir] .py-sm-0 {\n    padding-top: 0 !important;\n  }\n\n  [dir=ltr] .pr-sm-0, [dir=ltr] .px-sm-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir=rtl] .pr-sm-0, [dir=rtl] .px-sm-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir] .pb-sm-0, [dir] .py-sm-0 {\n    padding-bottom: 0 !important;\n  }\n\n  [dir=ltr] .pl-sm-0, [dir=ltr] .px-sm-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir=rtl] .pl-sm-0, [dir=rtl] .px-sm-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir] .p-sm-1 {\n    padding: 0.25rem !important;\n  }\n\n  [dir] .pt-sm-1, [dir] .py-sm-1 {\n    padding-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .pr-sm-1, [dir=ltr] .px-sm-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .pr-sm-1, [dir=rtl] .px-sm-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir] .pb-sm-1, [dir] .py-sm-1 {\n    padding-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .pl-sm-1, [dir=ltr] .px-sm-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .pl-sm-1, [dir=rtl] .px-sm-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir] .p-sm-2 {\n    padding: 0.5rem !important;\n  }\n\n  [dir] .pt-sm-2, [dir] .py-sm-2 {\n    padding-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .pr-sm-2, [dir=ltr] .px-sm-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .pr-sm-2, [dir=rtl] .px-sm-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir] .pb-sm-2, [dir] .py-sm-2 {\n    padding-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .pl-sm-2, [dir=ltr] .px-sm-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .pl-sm-2, [dir=rtl] .px-sm-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir] .p-sm-3 {\n    padding: 1rem !important;\n  }\n\n  [dir] .pt-sm-3, [dir] .py-sm-3 {\n    padding-top: 1rem !important;\n  }\n\n  [dir=ltr] .pr-sm-3, [dir=ltr] .px-sm-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir=rtl] .pr-sm-3, [dir=rtl] .px-sm-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir] .pb-sm-3, [dir] .py-sm-3 {\n    padding-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .pl-sm-3, [dir=ltr] .px-sm-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir=rtl] .pl-sm-3, [dir=rtl] .px-sm-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir] .p-sm-4 {\n    padding: 1.5rem !important;\n  }\n\n  [dir] .pt-sm-4, [dir] .py-sm-4 {\n    padding-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .pr-sm-4, [dir=ltr] .px-sm-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .pr-sm-4, [dir=rtl] .px-sm-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir] .pb-sm-4, [dir] .py-sm-4 {\n    padding-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .pl-sm-4, [dir=ltr] .px-sm-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .pl-sm-4, [dir=rtl] .px-sm-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir] .p-sm-5 {\n    padding: 3rem !important;\n  }\n\n  [dir] .pt-sm-5, [dir] .py-sm-5 {\n    padding-top: 3rem !important;\n  }\n\n  [dir=ltr] .pr-sm-5, [dir=ltr] .px-sm-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir=rtl] .pr-sm-5, [dir=rtl] .px-sm-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir] .pb-sm-5, [dir] .py-sm-5 {\n    padding-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .pl-sm-5, [dir=ltr] .px-sm-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir=rtl] .pl-sm-5, [dir=rtl] .px-sm-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir] .m-sm-n1 {\n    margin: -0.25rem !important;\n  }\n\n  [dir] .mt-sm-n1, [dir] .my-sm-n1 {\n    margin-top: -0.25rem !important;\n  }\n\n  [dir=ltr] .mr-sm-n1, [dir=ltr] .mx-sm-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir=rtl] .mr-sm-n1, [dir=rtl] .mx-sm-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir] .mb-sm-n1, [dir] .my-sm-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n\n  [dir=ltr] .ml-sm-n1, [dir=ltr] .mx-sm-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir=rtl] .ml-sm-n1, [dir=rtl] .mx-sm-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir] .m-sm-n2 {\n    margin: -0.5rem !important;\n  }\n\n  [dir] .mt-sm-n2, [dir] .my-sm-n2 {\n    margin-top: -0.5rem !important;\n  }\n\n  [dir=ltr] .mr-sm-n2, [dir=ltr] .mx-sm-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir=rtl] .mr-sm-n2, [dir=rtl] .mx-sm-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir] .mb-sm-n2, [dir] .my-sm-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n\n  [dir=ltr] .ml-sm-n2, [dir=ltr] .mx-sm-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir=rtl] .ml-sm-n2, [dir=rtl] .mx-sm-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir] .m-sm-n3 {\n    margin: -1rem !important;\n  }\n\n  [dir] .mt-sm-n3, [dir] .my-sm-n3 {\n    margin-top: -1rem !important;\n  }\n\n  [dir=ltr] .mr-sm-n3, [dir=ltr] .mx-sm-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir=rtl] .mr-sm-n3, [dir=rtl] .mx-sm-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir] .mb-sm-n3, [dir] .my-sm-n3 {\n    margin-bottom: -1rem !important;\n  }\n\n  [dir=ltr] .ml-sm-n3, [dir=ltr] .mx-sm-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir=rtl] .ml-sm-n3, [dir=rtl] .mx-sm-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir] .m-sm-n4 {\n    margin: -1.5rem !important;\n  }\n\n  [dir] .mt-sm-n4, [dir] .my-sm-n4 {\n    margin-top: -1.5rem !important;\n  }\n\n  [dir=ltr] .mr-sm-n4, [dir=ltr] .mx-sm-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir=rtl] .mr-sm-n4, [dir=rtl] .mx-sm-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir] .mb-sm-n4, [dir] .my-sm-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n\n  [dir=ltr] .ml-sm-n4, [dir=ltr] .mx-sm-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir=rtl] .ml-sm-n4, [dir=rtl] .mx-sm-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir] .m-sm-n5 {\n    margin: -3rem !important;\n  }\n\n  [dir] .mt-sm-n5, [dir] .my-sm-n5 {\n    margin-top: -3rem !important;\n  }\n\n  [dir=ltr] .mr-sm-n5, [dir=ltr] .mx-sm-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir=rtl] .mr-sm-n5, [dir=rtl] .mx-sm-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir] .mb-sm-n5, [dir] .my-sm-n5 {\n    margin-bottom: -3rem !important;\n  }\n\n  [dir=ltr] .ml-sm-n5, [dir=ltr] .mx-sm-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir=rtl] .ml-sm-n5, [dir=rtl] .mx-sm-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir] .m-sm-auto {\n    margin: auto !important;\n  }\n\n  [dir] .mt-sm-auto, [dir] .my-sm-auto {\n    margin-top: auto !important;\n  }\n\n  [dir=ltr] .mr-sm-auto, [dir=ltr] .mx-sm-auto {\n    margin-right: auto !important;\n  }\n\n  [dir=rtl] .mr-sm-auto, [dir=rtl] .mx-sm-auto {\n    margin-left: auto !important;\n  }\n\n  [dir] .mb-sm-auto, [dir] .my-sm-auto {\n    margin-bottom: auto !important;\n  }\n\n  [dir=ltr] .ml-sm-auto, [dir=ltr] .mx-sm-auto {\n    margin-left: auto !important;\n  }\n\n  [dir=rtl] .ml-sm-auto, [dir=rtl] .mx-sm-auto {\n    margin-right: auto !important;\n  }\n}\n\n@media (min-width: 768px) {\n  [dir] .m-md-0 {\n    margin: 0 !important;\n  }\n\n  [dir] .mt-md-0, [dir] .my-md-0 {\n    margin-top: 0 !important;\n  }\n\n  [dir=ltr] .mr-md-0, [dir=ltr] .mx-md-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir=rtl] .mr-md-0, [dir=rtl] .mx-md-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir] .mb-md-0, [dir] .my-md-0 {\n    margin-bottom: 0 !important;\n  }\n\n  [dir=ltr] .ml-md-0, [dir=ltr] .mx-md-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir=rtl] .ml-md-0, [dir=rtl] .mx-md-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir] .m-md-1 {\n    margin: 0.25rem !important;\n  }\n\n  [dir] .mt-md-1, [dir] .my-md-1 {\n    margin-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .mr-md-1, [dir=ltr] .mx-md-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .mr-md-1, [dir=rtl] .mx-md-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir] .mb-md-1, [dir] .my-md-1 {\n    margin-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .ml-md-1, [dir=ltr] .mx-md-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .ml-md-1, [dir=rtl] .mx-md-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir] .m-md-2 {\n    margin: 0.5rem !important;\n  }\n\n  [dir] .mt-md-2, [dir] .my-md-2 {\n    margin-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .mr-md-2, [dir=ltr] .mx-md-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .mr-md-2, [dir=rtl] .mx-md-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir] .mb-md-2, [dir] .my-md-2 {\n    margin-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .ml-md-2, [dir=ltr] .mx-md-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .ml-md-2, [dir=rtl] .mx-md-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir] .m-md-3 {\n    margin: 1rem !important;\n  }\n\n  [dir] .mt-md-3, [dir] .my-md-3 {\n    margin-top: 1rem !important;\n  }\n\n  [dir=ltr] .mr-md-3, [dir=ltr] .mx-md-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir=rtl] .mr-md-3, [dir=rtl] .mx-md-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir] .mb-md-3, [dir] .my-md-3 {\n    margin-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .ml-md-3, [dir=ltr] .mx-md-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir=rtl] .ml-md-3, [dir=rtl] .mx-md-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir] .m-md-4 {\n    margin: 1.5rem !important;\n  }\n\n  [dir] .mt-md-4, [dir] .my-md-4 {\n    margin-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .mr-md-4, [dir=ltr] .mx-md-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .mr-md-4, [dir=rtl] .mx-md-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir] .mb-md-4, [dir] .my-md-4 {\n    margin-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .ml-md-4, [dir=ltr] .mx-md-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .ml-md-4, [dir=rtl] .mx-md-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir] .m-md-5 {\n    margin: 3rem !important;\n  }\n\n  [dir] .mt-md-5, [dir] .my-md-5 {\n    margin-top: 3rem !important;\n  }\n\n  [dir=ltr] .mr-md-5, [dir=ltr] .mx-md-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir=rtl] .mr-md-5, [dir=rtl] .mx-md-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir] .mb-md-5, [dir] .my-md-5 {\n    margin-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .ml-md-5, [dir=ltr] .mx-md-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir=rtl] .ml-md-5, [dir=rtl] .mx-md-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir] .p-md-0 {\n    padding: 0 !important;\n  }\n\n  [dir] .pt-md-0, [dir] .py-md-0 {\n    padding-top: 0 !important;\n  }\n\n  [dir=ltr] .pr-md-0, [dir=ltr] .px-md-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir=rtl] .pr-md-0, [dir=rtl] .px-md-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir] .pb-md-0, [dir] .py-md-0 {\n    padding-bottom: 0 !important;\n  }\n\n  [dir=ltr] .pl-md-0, [dir=ltr] .px-md-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir=rtl] .pl-md-0, [dir=rtl] .px-md-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir] .p-md-1 {\n    padding: 0.25rem !important;\n  }\n\n  [dir] .pt-md-1, [dir] .py-md-1 {\n    padding-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .pr-md-1, [dir=ltr] .px-md-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .pr-md-1, [dir=rtl] .px-md-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir] .pb-md-1, [dir] .py-md-1 {\n    padding-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .pl-md-1, [dir=ltr] .px-md-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .pl-md-1, [dir=rtl] .px-md-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir] .p-md-2 {\n    padding: 0.5rem !important;\n  }\n\n  [dir] .pt-md-2, [dir] .py-md-2 {\n    padding-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .pr-md-2, [dir=ltr] .px-md-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .pr-md-2, [dir=rtl] .px-md-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir] .pb-md-2, [dir] .py-md-2 {\n    padding-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .pl-md-2, [dir=ltr] .px-md-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .pl-md-2, [dir=rtl] .px-md-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir] .p-md-3 {\n    padding: 1rem !important;\n  }\n\n  [dir] .pt-md-3, [dir] .py-md-3 {\n    padding-top: 1rem !important;\n  }\n\n  [dir=ltr] .pr-md-3, [dir=ltr] .px-md-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir=rtl] .pr-md-3, [dir=rtl] .px-md-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir] .pb-md-3, [dir] .py-md-3 {\n    padding-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .pl-md-3, [dir=ltr] .px-md-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir=rtl] .pl-md-3, [dir=rtl] .px-md-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir] .p-md-4 {\n    padding: 1.5rem !important;\n  }\n\n  [dir] .pt-md-4, [dir] .py-md-4 {\n    padding-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .pr-md-4, [dir=ltr] .px-md-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .pr-md-4, [dir=rtl] .px-md-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir] .pb-md-4, [dir] .py-md-4 {\n    padding-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .pl-md-4, [dir=ltr] .px-md-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .pl-md-4, [dir=rtl] .px-md-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir] .p-md-5 {\n    padding: 3rem !important;\n  }\n\n  [dir] .pt-md-5, [dir] .py-md-5 {\n    padding-top: 3rem !important;\n  }\n\n  [dir=ltr] .pr-md-5, [dir=ltr] .px-md-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir=rtl] .pr-md-5, [dir=rtl] .px-md-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir] .pb-md-5, [dir] .py-md-5 {\n    padding-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .pl-md-5, [dir=ltr] .px-md-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir=rtl] .pl-md-5, [dir=rtl] .px-md-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir] .m-md-n1 {\n    margin: -0.25rem !important;\n  }\n\n  [dir] .mt-md-n1, [dir] .my-md-n1 {\n    margin-top: -0.25rem !important;\n  }\n\n  [dir=ltr] .mr-md-n1, [dir=ltr] .mx-md-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir=rtl] .mr-md-n1, [dir=rtl] .mx-md-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir] .mb-md-n1, [dir] .my-md-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n\n  [dir=ltr] .ml-md-n1, [dir=ltr] .mx-md-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir=rtl] .ml-md-n1, [dir=rtl] .mx-md-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir] .m-md-n2 {\n    margin: -0.5rem !important;\n  }\n\n  [dir] .mt-md-n2, [dir] .my-md-n2 {\n    margin-top: -0.5rem !important;\n  }\n\n  [dir=ltr] .mr-md-n2, [dir=ltr] .mx-md-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir=rtl] .mr-md-n2, [dir=rtl] .mx-md-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir] .mb-md-n2, [dir] .my-md-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n\n  [dir=ltr] .ml-md-n2, [dir=ltr] .mx-md-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir=rtl] .ml-md-n2, [dir=rtl] .mx-md-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir] .m-md-n3 {\n    margin: -1rem !important;\n  }\n\n  [dir] .mt-md-n3, [dir] .my-md-n3 {\n    margin-top: -1rem !important;\n  }\n\n  [dir=ltr] .mr-md-n3, [dir=ltr] .mx-md-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir=rtl] .mr-md-n3, [dir=rtl] .mx-md-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir] .mb-md-n3, [dir] .my-md-n3 {\n    margin-bottom: -1rem !important;\n  }\n\n  [dir=ltr] .ml-md-n3, [dir=ltr] .mx-md-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir=rtl] .ml-md-n3, [dir=rtl] .mx-md-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir] .m-md-n4 {\n    margin: -1.5rem !important;\n  }\n\n  [dir] .mt-md-n4, [dir] .my-md-n4 {\n    margin-top: -1.5rem !important;\n  }\n\n  [dir=ltr] .mr-md-n4, [dir=ltr] .mx-md-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir=rtl] .mr-md-n4, [dir=rtl] .mx-md-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir] .mb-md-n4, [dir] .my-md-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n\n  [dir=ltr] .ml-md-n4, [dir=ltr] .mx-md-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir=rtl] .ml-md-n4, [dir=rtl] .mx-md-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir] .m-md-n5 {\n    margin: -3rem !important;\n  }\n\n  [dir] .mt-md-n5, [dir] .my-md-n5 {\n    margin-top: -3rem !important;\n  }\n\n  [dir=ltr] .mr-md-n5, [dir=ltr] .mx-md-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir=rtl] .mr-md-n5, [dir=rtl] .mx-md-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir] .mb-md-n5, [dir] .my-md-n5 {\n    margin-bottom: -3rem !important;\n  }\n\n  [dir=ltr] .ml-md-n5, [dir=ltr] .mx-md-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir=rtl] .ml-md-n5, [dir=rtl] .mx-md-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir] .m-md-auto {\n    margin: auto !important;\n  }\n\n  [dir] .mt-md-auto, [dir] .my-md-auto {\n    margin-top: auto !important;\n  }\n\n  [dir=ltr] .mr-md-auto, [dir=ltr] .mx-md-auto {\n    margin-right: auto !important;\n  }\n\n  [dir=rtl] .mr-md-auto, [dir=rtl] .mx-md-auto {\n    margin-left: auto !important;\n  }\n\n  [dir] .mb-md-auto, [dir] .my-md-auto {\n    margin-bottom: auto !important;\n  }\n\n  [dir=ltr] .ml-md-auto, [dir=ltr] .mx-md-auto {\n    margin-left: auto !important;\n  }\n\n  [dir=rtl] .ml-md-auto, [dir=rtl] .mx-md-auto {\n    margin-right: auto !important;\n  }\n}\n\n@media (min-width: 992px) {\n  [dir] .m-lg-0 {\n    margin: 0 !important;\n  }\n\n  [dir] .mt-lg-0, [dir] .my-lg-0 {\n    margin-top: 0 !important;\n  }\n\n  [dir=ltr] .mr-lg-0, [dir=ltr] .mx-lg-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir=rtl] .mr-lg-0, [dir=rtl] .mx-lg-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir] .mb-lg-0, [dir] .my-lg-0 {\n    margin-bottom: 0 !important;\n  }\n\n  [dir=ltr] .ml-lg-0, [dir=ltr] .mx-lg-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir=rtl] .ml-lg-0, [dir=rtl] .mx-lg-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir] .m-lg-1 {\n    margin: 0.25rem !important;\n  }\n\n  [dir] .mt-lg-1, [dir] .my-lg-1 {\n    margin-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .mr-lg-1, [dir=ltr] .mx-lg-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .mr-lg-1, [dir=rtl] .mx-lg-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir] .mb-lg-1, [dir] .my-lg-1 {\n    margin-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .ml-lg-1, [dir=ltr] .mx-lg-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .ml-lg-1, [dir=rtl] .mx-lg-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir] .m-lg-2 {\n    margin: 0.5rem !important;\n  }\n\n  [dir] .mt-lg-2, [dir] .my-lg-2 {\n    margin-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .mr-lg-2, [dir=ltr] .mx-lg-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .mr-lg-2, [dir=rtl] .mx-lg-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir] .mb-lg-2, [dir] .my-lg-2 {\n    margin-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .ml-lg-2, [dir=ltr] .mx-lg-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .ml-lg-2, [dir=rtl] .mx-lg-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir] .m-lg-3 {\n    margin: 1rem !important;\n  }\n\n  [dir] .mt-lg-3, [dir] .my-lg-3 {\n    margin-top: 1rem !important;\n  }\n\n  [dir=ltr] .mr-lg-3, [dir=ltr] .mx-lg-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir=rtl] .mr-lg-3, [dir=rtl] .mx-lg-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir] .mb-lg-3, [dir] .my-lg-3 {\n    margin-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .ml-lg-3, [dir=ltr] .mx-lg-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir=rtl] .ml-lg-3, [dir=rtl] .mx-lg-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir] .m-lg-4 {\n    margin: 1.5rem !important;\n  }\n\n  [dir] .mt-lg-4, [dir] .my-lg-4 {\n    margin-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .mr-lg-4, [dir=ltr] .mx-lg-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .mr-lg-4, [dir=rtl] .mx-lg-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir] .mb-lg-4, [dir] .my-lg-4 {\n    margin-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .ml-lg-4, [dir=ltr] .mx-lg-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .ml-lg-4, [dir=rtl] .mx-lg-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir] .m-lg-5 {\n    margin: 3rem !important;\n  }\n\n  [dir] .mt-lg-5, [dir] .my-lg-5 {\n    margin-top: 3rem !important;\n  }\n\n  [dir=ltr] .mr-lg-5, [dir=ltr] .mx-lg-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir=rtl] .mr-lg-5, [dir=rtl] .mx-lg-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir] .mb-lg-5, [dir] .my-lg-5 {\n    margin-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .ml-lg-5, [dir=ltr] .mx-lg-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir=rtl] .ml-lg-5, [dir=rtl] .mx-lg-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir] .p-lg-0 {\n    padding: 0 !important;\n  }\n\n  [dir] .pt-lg-0, [dir] .py-lg-0 {\n    padding-top: 0 !important;\n  }\n\n  [dir=ltr] .pr-lg-0, [dir=ltr] .px-lg-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir=rtl] .pr-lg-0, [dir=rtl] .px-lg-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir] .pb-lg-0, [dir] .py-lg-0 {\n    padding-bottom: 0 !important;\n  }\n\n  [dir=ltr] .pl-lg-0, [dir=ltr] .px-lg-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir=rtl] .pl-lg-0, [dir=rtl] .px-lg-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir] .p-lg-1 {\n    padding: 0.25rem !important;\n  }\n\n  [dir] .pt-lg-1, [dir] .py-lg-1 {\n    padding-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .pr-lg-1, [dir=ltr] .px-lg-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .pr-lg-1, [dir=rtl] .px-lg-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir] .pb-lg-1, [dir] .py-lg-1 {\n    padding-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .pl-lg-1, [dir=ltr] .px-lg-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .pl-lg-1, [dir=rtl] .px-lg-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir] .p-lg-2 {\n    padding: 0.5rem !important;\n  }\n\n  [dir] .pt-lg-2, [dir] .py-lg-2 {\n    padding-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .pr-lg-2, [dir=ltr] .px-lg-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .pr-lg-2, [dir=rtl] .px-lg-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir] .pb-lg-2, [dir] .py-lg-2 {\n    padding-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .pl-lg-2, [dir=ltr] .px-lg-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .pl-lg-2, [dir=rtl] .px-lg-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir] .p-lg-3 {\n    padding: 1rem !important;\n  }\n\n  [dir] .pt-lg-3, [dir] .py-lg-3 {\n    padding-top: 1rem !important;\n  }\n\n  [dir=ltr] .pr-lg-3, [dir=ltr] .px-lg-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir=rtl] .pr-lg-3, [dir=rtl] .px-lg-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir] .pb-lg-3, [dir] .py-lg-3 {\n    padding-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .pl-lg-3, [dir=ltr] .px-lg-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir=rtl] .pl-lg-3, [dir=rtl] .px-lg-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir] .p-lg-4 {\n    padding: 1.5rem !important;\n  }\n\n  [dir] .pt-lg-4, [dir] .py-lg-4 {\n    padding-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .pr-lg-4, [dir=ltr] .px-lg-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .pr-lg-4, [dir=rtl] .px-lg-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir] .pb-lg-4, [dir] .py-lg-4 {\n    padding-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .pl-lg-4, [dir=ltr] .px-lg-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .pl-lg-4, [dir=rtl] .px-lg-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir] .p-lg-5 {\n    padding: 3rem !important;\n  }\n\n  [dir] .pt-lg-5, [dir] .py-lg-5 {\n    padding-top: 3rem !important;\n  }\n\n  [dir=ltr] .pr-lg-5, [dir=ltr] .px-lg-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir=rtl] .pr-lg-5, [dir=rtl] .px-lg-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir] .pb-lg-5, [dir] .py-lg-5 {\n    padding-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .pl-lg-5, [dir=ltr] .px-lg-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir=rtl] .pl-lg-5, [dir=rtl] .px-lg-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir] .m-lg-n1 {\n    margin: -0.25rem !important;\n  }\n\n  [dir] .mt-lg-n1, [dir] .my-lg-n1 {\n    margin-top: -0.25rem !important;\n  }\n\n  [dir=ltr] .mr-lg-n1, [dir=ltr] .mx-lg-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir=rtl] .mr-lg-n1, [dir=rtl] .mx-lg-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir] .mb-lg-n1, [dir] .my-lg-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n\n  [dir=ltr] .ml-lg-n1, [dir=ltr] .mx-lg-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir=rtl] .ml-lg-n1, [dir=rtl] .mx-lg-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir] .m-lg-n2 {\n    margin: -0.5rem !important;\n  }\n\n  [dir] .mt-lg-n2, [dir] .my-lg-n2 {\n    margin-top: -0.5rem !important;\n  }\n\n  [dir=ltr] .mr-lg-n2, [dir=ltr] .mx-lg-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir=rtl] .mr-lg-n2, [dir=rtl] .mx-lg-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir] .mb-lg-n2, [dir] .my-lg-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n\n  [dir=ltr] .ml-lg-n2, [dir=ltr] .mx-lg-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir=rtl] .ml-lg-n2, [dir=rtl] .mx-lg-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir] .m-lg-n3 {\n    margin: -1rem !important;\n  }\n\n  [dir] .mt-lg-n3, [dir] .my-lg-n3 {\n    margin-top: -1rem !important;\n  }\n\n  [dir=ltr] .mr-lg-n3, [dir=ltr] .mx-lg-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir=rtl] .mr-lg-n3, [dir=rtl] .mx-lg-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir] .mb-lg-n3, [dir] .my-lg-n3 {\n    margin-bottom: -1rem !important;\n  }\n\n  [dir=ltr] .ml-lg-n3, [dir=ltr] .mx-lg-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir=rtl] .ml-lg-n3, [dir=rtl] .mx-lg-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir] .m-lg-n4 {\n    margin: -1.5rem !important;\n  }\n\n  [dir] .mt-lg-n4, [dir] .my-lg-n4 {\n    margin-top: -1.5rem !important;\n  }\n\n  [dir=ltr] .mr-lg-n4, [dir=ltr] .mx-lg-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir=rtl] .mr-lg-n4, [dir=rtl] .mx-lg-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir] .mb-lg-n4, [dir] .my-lg-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n\n  [dir=ltr] .ml-lg-n4, [dir=ltr] .mx-lg-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir=rtl] .ml-lg-n4, [dir=rtl] .mx-lg-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir] .m-lg-n5 {\n    margin: -3rem !important;\n  }\n\n  [dir] .mt-lg-n5, [dir] .my-lg-n5 {\n    margin-top: -3rem !important;\n  }\n\n  [dir=ltr] .mr-lg-n5, [dir=ltr] .mx-lg-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir=rtl] .mr-lg-n5, [dir=rtl] .mx-lg-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir] .mb-lg-n5, [dir] .my-lg-n5 {\n    margin-bottom: -3rem !important;\n  }\n\n  [dir=ltr] .ml-lg-n5, [dir=ltr] .mx-lg-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir=rtl] .ml-lg-n5, [dir=rtl] .mx-lg-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir] .m-lg-auto {\n    margin: auto !important;\n  }\n\n  [dir] .mt-lg-auto, [dir] .my-lg-auto {\n    margin-top: auto !important;\n  }\n\n  [dir=ltr] .mr-lg-auto, [dir=ltr] .mx-lg-auto {\n    margin-right: auto !important;\n  }\n\n  [dir=rtl] .mr-lg-auto, [dir=rtl] .mx-lg-auto {\n    margin-left: auto !important;\n  }\n\n  [dir] .mb-lg-auto, [dir] .my-lg-auto {\n    margin-bottom: auto !important;\n  }\n\n  [dir=ltr] .ml-lg-auto, [dir=ltr] .mx-lg-auto {\n    margin-left: auto !important;\n  }\n\n  [dir=rtl] .ml-lg-auto, [dir=rtl] .mx-lg-auto {\n    margin-right: auto !important;\n  }\n}\n\n@media (min-width: 1200px) {\n  [dir] .m-xl-0 {\n    margin: 0 !important;\n  }\n\n  [dir] .mt-xl-0, [dir] .my-xl-0 {\n    margin-top: 0 !important;\n  }\n\n  [dir=ltr] .mr-xl-0, [dir=ltr] .mx-xl-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir=rtl] .mr-xl-0, [dir=rtl] .mx-xl-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir] .mb-xl-0, [dir] .my-xl-0 {\n    margin-bottom: 0 !important;\n  }\n\n  [dir=ltr] .ml-xl-0, [dir=ltr] .mx-xl-0 {\n    margin-left: 0 !important;\n  }\n\n  [dir=rtl] .ml-xl-0, [dir=rtl] .mx-xl-0 {\n    margin-right: 0 !important;\n  }\n\n  [dir] .m-xl-1 {\n    margin: 0.25rem !important;\n  }\n\n  [dir] .mt-xl-1, [dir] .my-xl-1 {\n    margin-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .mr-xl-1, [dir=ltr] .mx-xl-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .mr-xl-1, [dir=rtl] .mx-xl-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir] .mb-xl-1, [dir] .my-xl-1 {\n    margin-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .ml-xl-1, [dir=ltr] .mx-xl-1 {\n    margin-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .ml-xl-1, [dir=rtl] .mx-xl-1 {\n    margin-right: 0.25rem !important;\n  }\n\n  [dir] .m-xl-2 {\n    margin: 0.5rem !important;\n  }\n\n  [dir] .mt-xl-2, [dir] .my-xl-2 {\n    margin-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .mr-xl-2, [dir=ltr] .mx-xl-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .mr-xl-2, [dir=rtl] .mx-xl-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir] .mb-xl-2, [dir] .my-xl-2 {\n    margin-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .ml-xl-2, [dir=ltr] .mx-xl-2 {\n    margin-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .ml-xl-2, [dir=rtl] .mx-xl-2 {\n    margin-right: 0.5rem !important;\n  }\n\n  [dir] .m-xl-3 {\n    margin: 1rem !important;\n  }\n\n  [dir] .mt-xl-3, [dir] .my-xl-3 {\n    margin-top: 1rem !important;\n  }\n\n  [dir=ltr] .mr-xl-3, [dir=ltr] .mx-xl-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir=rtl] .mr-xl-3, [dir=rtl] .mx-xl-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir] .mb-xl-3, [dir] .my-xl-3 {\n    margin-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .ml-xl-3, [dir=ltr] .mx-xl-3 {\n    margin-left: 1rem !important;\n  }\n\n  [dir=rtl] .ml-xl-3, [dir=rtl] .mx-xl-3 {\n    margin-right: 1rem !important;\n  }\n\n  [dir] .m-xl-4 {\n    margin: 1.5rem !important;\n  }\n\n  [dir] .mt-xl-4, [dir] .my-xl-4 {\n    margin-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .mr-xl-4, [dir=ltr] .mx-xl-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .mr-xl-4, [dir=rtl] .mx-xl-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir] .mb-xl-4, [dir] .my-xl-4 {\n    margin-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .ml-xl-4, [dir=ltr] .mx-xl-4 {\n    margin-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .ml-xl-4, [dir=rtl] .mx-xl-4 {\n    margin-right: 1.5rem !important;\n  }\n\n  [dir] .m-xl-5 {\n    margin: 3rem !important;\n  }\n\n  [dir] .mt-xl-5, [dir] .my-xl-5 {\n    margin-top: 3rem !important;\n  }\n\n  [dir=ltr] .mr-xl-5, [dir=ltr] .mx-xl-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir=rtl] .mr-xl-5, [dir=rtl] .mx-xl-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir] .mb-xl-5, [dir] .my-xl-5 {\n    margin-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .ml-xl-5, [dir=ltr] .mx-xl-5 {\n    margin-left: 3rem !important;\n  }\n\n  [dir=rtl] .ml-xl-5, [dir=rtl] .mx-xl-5 {\n    margin-right: 3rem !important;\n  }\n\n  [dir] .p-xl-0 {\n    padding: 0 !important;\n  }\n\n  [dir] .pt-xl-0, [dir] .py-xl-0 {\n    padding-top: 0 !important;\n  }\n\n  [dir=ltr] .pr-xl-0, [dir=ltr] .px-xl-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir=rtl] .pr-xl-0, [dir=rtl] .px-xl-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir] .pb-xl-0, [dir] .py-xl-0 {\n    padding-bottom: 0 !important;\n  }\n\n  [dir=ltr] .pl-xl-0, [dir=ltr] .px-xl-0 {\n    padding-left: 0 !important;\n  }\n\n  [dir=rtl] .pl-xl-0, [dir=rtl] .px-xl-0 {\n    padding-right: 0 !important;\n  }\n\n  [dir] .p-xl-1 {\n    padding: 0.25rem !important;\n  }\n\n  [dir] .pt-xl-1, [dir] .py-xl-1 {\n    padding-top: 0.25rem !important;\n  }\n\n  [dir=ltr] .pr-xl-1, [dir=ltr] .px-xl-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir=rtl] .pr-xl-1, [dir=rtl] .px-xl-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir] .pb-xl-1, [dir] .py-xl-1 {\n    padding-bottom: 0.25rem !important;\n  }\n\n  [dir=ltr] .pl-xl-1, [dir=ltr] .px-xl-1 {\n    padding-left: 0.25rem !important;\n  }\n\n  [dir=rtl] .pl-xl-1, [dir=rtl] .px-xl-1 {\n    padding-right: 0.25rem !important;\n  }\n\n  [dir] .p-xl-2 {\n    padding: 0.5rem !important;\n  }\n\n  [dir] .pt-xl-2, [dir] .py-xl-2 {\n    padding-top: 0.5rem !important;\n  }\n\n  [dir=ltr] .pr-xl-2, [dir=ltr] .px-xl-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir=rtl] .pr-xl-2, [dir=rtl] .px-xl-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir] .pb-xl-2, [dir] .py-xl-2 {\n    padding-bottom: 0.5rem !important;\n  }\n\n  [dir=ltr] .pl-xl-2, [dir=ltr] .px-xl-2 {\n    padding-left: 0.5rem !important;\n  }\n\n  [dir=rtl] .pl-xl-2, [dir=rtl] .px-xl-2 {\n    padding-right: 0.5rem !important;\n  }\n\n  [dir] .p-xl-3 {\n    padding: 1rem !important;\n  }\n\n  [dir] .pt-xl-3, [dir] .py-xl-3 {\n    padding-top: 1rem !important;\n  }\n\n  [dir=ltr] .pr-xl-3, [dir=ltr] .px-xl-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir=rtl] .pr-xl-3, [dir=rtl] .px-xl-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir] .pb-xl-3, [dir] .py-xl-3 {\n    padding-bottom: 1rem !important;\n  }\n\n  [dir=ltr] .pl-xl-3, [dir=ltr] .px-xl-3 {\n    padding-left: 1rem !important;\n  }\n\n  [dir=rtl] .pl-xl-3, [dir=rtl] .px-xl-3 {\n    padding-right: 1rem !important;\n  }\n\n  [dir] .p-xl-4 {\n    padding: 1.5rem !important;\n  }\n\n  [dir] .pt-xl-4, [dir] .py-xl-4 {\n    padding-top: 1.5rem !important;\n  }\n\n  [dir=ltr] .pr-xl-4, [dir=ltr] .px-xl-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir=rtl] .pr-xl-4, [dir=rtl] .px-xl-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir] .pb-xl-4, [dir] .py-xl-4 {\n    padding-bottom: 1.5rem !important;\n  }\n\n  [dir=ltr] .pl-xl-4, [dir=ltr] .px-xl-4 {\n    padding-left: 1.5rem !important;\n  }\n\n  [dir=rtl] .pl-xl-4, [dir=rtl] .px-xl-4 {\n    padding-right: 1.5rem !important;\n  }\n\n  [dir] .p-xl-5 {\n    padding: 3rem !important;\n  }\n\n  [dir] .pt-xl-5, [dir] .py-xl-5 {\n    padding-top: 3rem !important;\n  }\n\n  [dir=ltr] .pr-xl-5, [dir=ltr] .px-xl-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir=rtl] .pr-xl-5, [dir=rtl] .px-xl-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir] .pb-xl-5, [dir] .py-xl-5 {\n    padding-bottom: 3rem !important;\n  }\n\n  [dir=ltr] .pl-xl-5, [dir=ltr] .px-xl-5 {\n    padding-left: 3rem !important;\n  }\n\n  [dir=rtl] .pl-xl-5, [dir=rtl] .px-xl-5 {\n    padding-right: 3rem !important;\n  }\n\n  [dir] .m-xl-n1 {\n    margin: -0.25rem !important;\n  }\n\n  [dir] .mt-xl-n1, [dir] .my-xl-n1 {\n    margin-top: -0.25rem !important;\n  }\n\n  [dir=ltr] .mr-xl-n1, [dir=ltr] .mx-xl-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir=rtl] .mr-xl-n1, [dir=rtl] .mx-xl-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir] .mb-xl-n1, [dir] .my-xl-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n\n  [dir=ltr] .ml-xl-n1, [dir=ltr] .mx-xl-n1 {\n    margin-left: -0.25rem !important;\n  }\n\n  [dir=rtl] .ml-xl-n1, [dir=rtl] .mx-xl-n1 {\n    margin-right: -0.25rem !important;\n  }\n\n  [dir] .m-xl-n2 {\n    margin: -0.5rem !important;\n  }\n\n  [dir] .mt-xl-n2, [dir] .my-xl-n2 {\n    margin-top: -0.5rem !important;\n  }\n\n  [dir=ltr] .mr-xl-n2, [dir=ltr] .mx-xl-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir=rtl] .mr-xl-n2, [dir=rtl] .mx-xl-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir] .mb-xl-n2, [dir] .my-xl-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n\n  [dir=ltr] .ml-xl-n2, [dir=ltr] .mx-xl-n2 {\n    margin-left: -0.5rem !important;\n  }\n\n  [dir=rtl] .ml-xl-n2, [dir=rtl] .mx-xl-n2 {\n    margin-right: -0.5rem !important;\n  }\n\n  [dir] .m-xl-n3 {\n    margin: -1rem !important;\n  }\n\n  [dir] .mt-xl-n3, [dir] .my-xl-n3 {\n    margin-top: -1rem !important;\n  }\n\n  [dir=ltr] .mr-xl-n3, [dir=ltr] .mx-xl-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir=rtl] .mr-xl-n3, [dir=rtl] .mx-xl-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir] .mb-xl-n3, [dir] .my-xl-n3 {\n    margin-bottom: -1rem !important;\n  }\n\n  [dir=ltr] .ml-xl-n3, [dir=ltr] .mx-xl-n3 {\n    margin-left: -1rem !important;\n  }\n\n  [dir=rtl] .ml-xl-n3, [dir=rtl] .mx-xl-n3 {\n    margin-right: -1rem !important;\n  }\n\n  [dir] .m-xl-n4 {\n    margin: -1.5rem !important;\n  }\n\n  [dir] .mt-xl-n4, [dir] .my-xl-n4 {\n    margin-top: -1.5rem !important;\n  }\n\n  [dir=ltr] .mr-xl-n4, [dir=ltr] .mx-xl-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir=rtl] .mr-xl-n4, [dir=rtl] .mx-xl-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir] .mb-xl-n4, [dir] .my-xl-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n\n  [dir=ltr] .ml-xl-n4, [dir=ltr] .mx-xl-n4 {\n    margin-left: -1.5rem !important;\n  }\n\n  [dir=rtl] .ml-xl-n4, [dir=rtl] .mx-xl-n4 {\n    margin-right: -1.5rem !important;\n  }\n\n  [dir] .m-xl-n5 {\n    margin: -3rem !important;\n  }\n\n  [dir] .mt-xl-n5, [dir] .my-xl-n5 {\n    margin-top: -3rem !important;\n  }\n\n  [dir=ltr] .mr-xl-n5, [dir=ltr] .mx-xl-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir=rtl] .mr-xl-n5, [dir=rtl] .mx-xl-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir] .mb-xl-n5, [dir] .my-xl-n5 {\n    margin-bottom: -3rem !important;\n  }\n\n  [dir=ltr] .ml-xl-n5, [dir=ltr] .mx-xl-n5 {\n    margin-left: -3rem !important;\n  }\n\n  [dir=rtl] .ml-xl-n5, [dir=rtl] .mx-xl-n5 {\n    margin-right: -3rem !important;\n  }\n\n  [dir] .m-xl-auto {\n    margin: auto !important;\n  }\n\n  [dir] .mt-xl-auto, [dir] .my-xl-auto {\n    margin-top: auto !important;\n  }\n\n  [dir=ltr] .mr-xl-auto, [dir=ltr] .mx-xl-auto {\n    margin-right: auto !important;\n  }\n\n  [dir=rtl] .mr-xl-auto, [dir=rtl] .mx-xl-auto {\n    margin-left: auto !important;\n  }\n\n  [dir] .mb-xl-auto, [dir] .my-xl-auto {\n    margin-bottom: auto !important;\n  }\n\n  [dir=ltr] .ml-xl-auto, [dir=ltr] .mx-xl-auto {\n    margin-left: auto !important;\n  }\n\n  [dir=rtl] .ml-xl-auto, [dir=rtl] .mx-xl-auto {\n    margin-right: auto !important;\n  }\n}\n\n.text-monospace {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace !important;\n}\n\n[dir] .text-justify {\n  text-align: justify !important;\n}\n\n.text-wrap {\n  white-space: normal !important;\n}\n\n.text-nowrap {\n  white-space: nowrap !important;\n}\n\n.text-truncate {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n[dir=ltr] .text-left {\n  text-align: left !important;\n}\n\n[dir=rtl] .text-left {\n  text-align: right !important;\n}\n\n[dir=ltr] .text-right {\n  text-align: right !important;\n}\n\n[dir=rtl] .text-right {\n  text-align: left !important;\n}\n\n[dir] .text-center {\n  text-align: center !important;\n}\n\n@media (min-width: 576px) {\n  [dir=ltr] .text-sm-left {\n    text-align: left !important;\n  }\n  [dir=rtl] .text-sm-left {\n    text-align: right !important;\n  }\n\n  [dir=ltr] .text-sm-right {\n    text-align: right !important;\n  }\n\n  [dir=rtl] .text-sm-right {\n    text-align: left !important;\n  }\n\n  [dir] .text-sm-center {\n    text-align: center !important;\n  }\n}\n\n@media (min-width: 768px) {\n  [dir=ltr] .text-md-left {\n    text-align: left !important;\n  }\n  [dir=rtl] .text-md-left {\n    text-align: right !important;\n  }\n\n  [dir=ltr] .text-md-right {\n    text-align: right !important;\n  }\n\n  [dir=rtl] .text-md-right {\n    text-align: left !important;\n  }\n\n  [dir] .text-md-center {\n    text-align: center !important;\n  }\n}\n\n@media (min-width: 992px) {\n  [dir=ltr] .text-lg-left {\n    text-align: left !important;\n  }\n  [dir=rtl] .text-lg-left {\n    text-align: right !important;\n  }\n\n  [dir=ltr] .text-lg-right {\n    text-align: right !important;\n  }\n\n  [dir=rtl] .text-lg-right {\n    text-align: left !important;\n  }\n\n  [dir] .text-lg-center {\n    text-align: center !important;\n  }\n}\n\n@media (min-width: 1200px) {\n  [dir=ltr] .text-xl-left {\n    text-align: left !important;\n  }\n  [dir=rtl] .text-xl-left {\n    text-align: right !important;\n  }\n\n  [dir=ltr] .text-xl-right {\n    text-align: right !important;\n  }\n\n  [dir=rtl] .text-xl-right {\n    text-align: left !important;\n  }\n\n  [dir] .text-xl-center {\n    text-align: center !important;\n  }\n}\n\n.text-lowercase {\n  text-transform: lowercase !important;\n}\n\n.text-uppercase {\n  text-transform: uppercase !important;\n}\n\n.text-capitalize {\n  text-transform: capitalize !important;\n}\n\n.font-weight-light {\n  font-weight: 300 !important;\n}\n\n.font-weight-lighter {\n  font-weight: lighter !important;\n}\n\n.font-weight-normal {\n  font-weight: 400 !important;\n}\n\n.font-weight-bold {\n  font-weight: 700 !important;\n}\n\n.font-weight-bolder {\n  font-weight: bolder !important;\n}\n\n.font-italic {\n  font-style: italic !important;\n}\n\n.text-white {\n  color: #fff !important;\n}\n\n.text-primary {\n  color: #007bff !important;\n}\n\na.text-primary:hover, a.text-primary:focus {\n  color: #0056b3 !important;\n}\n\n.text-secondary {\n  color: #6c757d !important;\n}\n\na.text-secondary:hover, a.text-secondary:focus {\n  color: #494f54 !important;\n}\n\n.text-success {\n  color: #28a745 !important;\n}\n\na.text-success:hover, a.text-success:focus {\n  color: #19692c !important;\n}\n\n.text-info {\n  color: #17a2b8 !important;\n}\n\na.text-info:hover, a.text-info:focus {\n  color: #0f6674 !important;\n}\n\n.text-warning {\n  color: #ffc107 !important;\n}\n\na.text-warning:hover, a.text-warning:focus {\n  color: #ba8b00 !important;\n}\n\n.text-danger {\n  color: #dc3545 !important;\n}\n\na.text-danger:hover, a.text-danger:focus {\n  color: #a71d2a !important;\n}\n\n.text-light {\n  color: #f8f9fa !important;\n}\n\na.text-light:hover, a.text-light:focus {\n  color: #cbd3da !important;\n}\n\n.text-dark {\n  color: #343a40 !important;\n}\n\na.text-dark:hover, a.text-dark:focus {\n  color: #121416 !important;\n}\n\n.text-body {\n  color: #212529 !important;\n}\n\n.text-muted {\n  color: #6c757d !important;\n}\n\n.text-black-50 {\n  color: rgba(0, 0, 0, 0.5) !important;\n}\n\n.text-white-50 {\n  color: rgba(255, 255, 255, 0.5) !important;\n}\n\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n}\n\n[dir] .text-hide {\n  text-shadow: none;\n  background-color: transparent;\n  border: 0;\n}\n\n.text-decoration-none {\n  text-decoration: none !important;\n}\n\n.text-break {\n  word-break: break-word !important;\n  overflow-wrap: break-word !important;\n}\n\n.text-reset {\n  color: inherit !important;\n}\n\n.visible {\n  visibility: visible !important;\n}\n\n.invisible {\n  visibility: hidden !important;\n}\n\n@media print {\n  [dir] *, [dir] *::before, [dir] *::after {\n    text-shadow: none !important;\n    box-shadow: none !important;\n  }\n\n  a:not(.btn) {\n    text-decoration: underline;\n  }\n\n  abbr[title]::after {\n    content: \" (\" attr(title) \")\";\n  }\n\n  pre {\n    white-space: pre-wrap !important;\n  }\n\n  pre,\n  blockquote {\n    page-break-inside: avoid;\n  }\n\n  [dir] pre, [dir] blockquote {\n    border: 1px solid #adb5bd;\n  }\n\n  thead {\n    display: table-header-group;\n  }\n\n  tr,\n  img {\n    page-break-inside: avoid;\n  }\n\n  p,\n  h2,\n  h3 {\n    orphans: 3;\n    widows: 3;\n  }\n\n  h2,\n  h3 {\n    page-break-after: avoid;\n  }\n\n  @page {\n    size: a3;\n  }\n\n  body {\n    min-width: 992px !important;\n  }\n\n  .container {\n    min-width: 992px !important;\n  }\n\n  .navbar {\n    display: none;\n  }\n\n  [dir] .badge {\n    border: 1px solid #000;\n  }\n\n  .table {\n    border-collapse: collapse !important;\n  }\n\n  [dir] .table td, [dir] .table th {\n    background-color: #fff !important;\n  }\n\n  [dir] .table-bordered th, [dir] .table-bordered td {\n    border: 1px solid #dee2e6 !important;\n  }\n\n  .table-dark {\n    color: inherit;\n  }\n\n  [dir] .table-dark th, [dir] .table-dark td, [dir] .table-dark thead th, [dir] .table-dark tbody + tbody {\n    border-color: #dee2e6;\n  }\n\n  .table .thead-dark th {\n    color: inherit;\n  }\n\n  [dir] .table .thead-dark th {\n    border-color: #dee2e6;\n  }\n}", ""]);
 
 // exports
 
@@ -17735,7 +14472,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "@font-face {\n  font-family: \"feather\";\n\n  src: url(" + escape(__webpack_require__(/*! ../fonts/feather.eot?t=1525787366991 */ "./resources/assets/fonts/feather.eot?t=1525787366991")) + "); /* IE9 */\n\n  src: url(" + escape(__webpack_require__(/*! ../fonts/feather.eot?t=1525787366991 */ "./resources/assets/fonts/feather.eot?t=1525787366991")) + "#iefix) format('embedded-opentype'), \n  url(" + escape(__webpack_require__(/*! ../fonts/feather.woff?t=1525787366991 */ "./resources/assets/fonts/feather.woff?t=1525787366991")) + ") format('woff'), \n  url(" + escape(__webpack_require__(/*! ../fonts/feather.ttf?t=1525787366991 */ "./resources/assets/fonts/feather.ttf?t=1525787366991")) + ") format('truetype'), \n  url(" + escape(__webpack_require__(/*! ../fonts/feather.svg?t=1525787366991 */ "./resources/assets/fonts/feather.svg?t=1525787366991")) + "#feather) format('svg'); /* iOS 4.1- */\n}\n\n.feather {\n  /* use !important to prevent issues with browser extensions that change fonts */\n  font-family: 'feather' !important;\n  speak: none;\n  font-style: normal;\n  font-weight: normal;\n  font-variant: normal;\n  text-transform: none;\n  line-height: 1;\n  /* Better Font Rendering =========== */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.icon-alert-octagon:before { content: \"\\E81B\";\n}\n\n.icon-alert-circle:before { content: \"\\E81C\";\n}\n\n.icon-activity:before { content: \"\\E81D\";\n}\n\n.icon-alert-triangle:before { content: \"\\E81E\";\n}\n\n.icon-align-center:before { content: \"\\E81F\";\n}\n\n.icon-airplay:before { content: \"\\E820\";\n}\n\n.icon-align-justify:before { content: \"\\E821\";\n}\n\n.icon-align-left:before { content: \"\\E822\";\n}\n\n.icon-align-right:before { content: \"\\E823\";\n}\n\n.icon-arrow-down-left:before { content: \"\\E824\";\n}\n\n.icon-arrow-down-right:before { content: \"\\E825\";\n}\n\n.icon-anchor:before { content: \"\\E826\";\n}\n\n.icon-aperture:before { content: \"\\E827\";\n}\n\n.icon-arrow-left:before { content: \"\\E828\";\n}\n\n.icon-arrow-right:before { content: \"\\E829\";\n}\n\n.icon-arrow-down:before { content: \"\\E82A\";\n}\n\n.icon-arrow-up-left:before { content: \"\\E82B\";\n}\n\n.icon-arrow-up-right:before { content: \"\\E82C\";\n}\n\n.icon-arrow-up:before { content: \"\\E82D\";\n}\n\n.icon-award:before { content: \"\\E82E\";\n}\n\n.icon-bar-chart:before { content: \"\\E82F\";\n}\n\n.icon-at-sign:before { content: \"\\E830\";\n}\n\n.icon-bar-chart-2:before { content: \"\\E831\";\n}\n\n.icon-battery-charging:before { content: \"\\E832\";\n}\n\n.icon-bell-off:before { content: \"\\E833\";\n}\n\n.icon-battery:before { content: \"\\E834\";\n}\n\n.icon-bluetooth:before { content: \"\\E835\";\n}\n\n.icon-bell:before { content: \"\\E836\";\n}\n\n.icon-book:before { content: \"\\E837\";\n}\n\n.icon-briefcase:before { content: \"\\E838\";\n}\n\n.icon-camera-off:before { content: \"\\E839\";\n}\n\n.icon-calendar:before { content: \"\\E83A\";\n}\n\n.icon-bookmark:before { content: \"\\E83B\";\n}\n\n.icon-box:before { content: \"\\E83C\";\n}\n\n.icon-camera:before { content: \"\\E83D\";\n}\n\n.icon-check-circle:before { content: \"\\E83E\";\n}\n\n.icon-check:before { content: \"\\E83F\";\n}\n\n.icon-check-square:before { content: \"\\E840\";\n}\n\n.icon-cast:before { content: \"\\E841\";\n}\n\n.icon-chevron-down:before { content: \"\\E842\";\n}\n\n.icon-chevron-left:before { content: \"\\E843\";\n}\n\n.icon-chevron-right:before { content: \"\\E844\";\n}\n\n.icon-chevron-up:before { content: \"\\E845\";\n}\n\n.icon-chevrons-down:before { content: \"\\E846\";\n}\n\n.icon-chevrons-right:before { content: \"\\E847\";\n}\n\n.icon-chevrons-up:before { content: \"\\E848\";\n}\n\n.icon-chevrons-left:before { content: \"\\E849\";\n}\n\n.icon-circle:before { content: \"\\E84A\";\n}\n\n.icon-clipboard:before { content: \"\\E84B\";\n}\n\n.icon-chrome:before { content: \"\\E84C\";\n}\n\n.icon-clock:before { content: \"\\E84D\";\n}\n\n.icon-cloud-lightning:before { content: \"\\E84E\";\n}\n\n.icon-cloud-drizzle:before { content: \"\\E84F\";\n}\n\n.icon-cloud-rain:before { content: \"\\E850\";\n}\n\n.icon-cloud-off:before { content: \"\\E851\";\n}\n\n.icon-codepen:before { content: \"\\E852\";\n}\n\n.icon-cloud-snow:before { content: \"\\E853\";\n}\n\n.icon-compass:before { content: \"\\E854\";\n}\n\n.icon-copy:before { content: \"\\E855\";\n}\n\n.icon-corner-down-right:before { content: \"\\E856\";\n}\n\n.icon-corner-down-left:before { content: \"\\E857\";\n}\n\n.icon-corner-left-down:before { content: \"\\E858\";\n}\n\n.icon-corner-left-up:before { content: \"\\E859\";\n}\n\n.icon-corner-up-left:before { content: \"\\E85A\";\n}\n\n.icon-corner-up-right:before { content: \"\\E85B\";\n}\n\n.icon-corner-right-down:before { content: \"\\E85C\";\n}\n\n.icon-corner-right-up:before { content: \"\\E85D\";\n}\n\n.icon-cpu:before { content: \"\\E85E\";\n}\n\n.icon-credit-card:before { content: \"\\E85F\";\n}\n\n.icon-crosshair:before { content: \"\\E860\";\n}\n\n.icon-disc:before { content: \"\\E861\";\n}\n\n.icon-delete:before { content: \"\\E862\";\n}\n\n.icon-download-cloud:before { content: \"\\E863\";\n}\n\n.icon-download:before { content: \"\\E864\";\n}\n\n.icon-droplet:before { content: \"\\E865\";\n}\n\n.icon-edit-2:before { content: \"\\E866\";\n}\n\n.icon-edit:before { content: \"\\E867\";\n}\n\n.icon-edit-1:before { content: \"\\E868\";\n}\n\n.icon-external-link:before { content: \"\\E869\";\n}\n\n.icon-eye:before { content: \"\\E86A\";\n}\n\n.icon-feather:before { content: \"\\E86B\";\n}\n\n.icon-facebook:before { content: \"\\E86C\";\n}\n\n.icon-file-minus:before { content: \"\\E86D\";\n}\n\n.icon-eye-off:before { content: \"\\E86E\";\n}\n\n.icon-fast-forward:before { content: \"\\E86F\";\n}\n\n.icon-file-text:before { content: \"\\E870\";\n}\n\n.icon-film:before { content: \"\\E871\";\n}\n\n.icon-file:before { content: \"\\E872\";\n}\n\n.icon-file-plus:before { content: \"\\E873\";\n}\n\n.icon-folder:before { content: \"\\E874\";\n}\n\n.icon-filter:before { content: \"\\E875\";\n}\n\n.icon-flag:before { content: \"\\E876\";\n}\n\n.icon-globe:before { content: \"\\E877\";\n}\n\n.icon-grid:before { content: \"\\E878\";\n}\n\n.icon-heart:before { content: \"\\E879\";\n}\n\n.icon-home:before { content: \"\\E87A\";\n}\n\n.icon-github:before { content: \"\\E87B\";\n}\n\n.icon-image:before { content: \"\\E87C\";\n}\n\n.icon-inbox:before { content: \"\\E87D\";\n}\n\n.icon-layers:before { content: \"\\E87E\";\n}\n\n.icon-info:before { content: \"\\E87F\";\n}\n\n.icon-instagram:before { content: \"\\E880\";\n}\n\n.icon-layout:before { content: \"\\E881\";\n}\n\n.icon-link-2:before { content: \"\\E882\";\n}\n\n.icon-life-buoy:before { content: \"\\E883\";\n}\n\n.icon-link:before { content: \"\\E884\";\n}\n\n.icon-log-in:before { content: \"\\E885\";\n}\n\n.icon-list:before { content: \"\\E886\";\n}\n\n.icon-lock:before { content: \"\\E887\";\n}\n\n.icon-log-out:before { content: \"\\E888\";\n}\n\n.icon-loader:before { content: \"\\E889\";\n}\n\n.icon-mail:before { content: \"\\E88A\";\n}\n\n.icon-maximize-2:before { content: \"\\E88B\";\n}\n\n.icon-map:before { content: \"\\E88C\";\n}\n\n.icon-map-pin:before { content: \"\\E88E\";\n}\n\n.icon-menu:before { content: \"\\E88F\";\n}\n\n.icon-message-circle:before { content: \"\\E890\";\n}\n\n.icon-message-square:before { content: \"\\E891\";\n}\n\n.icon-minimize-2:before { content: \"\\E892\";\n}\n\n.icon-mic-off:before { content: \"\\E893\";\n}\n\n.icon-minus-circle:before { content: \"\\E894\";\n}\n\n.icon-mic:before { content: \"\\E895\";\n}\n\n.icon-minus-square:before { content: \"\\E896\";\n}\n\n.icon-minus:before { content: \"\\E897\";\n}\n\n.icon-moon:before { content: \"\\E898\";\n}\n\n.icon-monitor:before { content: \"\\E899\";\n}\n\n.icon-more-vertical:before { content: \"\\E89A\";\n}\n\n.icon-more-horizontal:before { content: \"\\E89B\";\n}\n\n.icon-move:before { content: \"\\E89C\";\n}\n\n.icon-music:before { content: \"\\E89D\";\n}\n\n.icon-navigation-2:before { content: \"\\E89E\";\n}\n\n.icon-navigation:before { content: \"\\E89F\";\n}\n\n.icon-octagon:before { content: \"\\E8A0\";\n}\n\n.icon-package:before { content: \"\\E8A1\";\n}\n\n.icon-pause-circle:before { content: \"\\E8A2\";\n}\n\n.icon-pause:before { content: \"\\E8A3\";\n}\n\n.icon-percent:before { content: \"\\E8A4\";\n}\n\n.icon-phone-call:before { content: \"\\E8A5\";\n}\n\n.icon-phone-forwarded:before { content: \"\\E8A6\";\n}\n\n.icon-phone-missed:before { content: \"\\E8A7\";\n}\n\n.icon-phone-off:before { content: \"\\E8A8\";\n}\n\n.icon-phone-incoming:before { content: \"\\E8A9\";\n}\n\n.icon-phone:before { content: \"\\E8AA\";\n}\n\n.icon-phone-outgoing:before { content: \"\\E8AB\";\n}\n\n.icon-pie-chart:before { content: \"\\E8AC\";\n}\n\n.icon-play-circle:before { content: \"\\E8AD\";\n}\n\n.icon-play:before { content: \"\\E8AE\";\n}\n\n.icon-plus-square:before { content: \"\\E8AF\";\n}\n\n.icon-plus-circle:before { content: \"\\E8B0\";\n}\n\n.icon-plus:before { content: \"\\E8B1\";\n}\n\n.icon-pocket:before { content: \"\\E8B2\";\n}\n\n.icon-printer:before { content: \"\\E8B3\";\n}\n\n.icon-power:before { content: \"\\E8B4\";\n}\n\n.icon-radio:before { content: \"\\E8B5\";\n}\n\n.icon-repeat:before { content: \"\\E8B6\";\n}\n\n.icon-refresh-ccw:before { content: \"\\E8B7\";\n}\n\n.icon-rewind:before { content: \"\\E8B8\";\n}\n\n.icon-rotate-ccw:before { content: \"\\E8B9\";\n}\n\n.icon-refresh-cw:before { content: \"\\E8BA\";\n}\n\n.icon-rotate-cw:before { content: \"\\E8BB\";\n}\n\n.icon-save:before { content: \"\\E8BC\";\n}\n\n.icon-search:before { content: \"\\E8BD\";\n}\n\n.icon-server:before { content: \"\\E8BE\";\n}\n\n.icon-scissors:before { content: \"\\E8BF\";\n}\n\n.icon-share-2:before { content: \"\\E8C0\";\n}\n\n.icon-share:before { content: \"\\E8C1\";\n}\n\n.icon-shield:before { content: \"\\E8C2\";\n}\n\n.icon-settings:before { content: \"\\E8C3\";\n}\n\n.icon-skip-back:before { content: \"\\E8C4\";\n}\n\n.icon-shuffle:before { content: \"\\E8C5\";\n}\n\n.icon-sidebar:before { content: \"\\E8C6\";\n}\n\n.icon-skip-forward:before { content: \"\\E8C7\";\n}\n\n.icon-slack:before { content: \"\\E8C8\";\n}\n\n.icon-slash:before { content: \"\\E8C9\";\n}\n\n.icon-smartphone:before { content: \"\\E8CA\";\n}\n\n.icon-square:before { content: \"\\E8CB\";\n}\n\n.icon-speaker:before { content: \"\\E8CC\";\n}\n\n.icon-star:before { content: \"\\E8CD\";\n}\n\n.icon-stop-circle:before { content: \"\\E8CE\";\n}\n\n.icon-sun:before { content: \"\\E8CF\";\n}\n\n.icon-sunrise:before { content: \"\\E8D0\";\n}\n\n.icon-tablet:before { content: \"\\E8D1\";\n}\n\n.icon-tag:before { content: \"\\E8D2\";\n}\n\n.icon-sunset:before { content: \"\\E8D3\";\n}\n\n.icon-target:before { content: \"\\E8D4\";\n}\n\n.icon-thermometer:before { content: \"\\E8D5\";\n}\n\n.icon-thumbs-up:before { content: \"\\E8D6\";\n}\n\n.icon-thumbs-down:before { content: \"\\E8D7\";\n}\n\n.icon-toggle-left:before { content: \"\\E8D8\";\n}\n\n.icon-toggle-right:before { content: \"\\E8D9\";\n}\n\n.icon-trash-2:before { content: \"\\E8DA\";\n}\n\n.icon-trash:before { content: \"\\E8DB\";\n}\n\n.icon-trending-up:before { content: \"\\E8DC\";\n}\n\n.icon-trending-down:before { content: \"\\E8DD\";\n}\n\n.icon-triangle:before { content: \"\\E8DE\";\n}\n\n.icon-type:before { content: \"\\E8DF\";\n}\n\n.icon-twitter:before { content: \"\\E8E0\";\n}\n\n.icon-upload:before { content: \"\\E8E1\";\n}\n\n.icon-umbrella:before { content: \"\\E8E2\";\n}\n\n.icon-upload-cloud:before { content: \"\\E8E3\";\n}\n\n.icon-unlock:before { content: \"\\E8E4\";\n}\n\n.icon-user-check:before { content: \"\\E8E5\";\n}\n\n.icon-user-minus:before { content: \"\\E8E6\";\n}\n\n.icon-user-plus:before { content: \"\\E8E7\";\n}\n\n.icon-user-x:before { content: \"\\E8E8\";\n}\n\n.icon-user:before { content: \"\\E8E9\";\n}\n\n.icon-users:before { content: \"\\E8EA\";\n}\n\n.icon-video-off:before { content: \"\\E8EB\";\n}\n\n.icon-video:before { content: \"\\E8EC\";\n}\n\n.icon-voicemail:before { content: \"\\E8ED\";\n}\n\n.icon-volume-x:before { content: \"\\E8EE\";\n}\n\n.icon-volume-2:before { content: \"\\E8EF\";\n}\n\n.icon-volume-1:before { content: \"\\E8F0\";\n}\n\n.icon-volume:before { content: \"\\E8F1\";\n}\n\n.icon-watch:before { content: \"\\E8F2\";\n}\n\n.icon-wifi:before { content: \"\\E8F3\";\n}\n\n.icon-x-square:before { content: \"\\E8F4\";\n}\n\n.icon-wind:before { content: \"\\E8F5\";\n}\n\n.icon-x:before { content: \"\\E8F6\";\n}\n\n.icon-x-circle:before { content: \"\\E8F7\";\n}\n\n.icon-zap:before { content: \"\\E8F8\";\n}\n\n.icon-zoom-in:before { content: \"\\E8F9\";\n}\n\n.icon-zoom-out:before { content: \"\\E8FA\";\n}\n\n.icon-command:before { content: \"\\E8FB\";\n}\n\n.icon-cloud:before { content: \"\\E8FC\";\n}\n\n.icon-hash:before { content: \"\\E8FD\";\n}\n\n.icon-headphones:before { content: \"\\E8FE\";\n}\n\n.icon-underline:before { content: \"\\E8FF\";\n}\n\n.icon-italic:before { content: \"\\E900\";\n}\n\n.icon-bold:before { content: \"\\E901\";\n}\n\n.icon-crop:before { content: \"\\E902\";\n}\n\n.icon-help-circle:before { content: \"\\E903\";\n}\n\n.icon-paperclip:before { content: \"\\E904\";\n}\n\n.icon-shopping-cart:before { content: \"\\E905\";\n}\n\n.icon-tv:before { content: \"\\E906\";\n}\n\n.icon-wifi-off:before { content: \"\\E907\";\n}\n\n.icon-minimize:before { content: \"\\E88D\";\n}\n\n.icon-maximize:before { content: \"\\E908\";\n}\n\n.icon-gitlab:before { content: \"\\E909\";\n}\n\n.icon-sliders:before { content: \"\\E90A\";\n}\n\n.icon-star-on:before { content: \"\\E90B\";\n}\n\n.icon-heart-on:before { content: \"\\E90C\";\n}\n\n.icon-archive:before { content: \"\\E90D\";\n}\n\n.icon-arrow-down-circle:before { content: \"\\E90E\";\n}\n\n.icon-arrow-up-circle:before { content: \"\\E90F\";\n}\n\n.icon-arrow-left-circle:before { content: \"\\E910\";\n}\n\n.icon-arrow-right-circle:before { content: \"\\E911\";\n}\n\n.icon-bar-chart-line-:before { content: \"\\E912\";\n}\n\n.icon-bar-chart-line:before { content: \"\\E913\";\n}\n\n.icon-book-open:before { content: \"\\E914\";\n}\n\n.icon-code:before { content: \"\\E915\";\n}\n\n.icon-database:before { content: \"\\E916\";\n}\n\n.icon-dollar-sign:before { content: \"\\E917\";\n}\n\n.icon-folder-plus:before { content: \"\\E918\";\n}\n\n.icon-gift:before { content: \"\\E919\";\n}\n\n.icon-folder-minus:before { content: \"\\E91A\";\n}\n\n.icon-git-commit:before { content: \"\\E91B\";\n}\n\n.icon-git-branch:before { content: \"\\E91C\";\n}\n\n.icon-git-pull-request:before { content: \"\\E91D\";\n}\n\n.icon-git-merge:before { content: \"\\E91E\";\n}\n\n.icon-linkedin:before { content: \"\\E91F\";\n}\n\n.icon-hard-drive:before { content: \"\\E920\";\n}\n\n.icon-more-vertical-:before { content: \"\\E921\";\n}\n\n.icon-more-horizontal-:before { content: \"\\E922\";\n}\n\n.icon-rss:before { content: \"\\E923\";\n}\n\n.icon-send:before { content: \"\\E924\";\n}\n\n.icon-shield-off:before { content: \"\\E925\";\n}\n\n.icon-shopping-bag:before { content: \"\\E926\";\n}\n\n.icon-terminal:before { content: \"\\E927\";\n}\n\n.icon-truck:before { content: \"\\E928\";\n}\n\n.icon-zap-off:before { content: \"\\E929\";\n}\n\n.icon-youtube:before { content: \"\\E92A\";\n}\n", ""]);
+exports.push([module.i, "@font-face {\n  font-family: \"feather\";\n\n  src: url(" + escape(__webpack_require__(/*! ../fonts/feather.eot?t=1525787366991 */ "./resources/assets/fonts/feather.eot?t=1525787366991")) + "); /* IE9 */\n\n  src: url(" + escape(__webpack_require__(/*! ../fonts/feather.eot?t=1525787366991 */ "./resources/assets/fonts/feather.eot?t=1525787366991")) + "#iefix) format('embedded-opentype'), \r\n  url(" + escape(__webpack_require__(/*! ../fonts/feather.woff?t=1525787366991 */ "./resources/assets/fonts/feather.woff?t=1525787366991")) + ") format('woff'), \r\n  url(" + escape(__webpack_require__(/*! ../fonts/feather.ttf?t=1525787366991 */ "./resources/assets/fonts/feather.ttf?t=1525787366991")) + ") format('truetype'), \r\n  url(" + escape(__webpack_require__(/*! ../fonts/feather.svg?t=1525787366991 */ "./resources/assets/fonts/feather.svg?t=1525787366991")) + "#feather) format('svg'); /* iOS 4.1- */\n}\n\n.feather {\n  /* use !important to prevent issues with browser extensions that change fonts */\n  font-family: 'feather' !important;\n  speak: none;\n  font-style: normal;\n  font-weight: normal;\n  font-variant: normal;\n  text-transform: none;\n  line-height: 1;\n  /* Better Font Rendering =========== */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n.icon-alert-octagon:before { content: \"\\E81B\";\n}\n\n.icon-alert-circle:before { content: \"\\E81C\";\n}\n\n.icon-activity:before { content: \"\\E81D\";\n}\n\n.icon-alert-triangle:before { content: \"\\E81E\";\n}\n\n.icon-align-center:before { content: \"\\E81F\";\n}\n\n.icon-airplay:before { content: \"\\E820\";\n}\n\n.icon-align-justify:before { content: \"\\E821\";\n}\n\n.icon-align-left:before { content: \"\\E822\";\n}\n\n.icon-align-right:before { content: \"\\E823\";\n}\n\n.icon-arrow-down-left:before { content: \"\\E824\";\n}\n\n.icon-arrow-down-right:before { content: \"\\E825\";\n}\n\n.icon-anchor:before { content: \"\\E826\";\n}\n\n.icon-aperture:before { content: \"\\E827\";\n}\n\n.icon-arrow-left:before { content: \"\\E828\";\n}\n\n.icon-arrow-right:before { content: \"\\E829\";\n}\n\n.icon-arrow-down:before { content: \"\\E82A\";\n}\n\n.icon-arrow-up-left:before { content: \"\\E82B\";\n}\n\n.icon-arrow-up-right:before { content: \"\\E82C\";\n}\n\n.icon-arrow-up:before { content: \"\\E82D\";\n}\n\n.icon-award:before { content: \"\\E82E\";\n}\n\n.icon-bar-chart:before { content: \"\\E82F\";\n}\n\n.icon-at-sign:before { content: \"\\E830\";\n}\n\n.icon-bar-chart-2:before { content: \"\\E831\";\n}\n\n.icon-battery-charging:before { content: \"\\E832\";\n}\n\n.icon-bell-off:before { content: \"\\E833\";\n}\n\n.icon-battery:before { content: \"\\E834\";\n}\n\n.icon-bluetooth:before { content: \"\\E835\";\n}\n\n.icon-bell:before { content: \"\\E836\";\n}\n\n.icon-book:before { content: \"\\E837\";\n}\n\n.icon-briefcase:before { content: \"\\E838\";\n}\n\n.icon-camera-off:before { content: \"\\E839\";\n}\n\n.icon-calendar:before { content: \"\\E83A\";\n}\n\n.icon-bookmark:before { content: \"\\E83B\";\n}\n\n.icon-box:before { content: \"\\E83C\";\n}\n\n.icon-camera:before { content: \"\\E83D\";\n}\n\n.icon-check-circle:before { content: \"\\E83E\";\n}\n\n.icon-check:before { content: \"\\E83F\";\n}\n\n.icon-check-square:before { content: \"\\E840\";\n}\n\n.icon-cast:before { content: \"\\E841\";\n}\n\n.icon-chevron-down:before { content: \"\\E842\";\n}\n\n.icon-chevron-left:before { content: \"\\E843\";\n}\n\n.icon-chevron-right:before { content: \"\\E844\";\n}\n\n.icon-chevron-up:before { content: \"\\E845\";\n}\n\n.icon-chevrons-down:before { content: \"\\E846\";\n}\n\n.icon-chevrons-right:before { content: \"\\E847\";\n}\n\n.icon-chevrons-up:before { content: \"\\E848\";\n}\n\n.icon-chevrons-left:before { content: \"\\E849\";\n}\n\n.icon-circle:before { content: \"\\E84A\";\n}\n\n.icon-clipboard:before { content: \"\\E84B\";\n}\n\n.icon-chrome:before { content: \"\\E84C\";\n}\n\n.icon-clock:before { content: \"\\E84D\";\n}\n\n.icon-cloud-lightning:before { content: \"\\E84E\";\n}\n\n.icon-cloud-drizzle:before { content: \"\\E84F\";\n}\n\n.icon-cloud-rain:before { content: \"\\E850\";\n}\n\n.icon-cloud-off:before { content: \"\\E851\";\n}\n\n.icon-codepen:before { content: \"\\E852\";\n}\n\n.icon-cloud-snow:before { content: \"\\E853\";\n}\n\n.icon-compass:before { content: \"\\E854\";\n}\n\n.icon-copy:before { content: \"\\E855\";\n}\n\n.icon-corner-down-right:before { content: \"\\E856\";\n}\n\n.icon-corner-down-left:before { content: \"\\E857\";\n}\n\n.icon-corner-left-down:before { content: \"\\E858\";\n}\n\n.icon-corner-left-up:before { content: \"\\E859\";\n}\n\n.icon-corner-up-left:before { content: \"\\E85A\";\n}\n\n.icon-corner-up-right:before { content: \"\\E85B\";\n}\n\n.icon-corner-right-down:before { content: \"\\E85C\";\n}\n\n.icon-corner-right-up:before { content: \"\\E85D\";\n}\n\n.icon-cpu:before { content: \"\\E85E\";\n}\n\n.icon-credit-card:before { content: \"\\E85F\";\n}\n\n.icon-crosshair:before { content: \"\\E860\";\n}\n\n.icon-disc:before { content: \"\\E861\";\n}\n\n.icon-delete:before { content: \"\\E862\";\n}\n\n.icon-download-cloud:before { content: \"\\E863\";\n}\n\n.icon-download:before { content: \"\\E864\";\n}\n\n.icon-droplet:before { content: \"\\E865\";\n}\n\n.icon-edit-2:before { content: \"\\E866\";\n}\n\n.icon-edit:before { content: \"\\E867\";\n}\n\n.icon-edit-1:before { content: \"\\E868\";\n}\n\n.icon-external-link:before { content: \"\\E869\";\n}\n\n.icon-eye:before { content: \"\\E86A\";\n}\n\n.icon-feather:before { content: \"\\E86B\";\n}\n\n.icon-facebook:before { content: \"\\E86C\";\n}\n\n.icon-file-minus:before { content: \"\\E86D\";\n}\n\n.icon-eye-off:before { content: \"\\E86E\";\n}\n\n.icon-fast-forward:before { content: \"\\E86F\";\n}\n\n.icon-file-text:before { content: \"\\E870\";\n}\n\n.icon-film:before { content: \"\\E871\";\n}\n\n.icon-file:before { content: \"\\E872\";\n}\n\n.icon-file-plus:before { content: \"\\E873\";\n}\n\n.icon-folder:before { content: \"\\E874\";\n}\n\n.icon-filter:before { content: \"\\E875\";\n}\n\n.icon-flag:before { content: \"\\E876\";\n}\n\n.icon-globe:before { content: \"\\E877\";\n}\n\n.icon-grid:before { content: \"\\E878\";\n}\n\n.icon-heart:before { content: \"\\E879\";\n}\n\n.icon-home:before { content: \"\\E87A\";\n}\n\n.icon-github:before { content: \"\\E87B\";\n}\n\n.icon-image:before { content: \"\\E87C\";\n}\n\n.icon-inbox:before { content: \"\\E87D\";\n}\n\n.icon-layers:before { content: \"\\E87E\";\n}\n\n.icon-info:before { content: \"\\E87F\";\n}\n\n.icon-instagram:before { content: \"\\E880\";\n}\n\n.icon-layout:before { content: \"\\E881\";\n}\n\n.icon-link-2:before { content: \"\\E882\";\n}\n\n.icon-life-buoy:before { content: \"\\E883\";\n}\n\n.icon-link:before { content: \"\\E884\";\n}\n\n.icon-log-in:before { content: \"\\E885\";\n}\n\n.icon-list:before { content: \"\\E886\";\n}\n\n.icon-lock:before { content: \"\\E887\";\n}\n\n.icon-log-out:before { content: \"\\E888\";\n}\n\n.icon-loader:before { content: \"\\E889\";\n}\n\n.icon-mail:before { content: \"\\E88A\";\n}\n\n.icon-maximize-2:before { content: \"\\E88B\";\n}\n\n.icon-map:before { content: \"\\E88C\";\n}\n\n.icon-map-pin:before { content: \"\\E88E\";\n}\n\n.icon-menu:before { content: \"\\E88F\";\n}\n\n.icon-message-circle:before { content: \"\\E890\";\n}\n\n.icon-message-square:before { content: \"\\E891\";\n}\n\n.icon-minimize-2:before { content: \"\\E892\";\n}\n\n.icon-mic-off:before { content: \"\\E893\";\n}\n\n.icon-minus-circle:before { content: \"\\E894\";\n}\n\n.icon-mic:before { content: \"\\E895\";\n}\n\n.icon-minus-square:before { content: \"\\E896\";\n}\n\n.icon-minus:before { content: \"\\E897\";\n}\n\n.icon-moon:before { content: \"\\E898\";\n}\n\n.icon-monitor:before { content: \"\\E899\";\n}\n\n.icon-more-vertical:before { content: \"\\E89A\";\n}\n\n.icon-more-horizontal:before { content: \"\\E89B\";\n}\n\n.icon-move:before { content: \"\\E89C\";\n}\n\n.icon-music:before { content: \"\\E89D\";\n}\n\n.icon-navigation-2:before { content: \"\\E89E\";\n}\n\n.icon-navigation:before { content: \"\\E89F\";\n}\n\n.icon-octagon:before { content: \"\\E8A0\";\n}\n\n.icon-package:before { content: \"\\E8A1\";\n}\n\n.icon-pause-circle:before { content: \"\\E8A2\";\n}\n\n.icon-pause:before { content: \"\\E8A3\";\n}\n\n.icon-percent:before { content: \"\\E8A4\";\n}\n\n.icon-phone-call:before { content: \"\\E8A5\";\n}\n\n.icon-phone-forwarded:before { content: \"\\E8A6\";\n}\n\n.icon-phone-missed:before { content: \"\\E8A7\";\n}\n\n.icon-phone-off:before { content: \"\\E8A8\";\n}\n\n.icon-phone-incoming:before { content: \"\\E8A9\";\n}\n\n.icon-phone:before { content: \"\\E8AA\";\n}\n\n.icon-phone-outgoing:before { content: \"\\E8AB\";\n}\n\n.icon-pie-chart:before { content: \"\\E8AC\";\n}\n\n.icon-play-circle:before { content: \"\\E8AD\";\n}\n\n.icon-play:before { content: \"\\E8AE\";\n}\n\n.icon-plus-square:before { content: \"\\E8AF\";\n}\n\n.icon-plus-circle:before { content: \"\\E8B0\";\n}\n\n.icon-plus:before { content: \"\\E8B1\";\n}\n\n.icon-pocket:before { content: \"\\E8B2\";\n}\n\n.icon-printer:before { content: \"\\E8B3\";\n}\n\n.icon-power:before { content: \"\\E8B4\";\n}\n\n.icon-radio:before { content: \"\\E8B5\";\n}\n\n.icon-repeat:before { content: \"\\E8B6\";\n}\n\n.icon-refresh-ccw:before { content: \"\\E8B7\";\n}\n\n.icon-rewind:before { content: \"\\E8B8\";\n}\n\n.icon-rotate-ccw:before { content: \"\\E8B9\";\n}\n\n.icon-refresh-cw:before { content: \"\\E8BA\";\n}\n\n.icon-rotate-cw:before { content: \"\\E8BB\";\n}\n\n.icon-save:before { content: \"\\E8BC\";\n}\n\n.icon-search:before { content: \"\\E8BD\";\n}\n\n.icon-server:before { content: \"\\E8BE\";\n}\n\n.icon-scissors:before { content: \"\\E8BF\";\n}\n\n.icon-share-2:before { content: \"\\E8C0\";\n}\n\n.icon-share:before { content: \"\\E8C1\";\n}\n\n.icon-shield:before { content: \"\\E8C2\";\n}\n\n.icon-settings:before { content: \"\\E8C3\";\n}\n\n.icon-skip-back:before { content: \"\\E8C4\";\n}\n\n.icon-shuffle:before { content: \"\\E8C5\";\n}\n\n.icon-sidebar:before { content: \"\\E8C6\";\n}\n\n.icon-skip-forward:before { content: \"\\E8C7\";\n}\n\n.icon-slack:before { content: \"\\E8C8\";\n}\n\n.icon-slash:before { content: \"\\E8C9\";\n}\n\n.icon-smartphone:before { content: \"\\E8CA\";\n}\n\n.icon-square:before { content: \"\\E8CB\";\n}\n\n.icon-speaker:before { content: \"\\E8CC\";\n}\n\n.icon-star:before { content: \"\\E8CD\";\n}\n\n.icon-stop-circle:before { content: \"\\E8CE\";\n}\n\n.icon-sun:before { content: \"\\E8CF\";\n}\n\n.icon-sunrise:before { content: \"\\E8D0\";\n}\n\n.icon-tablet:before { content: \"\\E8D1\";\n}\n\n.icon-tag:before { content: \"\\E8D2\";\n}\n\n.icon-sunset:before { content: \"\\E8D3\";\n}\n\n.icon-target:before { content: \"\\E8D4\";\n}\n\n.icon-thermometer:before { content: \"\\E8D5\";\n}\n\n.icon-thumbs-up:before { content: \"\\E8D6\";\n}\n\n.icon-thumbs-down:before { content: \"\\E8D7\";\n}\n\n.icon-toggle-left:before { content: \"\\E8D8\";\n}\n\n.icon-toggle-right:before { content: \"\\E8D9\";\n}\n\n.icon-trash-2:before { content: \"\\E8DA\";\n}\n\n.icon-trash:before { content: \"\\E8DB\";\n}\n\n.icon-trending-up:before { content: \"\\E8DC\";\n}\n\n.icon-trending-down:before { content: \"\\E8DD\";\n}\n\n.icon-triangle:before { content: \"\\E8DE\";\n}\n\n.icon-type:before { content: \"\\E8DF\";\n}\n\n.icon-twitter:before { content: \"\\E8E0\";\n}\n\n.icon-upload:before { content: \"\\E8E1\";\n}\n\n.icon-umbrella:before { content: \"\\E8E2\";\n}\n\n.icon-upload-cloud:before { content: \"\\E8E3\";\n}\n\n.icon-unlock:before { content: \"\\E8E4\";\n}\n\n.icon-user-check:before { content: \"\\E8E5\";\n}\n\n.icon-user-minus:before { content: \"\\E8E6\";\n}\n\n.icon-user-plus:before { content: \"\\E8E7\";\n}\n\n.icon-user-x:before { content: \"\\E8E8\";\n}\n\n.icon-user:before { content: \"\\E8E9\";\n}\n\n.icon-users:before { content: \"\\E8EA\";\n}\n\n.icon-video-off:before { content: \"\\E8EB\";\n}\n\n.icon-video:before { content: \"\\E8EC\";\n}\n\n.icon-voicemail:before { content: \"\\E8ED\";\n}\n\n.icon-volume-x:before { content: \"\\E8EE\";\n}\n\n.icon-volume-2:before { content: \"\\E8EF\";\n}\n\n.icon-volume-1:before { content: \"\\E8F0\";\n}\n\n.icon-volume:before { content: \"\\E8F1\";\n}\n\n.icon-watch:before { content: \"\\E8F2\";\n}\n\n.icon-wifi:before { content: \"\\E8F3\";\n}\n\n.icon-x-square:before { content: \"\\E8F4\";\n}\n\n.icon-wind:before { content: \"\\E8F5\";\n}\n\n.icon-x:before { content: \"\\E8F6\";\n}\n\n.icon-x-circle:before { content: \"\\E8F7\";\n}\n\n.icon-zap:before { content: \"\\E8F8\";\n}\n\n.icon-zoom-in:before { content: \"\\E8F9\";\n}\n\n.icon-zoom-out:before { content: \"\\E8FA\";\n}\n\n.icon-command:before { content: \"\\E8FB\";\n}\n\n.icon-cloud:before { content: \"\\E8FC\";\n}\n\n.icon-hash:before { content: \"\\E8FD\";\n}\n\n.icon-headphones:before { content: \"\\E8FE\";\n}\n\n.icon-underline:before { content: \"\\E8FF\";\n}\n\n.icon-italic:before { content: \"\\E900\";\n}\n\n.icon-bold:before { content: \"\\E901\";\n}\n\n.icon-crop:before { content: \"\\E902\";\n}\n\n.icon-help-circle:before { content: \"\\E903\";\n}\n\n.icon-paperclip:before { content: \"\\E904\";\n}\n\n.icon-shopping-cart:before { content: \"\\E905\";\n}\n\n.icon-tv:before { content: \"\\E906\";\n}\n\n.icon-wifi-off:before { content: \"\\E907\";\n}\n\n.icon-minimize:before { content: \"\\E88D\";\n}\n\n.icon-maximize:before { content: \"\\E908\";\n}\n\n.icon-gitlab:before { content: \"\\E909\";\n}\n\n.icon-sliders:before { content: \"\\E90A\";\n}\n\n.icon-star-on:before { content: \"\\E90B\";\n}\n\n.icon-heart-on:before { content: \"\\E90C\";\n}\n\n.icon-archive:before { content: \"\\E90D\";\n}\n\n.icon-arrow-down-circle:before { content: \"\\E90E\";\n}\n\n.icon-arrow-up-circle:before { content: \"\\E90F\";\n}\n\n.icon-arrow-left-circle:before { content: \"\\E910\";\n}\n\n.icon-arrow-right-circle:before { content: \"\\E911\";\n}\n\n.icon-bar-chart-line-:before { content: \"\\E912\";\n}\n\n.icon-bar-chart-line:before { content: \"\\E913\";\n}\n\n.icon-book-open:before { content: \"\\E914\";\n}\n\n.icon-code:before { content: \"\\E915\";\n}\n\n.icon-database:before { content: \"\\E916\";\n}\n\n.icon-dollar-sign:before { content: \"\\E917\";\n}\n\n.icon-folder-plus:before { content: \"\\E918\";\n}\n\n.icon-gift:before { content: \"\\E919\";\n}\n\n.icon-folder-minus:before { content: \"\\E91A\";\n}\n\n.icon-git-commit:before { content: \"\\E91B\";\n}\n\n.icon-git-branch:before { content: \"\\E91C\";\n}\n\n.icon-git-pull-request:before { content: \"\\E91D\";\n}\n\n.icon-git-merge:before { content: \"\\E91E\";\n}\n\n.icon-linkedin:before { content: \"\\E91F\";\n}\n\n.icon-hard-drive:before { content: \"\\E920\";\n}\n\n.icon-more-vertical-:before { content: \"\\E921\";\n}\n\n.icon-more-horizontal-:before { content: \"\\E922\";\n}\n\n.icon-rss:before { content: \"\\E923\";\n}\n\n.icon-send:before { content: \"\\E924\";\n}\n\n.icon-shield-off:before { content: \"\\E925\";\n}\n\n.icon-shopping-bag:before { content: \"\\E926\";\n}\n\n.icon-terminal:before { content: \"\\E927\";\n}\n\n.icon-truck:before { content: \"\\E928\";\n}\n\n.icon-zap-off:before { content: \"\\E929\";\n}\n\n.icon-youtube:before { content: \"\\E92A\";\n}\r\n", ""]);
 
 // exports
 
@@ -23418,10 +20155,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, dependencies, deprecated, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"_from":"elliptic@^6.0.0","_id":"elliptic@6.5.2","_inBundle":false,"_integrity":"sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"elliptic@^6.0.0","name":"elliptic","escapedName":"elliptic","rawSpec":"^6.0.0","saveSpec":null,"fetchSpec":"^6.0.0"},"_requiredBy":["/browserify-sign","/create-ecdh"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.5.2.tgz","_shasum":"05c5678d7173c049d8ca433552224a495d0e3762","_spec":"elliptic@^6.0.0","_where":"/Users/sharif/Php/viholding/node_modules/browserify-sign","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"bundleDependencies":false,"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"deprecated":false,"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^3.0.8","grunt":"^1.0.4","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^9.0.1","istanbul":"^0.4.2","jscs":"^3.0.7","jshint":"^2.10.3","mocha":"^6.2.2"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.5.2"};
+module.exports = {"_args":[["elliptic@6.5.2","I:\\school"]],"_development":true,"_from":"elliptic@6.5.2","_id":"elliptic@6.5.2","_inBundle":false,"_integrity":"sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"elliptic@6.5.2","name":"elliptic","escapedName":"elliptic","rawSpec":"6.5.2","saveSpec":null,"fetchSpec":"6.5.2"},"_requiredBy":["/browserify-sign","/create-ecdh"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.5.2.tgz","_spec":"6.5.2","_where":"I:\\school","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^3.0.8","grunt":"^1.0.4","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^9.0.1","istanbul":"^0.4.2","jscs":"^3.0.7","jshint":"^2.10.3","mocha":"^6.2.2"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.5.2"};
 
 /***/ }),
 
@@ -24194,76 +20931,6 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 }
 
 module.exports = EVP_BytesToKey
-
-
-/***/ }),
-
-/***/ "./node_modules/firebase/app/dist/index.cjs.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/firebase/app/dist/index.cjs.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var firebase = _interopDefault(__webpack_require__(/*! @firebase/app */ "./node_modules/@firebase/app/dist/index.cjs.js"));
-
-/**
- * @license
- * Copyright 2018 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-module.exports = firebase;
-//# sourceMappingURL=index.cjs.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/firebase/auth/dist/index.esm.js":
-/*!******************************************************!*\
-  !*** ./node_modules/firebase/auth/dist/index.esm.js ***!
-  \******************************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _firebase_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @firebase/auth */ "./node_modules/@firebase/auth/dist/auth.esm.js");
-
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-//# sourceMappingURL=index.esm.js.map
 
 
 /***/ }),
@@ -108925,7 +105592,7 @@ module.exports = "/fonts/feather.eot?931c9e74d0b20947054bfe6a5b74a838";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "/fonts/feather.svg?90f969db293a9077b0555139e6c9b20e";
+module.exports = "/fonts/feather.svg?0e5daf6bac4f17e400266545070b108e";
 
 /***/ }),
 
@@ -113759,33 +110426,6 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.filter('k_formatter', function (num) 
 
 /***/ }),
 
-/***/ "./resources/js/src/firebase/firebaseConfig.js":
-/*!*****************************************************!*\
-  !*** ./resources/js/src/firebase/firebaseConfig.js ***!
-  \*****************************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_0__);
-// NOTE
-// Please use your own firebase details below. For more details visit: https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/development/firebaseIntegration.html
- // Initialize Firebase
-
-var config = {
-  apiKey: "AIzaSyDFYIpJlgGZBHyjcaiIKgPAadzSofuYaCY",
-  authDomain: "vuesax-admin.firebaseapp.com",
-  databaseURL: "https://vuesax-admin.firebaseio.com",
-  projectId: "vuesax-admin",
-  storageBucket: "vuesax-admin.appspot.com",
-  messagingSenderId: "914001522995"
-};
-firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializeApp(config);
-
-/***/ }),
-
 /***/ "./resources/js/src/globalComponents.js":
 /*!**********************************************!*\
   !*** ./resources/js/src/globalComponents.js ***!
@@ -115156,31 +111796,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _App_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue */ "./resources/js/src/App.vue");
-/* harmony import */ var vuesax__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuesax */ "./node_modules/vuesax/dist/vuesax.common.js");
-/* harmony import */ var vuesax__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuesax__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _axios_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./axios.js */ "./resources/js/src/axios.js");
-/* harmony import */ var _http_requests__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./http/requests */ "./resources/js/src/http/requests/index.js");
-/* harmony import */ var _fake_db_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fake-db/index.js */ "./resources/js/src/fake-db/index.js");
-/* harmony import */ var _themeConfig_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../themeConfig.js */ "./resources/js/themeConfig.js");
-/* harmony import */ var _firebase_firebaseConfig__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/firebase/firebaseConfig */ "./resources/js/src/firebase/firebaseConfig.js");
-/* harmony import */ var _plugins_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./plugins/auth */ "./resources/js/src/plugins/auth.js");
-/* harmony import */ var _acl_acl__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./acl/acl */ "./resources/js/src/acl/acl.js");
-/* harmony import */ var _globalComponents_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./globalComponents.js */ "./resources/js/src/globalComponents.js");
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./router */ "./resources/js/src/router.js");
-/* harmony import */ var _store_store__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./store/store */ "./resources/js/src/store/store.js");
-/* harmony import */ var _i18n_i18n__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./i18n/i18n */ "./resources/js/src/i18n/i18n.js");
-/* harmony import */ var _filters_filters__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./filters/filters */ "./resources/js/src/filters/filters.js");
-/* harmony import */ var vue_clipboard2__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vue-clipboard2 */ "./node_modules/vue-clipboard2/vue-clipboard.js");
-/* harmony import */ var vue_clipboard2__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(vue_clipboard2__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var vue_tour__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vue-tour */ "./node_modules/vue-tour/dist/vue-tour.umd.js");
-/* harmony import */ var vue_tour__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(vue_tour__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
-/* harmony import */ var vue2_google_maps__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vue2-google-maps */ "./node_modules/vue2-google-maps/dist/main.js");
-/* harmony import */ var vue2_google_maps__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(vue2_google_maps__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var vue2_hammer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! vue2-hammer */ "./node_modules/vue2-hammer/index.min.js");
-/* harmony import */ var vue2_hammer__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(vue2_hammer__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! prismjs */ "./node_modules/prismjs/prism.js");
-/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(prismjs__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var bootstrap_dist_css_bootstrap_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! bootstrap/dist/css/bootstrap.css */ "./node_modules/bootstrap/dist/css/bootstrap.css");
+/* harmony import */ var bootstrap_dist_css_bootstrap_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(bootstrap_dist_css_bootstrap_css__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vuesax__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuesax */ "./node_modules/vuesax/dist/vuesax.common.js");
+/* harmony import */ var vuesax__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuesax__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _axios_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./axios.js */ "./resources/js/src/axios.js");
+/* harmony import */ var _http_requests__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./http/requests */ "./resources/js/src/http/requests/index.js");
+/* harmony import */ var _fake_db_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./fake-db/index.js */ "./resources/js/src/fake-db/index.js");
+/* harmony import */ var _themeConfig_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../themeConfig.js */ "./resources/js/themeConfig.js");
+/* harmony import */ var _acl_acl__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./acl/acl */ "./resources/js/src/acl/acl.js");
+/* harmony import */ var _globalComponents_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./globalComponents.js */ "./resources/js/src/globalComponents.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./router */ "./resources/js/src/router.js");
+/* harmony import */ var _store_store__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./store/store */ "./resources/js/src/store/store.js");
+/* harmony import */ var _i18n_i18n__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./i18n/i18n */ "./resources/js/src/i18n/i18n.js");
+/* harmony import */ var _filters_filters__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./filters/filters */ "./resources/js/src/filters/filters.js");
+/* harmony import */ var vue_clipboard2__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vue-clipboard2 */ "./node_modules/vue-clipboard2/vue-clipboard.js");
+/* harmony import */ var vue_clipboard2__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(vue_clipboard2__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var vue_tour__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vue-tour */ "./node_modules/vue-tour/dist/vue-tour.umd.js");
+/* harmony import */ var vue_tour__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(vue_tour__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
+/* harmony import */ var vue2_google_maps__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! vue2-google-maps */ "./node_modules/vue2-google-maps/dist/main.js");
+/* harmony import */ var vue2_google_maps__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(vue2_google_maps__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var vue2_hammer__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vue2-hammer */ "./node_modules/vue2-hammer/index.min.js");
+/* harmony import */ var vue2_hammer__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(vue2_hammer__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! prismjs */ "./node_modules/prismjs/prism.js");
+/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(prismjs__WEBPACK_IMPORTED_MODULE_19__);
 /*=========================================================================================
   File Name: main.js
   Description: main vue(js) file
@@ -115190,24 +111830,25 @@ __webpack_require__.r(__webpack_exports__);
   Author URL: hhttp://www.themeforest.net/user/pixinvent
 ==========================================================================================*/
 
+
  // Vuesax Component Framework
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuesax__WEBPACK_IMPORTED_MODULE_2___default.a); // axios
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuesax__WEBPACK_IMPORTED_MODULE_3___default.a); // axios
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$http = _axios_js__WEBPACK_IMPORTED_MODULE_3__["default"]; // API Calls
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$http = _axios_js__WEBPACK_IMPORTED_MODULE_4__["default"]; // API Calls
 
  // mock
 
  // Theme Configurations
 
  // Firebase
-
- // Auth0 Plugin
-
-
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(_plugins_auth__WEBPACK_IMPORTED_MODULE_8__["default"]); // ACL
+// import '@/firebase/firebaseConfig'
+// // Auth0 Plugin
+// import AuthPlugin from "./plugins/auth"
+// Vue.use(AuthPlugin);
+// ACL
 
  // Globally Registered Components
 
@@ -115222,19 +111863,19 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(_plugins_auth__WEBPACK_IMPORTED_M
  // Clipboard
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_clipboard2__WEBPACK_IMPORTED_MODULE_15___default.a); // Tour
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_clipboard2__WEBPACK_IMPORTED_MODULE_14___default.a); // Tour
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_tour__WEBPACK_IMPORTED_MODULE_16___default.a);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_tour__WEBPACK_IMPORTED_MODULE_15___default.a);
 
 __webpack_require__(/*! vue-tour/dist/vue-tour.css */ "./node_modules/vue-tour/dist/vue-tour.css"); // VeeValidate
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vee_validate__WEBPACK_IMPORTED_MODULE_17__["default"]); // Google Maps
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vee_validate__WEBPACK_IMPORTED_MODULE_16__["default"]); // Google Maps
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_18__, {
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_17__, {
   load: {
     // Add your API key here
     key: 'AIzaSyB4DDathvvwuwlwnUu7F4Sow3oU22y5T1Y',
@@ -115244,7 +111885,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue2_google_maps__WEBPACK_IMPORTE
 }); // Vuejs - Vue wrapper for hammerjs
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue2_hammer__WEBPACK_IMPORTED_MODULE_19__["VueHammer"]); // PrismJS
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue2_hammer__WEBPACK_IMPORTED_MODULE_18__["VueHammer"]); // PrismJS
 
  // import 'prismjs/themes/prism-tomorrow.css'
 // Feather font icon
@@ -115253,45 +111894,47 @@ __webpack_require__(/*! @assets/css/iconfont.css */ "./resources/assets/css/icon
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.config.productionTip = false;
 new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
-  router: _router__WEBPACK_IMPORTED_MODULE_11__["default"],
-  store: _store_store__WEBPACK_IMPORTED_MODULE_12__["default"],
-  i18n: _i18n_i18n__WEBPACK_IMPORTED_MODULE_13__["default"],
-  acl: _acl_acl__WEBPACK_IMPORTED_MODULE_9__["default"],
+  router: _router__WEBPACK_IMPORTED_MODULE_10__["default"],
+  store: _store_store__WEBPACK_IMPORTED_MODULE_11__["default"],
+  i18n: _i18n_i18n__WEBPACK_IMPORTED_MODULE_12__["default"],
+  acl: _acl_acl__WEBPACK_IMPORTED_MODULE_8__["default"],
+  el: '#app',
+  data: function data() {
+    return {
+      isMaximized: false
+    };
+  },
+  methods: {
+    toggleMaximize: function toggleMaximize() {
+      if (this.isMaximized) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) document.msExitFullscreen();
+      } else {
+        if (this.$el.requestFullScreen) {
+          this.$el.requestFullScreen();
+        } else if (this.$el.mozRequestFullScreen) {
+          this.$el.mozRequestFullScreen();
+        } else if (this.$el.webkitRequestFullScreen) {
+          this.$el.webkitRequestFullScreen(this.$el.ALLOW_KEYBOARD_INPUT);
+        }
+      }
+
+      this.isMaximized = !this.isMaximized;
+    },
+    onFullScreenChange: function onFullScreenChange() {
+      var fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+      console.log(fullscreenElement); // if in fullscreen mode fullscreenElement won't be null
+    }
+  },
   render: function render(h) {
     return h(_App_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
   }
 }).$mount('#app');
-
-/***/ }),
-
-/***/ "./resources/js/src/plugins/auth.js":
-/*!******************************************!*\
-  !*** ./resources/js/src/plugins/auth.js ***!
-  \******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _auth_authService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../auth/authService */ "./resources/js/src/auth/authService.js");
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  install: function install(Vue) {
-    Vue.prototype.$auth = _auth_authService__WEBPACK_IMPORTED_MODULE_0__["default"];
-    Vue.mixin({
-      created: function created() {
-        if (this.handleLoginEvent) {
-          _auth_authService__WEBPACK_IMPORTED_MODULE_0__["default"].addListener('loginEvent', this.handleLoginEvent);
-        }
-      },
-      destroyed: function destroyed() {
-        if (this.handleLoginEvent) {
-          _auth_authService__WEBPACK_IMPORTED_MODULE_0__["default"].removeListener('loginEvent', this.handleLoginEvent);
-        }
-      }
-    });
-  }
-});
 
 /***/ }),
 
@@ -115308,9 +111951,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _auth_authService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/auth/authService */ "./resources/js/src/auth/authService.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! firebase/auth */ "./node_modules/firebase/auth/dist/index.esm.js");
 /*=========================================================================================
   File Name: router.js
   Description: Routes for vue-router. Lazy loading is enabled.
@@ -115330,8 +111970,8 @@ __webpack_require__.r(__webpack_exports__);
 ==========================================================================================*/
 
 
-
-
+ // import firebase from 'firebase/app'
+// import 'firebase/auth'
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
@@ -115349,1757 +111989,1357 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     // =============================================================================
     path: '',
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(17), __webpack_require__.e(21)]).then(__webpack_require__.bind(null, /*! ./layouts/main/Main.vue */ "./resources/js/src/layouts/main/Main.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(5), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./layouts/main/Main.vue */ "./resources/js/src/layouts/main/Main.vue"));
     },
-    children: [{
-      path: '/student',
-      name: 'student.index',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 115).then(__webpack_require__.bind(null, /*! ./views/student/index/index.vue */ "./resources/js/src/views/student/index/index.vue"));
-      },
-      meta: {
-        rule: 'admin'
-      }
-    }, // =============================================================================
+    children: [// =============================================================================
     // Theme Routes
     // =============================================================================
     {
       path: '/',
-      redirect: '/dashboard/analytics'
+      redirect: '/dashboard'
     }, {
-      path: '/dashboard/analytics',
-      name: 'dashboard-analytics',
+      path: '/dashboard',
+      name: 'dashboard',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(3), __webpack_require__.e(73)]).then(__webpack_require__.bind(null, /*! ./views/DashboardAnalytics.vue */ "./resources/js/src/views/DashboardAnalytics.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(7)]).then(__webpack_require__.bind(null, /*! ./views/custom/dashboard */ "./resources/js/src/views/custom/dashboard.vue"));
       },
       meta: {
-        rule: 'editor'
+        rule: 'admin'
       }
     }, {
       path: '/dashboard/ecommerce',
       name: 'dashboard-ecommerce',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1), __webpack_require__.e(3), __webpack_require__.e(92)]).then(__webpack_require__.bind(null, /*! ./views/DashboardECommerce.vue */ "./resources/js/src/views/DashboardECommerce.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(9), __webpack_require__.e(4)]).then(__webpack_require__.bind(null, /*! ./views/DashboardECommerce.vue */ "./resources/js/src/views/DashboardECommerce.vue"));
       },
       meta: {
         rule: 'admin'
       }
-    }, // =============================================================================
+    }, {
+      path: '/',
+      redirect: '/dashboard'
+    }, {
+      path: '/student',
+      name: 'student.index',
+      component: function component() {
+        return Promise.all(/*! import() */[__webpack_require__.e(10), __webpack_require__.e(6)]).then(__webpack_require__.bind(null, /*! ./views/custom/student/index.vue */ "./resources/js/src/views/custom/student/index.vue"));
+      },
+      meta: {
+        rule: 'admin'
+      }
+    }, {
+      path: '/student/import',
+      name: 'student.bulk-import',
+      component: function component() {
+        return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ./views/custom/student/bulk-import.vue */ "./resources/js/src/views/custom/student/bulk-import.vue"));
+      },
+      meta: {
+        rule: 'admin'
+      }
+    } // =============================================================================
     // Application Routes
     // =============================================================================
-    {
-      path: '/apps/todo',
-      redirect: '/apps/todo/all',
-      name: 'todo'
-    }, {
-      path: '/apps/todo/:filter',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(44)]).then(__webpack_require__.bind(null, /*! ./views/apps/todo/Todo.vue */ "./resources/js/src/views/apps/todo/Todo.vue"));
-      },
-      meta: {
-        rule: 'editor',
-        parent: "todo",
-        no_scroll: true
-      }
-    }, {
-      path: '/apps/chat',
-      name: 'chat',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(42)]).then(__webpack_require__.bind(null, /*! ./views/apps/chat/Chat.vue */ "./resources/js/src/views/apps/chat/Chat.vue"));
-      },
-      meta: {
-        rule: 'editor',
-        no_scroll: true
-      }
-    }, {
-      path: '/apps/email',
-      redirect: '/apps/email/inbox',
-      name: 'email'
-    }, {
-      path: '/apps/email/:filter',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(13), __webpack_require__.e(43)]).then(__webpack_require__.bind(null, /*! ./views/apps/email/Email.vue */ "./resources/js/src/views/apps/email/Email.vue"));
-      },
-      meta: {
-        rule: 'editor',
-        parent: 'email',
-        no_scroll: true
-      }
-    }, {
-      path: '/apps/calendar/vue-simple-calendar',
-      name: 'calendar-simple-calendar',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(7), __webpack_require__.e(121), __webpack_require__.e(83)]).then(__webpack_require__.bind(null, /*! ./views/apps/calendar/SimpleCalendar.vue */ "./resources/js/src/views/apps/calendar/SimpleCalendar.vue"));
-      },
-      meta: {
-        rule: 'editor',
-        no_scroll: true
-      }
-    }, {
-      path: '/apps/eCommerce/shop',
-      name: 'ecommerce-shop',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(8), __webpack_require__.e(20), __webpack_require__.e(88)]).then(__webpack_require__.bind(null, /*! ./views/apps/eCommerce/ECommerceShop.vue */ "./resources/js/src/views/apps/eCommerce/ECommerceShop.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'eCommerce'
-        }, {
-          title: 'Shop',
-          active: true
-        }],
-        pageTitle: 'Shop',
-        rule: 'editor'
-      }
-    }, {
-      path: '/apps/eCommerce/wish-list',
-      name: 'ecommerce-wish-list',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 94).then(__webpack_require__.bind(null, /*! ./views/apps/eCommerce/ECommerceWishList.vue */ "./resources/js/src/views/apps/eCommerce/ECommerceWishList.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'eCommerce',
-          url: '/apps/eCommerce/shop'
-        }, {
-          title: 'Wish List',
-          active: true
-        }],
-        pageTitle: 'Wish List',
-        rule: 'editor'
-      }
-    }, {
-      path: '/apps/eCommerce/checkout',
-      name: 'ecommerce-checkout',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(15), __webpack_require__.e(87)]).then(__webpack_require__.bind(null, /*! ./views/apps/eCommerce/ECommerceCheckout.vue */ "./resources/js/src/views/apps/eCommerce/ECommerceCheckout.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'eCommerce',
-          url: '/apps/eCommerce/shop'
-        }, {
-          title: 'Checkout',
-          active: true
-        }],
-        pageTitle: 'Checkout',
-        rule: 'editor'
-      }
-    },
-    /*
-      Below route is for demo purpose
-      You can use this route in your app
-        {
-            path: '/apps/eCommerce/item/',
-            name: 'ecommerce-item-detail-view',
-            redirect: '/apps/eCommerce/shop',
-        }
-    */
-    {
-      path: '/apps/eCommerce/item/',
-      redirect: '/apps/eCommerce/item/5546604'
-    }, {
-      path: '/apps/eCommerce/item/:item_id',
-      name: 'ecommerce-item-detail-view',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(14), __webpack_require__.e(8), __webpack_require__.e(18), __webpack_require__.e(93)]).then(__webpack_require__.bind(null, /*! ./views/apps/eCommerce/ECommerceItemDetailView.vue */ "./resources/js/src/views/apps/eCommerce/ECommerceItemDetailView.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'eCommerce'
-        }, {
-          title: 'Shop',
-          url: {
-            name: 'ecommerce-shop'
-          }
-        }, {
-          title: 'Item Details',
-          active: true
-        }],
-        parent: "ecommerce-item-detail-view",
-        pageTitle: 'Item Details',
-        rule: 'editor'
-      }
-    }, {
-      path: '/apps/user/user-list',
-      name: 'app-user-list',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(6), __webpack_require__.e(16), __webpack_require__.e(38)]).then(__webpack_require__.bind(null, /*! @/views/apps/user/user-list/UserList.vue */ "./resources/js/src/views/apps/user/user-list/UserList.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'User'
-        }, {
-          title: 'List',
-          active: true
-        }],
-        pageTitle: 'User List',
-        rule: 'editor'
-      }
-    }, {
-      path: '/apps/user/user-view/:userId',
-      name: 'app-user-view',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 84).then(__webpack_require__.bind(null, /*! @/views/apps/user/UserView.vue */ "./resources/js/src/views/apps/user/UserView.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'User'
-        }, {
-          title: 'View',
-          active: true
-        }],
-        pageTitle: 'User View',
-        rule: 'editor'
-      }
-    }, {
-      path: '/apps/user/user-edit/:userId',
-      name: 'app-user-edit',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(4), __webpack_require__.e(59)]).then(__webpack_require__.bind(null, /*! @/views/apps/user/user-edit/UserEdit.vue */ "./resources/js/src/views/apps/user/user-edit/UserEdit.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'User'
-        }, {
-          title: 'Edit',
-          active: true
-        }],
-        pageTitle: 'User Edit',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // UI ELEMENTS
-    // =============================================================================
-    {
-      path: '/ui-elements/data-list/list-view',
-      name: 'data-list-list-view',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(9), __webpack_require__.e(97)]).then(__webpack_require__.bind(null, /*! @/views/ui-elements/data-list/list-view/DataListListView.vue */ "./resources/js/src/views/ui-elements/data-list/list-view/DataListListView.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Data List'
-        }, {
-          title: 'List View',
-          active: true
-        }],
-        pageTitle: 'List View',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/data-list/thumb-view',
-      name: 'data-list-thumb-view',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(9), __webpack_require__.e(98)]).then(__webpack_require__.bind(null, /*! @/views/ui-elements/data-list/thumb-view/DataListThumbView.vue */ "./resources/js/src/views/ui-elements/data-list/thumb-view/DataListThumbView.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Data List'
-        }, {
-          title: 'Thumb View',
-          active: true
-        }],
-        pageTitle: 'Thumb View',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/grid/vuesax',
-      name: 'grid-vuesax',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 29).then(__webpack_require__.bind(null, /*! @/views/ui-elements/grid/vuesax/GridVuesax.vue */ "./resources/js/src/views/ui-elements/grid/vuesax/GridVuesax.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Grid'
-        }, {
-          title: 'Vuesax',
-          active: true
-        }],
-        pageTitle: 'Grid',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/grid/tailwind',
-      name: 'grid-tailwind',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 41).then(__webpack_require__.bind(null, /*! @/views/ui-elements/grid/tailwind/GridTailwind.vue */ "./resources/js/src/views/ui-elements/grid/tailwind/GridTailwind.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Grid'
-        }, {
-          title: 'Tailwind',
-          active: true
-        }],
-        pageTitle: 'Tailwind Grid',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/colors',
-      name: 'colors',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 25).then(__webpack_require__.bind(null, /*! ./views/ui-elements/colors/Colors.vue */ "./resources/js/src/views/ui-elements/colors/Colors.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Colors',
-          active: true
-        }],
-        pageTitle: 'Colors',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/card/basic',
-      name: 'basic-cards',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(2), __webpack_require__.e(74)]).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardBasic.vue */ "./resources/js/src/views/ui-elements/card/CardBasic.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Card'
-        }, {
-          title: 'Basic Cards',
-          active: true
-        }],
-        pageTitle: 'Basic Cards',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/card/statistics',
-      name: 'statistics-cards',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(85)]).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardStatistics.vue */ "./resources/js/src/views/ui-elements/card/CardStatistics.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Card'
-        }, {
-          title: 'Statistics Cards',
-          active: true
-        }],
-        pageTitle: 'Statistics Card',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/card/analytics',
-      name: 'analytics-cards',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(3), __webpack_require__.e(96)]).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardAnalytics.vue */ "./resources/js/src/views/ui-elements/card/CardAnalytics.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Card'
-        }, {
-          title: 'Analytics Card',
-          active: true
-        }],
-        pageTitle: 'Analytics Card',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/card/card-actions',
-      name: 'card-actions',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 116).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardActions.vue */ "./resources/js/src/views/ui-elements/card/CardActions.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Card'
-        }, {
-          title: 'Card Actions',
-          active: true
-        }],
-        pageTitle: 'Card Actions',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/card/card-colors',
-      name: 'card-colors',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 100).then(__webpack_require__.bind(null, /*! ./views/ui-elements/card/CardColors.vue */ "./resources/js/src/views/ui-elements/card/CardColors.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Card'
-        }, {
-          title: 'Card Colors',
-          active: true
-        }],
-        pageTitle: 'Card Colors',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/table',
-      name: 'table',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 24).then(__webpack_require__.bind(null, /*! ./views/ui-elements/table/Table.vue */ "./resources/js/src/views/ui-elements/table/Table.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Table',
-          active: true
-        }],
-        pageTitle: 'Table',
-        rule: 'editor'
-      }
-    }, {
-      path: '/ui-elements/ag-grid-table',
-      name: 'ag-grid-table',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(6), __webpack_require__.e(16), __webpack_require__.e(107)]).then(__webpack_require__.bind(null, /*! ./views/ui-elements/ag-grid-table/AgGridTable.vue */ "./resources/js/src/views/ui-elements/ag-grid-table/AgGridTable.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'agGrid Table',
-          active: true
-        }],
-        pageTitle: 'agGrid Table',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // COMPONENT ROUTES
-    // =============================================================================
-    {
-      path: '/components/alert',
-      name: 'component-alert',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 55).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/alert/Alert.vue */ "./resources/js/src/views/components/vuesax/alert/Alert.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Alert',
-          active: true
-        }],
-        pageTitle: 'Alert',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/avatar',
-      name: 'component-avatar',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 63).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/avatar/Avatar.vue */ "./resources/js/src/views/components/vuesax/avatar/Avatar.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Avatar',
-          active: true
-        }],
-        pageTitle: 'Avatar',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/breadcrumb',
-      name: 'component-breadcrumb',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 58).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/breadcrumb/Breadcrumb.vue */ "./resources/js/src/views/components/vuesax/breadcrumb/Breadcrumb.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Breadcrumb',
-          active: true
-        }],
-        pageTitle: 'Breadcrumb',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/button',
-      name: 'component-button',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 26).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/button/Button.vue */ "./resources/js/src/views/components/vuesax/button/Button.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Button',
-          active: true
-        }],
-        pageTitle: 'Button',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/button-group',
-      name: 'component-button-group',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 75).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/button-group/ButtonGroup.vue */ "./resources/js/src/views/components/vuesax/button-group/ButtonGroup.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Button Group',
-          active: true
-        }],
-        pageTitle: 'Button Group',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/chip',
-      name: 'component-chip',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 45).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/chip/Chip.vue */ "./resources/js/src/views/components/vuesax/chip/Chip.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Chip',
-          active: true
-        }],
-        pageTitle: 'Chip',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/collapse',
-      name: 'component-collapse',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 64).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/collapse/Collapse.vue */ "./resources/js/src/views/components/vuesax/collapse/Collapse.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Collapse',
-          active: true
-        }],
-        pageTitle: 'Collapse',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/dialogs',
-      name: 'component-dialog',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 70).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/dialogs/Dialogs.vue */ "./resources/js/src/views/components/vuesax/dialogs/Dialogs.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Dialogs',
-          active: true
-        }],
-        pageTitle: 'Dialogs',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/divider',
-      name: 'component-divider',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 60).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/divider/Divider.vue */ "./resources/js/src/views/components/vuesax/divider/Divider.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Divider',
-          active: true
-        }],
-        pageTitle: 'Divider',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/dropdown',
-      name: 'component-drop-down',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 36).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/dropdown/Dropdown.vue */ "./resources/js/src/views/components/vuesax/dropdown/Dropdown.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Dropdown',
-          active: true
-        }],
-        pageTitle: 'Dropdown',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/list',
-      name: 'component-list',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 65).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/list/List.vue */ "./resources/js/src/views/components/vuesax/list/List.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'List',
-          active: true
-        }],
-        pageTitle: 'List',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/loading',
-      name: 'component-loading',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 46).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/loading/Loading.vue */ "./resources/js/src/views/components/vuesax/loading/Loading.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Loading',
-          active: true
-        }],
-        pageTitle: 'Loading',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/navbar',
-      name: 'component-navbar',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 50).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/navbar/Navbar.vue */ "./resources/js/src/views/components/vuesax/navbar/Navbar.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Navbar',
-          active: true
-        }],
-        pageTitle: 'Navbar',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/notifications',
-      name: 'component-notifications',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 54).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/notifications/Notifications.vue */ "./resources/js/src/views/components/vuesax/notifications/Notifications.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Notifications',
-          active: true
-        }],
-        pageTitle: 'Notifications',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/pagination',
-      name: 'component-pagination',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 40).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/pagination/Pagination.vue */ "./resources/js/src/views/components/vuesax/pagination/Pagination.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Pagination',
-          active: true
-        }],
-        pageTitle: 'Pagination',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/popup',
-      name: 'component-popup',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 61).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/popup/Popup.vue */ "./resources/js/src/views/components/vuesax/popup/Popup.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Popup',
-          active: true
-        }],
-        pageTitle: 'Popup',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/progress',
-      name: 'component-progress',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 81).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/progress/Progress.vue */ "./resources/js/src/views/components/vuesax/progress/Progress.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Progress',
-          active: true
-        }],
-        pageTitle: 'Progress',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/sidebar',
-      name: 'component-sidebar',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 28).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/sidebar/Sidebar.vue */ "./resources/js/src/views/components/vuesax/sidebar/Sidebar.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Sidebar',
-          active: true
-        }],
-        pageTitle: 'Sidebar',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/slider',
-      name: 'component-slider',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 32).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/slider/Slider.vue */ "./resources/js/src/views/components/vuesax/slider/Slider.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Slider',
-          active: true
-        }],
-        pageTitle: 'Slider',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/tabs',
-      name: 'component-tabs',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 66).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/tabs/Tabs.vue */ "./resources/js/src/views/components/vuesax/tabs/Tabs.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Tabs',
-          active: true
-        }],
-        pageTitle: 'Tabs',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/tooltip',
-      name: 'component-tooltip',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 67).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/tooltip/Tooltip.vue */ "./resources/js/src/views/components/vuesax/tooltip/Tooltip.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Tooltip',
-          active: true
-        }],
-        pageTitle: 'Tooltip',
-        rule: 'editor'
-      }
-    }, {
-      path: '/components/upload',
-      name: 'component-upload',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 71).then(__webpack_require__.bind(null, /*! @/views/components/vuesax/upload/Upload.vue */ "./resources/js/src/views/components/vuesax/upload/Upload.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Components'
-        }, {
-          title: 'Upload',
-          active: true
-        }],
-        pageTitle: 'Upload',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // FORMS
-    // =============================================================================
-    // =============================================================================
-    // FORM ELEMENTS
-    // =============================================================================
-    {
-      path: '/forms/form-elements/select',
-      name: 'form-element-select',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 27).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/select/Select.vue */ "./resources/js/src/views/forms/form-elements/select/Select.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Select',
-          active: true
-        }],
-        pageTitle: 'Select',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/switch',
-      name: 'form-element-switch',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 47).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/switch/Switch.vue */ "./resources/js/src/views/forms/form-elements/switch/Switch.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Switch',
-          active: true
-        }],
-        pageTitle: 'Switch',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/checkbox',
-      name: 'form-element-checkbox',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 33).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/checkbox/Checkbox.vue */ "./resources/js/src/views/forms/form-elements/checkbox/Checkbox.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Checkbox',
-          active: true
-        }],
-        pageTitle: 'Checkbox',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/radio',
-      name: 'form-element-radio',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 79).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/radio/Radio.vue */ "./resources/js/src/views/forms/form-elements/radio/Radio.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Radio',
-          active: true
-        }],
-        pageTitle: 'Radio',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/input',
-      name: 'form-element-input',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 34).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/input/Input.vue */ "./resources/js/src/views/forms/form-elements/input/Input.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Input',
-          active: true
-        }],
-        pageTitle: 'Input',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/number-input',
-      name: 'form-element-number-input',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 35).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/number-input/NumberInput.vue */ "./resources/js/src/views/forms/form-elements/number-input/NumberInput.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Number Input',
-          active: true
-        }],
-        pageTitle: 'Number Input',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-elements/textarea',
-      name: 'form-element-textarea',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 51).then(__webpack_require__.bind(null, /*! ./views/forms/form-elements/textarea/Textarea.vue */ "./resources/js/src/views/forms/form-elements/textarea/Textarea.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Form Elements'
-        }, {
-          title: 'Textarea',
-          active: true
-        }],
-        pageTitle: 'Textarea',
-        rule: 'editor'
-      }
-    }, // -------------------------------------------------------------------------------------------------------------------------------------------
-    {
-      path: '/forms/form-layouts',
-      name: 'forms-form-layouts',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 113).then(__webpack_require__.bind(null, /*! @/views/forms/FormLayouts.vue */ "./resources/js/src/views/forms/FormLayouts.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Forms'
-        }, {
-          title: 'Form Layouts',
-          active: true
-        }],
-        pageTitle: 'Form Layouts',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-wizard',
-      name: 'extra-component-form-wizard',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(15), __webpack_require__.e(72)]).then(__webpack_require__.bind(null, /*! @/views/forms/form-wizard/FormWizard.vue */ "./resources/js/src/views/forms/form-wizard/FormWizard.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Form Wizard',
-          active: true
-        }],
-        pageTitle: 'Form Wizard',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-validation',
-      name: 'extra-component-form-validation',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 52).then(__webpack_require__.bind(null, /*! @/views/forms/form-validation/FormValidation.vue */ "./resources/js/src/views/forms/form-validation/FormValidation.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Form Validation',
-          active: true
-        }],
-        pageTitle: 'Form Validation',
-        rule: 'editor'
-      }
-    }, {
-      path: '/forms/form-input-group',
-      name: 'extra-component-form-input-group',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 48).then(__webpack_require__.bind(null, /*! @/views/forms/form-input-group/FormInputGroup.vue */ "./resources/js/src/views/forms/form-input-group/FormInputGroup.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Form Input Group',
-          active: true
-        }],
-        pageTitle: 'Form Input Group',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // Pages Routes
-    // =============================================================================
-    {
-      path: '/pages/profile',
-      name: 'page-profile',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(49)]).then(__webpack_require__.bind(null, /*! @/views/pages/Profile.vue */ "./resources/js/src/views/pages/Profile.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'Profile',
-          active: true
-        }],
-        pageTitle: 'Profile',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/user-settings',
-      name: 'page-user-settings',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(4), __webpack_require__.e(37)]).then(__webpack_require__.bind(null, /*! @/views/pages/user-settings/UserSettings.vue */ "./resources/js/src/views/pages/user-settings/UserSettings.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'User Settings',
-          active: true
-        }],
-        pageTitle: 'Settings',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/faq',
-      name: 'page-faq',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 89).then(__webpack_require__.bind(null, /*! @/views/pages/Faq.vue */ "./resources/js/src/views/pages/Faq.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'FAQ',
-          active: true
-        }],
-        pageTitle: 'FAQ',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/knowledge-base',
-      name: 'page-knowledge-base',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 80).then(__webpack_require__.bind(null, /*! @/views/pages/KnowledgeBase.vue */ "./resources/js/src/views/pages/KnowledgeBase.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'KnowledgeBase',
-          active: true
-        }],
-        pageTitle: 'KnowledgeBase',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/knowledge-base/category',
-      name: 'page-knowledge-base-category',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 114).then(__webpack_require__.bind(null, /*! @/views/pages/KnowledgeBaseCategory.vue */ "./resources/js/src/views/pages/KnowledgeBaseCategory.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'KnowledgeBase',
-          url: '/pages/knowledge-base'
-        }, {
-          title: 'Category',
-          active: true
-        }],
-        parent: 'page-knowledge-base',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/knowledge-base/category/question',
-      name: 'page-knowledge-base-category-question',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 103).then(__webpack_require__.bind(null, /*! @/views/pages/KnowledgeBaseCategoryQuestion.vue */ "./resources/js/src/views/pages/KnowledgeBaseCategoryQuestion.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'KnowledgeBase',
-          url: '/pages/knowledge-base'
-        }, {
-          title: 'Category',
-          url: '/pages/knowledge-base/category'
-        }, {
-          title: 'Question',
-          active: true
-        }],
-        parent: 'page-knowledge-base',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/search',
-      name: 'page-search',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(2), __webpack_require__.e(76)]).then(__webpack_require__.bind(null, /*! @/views/pages/Search.vue */ "./resources/js/src/views/pages/Search.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'Search',
-          active: true
-        }],
-        pageTitle: 'Search',
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/invoice',
-      name: 'page-invoice',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 90).then(__webpack_require__.bind(null, /*! @/views/pages/Invoice.vue */ "./resources/js/src/views/pages/Invoice.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Pages'
-        }, {
-          title: 'Invoice',
-          active: true
-        }],
-        pageTitle: 'Invoice',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // CHARTS & MAPS
-    // =============================================================================
-    {
-      path: '/charts-and-maps/charts/apex-charts',
-      name: 'extra-component-charts-apex-charts',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(101)]).then(__webpack_require__.bind(null, /*! @/views/charts-and-maps/charts/apex-charts/ApexCharts.vue */ "./resources/js/src/views/charts-and-maps/charts/apex-charts/ApexCharts.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Charts & Maps'
-        }, {
-          title: 'Apex Charts',
-          active: true
-        }],
-        pageTitle: 'Apex Charts',
-        rule: 'editor'
-      }
-    }, {
-      path: '/charts-and-maps/charts/echarts',
-      name: 'extra-component-charts-echarts',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(19), __webpack_require__.e(39)]).then(__webpack_require__.bind(null, /*! @/views/charts-and-maps/charts/echarts/Echarts.vue */ "./resources/js/src/views/charts-and-maps/charts/echarts/Echarts.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Charts & Maps'
-        }, {
-          title: 'echarts',
-          active: true
-        }],
-        pageTitle: 'echarts',
-        rule: 'editor'
-      }
-    }, {
-      path: '/charts-and-maps/maps/google-map',
-      name: 'extra-component-maps-google-map',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 68).then(__webpack_require__.bind(null, /*! @/views/charts-and-maps/maps/google-map/GoogleMap.vue */ "./resources/js/src/views/charts-and-maps/maps/google-map/GoogleMap.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Charts & Maps'
-        }, {
-          title: 'Google Map',
-          active: true
-        }],
-        pageTitle: 'Google Map',
-        rule: 'editor'
-      }
-    }, // =============================================================================
-    // EXTENSIONS
-    // =============================================================================
-    {
-      path: '/extensions/select',
-      name: 'extra-component-select',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 31).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/select/Select.vue */ "./resources/js/src/views/components/extra-components/select/Select.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Select',
-          active: true
-        }],
-        pageTitle: 'Select',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/quill-editor',
-      name: 'extra-component-quill-editor',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(13), __webpack_require__.e(124), __webpack_require__.e(69)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/quill-editor/QuillEditor.vue */ "./resources/js/src/views/components/extra-components/quill-editor/QuillEditor.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Quill Editor',
-          active: true
-        }],
-        pageTitle: 'Quill Editor',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/drag-and-drop',
-      name: 'extra-component-drag-and-drop',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(17), __webpack_require__.e(53)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/drag-and-drop/DragAndDrop.vue */ "./resources/js/src/views/components/extra-components/drag-and-drop/DragAndDrop.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Drag & Drop',
-          active: true
-        }],
-        pageTitle: 'Drag & Drop',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/datepicker',
-      name: 'extra-component-datepicker',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(7), __webpack_require__.e(23)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/datepicker/Datepicker.vue */ "./resources/js/src/views/components/extra-components/datepicker/Datepicker.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Datepicker',
-          active: true
-        }],
-        pageTitle: 'Datepicker',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/datetime-picker',
-      name: 'extra-component-datetime-picker',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(4), __webpack_require__.e(120), __webpack_require__.e(30)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/datetime-picker/DatetimePicker.vue */ "./resources/js/src/views/components/extra-components/datetime-picker/DatetimePicker.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extra Components'
-        }, {
-          title: 'Datetime Picker',
-          active: true
-        }],
-        pageTitle: 'Datetime Picker',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/access-control',
-      name: 'extra-component-access-control',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 109).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/access-control/AccessControl.vue */ "./resources/js/src/views/components/extra-components/access-control/AccessControl.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Access Control',
-          active: true
-        }],
-        pageTitle: 'Access Control',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/i18n',
-      name: 'extra-component-i18n',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 108).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/I18n.vue */ "./resources/js/src/views/components/extra-components/I18n.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'I18n',
-          active: true
-        }],
-        pageTitle: 'I18n',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/carousel',
-      name: 'extra-component-carousel',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(14), __webpack_require__.e(22)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/carousel/Carousel.vue */ "./resources/js/src/views/components/extra-components/carousel/Carousel.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Carousel',
-          active: true
-        }],
-        pageTitle: 'Carousel',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/clipboard',
-      name: 'extra-component-clipboard',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 77).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/clipboard/Clipboard.vue */ "./resources/js/src/views/components/extra-components/clipboard/Clipboard.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Clipboard',
-          active: true
-        }],
-        pageTitle: 'Clipboard',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/context-menu',
-      name: 'extra-component-context-menu',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(125), __webpack_require__.e(78)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/context-menu/ContextMenu.vue */ "./resources/js/src/views/components/extra-components/context-menu/ContextMenu.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Context Menu',
-          active: true
-        }],
-        pageTitle: 'Context Menu',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/star-ratings',
-      name: 'extra-component-star-ratings',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(18), __webpack_require__.e(112)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/star-ratings/StarRatings.vue */ "./resources/js/src/views/components/extra-components/star-ratings/StarRatings.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Star Ratings',
-          active: true
-        }],
-        pageTitle: 'Star Ratings',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/autocomplete',
-      name: 'extra-component-autocomplete',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(122), __webpack_require__.e(95)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/autocomplete/Autocomplete.vue */ "./resources/js/src/views/components/extra-components/autocomplete/Autocomplete.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Autocomplete',
-          active: true
-        }],
-        pageTitle: 'Autocomplete',
-        rule: 'editor'
-      }
-    }, {
-      path: '/extensions/tree',
-      name: 'extra-component-tree',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(126), __webpack_require__.e(57)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/tree/Tree.vue */ "./resources/js/src/views/components/extra-components/tree/Tree.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Tree',
-          active: true
-        }],
-        pageTitle: 'Tree',
-        rule: 'editor'
-      }
-    }, {
-      path: '/import-export/import',
-      name: 'import-excel',
-      component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(5), __webpack_require__.e(82)]).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/import-export/Import.vue */ "./resources/js/src/views/components/extra-components/import-export/Import.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Import/Export'
-        }, {
-          title: 'Import',
-          active: true
-        }],
-        pageTitle: 'Import Excel',
-        rule: 'editor'
-      }
-    }, {
-      path: '/import-export/export',
-      name: 'export-excel',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 110).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/import-export/Export.vue */ "./resources/js/src/views/components/extra-components/import-export/Export.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Import/Export'
-        }, {
-          title: 'Export',
-          active: true
-        }],
-        pageTitle: 'Export Excel',
-        rule: 'editor'
-      }
-    }, {
-      path: '/import-export/export-selected',
-      name: 'export-excel-selected',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 111).then(__webpack_require__.bind(null, /*! @/views/components/extra-components/import-export/ExportSelected.vue */ "./resources/js/src/views/components/extra-components/import-export/ExportSelected.vue"));
-      },
-      meta: {
-        breadcrumb: [{
-          title: 'Home',
-          url: '/'
-        }, {
-          title: 'Extensions'
-        }, {
-          title: 'Import/Export'
-        }, {
-          title: 'Export Selected',
-          active: true
-        }],
-        pageTitle: 'Export Excel',
-        rule: 'editor'
-      }
-    }]
-  }, // =============================================================================
-  // FULL PAGE LAYOUTS
-  // =============================================================================
-  {
-    path: '',
-    component: function component() {
-      return __webpack_require__.e(/*! import() */ 123).then(__webpack_require__.bind(null, /*! @/layouts/full-page/FullPage.vue */ "./resources/js/src/layouts/full-page/FullPage.vue"));
-    },
-    children: [// =============================================================================
-    // PAGES
-    // =============================================================================
-    {
-      path: '/callback',
-      name: 'auth-callback',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 86).then(__webpack_require__.bind(null, /*! @/views/Callback.vue */ "./resources/js/src/views/Callback.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/login',
-      name: 'page-login',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 56).then(__webpack_require__.bind(null, /*! @/views/pages/login/Login.vue */ "./resources/js/src/views/pages/login/Login.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/register',
-      name: 'page-register',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 62).then(__webpack_require__.bind(null, /*! @/views/pages/register/Register.vue */ "./resources/js/src/views/pages/register/Register.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/forgot-password',
-      name: 'page-forgot-password',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 102).then(__webpack_require__.bind(null, /*! @/views/pages/ForgotPassword.vue */ "./resources/js/src/views/pages/ForgotPassword.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/reset-password',
-      name: 'page-reset-password',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 106).then(__webpack_require__.bind(null, /*! @/views/pages/ResetPassword.vue */ "./resources/js/src/views/pages/ResetPassword.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/lock-screen',
-      name: 'page-lock-screen',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 104).then(__webpack_require__.bind(null, /*! @/views/pages/LockScreen.vue */ "./resources/js/src/views/pages/LockScreen.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/comingsoon',
-      name: 'page-coming-soon',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 99).then(__webpack_require__.bind(null, /*! @/views/pages/ComingSoon.vue */ "./resources/js/src/views/pages/ComingSoon.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/error-404',
-      name: 'page-error-404',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 117).then(__webpack_require__.bind(null, /*! @/views/pages/Error404.vue */ "./resources/js/src/views/pages/Error404.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/error-500',
-      name: 'page-error-500',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 118).then(__webpack_require__.bind(null, /*! @/views/pages/Error500.vue */ "./resources/js/src/views/pages/Error500.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/not-authorized',
-      name: 'page-not-authorized',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 119).then(__webpack_require__.bind(null, /*! @/views/pages/NotAuthorized.vue */ "./resources/js/src/views/pages/NotAuthorized.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }, {
-      path: '/pages/maintenance',
-      name: 'page-maintenance',
-      component: function component() {
-        return __webpack_require__.e(/*! import() */ 105).then(__webpack_require__.bind(null, /*! @/views/pages/Maintenance.vue */ "./resources/js/src/views/pages/Maintenance.vue"));
-      },
-      meta: {
-        rule: 'editor'
-      }
-    }]
+    //             {
+    //                 path: '/apps/todo',
+    //                 redirect: '/apps/todo/all',
+    //                 name: 'todo',
+    //             },
+    //             {
+    //                 path: '/apps/todo/:filter',
+    //                 component: () => import('./views/apps/todo/Todo.vue'),
+    //                 meta: {
+    //                     rule: 'editor',
+    //                     parent: "todo",
+    //                     no_scroll: true,
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/chat',
+    //                 name: 'chat',
+    //                 component: () => import('./views/apps/chat/Chat.vue'),
+    //                 meta: {
+    //                     rule: 'editor',
+    //                     no_scroll: true,
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/email',
+    //                 redirect: '/apps/email/inbox',
+    //                 name: 'email',
+    //             },
+    //             {
+    //                 path: '/apps/email/:filter',
+    //                 component: () => import('./views/apps/email/Email.vue'),
+    //                 meta: {
+    //                     rule: 'editor',
+    //                     parent: 'email',
+    //                     no_scroll: true,
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/calendar/vue-simple-calendar',
+    //                 name: 'calendar-simple-calendar',
+    //                 component: () => import('./views/apps/calendar/SimpleCalendar.vue'),
+    //                 meta: {
+    //                     rule: 'editor',
+    //                     no_scroll: true,
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/eCommerce/shop',
+    //                 name: 'ecommerce-shop',
+    //                 component: () => import('./views/apps/eCommerce/ECommerceShop.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'eCommerce'},
+    //                         { title: 'Shop', active: true },
+    //                     ],
+    //                     pageTitle: 'Shop',
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/eCommerce/wish-list',
+    //                 name: 'ecommerce-wish-list',
+    //                 component: () => import('./views/apps/eCommerce/ECommerceWishList.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'eCommerce', url:'/apps/eCommerce/shop'},
+    //                         { title: 'Wish List', active: true },
+    //                     ],
+    //                     pageTitle: 'Wish List',
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/eCommerce/checkout',
+    //                 name: 'ecommerce-checkout',
+    //                 component: () => import('./views/apps/eCommerce/ECommerceCheckout.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'eCommerce', url:'/apps/eCommerce/shop'},
+    //                         { title: 'Checkout', active: true },
+    //                     ],
+    //                     pageTitle: 'Checkout',
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             /*
+    //               Below route is for demo purpose
+    //               You can use this route in your app
+    //                 {
+    //                     path: '/apps/eCommerce/item/',
+    //                     name: 'ecommerce-item-detail-view',
+    //                     redirect: '/apps/eCommerce/shop',
+    //                 }
+    //             */
+    //             {
+    //                 path: '/apps/eCommerce/item/',
+    //                 redirect: '/apps/eCommerce/item/5546604',
+    //             },
+    //             {
+    //                 path: '/apps/eCommerce/item/:item_id',
+    //                 name: 'ecommerce-item-detail-view',
+    //                 component: () => import('./views/apps/eCommerce/ECommerceItemDetailView.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'eCommerce'},
+    //                         { title: 'Shop', url: {name: 'ecommerce-shop'} },
+    //                         { title: 'Item Details', active: true },
+    //                     ],
+    //                     parent: "ecommerce-item-detail-view",
+    //                     pageTitle: 'Item Details',
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/apps/user/user-list',
+    //                 name: 'app-user-list',
+    //                 component: () => import('@/views/apps/user/user-list/UserList.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'User' },
+    //                         { title: 'List', active: true },
+    //                     ],
+    //                     pageTitle: 'User List',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/apps/user/user-view/:userId',
+    //                 name: 'app-user-view',
+    //                 component: () => import('@/views/apps/user/UserView.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'User' },
+    //                         { title: 'View', active: true },
+    //                     ],
+    //                     pageTitle: 'User View',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/apps/user/user-edit/:userId',
+    //                 name: 'app-user-edit',
+    //                 component: () => import('@/views/apps/user/user-edit/UserEdit.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'User' },
+    //                         { title: 'Edit', active: true },
+    //                     ],
+    //                     pageTitle: 'User Edit',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //     // =============================================================================
+    //     // UI ELEMENTS
+    //     // =============================================================================
+    //             {
+    //                 path: '/ui-elements/data-list/list-view',
+    //                 name: 'data-list-list-view',
+    //                 component: () => import('@/views/ui-elements/data-list/list-view/DataListListView.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Data List'},
+    //                         { title: 'List View', active: true },
+    //                     ],
+    //                     pageTitle: 'List View',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/data-list/thumb-view',
+    //                 name: 'data-list-thumb-view',
+    //                 component: () => import('@/views/ui-elements/data-list/thumb-view/DataListThumbView.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Data List'},
+    //                         { title: 'Thumb View', active: true },
+    //                     ],
+    //                     pageTitle: 'Thumb View',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/grid/vuesax',
+    //                 name: 'grid-vuesax',
+    //                 component: () => import('@/views/ui-elements/grid/vuesax/GridVuesax.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Grid'},
+    //                         { title: 'Vuesax', active: true },
+    //                     ],
+    //                     pageTitle: 'Grid',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/grid/tailwind',
+    //                 name: 'grid-tailwind',
+    //                 component: () => import('@/views/ui-elements/grid/tailwind/GridTailwind.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Grid'},
+    //                         { title: 'Tailwind', active: true },
+    //                     ],
+    //                     pageTitle: 'Tailwind Grid',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/colors',
+    //                 name: 'colors',
+    //                 component: () => import('./views/ui-elements/colors/Colors.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Colors', active: true },
+    //                     ],
+    //                     pageTitle: 'Colors',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/card/basic',
+    //                 name: 'basic-cards',
+    //                 component: () => import('./views/ui-elements/card/CardBasic.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Card' },
+    //                         { title: 'Basic Cards', active: true },
+    //                     ],
+    //                     pageTitle: 'Basic Cards',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/card/statistics',
+    //                 name: 'statistics-cards',
+    //                 component: () => import('./views/ui-elements/card/CardStatistics.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Card' },
+    //                         { title: 'Statistics Cards', active: true },
+    //                     ],
+    //                     pageTitle: 'Statistics Card',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/card/analytics',
+    //                 name: 'analytics-cards',
+    //                 component: () => import('./views/ui-elements/card/CardAnalytics.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Card' },
+    //                         { title: 'Analytics Card', active: true },
+    //                     ],
+    //                     pageTitle: 'Analytics Card',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/card/card-actions',
+    //                 name: 'card-actions',
+    //                 component: () => import('./views/ui-elements/card/CardActions.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Card' },
+    //                         { title: 'Card Actions', active: true },
+    //                     ],
+    //                     pageTitle: 'Card Actions',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/card/card-colors',
+    //                 name: 'card-colors',
+    //                 component: () => import('./views/ui-elements/card/CardColors.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Card' },
+    //                         { title: 'Card Colors', active: true },
+    //                     ],
+    //                     pageTitle: 'Card Colors',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/table',
+    //                 name: 'table',
+    //                 component: () => import('./views/ui-elements/table/Table.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Table', active: true },
+    //                     ],
+    //                     pageTitle: 'Table',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/ui-elements/ag-grid-table',
+    //                 name: 'ag-grid-table',
+    //                 component: () => import('./views/ui-elements/ag-grid-table/AgGridTable.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'agGrid Table', active: true },
+    //                     ],
+    //                     pageTitle: 'agGrid Table',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //
+    //     // =============================================================================
+    //     // COMPONENT ROUTES
+    //     // =============================================================================
+    //             {
+    //                 path: '/components/alert',
+    //                 name: 'component-alert',
+    //                 component: () => import('@/views/components/vuesax/alert/Alert.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Alert', active: true },
+    //                     ],
+    //                     pageTitle: 'Alert',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/avatar',
+    //                 name: 'component-avatar',
+    //                 component: () => import('@/views/components/vuesax/avatar/Avatar.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Avatar', active: true },
+    //                     ],
+    //                     pageTitle: 'Avatar',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/breadcrumb',
+    //                 name: 'component-breadcrumb',
+    //                 component: () => import('@/views/components/vuesax/breadcrumb/Breadcrumb.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Breadcrumb', active: true },
+    //                     ],
+    //                     pageTitle: 'Breadcrumb',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/button',
+    //                 name: 'component-button',
+    //                 component: () => import('@/views/components/vuesax/button/Button.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Button', active: true },
+    //                     ],
+    //                     pageTitle: 'Button',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/button-group',
+    //                 name: 'component-button-group',
+    //                 component: () => import('@/views/components/vuesax/button-group/ButtonGroup.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Button Group', active: true },
+    //                     ],
+    //                     pageTitle: 'Button Group',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/chip',
+    //                 name: 'component-chip',
+    //                 component: () => import('@/views/components/vuesax/chip/Chip.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Chip', active: true },
+    //                     ],
+    //                     pageTitle: 'Chip',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/collapse',
+    //                 name: 'component-collapse',
+    //                 component: () => import('@/views/components/vuesax/collapse/Collapse.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Collapse', active: true },
+    //                     ],
+    //                     pageTitle: 'Collapse',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/dialogs',
+    //                 name: 'component-dialog',
+    //                 component: () => import('@/views/components/vuesax/dialogs/Dialogs.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Dialogs', active: true },
+    //                     ],
+    //                     pageTitle: 'Dialogs',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/divider',
+    //                 name: 'component-divider',
+    //                 component: () => import('@/views/components/vuesax/divider/Divider.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Divider', active: true },
+    //                     ],
+    //                     pageTitle: 'Divider',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/dropdown',
+    //                 name: 'component-drop-down',
+    //                 component: () => import('@/views/components/vuesax/dropdown/Dropdown.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Dropdown', active: true },
+    //                     ],
+    //                     pageTitle: 'Dropdown',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/list',
+    //                 name: 'component-list',
+    //                 component: () => import('@/views/components/vuesax/list/List.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'List', active: true },
+    //                     ],
+    //                     pageTitle: 'List',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/loading',
+    //                 name: 'component-loading',
+    //                 component: () => import('@/views/components/vuesax/loading/Loading.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Loading', active: true },
+    //                     ],
+    //                     pageTitle: 'Loading',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/navbar',
+    //                 name: 'component-navbar',
+    //                 component: () => import('@/views/components/vuesax/navbar/Navbar.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Navbar', active: true },
+    //                     ],
+    //                     pageTitle: 'Navbar',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/notifications',
+    //                 name: 'component-notifications',
+    //                 component: () => import('@/views/components/vuesax/notifications/Notifications.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Notifications', active: true },
+    //                     ],
+    //                     pageTitle: 'Notifications',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/pagination',
+    //                 name: 'component-pagination',
+    //                 component: () => import('@/views/components/vuesax/pagination/Pagination.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Pagination', active: true },
+    //                     ],
+    //                     pageTitle: 'Pagination',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/popup',
+    //                 name: 'component-popup',
+    //                 component: () => import('@/views/components/vuesax/popup/Popup.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Popup', active: true },
+    //                     ],
+    //                     pageTitle: 'Popup',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/progress',
+    //                 name: 'component-progress',
+    //                 component: () => import('@/views/components/vuesax/progress/Progress.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Progress', active: true },
+    //                     ],
+    //                     pageTitle: 'Progress',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/sidebar',
+    //                 name: 'component-sidebar',
+    //                 component: () => import('@/views/components/vuesax/sidebar/Sidebar.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Sidebar', active: true },
+    //                     ],
+    //                     pageTitle: 'Sidebar',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/slider',
+    //                 name: 'component-slider',
+    //                 component: () => import('@/views/components/vuesax/slider/Slider.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Slider', active: true },
+    //                     ],
+    //                     pageTitle: 'Slider',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/tabs',
+    //                 name: 'component-tabs',
+    //                 component: () => import('@/views/components/vuesax/tabs/Tabs.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Tabs', active: true },
+    //                     ],
+    //                     pageTitle: 'Tabs',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/tooltip',
+    //                 name: 'component-tooltip',
+    //                 component: () => import('@/views/components/vuesax/tooltip/Tooltip.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Tooltip', active: true },
+    //                     ],
+    //                     pageTitle: 'Tooltip',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/components/upload',
+    //                 name: 'component-upload',
+    //                 component: () => import('@/views/components/vuesax/upload/Upload.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Components' },
+    //                         { title: 'Upload', active: true },
+    //                     ],
+    //                     pageTitle: 'Upload',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //
+    //
+    //     // =============================================================================
+    //     // FORMS
+    //     // =============================================================================
+    //         // =============================================================================
+    //         // FORM ELEMENTS
+    //         // =============================================================================
+    //             {
+    //                 path: '/forms/form-elements/select',
+    //                 name: 'form-element-select',
+    //                 component: () => import('./views/forms/form-elements/select/Select.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Select', active: true },
+    //                     ],
+    //                     pageTitle: 'Select',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/switch',
+    //                 name: 'form-element-switch',
+    //                 component: () => import('./views/forms/form-elements/switch/Switch.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Switch', active: true },
+    //                     ],
+    //                     pageTitle: 'Switch',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/checkbox',
+    //                 name: 'form-element-checkbox',
+    //                 component: () => import('./views/forms/form-elements/checkbox/Checkbox.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Checkbox', active: true },
+    //                     ],
+    //                     pageTitle: 'Checkbox',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/radio',
+    //                 name: 'form-element-radio',
+    //                 component: () => import('./views/forms/form-elements/radio/Radio.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Radio', active: true },
+    //                     ],
+    //                     pageTitle: 'Radio',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/input',
+    //                 name: 'form-element-input',
+    //                 component: () => import('./views/forms/form-elements/input/Input.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Input', active: true },
+    //                     ],
+    //                     pageTitle: 'Input',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/number-input',
+    //                 name: 'form-element-number-input',
+    //                 component: () => import('./views/forms/form-elements/number-input/NumberInput.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Number Input', active: true },
+    //                     ],
+    //                     pageTitle: 'Number Input',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-elements/textarea',
+    //                 name: 'form-element-textarea',
+    //                 component: () => import('./views/forms/form-elements/textarea/Textarea.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Form Elements' },
+    //                         { title: 'Textarea', active: true },
+    //                     ],
+    //                     pageTitle: 'Textarea',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //     // -------------------------------------------------------------------------------------------------------------------------------------------
+    //             {
+    //                 path: '/forms/form-layouts',
+    //                 name: 'forms-form-layouts',
+    //                 component: () => import('@/views/forms/FormLayouts.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Forms' },
+    //                         { title: 'Form Layouts', active: true },
+    //                     ],
+    //                     pageTitle: 'Form Layouts',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-wizard',
+    //                 name: 'extra-component-form-wizard',
+    //                 component: () => import('@/views/forms/form-wizard/FormWizard.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Form Wizard', active: true },
+    //                     ],
+    //                     pageTitle: 'Form Wizard',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/forms/form-validation',
+    //                 name: 'extra-component-form-validation',
+    //                 component: () => import('@/views/forms/form-validation/FormValidation.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Form Validation', active: true },
+    //                     ],
+    //                     pageTitle: 'Form Validation',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //               path: '/forms/form-input-group',
+    //               name: 'extra-component-form-input-group',
+    //               component: () => import('@/views/forms/form-input-group/FormInputGroup.vue'),
+    //               meta: {
+    //                   breadcrumb: [
+    //                       { title: 'Home', url: '/' },
+    //                       { title: 'Extra Components' },
+    //                       { title: 'Form Input Group', active: true },
+    //                   ],
+    //                   pageTitle: 'Form Input Group',
+    //                   rule: 'editor'
+    //               },
+    //             },
+    //
+    //     // =============================================================================
+    //     // Pages Routes
+    //     // =============================================================================
+    //             {
+    //                 path: '/pages/profile',
+    //                 name: 'page-profile',
+    //                 component: () => import('@/views/pages/Profile.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'Profile', active: true },
+    //                     ],
+    //                     pageTitle: 'Profile',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/user-settings',
+    //                 name: 'page-user-settings',
+    //                 component: () => import('@/views/pages/user-settings/UserSettings.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'User Settings', active: true },
+    //                     ],
+    //                     pageTitle: 'Settings',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/faq',
+    //                 name: 'page-faq',
+    //                 component: () => import('@/views/pages/Faq.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'FAQ', active: true },
+    //                     ],
+    //                     pageTitle: 'FAQ',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/knowledge-base',
+    //                 name: 'page-knowledge-base',
+    //                 component: () => import('@/views/pages/KnowledgeBase.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'KnowledgeBase', active: true },
+    //                     ],
+    //                     pageTitle: 'KnowledgeBase',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/knowledge-base/category',
+    //                 name: 'page-knowledge-base-category',
+    //                 component: () => import('@/views/pages/KnowledgeBaseCategory.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'KnowledgeBase', url: '/pages/knowledge-base' },
+    //                         { title: 'Category', active: true },
+    //                     ],
+    //                     parent: 'page-knowledge-base',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/knowledge-base/category/question',
+    //                 name: 'page-knowledge-base-category-question',
+    //                 component: () => import('@/views/pages/KnowledgeBaseCategoryQuestion.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'KnowledgeBase', url: '/pages/knowledge-base' },
+    //                         { title: 'Category', url: '/pages/knowledge-base/category' },
+    //                         { title: 'Question', active: true },
+    //                     ],
+    //                     parent: 'page-knowledge-base',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/search',
+    //                 name: 'page-search',
+    //                 component: () => import('@/views/pages/Search.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'Search', active: true },
+    //                     ],
+    //                     pageTitle: 'Search',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/pages/invoice',
+    //                 name: 'page-invoice',
+    //                 component: () => import('@/views/pages/Invoice.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Pages' },
+    //                         { title: 'Invoice', active: true },
+    //                     ],
+    //                     pageTitle: 'Invoice',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //
+    //     // =============================================================================
+    //     // CHARTS & MAPS
+    //     // =============================================================================
+    //             {
+    //                 path: '/charts-and-maps/charts/apex-charts',
+    //                 name: 'extra-component-charts-apex-charts',
+    //                 component: () => import('@/views/charts-and-maps/charts/apex-charts/ApexCharts.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Charts & Maps' },
+    //                         { title: 'Apex Charts', active: true },
+    //                     ],
+    //                     pageTitle: 'Apex Charts',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/charts-and-maps/charts/echarts',
+    //                 name: 'extra-component-charts-echarts',
+    //                 component: () => import('@/views/charts-and-maps/charts/echarts/Echarts.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Charts & Maps' },
+    //                         { title: 'echarts', active: true },
+    //                     ],
+    //                     pageTitle: 'echarts',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/charts-and-maps/maps/google-map',
+    //                 name: 'extra-component-maps-google-map',
+    //                 component: () => import('@/views/charts-and-maps/maps/google-map/GoogleMap.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Charts & Maps' },
+    //                         { title: 'Google Map', active: true },
+    //                     ],
+    //                     pageTitle: 'Google Map',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //
+    //
+    //
+    //     // =============================================================================
+    //     // EXTENSIONS
+    //     // =============================================================================
+    //             {
+    //                 path: '/extensions/select',
+    //                 name: 'extra-component-select',
+    //                 component: () => import('@/views/components/extra-components/select/Select.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Select', active: true },
+    //                     ],
+    //                     pageTitle: 'Select',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/quill-editor',
+    //                 name: 'extra-component-quill-editor',
+    //                 component: () => import('@/views/components/extra-components/quill-editor/QuillEditor.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Quill Editor', active: true },
+    //                     ],
+    //                     pageTitle: 'Quill Editor',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/drag-and-drop',
+    //                 name: 'extra-component-drag-and-drop',
+    //                 component: () => import('@/views/components/extra-components/drag-and-drop/DragAndDrop.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Drag & Drop', active: true },
+    //                     ],
+    //                     pageTitle: 'Drag & Drop',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/datepicker',
+    //                 name: 'extra-component-datepicker',
+    //                 component: () => import('@/views/components/extra-components/datepicker/Datepicker.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Datepicker', active: true },
+    //                     ],
+    //                     pageTitle: 'Datepicker',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/datetime-picker',
+    //                 name: 'extra-component-datetime-picker',
+    //                 component: () => import('@/views/components/extra-components/datetime-picker/DatetimePicker.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extra Components' },
+    //                         { title: 'Datetime Picker', active: true },
+    //                     ],
+    //                     pageTitle: 'Datetime Picker',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/access-control',
+    //                 name: 'extra-component-access-control',
+    //                 component: () => import('@/views/components/extra-components/access-control/AccessControl.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Access Control', active: true },
+    //                     ],
+    //                     pageTitle: 'Access Control',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/i18n',
+    //                 name: 'extra-component-i18n',
+    //                 component: () => import('@/views/components/extra-components/I18n.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'I18n', active: true },
+    //                     ],
+    //                     pageTitle: 'I18n',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/carousel',
+    //                 name: 'extra-component-carousel',
+    //                 component: () => import('@/views/components/extra-components/carousel/Carousel.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Carousel', active: true },
+    //                     ],
+    //                     pageTitle: 'Carousel',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/clipboard',
+    //                 name: 'extra-component-clipboard',
+    //                 component: () => import('@/views/components/extra-components/clipboard/Clipboard.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Clipboard', active: true },
+    //                     ],
+    //                     pageTitle: 'Clipboard',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/context-menu',
+    //                 name: 'extra-component-context-menu',
+    //                 component: () => import('@/views/components/extra-components/context-menu/ContextMenu.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Context Menu', active: true },
+    //                     ],
+    //                     pageTitle: 'Context Menu',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/star-ratings',
+    //                 name: 'extra-component-star-ratings',
+    //                 component: () => import('@/views/components/extra-components/star-ratings/StarRatings.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Star Ratings', active: true },
+    //                     ],
+    //                     pageTitle: 'Star Ratings',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/autocomplete',
+    //                 name: 'extra-component-autocomplete',
+    //                 component: () => import('@/views/components/extra-components/autocomplete/Autocomplete.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Autocomplete', active: true },
+    //                     ],
+    //                     pageTitle: 'Autocomplete',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/extensions/tree',
+    //                 name: 'extra-component-tree',
+    //                 component: () => import('@/views/components/extra-components/tree/Tree.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Tree', active: true },
+    //                     ],
+    //                     pageTitle: 'Tree',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/import-export/import',
+    //                 name: 'import-excel',
+    //                 component: () => import('@/views/components/extra-components/import-export/Import.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Import/Export' },
+    //                         { title: 'Import', active: true },
+    //                     ],
+    //                     pageTitle: 'Import Excel',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/import-export/export',
+    //                 name: 'export-excel',
+    //                 component: () => import('@/views/components/extra-components/import-export/Export.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Import/Export' },
+    //                         { title: 'Export', active: true },
+    //                     ],
+    //                     pageTitle: 'Export Excel',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //             {
+    //                 path: '/import-export/export-selected',
+    //                 name: 'export-excel-selected',
+    //                 component: () => import('@/views/components/extra-components/import-export/ExportSelected.vue'),
+    //                 meta: {
+    //                     breadcrumb: [
+    //                         { title: 'Home', url: '/' },
+    //                         { title: 'Extensions' },
+    //                         { title: 'Import/Export' },
+    //                         { title: 'Export Selected', active: true },
+    //                     ],
+    //                     pageTitle: 'Export Excel',
+    //                     rule: 'editor'
+    //                 },
+    //             },
+    //         ],
+    //     },
+    // // =============================================================================
+    // // FULL PAGE LAYOUTS
+    // // =============================================================================
+    //     {
+    //         path: '',
+    //         component: () => import('@/layouts/full-page/FullPage.vue'),
+    //         children: [
+    //     // =============================================================================
+    //     // PAGES
+    //     // =============================================================================
+    //             {
+    //                 path: '/callback',
+    //                 name: 'auth-callback',
+    //                 component: () => import('@/views/Callback.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/login',
+    //                 name: 'page-login',
+    //                 component: () => import('@/views/pages/login/Login.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/register',
+    //                 name: 'page-register',
+    //                 component: () => import('@/views/pages/register/Register.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/forgot-password',
+    //                 name: 'page-forgot-password',
+    //                 component: () => import('@/views/pages/ForgotPassword.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/reset-password',
+    //                 name: 'page-reset-password',
+    //                 component: () => import('@/views/pages/ResetPassword.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/lock-screen',
+    //                 name: 'page-lock-screen',
+    //                 component: () => import('@/views/pages/LockScreen.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/comingsoon',
+    //                 name: 'page-coming-soon',
+    //                 component: () => import('@/views/pages/ComingSoon.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/error-404',
+    //                 name: 'page-error-404',
+    //                 component: () => import('@/views/pages/Error404.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/error-500',
+    //                 name: 'page-error-500',
+    //                 component: () => import('@/views/pages/Error500.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/not-authorized',
+    //                 name: 'page-not-authorized',
+    //                 component: () => import('@/views/pages/NotAuthorized.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    //             {
+    //                 path: '/pages/maintenance',
+    //                 name: 'page-maintenance',
+    //                 component: () => import('@/views/pages/Maintenance.vue'),
+    //                 meta: {
+    //                     rule: 'editor'
+    //                 }
+    //             },
+    ]
   }, // Redirect to 404 page, if no match found
   {
     path: '*',
@@ -117113,40 +113353,41 @@ router.afterEach(function () {
   if (appLoading) {
     appLoading.style.display = "none";
   }
-});
-router.beforeEach(function (to, from, next) {
-  firebase_app__WEBPACK_IMPORTED_MODULE_3___default.a.auth().onAuthStateChanged(function () {
-    // get firebase current user
-    var firebaseCurrentUser = firebase_app__WEBPACK_IMPORTED_MODULE_3___default.a.auth().currentUser; // if (
-    //     to.path === "/pages/login" ||
-    //     to.path === "/pages/forgot-password" ||
-    //     to.path === "/pages/error-404" ||
-    //     to.path === "/pages/error-500" ||
-    //     to.path === "/pages/register" ||
-    //     to.path === "/callback" ||
-    //     to.path === "/pages/comingsoon" ||
-    //     (auth.isAuthenticated() || firebaseCurrentUser)
-    // ) {
-    //     return next();
-    // }
-    // If auth required, check login. If login fails redirect to login page
+}); // router.beforeEach((to, from, next) => {
+//     firebase.auth().onAuthStateChanged(() => {
+//
+//         // get firebase current user
+//         const firebaseCurrentUser = firebase.auth().currentUser
+//
+//         // if (
+//         //     to.path === "/pages/login" ||
+//         //     to.path === "/pages/forgot-password" ||
+//         //     to.path === "/pages/error-404" ||
+//         //     to.path === "/pages/error-500" ||
+//         //     to.path === "/pages/register" ||
+//         //     to.path === "/callback" ||
+//         //     to.path === "/pages/comingsoon" ||
+//         //     (auth.isAuthenticated() || firebaseCurrentUser)
+//         // ) {
+//         //     return next();
+//         // }
+//
+//         // If auth required, check login. If login fails redirect to login page
+//         if(to.meta.authRequired) {
+//           if (!(auth.isAuthenticated() || firebaseCurrentUser)) {
+//             router.push({ path: '/pages/login', query: { to: to.path } })
+//           }
+//         }
+//
+//         return next()
+//         // Specify the current path as the customState parameter, meaning it
+//         // will be returned to the application after auth
+//         // auth.login({ target: to.path });
+//
+//     });
+//
+// });
 
-    if (to.meta.authRequired) {
-      if (!(_auth_authService__WEBPACK_IMPORTED_MODULE_2__["default"].isAuthenticated() || firebaseCurrentUser)) {
-        router.push({
-          path: '/pages/login',
-          query: {
-            to: to.path
-          }
-        });
-      }
-    }
-
-    return next(); // Specify the current path as the customState parameter, meaning it
-    // will be returned to the application after auth
-    // auth.login({ target: to.path });
-  });
-});
 /* harmony default export */ __webpack_exports__["default"] = (router);
 
 /***/ }),
@@ -117269,10 +113510,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _http_requests_auth_jwt_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../http/requests/auth/jwt/index.js */ "./resources/js/src/http/requests/auth/jwt/index.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase/auth */ "./node_modules/firebase/auth/dist/index.esm.js");
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/router */ "./resources/js/src/router.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/router */ "./resources/js/src/router.js");
 /*=========================================================================================
   File Name: moduleAuthActions.js
   Description: Auth Module Actions
@@ -117281,8 +113519,8 @@ __webpack_require__.r(__webpack_exports__);
   Author: Pixinvent
   Author URL: http://www.themeforest.net/user/pixinvent
 ==========================================================================================*/
-
-
+ // import firebase from 'firebase/app'
+// import 'firebase/auth'
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -117297,7 +113535,7 @@ __webpack_require__.r(__webpack_exports__);
 
     if (!payload.checkbox_remember_me) {
       // Change firebase Persistence
-      firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().setPersistence(firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth.Auth.Persistence.SESSION) // If success try to login
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION) // If success try to login
       .then(function () {
         dispatch('login', newPayload);
       }) // If error notify
@@ -117338,7 +113576,7 @@ __webpack_require__.r(__webpack_exports__);
     } // Try to sigin
 
 
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().signInWithEmailAndPassword(payload.userDetails.email, payload.userDetails.password).then(function (result) {
+    firebase.auth().signInWithEmailAndPassword(payload.userDetails.email, payload.userDetails.password).then(function (result) {
       // Set FLAG username update required for updating username
       var isUsernameUpdateRequired = false; // if username is provided and updateUsername FLAG is true
       // set local username update FLAG to true
@@ -117360,7 +113598,7 @@ __webpack_require__.r(__webpack_exports__);
       // set new user data in localstorage
 
       if (!isUsernameUpdateRequired) {
-        _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+        _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
         commit('UPDATE_USER_INFO', result.user.providerData[0], {
           root: true
         });
@@ -117394,9 +113632,9 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     }
 
-    var provider = new firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth.GoogleAuthProvider();
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().signInWithPopup(provider).then(function (result) {
-      _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function (result) {
+      _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
       commit('UPDATE_USER_INFO', result.user.providerData[0], {
         root: true
       });
@@ -117427,9 +113665,9 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     }
 
-    var provider = new firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth.FacebookAuthProvider();
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().signInWithPopup(provider).then(function (result) {
-      _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+    var provider = new firebase.auth.FacebookAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function (result) {
+      _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
       commit('UPDATE_USER_INFO', result.user.providerData[0], {
         root: true
       });
@@ -117460,9 +113698,9 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     }
 
-    var provider = new firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth.TwitterAuthProvider();
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().signInWithPopup(provider).then(function (result) {
-      _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+    var provider = new firebase.auth.TwitterAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function (result) {
+      _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
       commit('UPDATE_USER_INFO', result.user.providerData[0], {
         root: true
       });
@@ -117493,9 +113731,9 @@ __webpack_require__.r(__webpack_exports__);
       return false;
     }
 
-    var provider = new firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth.GithubAuthProvider();
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().signInWithPopup(provider).then(function (result) {
-      _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+    var provider = new firebase.auth.GithubAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function (result) {
+      _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
       commit('UPDATE_USER_INFO', result.user.providerData[0], {
         root: true
       });
@@ -117513,7 +113751,7 @@ __webpack_require__.r(__webpack_exports__);
   registerUser: function registerUser(_ref7, payload) {
     var dispatch = _ref7.dispatch;
     // create user using firebase
-    firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().createUserWithEmailAndPassword(payload.userDetails.email, payload.userDetails.password).then(function () {
+    firebase.auth().createUserWithEmailAndPassword(payload.userDetails.email, payload.userDetails.password).then(function () {
       payload.notify({
         title: 'Account Created',
         text: 'You are successfully registered!',
@@ -117552,7 +113790,7 @@ __webpack_require__.r(__webpack_exports__);
       // Reload current page
 
       if (payload.isReloadRequired) {
-        _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/');
+        _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/');
       }
     }).catch(function (err) {
       payload.notify({
@@ -117573,7 +113811,7 @@ __webpack_require__.r(__webpack_exports__);
         // If there's user data in response
         if (response.data.userData) {
           // Navigate User to homepage
-          _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/'); // Set accessToken
+          _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/'); // Set accessToken
 
           localStorage.setItem("accessToken", response.data.accessToken); // Update user details
 
@@ -117610,7 +113848,7 @@ __webpack_require__.r(__webpack_exports__);
 
       _http_requests_auth_jwt_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].registerUser(displayName, email, password).then(function (response) {
         // Redirect User
-        _router__WEBPACK_IMPORTED_MODULE_3__["default"].push(_router__WEBPACK_IMPORTED_MODULE_3__["default"].currentRoute.query.to || '/'); // Update data in localStorage
+        _router__WEBPACK_IMPORTED_MODULE_1__["default"].push(_router__WEBPACK_IMPORTED_MODULE_1__["default"].currentRoute.query.to || '/'); // Update data in localStorage
 
         localStorage.setItem("accessToken", response.data.accessToken);
         commit('UPDATE_USER_INFO', response.data.userData, {
@@ -117691,9 +113929,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _auth_authService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/auth/authService */ "./resources/js/src/auth/authService.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase/auth */ "./node_modules/firebase/auth/dist/index.esm.js");
 /*=========================================================================================
   File Name: moduleAuthState.js
   Description: Auth Module State
@@ -117702,14 +113937,14 @@ __webpack_require__.r(__webpack_exports__);
   Author: Pixinvent
   Author URL: http://www.themeforest.net/user/pixinvent
 ==========================================================================================*/
-
-
+ // import firebase from 'firebase/app'
+// import 'firebase/auth'
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   isUserLoggedIn: function isUserLoggedIn() {
     var isAuthenticated = false; // get firebase current user
 
-    var firebaseCurrentUser = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.auth().currentUser;
+    var firebaseCurrentUser = firebase.auth().currentUser;
     if (_auth_authService__WEBPACK_IMPORTED_MODULE_0__["default"].isAuthenticated() || firebaseCurrentUser) isAuthenticated = true;else isAuthenticated = false;
     return localStorage.getItem('userInfo') && isAuthenticated;
   }
@@ -119147,9 +115382,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuesax__WEBPACK_IMPORTED_MODULE_1
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/sharif/Php/viholding/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /Users/sharif/Php/viholding/resources/sass/app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! /Users/sharif/Php/viholding/resources/assets/css/main.css */"./resources/assets/css/main.css");
+__webpack_require__(/*! I:\school\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! I:\school\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! I:\school\resources\assets\css\main.css */"./resources/assets/css/main.css");
 
 
 /***/ }),

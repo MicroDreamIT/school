@@ -617,7 +617,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: switch.scss\n    Description: Switch page styles\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.demo-alignment li {\n  margin-right: 2rem;\n}\n.demo-alignment .vs-switch {\n  margin-top: 0.5rem;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: switch.scss\r\n    Description: Switch page styles\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.demo-alignment li {\n  margin-right: 2rem;\n}\n.demo-alignment .vs-switch {\n  margin-top: 0.5rem;\n}", ""]);
 
 // exports
 

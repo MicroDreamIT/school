@@ -535,7 +535,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: colors.scss\n    Description: Color page styles\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n#colors-demo ul.demo-alignment li {\n  width: 100px;\n  height: 100px;\n  margin: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 10px;\n  cursor: default;\n  box-shadow: 0px 15px 40px -10px rgba(0, 0, 0, 0.3);\n  transition: all 0.2s ease;\n  position: relative;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: colors.scss\r\n    Description: Color page styles\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n#colors-demo ul.demo-alignment li {\n  width: 100px;\n  height: 100px;\n  margin: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 10px;\n  cursor: default;\n  box-shadow: 0px 15px 40px -10px rgba(0, 0, 0, 0.3);\n  transition: all 0.2s ease;\n  position: relative;\n}", ""]);
 
 // exports
 
@@ -573,7 +573,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "[dir] .demo-alignment li[data-v-bc21baa6]:hover {\n  transform: translate(0, 8px);\n  box-shadow: 0px 0px 40px -10px rgba(255, 255, 255, 0) !important;\n}\n", ""]);
+exports.push([module.i, "[dir] .demo-alignment li[data-v-bc21baa6]:hover {\n  transform: translate(0, 8px);\n  box-shadow: 0px 0px 40px -10px rgba(255, 255, 255, 0) !important;\n}\r\n", ""]);
 
 // exports
 

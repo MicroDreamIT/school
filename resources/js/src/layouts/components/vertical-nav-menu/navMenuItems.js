@@ -138,12 +138,12 @@ export default [
                 name:'Guardian',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/guardian/guardian-details',
                         name: "Guardian Detail",
                         slug: "Guardian Detail",
                     },
                     {
-                        url: '/',
+                        url: '/guardian/guardian-registration',
                         name: "Registration",
                         slug: "Registration",
                     },

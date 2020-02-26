@@ -107,12 +107,12 @@ export default [
                   slug: "Student Detail",
                 },
                 {
-                  url: '/student',
+                  url: '/student/import',
                   name: "Bulk Import",
                   slug: "Bulk Import",
                 },
                 {
-                  url: '/student',
+                  url: '/student/registration',
                   name: "Registration",
                   slug: "Registration",
                 },

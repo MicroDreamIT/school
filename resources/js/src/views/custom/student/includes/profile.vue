@@ -24,22 +24,7 @@
                 </div>
             </div>
             <div>Permanent Address</div>
-            <div class="col-md-12">
-                <div class="row text-uppercase">
-                    <div class="col-md-2 py-3 text-right px-2 bg-light"> Address :</div>
-                    <div class="col-md-10 py-3 px-2">
-                        IT PARK
-                    </div>
-                    <div class="col-md-2 py-3 text-right px-2 bg-light"> State :</div>
-                    <div class="col-md-5 py-3 px-2">
-                       Uttarakhand
-                    </div>
-                    <div class="col-md-2 py-3 text-right px-2 bg-light"> Country :</div>
-                    <div class="col-md-3 py-3 px-2">
-                        India
-                    </div>
-                </div>
-            </div>
+
 
         </div>
 

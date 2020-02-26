@@ -134,8 +134,8 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/guardian/guardian-details',
-                    name:'guardian.guardian-details',
+                    path:'/guardian/details',
+                    name:'guardian.details',
                     component:()=>import('./views/custom/guardian/details'),
                     meta:{
                         rule: 'admin'

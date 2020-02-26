@@ -34,7 +34,7 @@ export default [
             },
             {
                 url: null,
-                name: "eCommerce",
+                name: "E-Commerce",
                 icon: "ShoppingCartIcon",
                 i18n: "eCommerce",
                 submenu: [
@@ -58,7 +58,7 @@ export default [
                     },
                     {
                         url: '/apps/eCommerce/checkout',
-                        name: "Checkout",
+                        name: "Check Out",
                         slug: "ecommerce-checkout",
                         i18n: "Checkout",
                     },
@@ -94,7 +94,7 @@ export default [
     },
     {
         url: null,
-        name: "Student & Stuff",
+        name: "Student And Stuff",
         icon: "HomeIcon",
         submenu: [
             {
@@ -216,7 +216,7 @@ export default [
                     },
                     {
                         url: '/',
-                        name: "Add Fees",
+                        name: "AddFees",
                         slug: "Add Fees",
                     },
                     {
@@ -228,7 +228,7 @@ export default [
             },
             {
                 url:null,
-                name:'Payroll',
+                name:'Pay Roll',
                 submenu:[
                     {
                         url: '/',
@@ -237,7 +237,7 @@ export default [
                     },
                     {
                         url: '/',
-                        name: "Salary pay",
+                        name: "Salary Pay",
                         slug: "Salary pay",
                     },
                     {
@@ -260,7 +260,7 @@ export default [
             },
             {
                 url:null,
-                name:'Ledger & Transaction',
+                name:'Ledger And Transaction',
                 submenu:[
                     {
                         url: '/',
@@ -281,8 +281,98 @@ export default [
                 submenu:[
                     {
                         url: '/',
-                        name: "manage Bank Account",
-                        slug: "manage Bank Account",
+                        name: "Manage Bank Account",
+                        slug: "Manage Bank Account",
+                    },
+                    {
+                        url: '/',
+                        name: "Add New Bank",
+                        slug: "Add New Bank",
+                    },
+                    {
+                        url: '/',
+                        name: "Transaction Detail",
+                        slug: "Transaction Detail",
+                    },
+                    {
+                        url: '/',
+                        name: "New Transaction",
+                        slug: "New Transaction",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Report',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Cash Book",
+                        slug: "Cash Book",
+                    },
+                    {
+                        url: '/',
+                        name: "Free Collection Head",
+                        slug: "Free Collection Head",
+                    },
+                ]
+            },
+        ]
+    },
+
+    // urls for library
+    {
+        url: null,
+        name: "Library",
+        icon: "HomeIcon",
+        submenu: [
+            {
+                url:null,
+                name:'Books',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Receive Detail",
+                        slug: "Receive Detail",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Pay Roll',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Paid Detail",
+                        slug: "Paid Detail",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Ledger And Transaction',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Transaction",
+                        slug: "Transaction",
+                    },
+                    {
+                        url: '/',
+                        name: "Ledger",
+                        slug: "Ledger",
+                    },
+
+                ]
+            },
+            {
+                url:null,
+                name:'Bank',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Manage Bank Account",
+                        slug: "Manage Bank Account",
                     },
                     {
                         url: '/',

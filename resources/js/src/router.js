@@ -101,14 +101,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                {
-                    path:'/payment-method',
-                    name:'payment_method',
-                    component:()=>import('./views/custom/academics/payment-method.vue'),
-                    meta:{
-                        rule: 'admin'
-                    }
-                },
+
                 // {
                 //     path:'/student/transfer',
                 //     name:'student.transfer',
@@ -133,7 +126,38 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-
+                {
+                    path:'/payment-method',
+                    name:'payment_method',
+                    component:()=>import('./views/custom/academics/payment-method.vue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/month',
+                    name:'academic.month',
+                    component:()=>import('./views/custom/academics/month'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/day',
+                    name:'academic.day',
+                    component:()=>import('./views/custom/academics/day'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/year',
+                    name:'academic.year',
+                    component:()=>import('./views/custom/academics/year'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
 
         // =============================================================================
         // Application Routes

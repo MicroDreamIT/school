@@ -52,3 +52,6 @@ a.router-link-active {
   border-radius: 0.4285rem!important;
 }
 button:focus {outline: none!important;}
+.custom-table{
+  .vs-table--td{pointer-events: none}
+}

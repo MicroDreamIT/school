@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="row ">
-
             <div class="col-md-12">
                 <h2 class="pageTitle">Details</h2>
                 <div class="p-2">

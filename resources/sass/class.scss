@@ -8,6 +8,7 @@
     }
   }
 }
+
 button.vs-tabs--btn{
   outline: 0!important;
   &:focus{
@@ -31,6 +32,15 @@ button.vs-tabs--btn{
   &:hover{
     box-shadow: 0 8px 25px -8px #28c76f;
   }
+}
+.badge{
+  border-radius: 10rem!important;
+  padding: 5px 12px!important;
+  font-size: 11px!important;
+  font-weight: normal!important;
+}
+.btn-danger{
+  background: #ea5455!important;
 }
 .btn-warning {
   background-color: #ff9f43 !important;

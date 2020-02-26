@@ -24,9 +24,17 @@
                     <router-link :to="'/'">
                         <vs-button type="filled" class="smBtn">Primary</vs-button>
                     </router-link>
-
                 </div>
             </div>
+        <div class="col-md-12">
+            <div class="mt-2 alert alert-success alert-dismissible display-block" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <i class="ace-icon fa fa-hand-o-right"></i>
+                Please, Create Year and Active
+            </div>
+        </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-row vs-justify="center">

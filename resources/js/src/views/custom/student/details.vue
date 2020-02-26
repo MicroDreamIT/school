@@ -1,9 +1,35 @@
 <template>
     <div>
-        <vs-card>
-            <div class="row ">
+        <div class="row ">
+            <div class="col-md-12">
+                <h2 class="pageTitle">Student Manager</h2>
+                <div class="p-2">
+                    <router-link :to="'/student'">
+                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    </router-link>
+                    <router-link :to="'/'">
+                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    </router-link>
+                    <router-link :to="'/'">
+                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    </router-link>
+                    <router-link :to="'/'">
+                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    </router-link>
+                    <router-link :to="'/'">
+                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    </router-link>
+                    <router-link :to="'/'">
+                        <vs-button type="filled" class="smBtn">
+                            Primary
+                        </vs-button>
+                    </router-link>
 
-                <div class="col-md-12">
+                </div>
+            </div>
+            <vs-divider class="mx-3"/>
+            <div class="col-md-12">
+                <vs-card>
                     <h2 class="pageTitle">Details</h2>
                     <div class="p-2">
                         <vs-button type="filled" class="smBtn" @click="currentView='profile'">Profile</vs-button>
@@ -21,26 +47,26 @@
                         <vs-button type="filled" class="smBtn" @click="currentView='login_access'">Login Access
                         </vs-button>
                     </div>
-                </div>
-                <div class="col-md-12">
-                    <profile v-if="currentView=='profile'"/>
-                    <academic v-else-if="currentView=='academic'"/>
-                    <fees v-else-if="currentView=='fees'"/>
-                    <library v-else-if="currentView=='library'"/>
-                    <attendance v-else-if="currentView=='attendance'"/>
-                    <exam v-else-if="currentView=='exam'"/>
-                    <certificate v-else-if="currentView=='certificate'"/>
-                    <hostel v-else-if="currentView=='hostel'"/>
-                    <transport v-else-if="currentView=='transport'"/>
-                    <docs v-else-if="currentView=='docs'"/>
-                    <notes v-else-if="currentView=='notes'"/>
-                    <login-access v-if="currentView=='login_access'"/>
-                </div>
+                    <div class="col-md-12">
+                        <profile v-if="currentView=='profile'"/>
+                        <academic v-else-if="currentView=='academic'"/>
+                        <fees v-else-if="currentView=='fees'"/>
+                        <library v-else-if="currentView=='library'"/>
+                        <attendance v-else-if="currentView=='attendance'"/>
+                        <exam v-else-if="currentView=='exam'"/>
+                        <certificate v-else-if="currentView=='certificate'"/>
+                        <hostel v-else-if="currentView=='hostel'"/>
+                        <transport v-else-if="currentView=='transport'"/>
+                        <docs v-else-if="currentView=='docs'"/>
+                        <notes v-else-if="currentView=='notes'"/>
+                        <login-access v-if="currentView=='login_access'"/>
+                    </div>
+                </vs-card>
             </div>
-
-        </vs-card>
+        </div>
     </div>
 </template>
+
 
 <script>
     import profile from './includes/profile'

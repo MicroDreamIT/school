@@ -117,17 +117,17 @@ export default [
                   slug: "Bulk Import",
                 },
                 {
-                  url: '/student/transfer-student',
+                  url: '/student/transfer',
                   name: "Transfer Student",
                   slug: "Transfer Student",
                 },
                 {
-                  url: '/student/doc-upload',
+                  url: '/student/document',
                   name: "Document Upload",
                   slug: "Document Upload",
                 },
                 {
-                  url: '/student/create-notes',
+                  url: '/student/note',
                   name: "Create Notes",
                   slug: "Create Notes",
                 },

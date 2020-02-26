@@ -286,9 +286,9 @@
                     </div>
                 </div>
                 <div class="py-3">
-                    <div class="miniTitle">Student Status</div>
+                    <div class="miniTitle">Academic Status</div>
                     <div class="mBox bg-light">
-                        <div>Active</div>
+                        <div>New Admission</div>
                         <div>4</div>
                     </div>
                     <div class="mBox font-weight-bold">
@@ -298,26 +298,26 @@
                 </div>
                 <vs-divider/>
                 <div class="py-3">
-                    <div class="miniTitle">Student Status</div>
+                    <div class="miniTitle">Stuff Status</div>
                     <div class="mBox bg-light">
                         <div>Active</div>
-                        <div>4</div>
+                        <div>3</div>
                     </div>
                     <div class="mBox font-weight-bold">
-                        <div>Total Student:</div>
-                        <div>4</div>
+                        <div>Total Stuff:</div>
+                        <div>3</div>
                     </div>
                 </div>
                 <vs-divider/>
                 <div class="py-3">
-                    <div class="miniTitle">Student Status</div>
+                    <div class="miniTitle">Book Status</div>
                     <div class="mBox bg-light">
-                        <div>Active</div>
-                        <div>4</div>
+                        <div>Available</div>
+                        <div>2</div>
                     </div>
                     <div class="mBox font-weight-bold">
-                        <div>Total Student:</div>
-                        <div>4</div>
+                        <div>Total Book:</div>
+                        <div>2</div>
                     </div>
                 </div>
 

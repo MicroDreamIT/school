@@ -127,37 +127,14 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/payment-method',
-                    name:'payment_method',
-                    component:()=>import('./views/custom/academics/payment-method.vue'),
+                    path:'/guardian/guardian-details',
+                    name:'guardian.guardian-details',
+                    component:()=>import('./views/custom/guardian/guardian-details'),
                     meta:{
                         rule: 'admin'
                     }
                 },
-                {
-                    path:'/month',
-                    name:'academic.month',
-                    component:()=>import('./views/custom/academics/month'),
-                    meta:{
-                        rule: 'admin'
-                    }
-                },
-                {
-                    path:'/day',
-                    name:'academic.day',
-                    component:()=>import('./views/custom/academics/day'),
-                    meta:{
-                        rule: 'admin'
-                    }
-                },
-                {
-                    path:'/year',
-                    name:'academic.year',
-                    component:()=>import('./views/custom/academics/year'),
-                    meta:{
-                        rule: 'admin'
-                    }
-                },
+
 
         // =============================================================================
         // Application Routes

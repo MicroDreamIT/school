@@ -9,21 +9,27 @@
 				<router-link :to="'/student/registration'">
 					<vs-button type="filled" class="smBtn success">Registration</vs-button>
 				</router-link>
-				<router-link :to="'/'">
-					<vs-button type="filled" class="smBtn">Primary</vs-button>
+				<router-link :to="'/student/import'">
+					<vs-button type="filled" class="smBtn">Bulk Registration</vs-button>
+				</router-link>
+				<router-link :to="'/student/transfer-student'">
+					<vs-button type="filled" class="smBtn">Transfer</vs-button>
+				</router-link>
+				<router-link :to="'/student/doc-upload'">
+					<vs-button type="filled" class="smBtn">Documents</vs-button>
+				</router-link>
+				<router-link :to="'/student/create-notes'">
+					<vs-button type="filled" class="smBtn">Notes</vs-button>
 				</router-link>
 				<router-link :to="'/'">
-					<vs-button type="filled" class="smBtn">Primary</vs-button>
+					<vs-button type="filled" class="smBtn">Balance Fees</vs-button>
 				</router-link>
 				<router-link :to="'/'">
-					<vs-button type="filled" class="smBtn">Primary</vs-button>
+					<vs-button type="filled" class="smBtn">Library</vs-button>
 				</router-link>
 				<router-link :to="'/'">
-					<vs-button type="filled" class="smBtn">
-						Primary
-					</vs-button>
+					<vs-button type="filled" class="smBtn">Attendance</vs-button>
 				</router-link>
-			
 			</div>
 			<vs-divider class="mx-1"/>
 			<div class="col-md-12 p-0">

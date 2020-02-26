@@ -112,22 +112,17 @@ export default [
                   slug: "Bulk Import",
                 },
                 {
-                  url: '/student/registration',
-                  name: "Registration",
-                  slug: "Registration",
-                },
-                {
-                  url: '/student',
+                  url: '/student/transfer-student',
                   name: "Transfer Student",
                   slug: "Transfer Student",
                 },
                 {
-                  url: '/student',
+                  url: '/student/doc-upload',
                   name: "Document Upload",
                   slug: "Document Upload",
                 },
                 {
-                  url: '/student',
+                  url: '/student/create-notes',
                   name: "Create Notes",
                   slug: "Create Notes",
                 },

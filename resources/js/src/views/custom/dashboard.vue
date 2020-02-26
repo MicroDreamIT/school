@@ -113,9 +113,9 @@
 
                     </div>
                     <div class="col-md-12">
-                        <div class="myTitle">Accounting</div>
+                        <div class="myTitle">Library</div>
                         <vs-tabs>
-                            <vs-tab label="Fees Collection">
+                            <vs-tab label="Book Issue">
                                 <div class="con-tab-ejemplo">
                                     <data-table :headers="tableHeader1"
                                                 :url="'/student'"
@@ -143,35 +143,7 @@
                                     </data-table>
                                 </div>
                             </vs-tab>
-                            <vs-tab label="Staff Payroll">
-                                <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
-                                                :no-data-message="'No matching records found'"
-                                                :searchField="searchData"
-                                                :hasSearch="false"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.email}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.username}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.id">
-                                                {{props.data.website}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.id">
-                                                {{props.data.id}}
-                                            </vs-td>
-                                        </template>
-                                    </data-table>
-                                </div>
-                            </vs-tab>
-                            <vs-tab label="Transaction">
+                            <vs-tab label="Return Period Over">
                                 <div class="con-tab-ejemplo">
                                     <data-table :headers="tableHeader1"
                                                 :url="'/student'"
@@ -203,65 +175,9 @@
 
                     </div>
                     <div class="col-md-12">
-                        <div class="myTitle">Accounting</div>
+                        <div class="myTitle">Attendance</div>
                         <vs-tabs>
-                            <vs-tab label="Fees Collection">
-                                <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
-                                                :no-data-message="'No matching records found'"
-                                                :searchField="searchData"
-                                                :hasSearch="false"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.email}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.username}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.id">
-                                                {{props.data.website}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.id">
-                                                {{props.data.id}}
-                                            </vs-td>
-                                        </template>
-                                    </data-table>
-                                </div>
-                            </vs-tab>
-                            <vs-tab label="Staff Payroll">
-                                <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
-                                                :no-data-message="'No matching records found'"
-                                                :searchField="searchData"
-                                                :hasSearch="false"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.email}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.username}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.id">
-                                                {{props.data.website}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.id">
-                                                {{props.data.id}}
-                                            </vs-td>
-                                        </template>
-                                    </data-table>
-                                </div>
-                            </vs-tab>
-                            <vs-tab label="Transaction">
+                            <vs-tab label="Booklet">
                                 <div class="con-tab-ejemplo">
                                     <data-table :headers="tableHeader1"
                                                 :url="'/student'"
@@ -293,9 +209,9 @@
 
                     </div>
                     <div class="col-md-12">
-                        <div class="myTitle">Accounting</div>
+                        <div class="myTitle">Up Coming Birthday</div>
                         <vs-tabs>
-                            <vs-tab label="Fees Collection">
+                            <vs-tab label="Student Birthday">
                                 <div class="con-tab-ejemplo">
                                     <data-table :headers="tableHeader1"
                                                 :url="'/student'"
@@ -323,35 +239,7 @@
                                     </data-table>
                                 </div>
                             </vs-tab>
-                            <vs-tab label="Staff Payroll">
-                                <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
-                                                :no-data-message="'No matching records found'"
-                                                :searchField="searchData"
-                                                :hasSearch="false"
-                                    >
-                                        <template slot="items" slot-scope="props">
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.email}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.username">
-                                                {{props.data.username}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.data.id">
-                                                {{props.data.website}}
-                                            </vs-td>
-
-                                            <vs-td :data="props.id">
-                                                {{props.data.id}}
-                                            </vs-td>
-                                        </template>
-                                    </data-table>
-                                </div>
-                            </vs-tab>
-                            <vs-tab label="Transaction">
+                            <vs-tab label="Staff Birthday">
                                 <div class="con-tab-ejemplo">
                                     <data-table :headers="tableHeader1"
                                                 :url="'/student'"

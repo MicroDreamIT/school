@@ -2,15 +2,15 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Payment Method Manager</h2>
+                <h2 class="pageTitle">Months Manager</h2>
                 <h2 class="pageTitle">notification bar</h2>
             </div>
             <vs-card>
                 <div class="row">
                     <div class="col-md-4">
-                        <div>Create Payment Method</div>
+                        <div>Create Months</div>
                         <div class="d-flex justify-content-between">
-                            <p>status</p>
+                            <p>Months</p>
                             <vs-input></vs-input>
                         </div>
                         <vs-divider></vs-divider>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-md-8">
                         <h4 class="header large lighter blue">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Payment Method List
+                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Months List
                             List</h4>
                         <div class="clearfix mt-3">
                             <div class="easy-link-menu">
@@ -36,7 +36,7 @@
                         </div>
                         <br>
                         <div class="table-header">
-                            Payment Method Record list on table. Filter Payment Method using the filter.
+                            Months Record list on table. Filter Months using the filter.
                         </div>
                         <div class="dt-buttons btn-group action-group mt-3">
                             <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
@@ -56,7 +56,7 @@
                         </div>
                         <data-table :headers="tableHeader"
                                     :url="'/student'"
-                                    :no-data-message="'No matching records found'"
+                                    :no-data-message="'No Month data found. Please Filter Month to show.'"
                                     :searchField="searchData"
                                     :hasSearch="true"
                                     :has-multiple="true"
@@ -88,7 +88,6 @@
 </template>
 
 <script>
-    import studentTable from '../component/table/student-table'
 
     export default {
         components: {

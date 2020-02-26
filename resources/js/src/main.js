@@ -16,7 +16,6 @@ import vSelect from 'vue-select'
 
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
-
 Vue.use(Vuesax)
 Vue.component('v-select', vSelect)
 // axios

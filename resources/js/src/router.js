@@ -101,6 +101,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path:'/payment-method',
+                    name:'payment_method',
+                    component:()=>import('./views/custom/academics/payment-method.vue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
 
 
         // =============================================================================

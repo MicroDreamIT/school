@@ -444,6 +444,12 @@
                     {name: 'Dr.Amount'},
                     {name: 'Cr.Amount'},
                 ],
+                tableHeader1: [
+                    {name: 'Email', field: 'email', sort_key: 'email'},
+                    {name: 'Name', field: 'name', sort_key: 'name'},
+                    {name: 'Mobile', field: 'mobile'},
+                    {name: 'PID'},
+                ],
                 searchData: {}
             }
         },

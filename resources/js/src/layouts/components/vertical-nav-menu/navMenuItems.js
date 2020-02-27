@@ -51,7 +51,7 @@ export default [
                 name:'Guardian',
                 submenu:[
                     {
-                        url: '/guardian/details',
+                        url: '/guardian',
                         name: "Guardian Detail",
                         slug: "Guardian Detail",
                     },
@@ -68,27 +68,27 @@ export default [
                 name:'Staff',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/staff',
                         name: "Staff Detail",
                         slug: "Staff Detail",
                     },
                     {
-                        url: '/',
+                        url: '/staff/import',
                         name: "Bulk Import",
                         slug: "Bulk Import",
                     },
                     {
-                        url: '/',
+                        url: '/staff/document',
                         name: "Document Upload",
                         slug: "Document Upload",
                     },
                     {
-                        url: '/',
+                        url: '/staff/note',
                         name: "Create Notes",
                         slug: "Create Notes",
                     },
                     {
-                        url: '/',
+                        url: '/staff/designation',
                         name: "Designation",
                         slug: "Designation",
                     },
@@ -108,32 +108,32 @@ export default [
                 name:'Fees Collection',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/account/fees',
                         name: "Receive Detail",
                         slug: "Receive Detail",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/quick-receive',
                         name: "Quick Receive",
                         slug: "Quick Receive",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/collection',
                         name: "Collect Fees",
                         slug: "Collect Fees",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/balance',
                         name: "Balance Fees Report",
                         slug: "Balance Fees Report",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/master/add',
                         name: "AddFees",
                         slug: "Add Fees",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/head',
                         name: "Fees Head",
                         slug: "Fees Head",
                     },
@@ -144,7 +144,7 @@ export default [
                 name:'Pay Roll',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/payroll',
                         name: "Paid Detail",
                         slug: "Paid Detail",
                     },
@@ -242,6 +242,94 @@ export default [
             {
                 url:null,
                 name:'Books',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Receive Detail",
+                        slug: "Receive Detail",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Pay Roll',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Paid Detail",
+                        slug: "Paid Detail",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Ledger And Transaction',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Transaction",
+                        slug: "Transaction",
+                    },
+                    {
+                        url: '/',
+                        name: "Ledger",
+                        slug: "Ledger",
+                    },
+
+                ]
+            },
+            {
+                url:null,
+                name:'Bank',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Manage Bank Account",
+                        slug: "Manage Bank Account",
+                    },
+                    {
+                        url: '/',
+                        name: "Add New Bank",
+                        slug: "Add New Bank",
+                    },
+                    {
+                        url: '/',
+                        name: "Transaction Detail",
+                        slug: "Transaction Detail",
+                    },
+                    {
+                        url: '/',
+                        name: "New Transaction",
+                        slug: "New Transaction",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Report',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Cash Book",
+                        slug: "Cash Book",
+                    },
+                    {
+                        url: '/',
+                        name: "Free Collection Head",
+                        slug: "Free Collection Head",
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        url: null,
+        name: "Academics",
+        icon: "HomeIcon",
+        submenu: [
+            {
+                url:null,
+                name:'Academic Level',
                 submenu:[
                     {
                         url: '/',

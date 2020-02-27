@@ -1,15 +1,18 @@
-a{
-  text-decoration: none;
+*{
+  text-decoration: none!important;
+  &:hover{
+    text-decoration: none!important;
+  }
 }
 .action-group{
-  .btn-secondary{
-    background-color: #b8c2cc !important;
-    padding: 0.8rem 2.25rem !important;
-    border: 0;
-    &:hover{
-      box-shadow: 0 8px 25px -8px #6c757d;
+    .btn-secondary{
+        background-color: #b8c2cc !important;
+        padding: 0.8rem 2.25rem !important;
+        border: 0;
+          &:hover{
+            box-shadow: 0 8px 25px -8px #6c757d;
+          }
     }
-  }
 }
 
 

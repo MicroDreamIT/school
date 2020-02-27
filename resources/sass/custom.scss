@@ -17,7 +17,7 @@
   padding: 10px 5px;
 }
 a{
-  text-decoration: none;
+  text-decoration: none!important;
 }
 .smBtn {
   margin: 0 1.5px;
@@ -93,5 +93,10 @@ button:focus {
   }
   div:last-child{
     flex:1;
+  }
+}
+.ow-tr{
+  .vs-con-input-label{
+    width:60px!important;
   }
 }

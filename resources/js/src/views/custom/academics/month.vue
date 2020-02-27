@@ -90,10 +90,6 @@
 <script>
 
     export default {
-        components: {
-            studentTable
-        },
-        name: "payment-method",
         data() {
             return {
                 searchData: {},

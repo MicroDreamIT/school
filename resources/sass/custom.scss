@@ -4,6 +4,19 @@
   margin-right: 1rem;
 }
 
+.myTitle {
+  font-weight: 500;
+  color: #646464;
+  font-size: 1.8rem;
+  padding: 10px 5px;
+}
+.miniTitle {
+  font-weight: 500;
+  color: #646464;
+  font-size: 1.2rem;
+  padding: 10px 5px;
+}
+
 .smBtn {
   margin: 0 1.5px;
   border-color: #4839eb;
@@ -13,8 +26,9 @@
   font-size: 0.7rem;
   line-height: 1;
   border-radius: 0.4285rem;
-  &:focus{
-    outline: none!important;
+
+  &:focus {
+    outline: none !important;
   }
 }
 
@@ -34,24 +48,48 @@ a.router-link-active {
   .vs-icon {
     font-size: 0.7rem;
   }
+
   text-decoration: none !important;
 }
 
 
-.vs-pagination--ul{
-  margin-bottom:0!important;
+.vs-pagination--ul {
+  margin-bottom: 0 !important;
 }
 
-.vs-card{
+.vs-card {
   padding: 10px;
 }
-.vs-card--content{
+
+.vs-card--content {
   font-size: 1rem;
 }
-.my-round{
-  border-radius: 0.4285rem!important;
+
+.my-round {
+  border-radius: 0.4285rem !important;
 }
-button:focus {outline: none!important;}
-.custom-table{
-  .vs-table--td{pointer-events: none}
+
+button:focus {
+  outline: none !important;
+}
+
+.custom-table {
+  .vs-table--td {
+    pointer-events: none
+  }
+}
+
+.vs-tabs--ul {
+  margin-bottom: 0;
+}
+.mBox{
+  display: flex;
+  padding: 10px 5px;
+  div:first-child{
+    flex:3;
+    border-right:3px solid #FFFFFF;
+  }
+  div:last-child{
+    flex:1;
+  }
 }

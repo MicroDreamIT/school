@@ -27,8 +27,8 @@
                         <vs-tabs>
                             <vs-tab label="Fees Collection">
                                 <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
+                                    <data-table :headers="feesCollection"
+                                                :url="'/fees-collection'"
                                                 :no-data-message="'No matching records found'"
                                                 :searchField="searchData"
                                                 :hasSearch="false"
@@ -55,8 +55,8 @@
                             </vs-tab>
                             <vs-tab label="Staff Payroll">
                                 <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
+                                    <data-table :headers="staffPayroll"
+                                                :url="'/staff-payroll'"
                                                 :no-data-message="'No matching records found'"
                                                 :searchField="searchData"
                                                 :hasSearch="false"
@@ -83,8 +83,8 @@
                             </vs-tab>
                             <vs-tab label="Transaction">
                                 <div class="con-tab-ejemplo">
-                                    <data-table :headers="tableHeader1"
-                                                :url="'/student'"
+                                    <data-table :headers="transactionTable"
+                                                :url="'/transaction'"
                                                 :no-data-message="'No matching records found'"
                                                 :searchField="searchData"
                                                 :hasSearch="false"
@@ -426,11 +426,23 @@
                     },
                 },
 
-                tableHeader1: [
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                feesCollection: [
+                    {name: 'Reg.No.', sort_key: 'reg_no'},
+                    {name: 'Fees Title',  sort_key: 'title'},
+                    {name: 'Date', sort_key: 'date'},
+                    {name: 'Amount'},
+                ],
+                staffPayroll: [
+                    {name: 'Reg.No.', sort_key: 'reg_no'},
+                    {name: 'PayFor',  sort_key: 'pay_for'},
+                    {name: 'Date', sort_key: 'date'},
+                    {name: 'Amount'},
+                ],
+                transactionTable: [
+                    {name: 'TrHead', sort_key: 'reg_no'},
+                    {name: 'Date', sort_key: 'date'},
+                    {name: 'Dr.Amount'},
+                    {name: 'Cr.Amount'},
                 ],
                 searchData: {}
             }

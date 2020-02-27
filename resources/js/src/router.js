@@ -46,10 +46,6 @@ const router = new Router({
                 // =============================================================================
                 {
                     path: '/',
-                    redirect: '/dashboard'
-                },
-                {
-                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('./views/custom/dashboard'),
                     meta: {

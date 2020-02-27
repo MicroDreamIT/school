@@ -332,63 +332,82 @@ export default [
                 name:'Academic Level',
                 submenu:[
                     {
-                        url: '/',
-                        name: "Receive Detail",
-                        slug: "Receive Detail",
+                        url: '/faculty',
+                        name: "Faculty",
+                        slug: "Faculty",
+                    },
+                    {
+                        url: '/semester',
+                        name: "Semester",
+                        slug: "Semester",
+                    },
+                    {
+                        url: '/student-batch',
+                        name: "Student Batch",
+                        slug: "Student Batch",
                     },
                 ]
             },
             {
                 url:null,
-                name:'Pay Roll',
+                name:'Grading',
                 submenu:[
                     {
-                        url: '/',
-                        name: "Paid Detail",
-                        slug: "Paid Detail",
+                        url: '/grading',
+                        name: "Grading",
+                        slug: "Grading",
+                    },
+                    {
+                        url: '/subject',
+                        name: "Subject",
+                        slug: "Subject",
                     },
                 ]
             },
             {
                 url:null,
-                name:'Ledger And Transaction',
+                name:'Status',
                 submenu:[
                     {
-                        url: '/',
-                        name: "Transaction",
-                        slug: "Transaction",
+                        url: '/student-status',
+                        name: "Student Status",
+                        slug: "Student Status",
                     },
                     {
-                        url: '/',
-                        name: "Ledger",
-                        slug: "Ledger",
+                        url: '/attendance-status',
+                        name: "Attendance Status",
+                        slug: "Attendance Status",
                     },
-
+                    {
+                        url: '/books-status',
+                        name: "Book Status",
+                        slug: "Book Status",
+                    },
+                    {
+                        url: '/bed-status',
+                        name: "Bed Status",
+                        slug: "Bed Status",
+                    },
                 ]
             },
             {
                 url:null,
-                name:'Bank',
+                name:'Date & Time',
                 submenu:[
                     {
-                        url: '/',
-                        name: "Manage Bank Account",
-                        slug: "Manage Bank Account",
+                        url: '/year',
+                        name: "Year",
+                        slug: "Year",
                     },
                     {
-                        url: '/',
-                        name: "Add New Bank",
-                        slug: "Add New Bank",
+                        url: '/month',
+                        name: "Month",
+                        slug: "Month",
                     },
                     {
-                        url: '/',
-                        name: "Transaction Detail",
-                        slug: "Transaction Detail",
-                    },
-                    {
-                        url: '/',
-                        name: "New Transaction",
-                        slug: "New Transaction",
+                        url: '/day',
+                        name: "Day",
+                        slug: "Day",
                     },
                 ]
             },

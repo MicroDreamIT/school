@@ -62,6 +62,11 @@
 										<vs-textarea  />
 									</div>
 								</div>
+								<hr>
+								<button class="btn btn-info waves-effect waves-light" type="submit">
+									<i class="fa fa-save bigger-110"></i>
+									upload
+								</button>
 							</div>
 							<div class="col-md-8"><br>
 								<h4 class="header large lighter blue">
@@ -74,7 +79,7 @@
 											<i class="fa fa-remove" aria-hidden="true"></i>
 											In-Active
 										</a>
-										<a class="btn-danger btn-sm bulk-action-btn text-white ml-1">
+										<a class="btn-danger btn-sm bulk-action-btn text-white ml-2">
 											<i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
 									</div>
 								</div>

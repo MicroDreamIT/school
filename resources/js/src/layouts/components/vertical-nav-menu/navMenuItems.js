@@ -2,95 +2,8 @@ export default [
     {
         icon: "HomeIcon",
         i18n: "Dashboard",
-        items: [
-            {
-                url: "/apps/email",
-                name: "Email",
-                slug: "email",
-                icon: "MailIcon",
-                i18n: "Email",
-            },
-            {
-                url: "/apps/chat",
-                name: "Chat",
-                slug: "chat",
-                icon: "MessageSquareIcon",
-                i18n: "Chat",
-            },
-            {
-                url: "/apps/todo",
-                name: "Todo",
-                slug: "todo",
-                icon: "CheckSquareIcon",
-                i18n: "Todo",
-            },
-            {
-                url: "/apps/calendar/vue-simple-calendar",
-                name: "Calendar",
-                slug: "calendar-simple-calendar",
-                icon: "CalendarIcon",
-                tagColor: "success",
-                i18n: "Calendar",
-            },
-            {
-                url: null,
-                name: "E-Commerce",
-                icon: "ShoppingCartIcon",
-                i18n: "eCommerce",
-                submenu: [
-                    {
-                        url: '/apps/eCommerce/shop',
-                        name: "Shop",
-                        slug: "ecommerce-shop",
-                        i18n: "Shop",
-                    },
-                    {
-                        url: '/apps/eCommerce/item/',
-                        name: "Item Details",
-                        slug: "ecommerce-item-detail-view",
-                        i18n: "ItemDetails",
-                    },
-                    {
-                        url: '/apps/eCommerce/wish-list',
-                        name: "Wish List",
-                        slug: "ecommerce-wish-list",
-                        i18n: "WishList",
-                    },
-                    {
-                        url: '/apps/eCommerce/checkout',
-                        name: "Check Out",
-                        slug: "ecommerce-checkout",
-                        i18n: "Checkout",
-                    },
-                ]
-            },
-            {
-                url: null,
-                name: "User",
-                icon: "UserIcon",
-                i18n: "User",
-                submenu: [
-                    {
-                        url: '/apps/user/user-list',
-                        name: "List",
-                        slug: "app-user-list",
-                        i18n: "List",
-                    },
-                    {
-                        url: '/apps/user/user-view/268',
-                        name: "View",
-                        slug: "app-user-view",
-                        i18n: "View",
-                    },
-                    {
-                        url: '/apps/user/user-edit/268',
-                        name: "Edit",
-                        slug: "app-user-edit",
-                        i18n: "Edit",
-                    },
-                ]
-            },
-        ]
+        url: "/",
+        slug:'dashboard'
     },
     {
         url: null,
@@ -138,7 +51,7 @@ export default [
                 name:'Guardian',
                 submenu:[
                     {
-                        url: '/guardian/details',
+                        url: '/guardian',
                         name: "Guardian Detail",
                         slug: "Guardian Detail",
                     },
@@ -155,27 +68,27 @@ export default [
                 name:'Staff',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/staff',
                         name: "Staff Detail",
                         slug: "Staff Detail",
                     },
                     {
-                        url: '/',
+                        url: '/staff/import',
                         name: "Bulk Import",
                         slug: "Bulk Import",
                     },
                     {
-                        url: '/',
+                        url: '/staff/document',
                         name: "Document Upload",
                         slug: "Document Upload",
                     },
                     {
-                        url: '/',
+                        url: '/staff/note',
                         name: "Create Notes",
                         slug: "Create Notes",
                     },
                     {
-                        url: '/',
+                        url: '/staff/designation',
                         name: "Designation",
                         slug: "Designation",
                     },
@@ -195,32 +108,32 @@ export default [
                 name:'Fees Collection',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/account/fees',
                         name: "Receive Detail",
                         slug: "Receive Detail",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/quick-receive',
                         name: "Quick Receive",
                         slug: "Quick Receive",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/collection',
                         name: "Collect Fees",
                         slug: "Collect Fees",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/balance',
                         name: "Balance Fees Report",
                         slug: "Balance Fees Report",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/master/add',
                         name: "AddFees",
                         slug: "Add Fees",
                     },
                     {
-                        url: '/',
+                        url: '/account/fees/head',
                         name: "Fees Head",
                         slug: "Fees Head",
                     },
@@ -231,7 +144,7 @@ export default [
                 name:'Pay Roll',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/payroll',
                         name: "Paid Detail",
                         slug: "Paid Detail",
                     },
@@ -388,6 +301,113 @@ export default [
                         url: '/',
                         name: "New Transaction",
                         slug: "New Transaction",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Report',
+                submenu:[
+                    {
+                        url: '/',
+                        name: "Cash Book",
+                        slug: "Cash Book",
+                    },
+                    {
+                        url: '/',
+                        name: "Free Collection Head",
+                        slug: "Free Collection Head",
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        url: null,
+        name: "Academics",
+        icon: "HomeIcon",
+        submenu: [
+            {
+                url:null,
+                name:'Academic Level',
+                submenu:[
+                    {
+                        url: '/faculty',
+                        name: "Faculty",
+                        slug: "Faculty",
+                    },
+                    {
+                        url: '/semester',
+                        name: "Semester",
+                        slug: "Semester",
+                    },
+                    {
+                        url: '/student-batch',
+                        name: "Student Batch",
+                        slug: "Student Batch",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Grading',
+                submenu:[
+                    {
+                        url: '/grading',
+                        name: "Grading",
+                        slug: "Grading",
+                    },
+                    {
+                        url: '/subject',
+                        name: "Subject",
+                        slug: "Subject",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Status',
+                submenu:[
+                    {
+                        url: '/student-status',
+                        name: "Student Status",
+                        slug: "Student Status",
+                    },
+                    {
+                        url: '/attendance-status',
+                        name: "Attendance Status",
+                        slug: "Attendance Status",
+                    },
+                    {
+                        url: '/books-status',
+                        name: "Book Status",
+                        slug: "Book Status",
+                    },
+                    {
+                        url: '/bed-status',
+                        name: "Bed Status",
+                        slug: "Bed Status",
+                    },
+                ]
+            },
+            {
+                url:null,
+                name:'Date & Time',
+                submenu:[
+                    {
+                        url: '/year',
+                        name: "Year",
+                        slug: "Year",
+                    },
+                    {
+                        url: '/month',
+                        name: "Month",
+                        slug: "Month",
+                    },
+                    {
+                        url: '/day',
+                        name: "Day",
+                        slug: "Day",
                     },
                 ]
             },

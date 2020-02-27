@@ -46,10 +46,6 @@ const router = new Router({
                 // =============================================================================
                 {
                     path: '/',
-                    redirect: '/dashboard'
-                },
-                {
-                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('./views/custom/dashboard'),
                     meta: {
@@ -123,6 +119,113 @@ const router = new Router({
                     }
                 },
 
+                /* url for academic section */
+                {
+                    path:'/faculty',
+                    name:'academics.faculty',
+                    component:()=>import('./views/custom/academics/faculty'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/semester',
+                    name:'academics.semester',
+                    component:()=>import('./views/custom/academics/semester'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/student-batch',
+                    name:'academics.batch',
+                    component:()=>import('./views/custom/academics/batch'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/grading',
+                    name:'academics.grading',
+                    component:()=>import('./views/custom/academics/grading'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/subject',
+                    name:'academics.subject',
+                    component:()=>import('./views/custom/academics/subject'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/student-status',
+                    name:'academics.student-status',
+                    component:()=>import('./views/custom/academics/student-status'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance-status',
+                    name:'academics.attendance-status',
+                    component:()=>import('./views/custom/academics/attendance-status'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/book-status',
+                    name:'academics.book-status',
+                    component:()=>import('./views/custom/academics/books-status'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/bed-status',
+                    name:'academics.bed-status',
+                    component:()=>import('./views/custom/academics/hostel-status'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/year',
+                    name:'academics.year',
+                    component:()=>import('./views/custom/academics/year'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/month',
+                    name:'academics.month',
+                    component:()=>import('./views/custom/academics/month'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/day',
+                    name:'academics.day',
+                    component:()=>import('./views/custom/academics/day'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/payment-method',
+                    name:'academics.payment-method',
+                    component:()=>import('./views/custom/academics/payment-method'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
+                /* url for academic section end */
 
                 // =============================================================================
                 // Application Routes

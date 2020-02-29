@@ -118,7 +118,31 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-
+                /*for more*/
+                {
+                    path:'/assignment',
+                    name:'assignment',
+                    component:()=>import('./views/custom/more/assignment/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/assignment/add',
+                    name:'assignmentCreate',
+                    component:()=>import('./views/custom/more/assignment/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/download',
+                    name:'download',
+                    component:()=>import('./views/custom/more/upload-download'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
 
                 /* for notice*/
                  {

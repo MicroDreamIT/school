@@ -178,7 +178,7 @@ const router = new Router({
                 },
                 {
                     path:'/book-status',
-                    name:'academics.book-status',
+                    name:'academics.books-status',
                     component:()=>import('./views/custom/academics/books-status'),
                     meta:{
                         rule: 'admin'

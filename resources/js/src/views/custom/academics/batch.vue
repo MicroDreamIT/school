@@ -20,7 +20,7 @@
                                 <label class="col-sm-3">Status</label>
                                 <vs-input class="col-sm-9"></vs-input>
                             </div>
-                            <vs-divider></vs-divider>
+                            <vs-divider class="mt-3"></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
                                        class="my-round">Create

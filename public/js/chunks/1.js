@@ -1,5 +1,44 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],{
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "buy-now"
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue?vue&type=script&lang=js& ***!
@@ -297,6 +336,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _components_BuyNow_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/BuyNow.vue */ "./resources/js/src/components/BuyNow.vue");
 //
 //
 //
@@ -316,11 +356,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "the-footer",
   props: {
     classes: {
       type: String
+    }
+  },
+  inject: {
+    components: {
+      default: {
+        BuyNow: _components_BuyNow_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+      }
     }
   }
 });
@@ -3159,7 +3212,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var VxTour = function VxTour() {
-  return __webpack_require__.e(/*! import() */ 7).then(__webpack_require__.bind(null, /*! @/components/VxTour.vue */ "./resources/js/src/components/VxTour.vue"));
+  return __webpack_require__.e(/*! import() */ 8).then(__webpack_require__.bind(null, /*! @/components/VxTour.vue */ "./resources/js/src/components/VxTour.vue"));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3562,6 +3615,25 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js??ref--8-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".buy-now {\n  position: fixed;\n  bottom: 5%;\n  right: 79px;\n  z-index: 51000;\n  box-shadow: 0 1px 20px 1px #fb434f;\n}", ""]);
+
+// exports
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue?vue&type=style&index=0&lang=scss&":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js??ref--8-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue?vue&type=style&index=0&lang=scss& ***!
@@ -3574,7 +3646,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n  File Name: vxAutoSuggest.scss\n  Description: Styles for vx-auto-suggest component. Imported in VxAutoSuggest.vue file\n  ----------------------------------------------------------------------------------------\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n  Author: Pixinvent\n  Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.vx-auto-suggest {\n  position: relative;\n}\n.vx-auto-suggest .vs-input .vs-con-input .vs-inputx {\n  z-index: 10;\n}\n.vx-auto-suggest .vs-input .vs-con-input .vs-input--placeholder {\n  top: 0;\n  z-index: 50;\n}\n.vx-auto-suggest .auto-suggest-suggestions-list {\n  position: absolute;\n  background: #fff;\n  width: 100%;\n  max-height: 82vh;\n  overflow-y: auto;\n}\n.vx-auto-suggest .auto-suggest-suggestions-list .auto-suggest__suggestion-group__suggestion.vx-auto-suggest__current-selected {\n  background: #F1F1F1;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n  File Name: vxAutoSuggest.scss\r\n  Description: Styles for vx-auto-suggest component. Imported in VxAutoSuggest.vue file\r\n  ----------------------------------------------------------------------------------------\r\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n  Author: Pixinvent\r\n  Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.vx-auto-suggest {\n  position: relative;\n}\n.vx-auto-suggest .vs-input .vs-con-input .vs-inputx {\n  z-index: 10;\n}\n.vx-auto-suggest .vs-input .vs-con-input .vs-input--placeholder {\n  top: 0;\n  z-index: 50;\n}\n.vx-auto-suggest .auto-suggest-suggestions-list {\n  position: absolute;\n  background: #fff;\n  width: 100%;\n  max-height: 82vh;\n  overflow-y: auto;\n}\n.vx-auto-suggest .auto-suggest-suggestions-list .auto-suggest__suggestion-group__suggestion.vx-auto-suggest__current-selected {\n  background: #F1F1F1;\n}", ""]);
 
 // exports
 
@@ -3612,7 +3684,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.menu-item .nav-link {\n  color: inherit;\n}\n.menu-item .disabled-item span {\n  color: #e2e2e2;\n}\n.h-nav-menu-dd {\n  background-color: #fff;\n}\n\n/* DARK THEME */\n.theme-dark .h-nav-menu-dd {\n  background-color: #262c49;\n  box-shadow: 0px 0px 30px #0f163a !important;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.menu-item .nav-link {\n  color: inherit;\n}\n.menu-item .disabled-item span {\n  color: #e2e2e2;\n}\n.h-nav-menu-dd {\n  background-color: #fff;\n}\n\n/* DARK THEME */\n.theme-dark .h-nav-menu-dd {\n  background-color: #262c49;\n  box-shadow: 0px 0px 30px #0f163a !important;\n}", ""]);
 
 // exports
 
@@ -3631,7 +3703,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.menu-item > .h-nav-group-open .group-header {\n  background-color: #f6f6f6;\n}\n.theme-dark .menu-item > .h-nav-group-open .group-header {\n  background-color: #262c49;\n}\n.header-children .h-nav-group-active {\n  background-color: #f6f6f6;\n}\n.theme-dark .header-children .h-nav-group-active {\n  background-color: #10163a;\n}\n.h-nav-group-items {\n  border-radius: 4px;\n  min-width: 215px;\n  z-index: 1;\n}\n.h-nav-group-items.dd-left {\n  right: 0rem;\n}\n.h-nav-group-items::-webkit-scrollbar {\n  width: 5px;\n  height: 5px;\n}\n.h-nav-group-items::-webkit-scrollbar-thumb {\n  background: #dae1e7;\n  border-radius: 20px;\n}\n.theme-dark .h-nav-group-items::-webkit-scrollbar-thumb {\n  background: #10163a;\n}\n.h-nav-group-items::-webkit-scrollbar-track {\n  background: #f8f8f8;\n  border-radius: 30px;\n}\n.theme-dark .h-nav-group-items::-webkit-scrollbar-track {\n  background: #262c49;\n}\n.nav-header .group-header {\n  transition: all 0.2s ease;\n  padding: 0.75rem 1.5rem;\n}\n.nav-header .group-header:hover {\n  transform: translateX(5px);\n}\n.menu-item > .h-nav-group .group-header {\n  border-radius: 4px;\n  padding: 0.5rem 1.5rem;\n}\n.menu-item > .h-nav-group-active .group-header {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7)) !important;\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n  color: #fff;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.menu-item > .h-nav-group-open .group-header {\n  background-color: #f6f6f6;\n}\n.theme-dark .menu-item > .h-nav-group-open .group-header {\n  background-color: #262c49;\n}\n.header-children .h-nav-group-active {\n  background-color: #f6f6f6;\n}\n.theme-dark .header-children .h-nav-group-active {\n  background-color: #10163a;\n}\n.h-nav-group-items {\n  border-radius: 4px;\n  min-width: 215px;\n  z-index: 1;\n}\n.h-nav-group-items.dd-left {\n  right: 0rem;\n}\n.h-nav-group-items::-webkit-scrollbar {\n  width: 5px;\n  height: 5px;\n}\n.h-nav-group-items::-webkit-scrollbar-thumb {\n  background: #dae1e7;\n  border-radius: 20px;\n}\n.theme-dark .h-nav-group-items::-webkit-scrollbar-thumb {\n  background: #10163a;\n}\n.h-nav-group-items::-webkit-scrollbar-track {\n  background: #f8f8f8;\n  border-radius: 30px;\n}\n.theme-dark .h-nav-group-items::-webkit-scrollbar-track {\n  background: #262c49;\n}\n.nav-header .group-header {\n  transition: all 0.2s ease;\n  padding: 0.75rem 1.5rem;\n}\n.nav-header .group-header:hover {\n  transform: translateX(5px);\n}\n.menu-item > .h-nav-group .group-header {\n  border-radius: 4px;\n  padding: 0.5rem 1.5rem;\n}\n.menu-item > .h-nav-group-active .group-header {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7)) !important;\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n  color: #fff;\n}", ""]);
 
 // exports
 
@@ -3650,7 +3722,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.header-active {\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n}\n.header-label {\n  border-radius: 4px;\n}\n.header-open {\n  background-color: #f6f6f6;\n}\n.header-children {\n  min-width: 215px;\n  top: 100%;\n  border-radius: 4px;\n  z-index: 1;\n}\n.header-children.dd-right {\n  right: 1rem;\n}\n.theme-dark .header-open {\n  background-color: #262c49;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.header-active {\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n}\n.header-label {\n  border-radius: 4px;\n}\n.header-open {\n  background-color: #f6f6f6;\n}\n.header-children {\n  min-width: 215px;\n  top: 100%;\n  border-radius: 4px;\n  z-index: 1;\n}\n.header-children.dd-right {\n  right: 1rem;\n}\n.theme-dark .header-open {\n  background-color: #262c49;\n}", ""]);
 
 // exports
 
@@ -3669,7 +3741,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.menu-item li .h-nav-menu-item a {\n  padding: 0.75rem 1.5rem;\n}\n.menu-item li .h-nav-menu-item > * {\n  transition: 0.25s ease-in-out;\n}\n.menu-item li .h-nav-menu-item > *:hover {\n  transform: translateX(5px);\n}\n.menu-item li .h-nav-menu-item.h-nav-active-item {\n  background-color: #f6f6f6;\n}\n.theme-dark .menu-item li .h-nav-menu-item.h-nav-active-item {\n  background-color: #10163a;\n}\n.menu-link .h-nav-menu-item:hover .nav-link {\n  background: #f6f6f6;\n}\n.theme-dark .menu-link .h-nav-menu-item:hover .nav-link {\n  background: #262c49;\n}\n.menu-link .h-nav-menu-item.h-nav-active-item a {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7)) !important;\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n  color: #fff;\n}\n.menu-link .h-nav-menu-item a {\n  border-radius: 4px;\n  padding: 0.5rem 1.5rem;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.menu-item li .h-nav-menu-item a {\n  padding: 0.75rem 1.5rem;\n}\n.menu-item li .h-nav-menu-item > * {\n  transition: 0.25s ease-in-out;\n}\n.menu-item li .h-nav-menu-item > *:hover {\n  transform: translateX(5px);\n}\n.menu-item li .h-nav-menu-item.h-nav-active-item {\n  background-color: #f6f6f6;\n}\n.theme-dark .menu-item li .h-nav-menu-item.h-nav-active-item {\n  background-color: #10163a;\n}\n.menu-link .h-nav-menu-item:hover .nav-link {\n  background: #f6f6f6;\n}\n.theme-dark .menu-link .h-nav-menu-item:hover .nav-link {\n  background: #262c49;\n}\n.menu-link .h-nav-menu-item.h-nav-active-item a {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7)) !important;\n  box-shadow: 0px 0px 6px 1px rgba(var(--vs-primary), 0.6);\n  color: #fff;\n}\n.menu-link .h-nav-menu-item a {\n  border-radius: 4px;\n  padding: 0.5rem 1.5rem;\n}", ""]);
 
 // exports
 
@@ -3688,7 +3760,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n  File Name: verticalNavMenu.scss\n  Description: Styles for v-nav-menu component. Imported in VerticalNavMenu.vue file\n  ----------------------------------------------------------------------------------------\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n  Author: Pixinvent\n  Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*=========================================================================================\n    File Name: _variables.scss\n    Description: partial- SCSS varibales\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n/*========================================================\n        SPACING\n=========================================================*/\n/*========================================================\n        COLORS\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        TYPOGRAPHY\n=========================================================*/\n/*========================================================\n        DARK THEME\n=========================================================*/\n.v-nav-menu-swipe-area {\n  position: fixed;\n  background: transparent;\n  height: calc(var(--vh, 1vh) * 100);\n  width: 30px;\n  z-index: 1;\n  top: 0;\n  left: 0;\n}\n.v-nav-menu {\n  white-space: nowrap;\n}\n.v-nav-menu .vs-sidebar--background {\n  z-index: 51000;\n}\n.v-nav-menu .vs-sidebar {\n  z-index: 51000;\n  position: fixed;\n}\n.v-nav-menu .vs-sidebar .vs-sidebar--items {\n  padding: 0;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce {\n  max-width: 80px;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce:hover {\n  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08) !important;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce:hover:not(.vs-sidebar-reduceNotRebound):not(.vs-sidebar-reduceNotHoverExpand) .vs-sidebar-group .group-header i {\n  display: block;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce .vs-sidebar-group .group-header i {\n  display: none;\n}\n.v-nav-menu .header-sidebar {\n  padding: 20px 19px 16px 23px;\n  width: 100%;\n}\n.v-nav-menu .header-sidebar .logo img {\n  padding: 4px 0;\n}\n.v-nav-menu .header-sidebar .feather-icon svg {\n  color: #7367F0;\n}\n.v-nav-menu .shadow-bottom {\n  position: absolute;\n  z-index: 2;\n  height: 60px;\n  width: 100%;\n  pointer-events: none;\n  margin-top: -1.3rem;\n  filter: blur(5px);\n  background: linear-gradient(white 41%, rgba(255, 255, 255, 0.11) 95%, rgba(255, 255, 255, 0) 100%);\n}\n.v-nav-menu .scroll-area-v-nav-menu {\n  position: relative;\n  margin: auto;\n  width: 100%;\n  height: calc(var(--vh, 1vh) * 100 - 69px);\n}\n.v-nav-menu .scroll-area-v-nav-menu > .vs-sidebar-group {\n  padding: 0 15px;\n}\n.v-nav-menu .scroll-area-v-nav-menu > .vs-sidebar--item {\n  padding: 0 15px;\n}\n.v-nav-menu .navigation-header {\n  font-size: 0.9rem;\n  display: block;\n  margin-bottom: 0.8rem;\n  margin-left: 2.2rem;\n  font-weight: 500;\n  text-transform: uppercase;\n  color: #999;\n}\n.v-nav-menu .navigation-header:not(:first-child) {\n  margin-top: 2rem;\n}\n.v-nav-menu .feather-icon {\n  color: #565656;\n  margin-right: 14px;\n}\n.v-nav-menu .feather-icon .feather {\n  width: 20px;\n  height: 20px;\n}\n.v-nav-menu .con-vs-chip {\n  min-height: 24px;\n  box-shadow: 0px 0px 7px 3px rgba(0, 0, 0, 0.1);\n}\n.v-nav-menu .con-vs-chip .vs-chip--text {\n  color: #fff;\n  font-size: 0.8rem;\n}\n.v-nav-menu .vs-sidebar--item {\n  transition: none;\n  overflow: visible !important;\n}\n.v-nav-menu .vs-sidebar--item:hover a {\n  color: inherit;\n}\n.v-nav-menu .vs-sidebar--item:hover a > * {\n  transform: translateX(5px);\n}\n.v-nav-menu .vs-sidebar--item.vs-sidebar-item-active {\n  border: none !important;\n  font-weight: 400;\n  z-index: 1;\n  position: relative;\n}\n.v-nav-menu .vs-sidebar--item a {\n  font-size: 1rem;\n  transition: none;\n  border-radius: 4px;\n  opacity: unset;\n  color: #626262;\n  padding: 10px 15px;\n}\n.v-nav-menu .vs-sidebar--item a > * {\n  transition: transform 0.25s ease;\n}\n.v-nav-menu .vs-sidebar--item a span {\n  font-size: 15px;\n}\n.v-nav-menu .vs-sidebar--item.disabled-item a span {\n  color: #e2e2e2;\n}\n.theme-dark .v-nav-menu .vs-sidebar--item.disabled-item a {\n  opacity: 0.3;\n}\n.v-nav-menu .vs-sidebar--item .router-link-active {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7));\n  box-shadow: 0px 0px 10px 1px rgba(var(--vs-primary), 0.7);\n}\n.v-nav-menu .vs-sidebar--item .router-link-active .feather-icon {\n  color: #fff;\n}\n.v-nav-menu .vs-sidebar--item .router-link-active span {\n  color: #fff;\n}\n#sidebar-demo .vs-sidebar {\n  z-index: 52000;\n}\n#sidebar-demo .vs-sidebar-staticPosition {\n  z-index: 10000;\n}\n#sidebar-demo #parentx-demo-7 .parentx:not(.show-custom-sidebar) .vs-sidebar {\n  display: none;\n  z-index: 1 !important;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n  File Name: verticalNavMenu.scss\r\n  Description: Styles for v-nav-menu component. Imported in VerticalNavMenu.vue file\r\n  ----------------------------------------------------------------------------------------\r\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n  Author: Pixinvent\r\n  Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*=========================================================================================\r\n    File Name: _variables.scss\r\n    Description: partial- SCSS varibales\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n/*========================================================\r\n        SPACING\r\n=========================================================*/\n/*========================================================\r\n        COLORS\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        TYPOGRAPHY\r\n=========================================================*/\n/*========================================================\r\n        DARK THEME\r\n=========================================================*/\n.v-nav-menu-swipe-area {\n  position: fixed;\n  background: transparent;\n  height: calc(var(--vh, 1vh) * 100);\n  width: 30px;\n  z-index: 1;\n  top: 0;\n  left: 0;\n}\n.v-nav-menu {\n  white-space: nowrap;\n}\n.v-nav-menu .vs-sidebar--background {\n  z-index: 51000;\n}\n.v-nav-menu .vs-sidebar {\n  z-index: 51000;\n  position: fixed;\n}\n.v-nav-menu .vs-sidebar .vs-sidebar--items {\n  padding: 0;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce {\n  max-width: 80px;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce:hover {\n  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08) !important;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce:hover:not(.vs-sidebar-reduceNotRebound):not(.vs-sidebar-reduceNotHoverExpand) .vs-sidebar-group .group-header i {\n  display: block;\n}\n.v-nav-menu .vs-sidebar.vs-sidebar-reduce .vs-sidebar-group .group-header i {\n  display: none;\n}\n.v-nav-menu .header-sidebar {\n  padding: 20px 19px 16px 23px;\n  width: 100%;\n}\n.v-nav-menu .header-sidebar .logo img {\n  padding: 4px 0;\n}\n.v-nav-menu .header-sidebar .feather-icon svg {\n  color: #7367F0;\n}\n.v-nav-menu .shadow-bottom {\n  position: absolute;\n  z-index: 2;\n  height: 60px;\n  width: 100%;\n  pointer-events: none;\n  margin-top: -1.3rem;\n  filter: blur(5px);\n  background: linear-gradient(white 41%, rgba(255, 255, 255, 0.11) 95%, rgba(255, 255, 255, 0) 100%);\n}\n.v-nav-menu .scroll-area-v-nav-menu {\n  position: relative;\n  margin: auto;\n  width: 100%;\n  height: calc(var(--vh, 1vh) * 100 - 69px);\n}\n.v-nav-menu .scroll-area-v-nav-menu > .vs-sidebar-group {\n  padding: 0 15px;\n}\n.v-nav-menu .scroll-area-v-nav-menu > .vs-sidebar--item {\n  padding: 0 15px;\n}\n.v-nav-menu .navigation-header {\n  font-size: 0.9rem;\n  display: block;\n  margin-bottom: 0.8rem;\n  margin-left: 2.2rem;\n  font-weight: 500;\n  text-transform: uppercase;\n  color: #999;\n}\n.v-nav-menu .navigation-header:not(:first-child) {\n  margin-top: 2rem;\n}\n.v-nav-menu .feather-icon {\n  color: #565656;\n  margin-right: 14px;\n}\n.v-nav-menu .feather-icon .feather {\n  width: 20px;\n  height: 20px;\n}\n.v-nav-menu .con-vs-chip {\n  min-height: 24px;\n  box-shadow: 0px 0px 7px 3px rgba(0, 0, 0, 0.1);\n}\n.v-nav-menu .con-vs-chip .vs-chip--text {\n  color: #fff;\n  font-size: 0.8rem;\n}\n.v-nav-menu .vs-sidebar--item {\n  transition: none;\n  overflow: visible !important;\n}\n.v-nav-menu .vs-sidebar--item:hover a {\n  color: inherit;\n}\n.v-nav-menu .vs-sidebar--item:hover a > * {\n  transform: translateX(5px);\n}\n.v-nav-menu .vs-sidebar--item.vs-sidebar-item-active {\n  border: none !important;\n  font-weight: 400;\n  z-index: 1;\n  position: relative;\n}\n.v-nav-menu .vs-sidebar--item a {\n  font-size: 1rem;\n  transition: none;\n  border-radius: 4px;\n  opacity: unset;\n  color: #626262;\n  padding: 10px 15px;\n}\n.v-nav-menu .vs-sidebar--item a > * {\n  transition: transform 0.25s ease;\n}\n.v-nav-menu .vs-sidebar--item a span {\n  font-size: 15px;\n}\n.v-nav-menu .vs-sidebar--item.disabled-item a span {\n  color: #e2e2e2;\n}\n.theme-dark .v-nav-menu .vs-sidebar--item.disabled-item a {\n  opacity: 0.3;\n}\n.v-nav-menu .vs-sidebar--item .router-link-active {\n  background: linear-gradient(118deg, rgba(var(--vs-primary), 1), rgba(var(--vs-primary), 0.7));\n  box-shadow: 0px 0px 10px 1px rgba(var(--vs-primary), 0.7);\n}\n.v-nav-menu .vs-sidebar--item .router-link-active .feather-icon {\n  color: #fff;\n}\n.v-nav-menu .vs-sidebar--item .router-link-active span {\n  color: #fff;\n}\n#sidebar-demo .vs-sidebar {\n  z-index: 52000;\n}\n#sidebar-demo .vs-sidebar-staticPosition {\n  z-index: 10000;\n}\n#sidebar-demo #parentx-demo-7 .parentx:not(.show-custom-sidebar) .vs-sidebar {\n  display: none;\n  z-index: 1 !important;\n}", ""]);
 
 // exports
 
@@ -3707,7 +3779,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n  File Name: verticalNavMenuGroup.scss\n  Description: Styles for v-nav-menu component. Imported in VerticalNavMenuGroup.vue file\n  ----------------------------------------------------------------------------------------\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n  Author: Pixinvent\n  Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.vs-sidebar-group {\n  overflow: hidden;\n}\n.vs-sidebar-group .group-header {\n  transition: all 0.5s ease;\n  font-size: 15px;\n  padding: 10px 15px;\n  cursor: pointer;\n}\n.vs-sidebar-group .group-header .feather-grp-header-arrow {\n  position: absolute !important;\n  right: 8px;\n  top: 12px;\n  transition: all 0.2s ease-out;\n  transform: rotate(0deg);\n  display: inline-block;\n}\n.vs-sidebar-group .group-header .feather-grp-header-arrow.rotate90 {\n  transform: rotate(90deg);\n}\n.vs-sidebar-group .group-header > * {\n  transition: all 0.25s ease;\n}\n.vs-sidebar-group .group-header:hover > * {\n  transform: translateX(5px);\n}\n.vs-sidebar-group .group-header .con-vs-chip {\n  margin-bottom: 0;\n}\n.vs-sidebar-group .vs-icon {\n  font-size: 1.5rem;\n}\n.vs-sidebar-group:hover > .group-header {\n  transform: unset;\n}\n.vs-sidebar-group .vs-sidebar-group .group-header {\n  padding-left: 20px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .group-header, .vs-sidebar-group.vs-sidebar-group-active > .group-header {\n  background: #f6f6f6;\n  border-radius: 6px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > ul, .vs-sidebar-group.vs-sidebar-group-active > ul {\n  padding-left: 0 !important;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .group-header {\n  cursor: pointer;\n  margin-bottom: 7px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items {\n  padding-left: 0;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items .vs-sidebar--item span {\n  padding-left: 0 0 0 2rem;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items .vs-sidebar--item:last-child {\n  border-bottom: 0px;\n}\n.vs-sidebar-group.vs-sidebar-group-open .vs-sidebar-group {\n  overflow: visible;\n}\n.vs-sidebar-group .vs-sidebar-group-items {\n  opacity: 0;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item a {\n  padding: 10px 15px 10px 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item a .feather-icon {\n  margin-right: 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item:last-child a {\n  margin-bottom: 0;\n}\n.vs-sidebar-group .vs-sidebar-group-items li:last-child {\n  padding-bottom: 7px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar-group span .feather-icon {\n  margin-right: 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar-group .feather-icon {\n  margin-right: 0px;\n}\n.vs-sidebar-group.disabled-item span {\n  color: #e2e2e2;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n  File Name: verticalNavMenuGroup.scss\r\n  Description: Styles for v-nav-menu component. Imported in VerticalNavMenuGroup.vue file\r\n  ----------------------------------------------------------------------------------------\r\n  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n  Author: Pixinvent\r\n  Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.vs-sidebar-group {\n  overflow: hidden;\n}\n.vs-sidebar-group .group-header {\n  transition: all 0.5s ease;\n  font-size: 15px;\n  padding: 10px 15px;\n  cursor: pointer;\n}\n.vs-sidebar-group .group-header .feather-grp-header-arrow {\n  position: absolute !important;\n  right: 8px;\n  top: 12px;\n  transition: all 0.2s ease-out;\n  transform: rotate(0deg);\n  display: inline-block;\n}\n.vs-sidebar-group .group-header .feather-grp-header-arrow.rotate90 {\n  transform: rotate(90deg);\n}\n.vs-sidebar-group .group-header > * {\n  transition: all 0.25s ease;\n}\n.vs-sidebar-group .group-header:hover > * {\n  transform: translateX(5px);\n}\n.vs-sidebar-group .group-header .con-vs-chip {\n  margin-bottom: 0;\n}\n.vs-sidebar-group .vs-icon {\n  font-size: 1.5rem;\n}\n.vs-sidebar-group:hover > .group-header {\n  transform: unset;\n}\n.vs-sidebar-group .vs-sidebar-group .group-header {\n  padding-left: 20px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .group-header, .vs-sidebar-group.vs-sidebar-group-active > .group-header {\n  background: #f6f6f6;\n  border-radius: 6px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > ul, .vs-sidebar-group.vs-sidebar-group-active > ul {\n  padding-left: 0 !important;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .group-header {\n  cursor: pointer;\n  margin-bottom: 7px;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items {\n  padding-left: 0;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items .vs-sidebar--item span {\n  padding-left: 0 0 0 2rem;\n}\n.vs-sidebar-group.vs-sidebar-group-open > .vs-sidebar-group-items .vs-sidebar--item:last-child {\n  border-bottom: 0px;\n}\n.vs-sidebar-group.vs-sidebar-group-open .vs-sidebar-group {\n  overflow: visible;\n}\n.vs-sidebar-group .vs-sidebar-group-items {\n  opacity: 0;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item a {\n  padding: 10px 15px 10px 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item a .feather-icon {\n  margin-right: 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar--item:last-child a {\n  margin-bottom: 0;\n}\n.vs-sidebar-group .vs-sidebar-group-items li:last-child {\n  padding-bottom: 7px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar-group span .feather-icon {\n  margin-right: 20px;\n}\n.vs-sidebar-group .vs-sidebar-group-items .vs-sidebar-group .feather-icon {\n  margin-right: 0px;\n}\n.vs-sidebar-group.disabled-item span {\n  color: #e2e2e2;\n}", ""]);
 
 // exports
 
@@ -3749,6 +3821,36 @@ exports.push([module.i, ".my-dropdown {\n  display: flex;\n  align-items: center
 
 // exports
 
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js??ref--8-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/sass-loader/lib/loader.js??ref--8-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./BuyNow.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
 
 /***/ }),
 
@@ -4049,6 +4151,40 @@ var update = __webpack_require__(/*! ../../../../../../../node_modules/style-loa
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function(_h, _vm) {
+  var _c = _vm._c
+  return _c(
+    "vs-button",
+    {
+      staticClass: "buy-now",
+      attrs: {
+        color: "danger",
+        type: "filled",
+        target: "",
+        href: { url: "https://1.envato.market/vuexy_admin" }
+      }
+    },
+    [_vm._v("Buy Now")]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
 
 /***/ }),
 
@@ -4435,19 +4571,44 @@ var render = function(_h, _vm) {
   var _c = _vm._c
   return _c(
     "footer",
-    {
-      staticClass: "the-footer flex-wrap justify-content-center",
-      class: _vm.classes
-    },
+    { staticClass: "the-footer flex-wrap justify-between", class: _vm.classes },
     [
       _c("span", [
-        _vm._v(
-          "COPYRIGHT © " +
-            _vm._s(new Date().getFullYear()) +
-            "\n        All rights Reserved"
-        )
-      ])
-    ]
+        _vm._v("COPYRIGHT © " + _vm._s(new Date().getFullYear()) + " "),
+        _c(
+          "a",
+          {
+            attrs: {
+              href: "https://1.envato.market/vuexy_admin",
+              target: "_blank",
+              rel: "nofollow"
+            }
+          },
+          [_vm._v("Pixinvent")]
+        ),
+        _vm._v(", All rights Reserved")
+      ]),
+      _vm._v(" "),
+      _c(
+        "span",
+        { staticClass: "md:flex hidden items-center" },
+        [
+          _c("span", [_vm._v("Hand-crafted & Made with")]),
+          _vm._v(" "),
+          _c("feather-icon", {
+            staticClass: "ml-2",
+            attrs: {
+              icon: "HeartIcon",
+              svgClasses: "stroke-current text-danger w-6 h-6"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(_vm.injections.components.BuyNow, { tag: "component" })
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -4476,6 +4637,22 @@ var render = function() {
     "div",
     { attrs: { id: "theme-customizer" } },
     [
+      _c("vs-button", {
+        staticClass: "customizer-btn",
+        attrs: {
+          color: "primary",
+          type: "filled",
+          "icon-pack": "feather",
+          icon: "icon-settings"
+        },
+        on: {
+          click: function($event) {
+            $event.stopPropagation()
+            _vm.active = !_vm.active
+          }
+        }
+      }),
+      _vm._v(" "),
       _c(
         "vs-sidebar",
         {
@@ -8185,6 +8362,93 @@ module.exports = "/images/pt.png?eba93d33545c78cc67915d9be8323661";
 
 /***/ }),
 
+/***/ "./resources/js/src/components/BuyNow.vue":
+/*!************************************************!*\
+  !*** ./resources/js/src/components/BuyNow.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BuyNow.vue?vue&type=template&id=542cd4a0&functional=true& */ "./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true&");
+/* harmony import */ var _BuyNow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BuyNow.vue?vue&type=script&lang=js& */ "./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BuyNow.vue?vue&type=style&index=0&lang=scss& */ "./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _BuyNow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  true,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/src/components/BuyNow.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./BuyNow.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss& ***!
+  \**********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/sass-loader/lib/loader.js??ref--8-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./BuyNow.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/sass-loader/lib/loader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=style&index=0&lang=scss&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_sass_loader_lib_loader_js_ref_8_2_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true& ***!
+  \***********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./BuyNow.vue?vue&type=template&id=542cd4a0&functional=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/components/BuyNow.vue?vue&type=template&id=542cd4a0&functional=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BuyNow_vue_vue_type_template_id_542cd4a0_functional_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue":
 /*!***********************************************************************!*\
   !*** ./resources/js/src/components/vx-auto-suggest/VxAutoSuggest.vue ***!
@@ -9569,25 +9833,25 @@ __webpack_require__.r(__webpack_exports__);
   i18n: "Dashboard",
   items: [{
     url: "/apps/email",
-    name: "Email",
+    name: "email",
     slug: "email",
     icon: "MailIcon",
     i18n: "Email"
   }, {
     url: "/apps/chat",
-    name: "Chat",
+    name: "chat",
     slug: "chat",
     icon: "MessageSquareIcon",
     i18n: "Chat"
   }, {
     url: "/apps/todo",
-    name: "Todo",
+    name: "todo",
     slug: "todo",
     icon: "CheckSquareIcon",
     i18n: "Todo"
   }, {
     url: "/apps/calendar/vue-simple-calendar",
-    name: "Calendar",
+    name: "calendar",
     slug: "calendar-simple-calendar",
     icon: "CalendarIcon",
     tagColor: "success",
@@ -9599,22 +9863,22 @@ __webpack_require__.r(__webpack_exports__);
     i18n: "eCommerce",
     submenu: [{
       url: '/apps/eCommerce/shop',
-      name: "Shop",
+      name: "shop",
       slug: "ecommerce-shop",
       i18n: "Shop"
     }, {
       url: '/apps/eCommerce/item/',
-      name: "Item Details",
+      name: "itemDetails",
       slug: "ecommerce-item-detail-view",
       i18n: "ItemDetails"
     }, {
       url: '/apps/eCommerce/wish-list',
-      name: "Wish List",
+      name: "wishList",
       slug: "ecommerce-wish-list",
       i18n: "WishList"
     }, {
       url: '/apps/eCommerce/checkout',
-      name: "Checkout",
+      name: "checkout",
       slug: "ecommerce-checkout",
       i18n: "Checkout"
     }]
@@ -9625,51 +9889,51 @@ __webpack_require__.r(__webpack_exports__);
     i18n: "User",
     submenu: [{
       url: '/apps/user/user-list',
-      name: "List",
+      name: "list",
       slug: "app-user-list",
       i18n: "List"
     }, {
       url: '/apps/user/user-view/268',
-      name: "View",
+      name: "view",
       slug: "app-user-view",
       i18n: "View"
     }, {
       url: '/apps/user/user-edit/268',
-      name: "Edit",
+      name: "edit",
       slug: "app-user-edit",
       i18n: "Edit"
     }]
   }]
 }, {
   url: null,
-  name: "Student & Stuff",
+  name: "studentAndStuff",
   icon: "HomeIcon",
   submenu: [{
     url: null,
     name: 'student',
     submenu: [{
       url: '/student',
-      name: "Student Detail",
+      name: "studentDetail",
       slug: "Student Detail"
     }, {
       url: '/student',
-      name: "Bulk Import",
+      name: "bulkImport",
       slug: "Bulk Import"
     }, {
       url: '/student',
-      name: "Registration",
+      name: "registration",
       slug: "Registration"
     }, {
       url: '/student',
-      name: "Transfer Student",
+      name: "transferStudent",
       slug: "Transfer Student"
     }, {
       url: '/student',
-      name: "Document Upload",
+      name: "documentUpload",
       slug: "Document Upload"
     }, {
       url: '/student',
-      name: "Create Notes",
+      name: "createNotes",
       slug: "Create Notes"
     }]
   }, {
@@ -9677,136 +9941,202 @@ __webpack_require__.r(__webpack_exports__);
     name: 'Guardian',
     submenu: [{
       url: '/',
-      name: "Guardian Detail",
+      name: "guardianDetail",
       slug: "Guardian Detail"
     }, {
       url: '/',
-      name: "Registration",
+      name: "registration",
       slug: "Registration"
     }]
   }, {
     url: null,
-    name: 'Staff',
+    name: 'staff',
     submenu: [{
       url: '/',
-      name: "Staff Detail",
+      name: "staffDetail",
       slug: "Staff Detail"
     }, {
       url: '/',
-      name: "Bulk Import",
+      name: "bulkImport",
       slug: "Bulk Import"
     }, {
       url: '/',
-      name: "Document Upload",
+      name: "documentUpload",
       slug: "Document Upload"
     }, {
       url: '/',
-      name: "Create Notes",
+      name: "createNotes",
       slug: "Create Notes"
     }, {
       url: '/',
-      name: "Designation",
+      name: "designation",
       slug: "Designation"
     }]
   }]
 }, {
   url: null,
-  name: "Account",
+  name: "account",
   icon: "HomeIcon",
   submenu: [{
     url: null,
-    name: 'Fees Collection',
+    name: 'feesCollection',
     submenu: [{
       url: '/',
-      name: "Receive Detail",
+      name: "receiveDetail",
       slug: "Receive Detail"
     }, {
       url: '/',
-      name: "Quick Receive",
+      name: "quickReceive",
       slug: "Quick Receive"
     }, {
       url: '/',
-      name: "Collect Fees",
+      name: "collectFees",
       slug: "Collect Fees"
     }, {
       url: '/',
-      name: "Balance Fees Report",
+      name: "balanceFeesReport",
       slug: "Balance Fees Report"
     }, {
       url: '/',
-      name: "Add Fees",
+      name: "addFees",
       slug: "Add Fees"
     }, {
       url: '/',
-      name: "Fees Head",
+      name: "feesHead",
       slug: "Fees Head"
     }]
   }, {
     url: null,
-    name: 'Payroll',
+    name: 'payroll',
     submenu: [{
       url: '/',
-      name: "Paid Detail",
+      name: "paidDetail",
       slug: "Paid Detail"
     }, {
       url: '/',
-      name: "Salary pay",
+      name: "salary pay",
       slug: "Salary pay"
     }, {
       url: '/',
-      name: "Add Payroll",
+      name: "addPayroll",
       slug: "Add Payroll"
     }, {
       url: '/',
-      name: "Balance Salary Report",
+      name: "balanceSalaryReport",
       slug: "Balance Salary Report"
     }, {
       url: '/',
-      name: "Salary Head",
+      name: "salaryHead",
       slug: "Salary Head"
     }]
   }, {
     url: null,
-    name: 'Ledger & Transaction',
+    name: 'ledgerAndTransaction',
     submenu: [{
       url: '/',
-      name: "Transaction",
+      name: "transaction",
       slug: "Transaction"
     }, {
       url: '/',
-      name: "Ledger",
+      name: "ledger",
       slug: "Ledger"
     }]
   }, {
     url: null,
-    name: 'Bank',
+    name: 'bank',
     submenu: [{
       url: '/',
-      name: "manage Bank Account",
-      slug: "manage Bank Account"
+      name: "manageBankAccount",
+      slug: "Manage Bank Account"
     }, {
       url: '/',
-      name: "Add New Bank",
+      name: "addNewBank",
       slug: "Add New Bank"
     }, {
       url: '/',
-      name: "Transaction Detail",
+      name: "transactionDetail",
       slug: "Transaction Detail"
     }, {
       url: '/',
-      name: "New Transaction",
+      name: "newTransaction",
       slug: "New Transaction"
     }]
   }, {
     url: null,
-    name: 'Report',
+    name: 'report',
     submenu: [{
       url: '/',
-      name: "Cash Book",
+      name: "cashBook",
       slug: "Cash Book"
     }, {
       url: '/',
-      name: "Free Collection Head",
+      name: "freeCollectionHead",
+      slug: "Free Collection Head"
+    }]
+  }]
+}, // urls for library
+{
+  url: null,
+  name: "library",
+  icon: "HomeIcon",
+  submenu: [{
+    url: null,
+    name: 'books',
+    submenu: [{
+      url: '/',
+      name: "receiveDetail",
+      slug: "Receive Detail"
+    }]
+  }, {
+    url: null,
+    name: 'payroll',
+    submenu: [{
+      url: '/',
+      name: "paidDetail",
+      slug: "Paid Detail"
+    }]
+  }, {
+    url: null,
+    name: 'ledgerAndTransaction',
+    submenu: [{
+      url: '/',
+      name: "transaction",
+      slug: "Transaction"
+    }, {
+      url: '/',
+      name: "ledger",
+      slug: "Ledger"
+    }]
+  }, {
+    url: null,
+    name: 'bank',
+    submenu: [{
+      url: '/',
+      name: "manageBankAccount",
+      slug: "Manage Bank Account"
+    }, {
+      url: '/',
+      name: "addNewBank",
+      slug: "Add New Bank"
+    }, {
+      url: '/',
+      name: "transactionDetail",
+      slug: "Transaction Detail"
+    }, {
+      url: '/',
+      name: "newTransaction",
+      slug: "New Transaction"
+    }]
+  }, {
+    url: null,
+    name: 'report',
+    submenu: [{
+      url: '/',
+      name: "cashBook",
+      slug: "Cash Book"
+    }, {
+      url: '/',
+      name: "freeCollectionHead",
       slug: "Free Collection Head"
     }]
   }]

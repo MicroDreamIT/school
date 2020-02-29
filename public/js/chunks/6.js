@@ -48,24 +48,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "student-table",
   props: {
     searchData: {
       type: Object,
-      default: function _default() {}
-    },
-    columns: {
-      type: Array,
-      default: function _default() {
-        return [];
-      }
-    },
-    url: {
-      type: String,
-      default: function _default() {
-        return '';
-      }
+      default: {}
     }
   },
   data: function data() {
@@ -131,8 +133,6 @@ __webpack_require__.r(__webpack_exports__);
         "email": "Rey.Padberg@karina.biz",
         "website": "ambrose.net"
       }],
-      header: [],
-      columnName: [],
       currentPage: 1,
       selected: []
     };
@@ -238,22 +238,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -264,33 +248,10 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       searchData: {
-        academic_status: null,
-        status: null
+        academic_status: 'Back Continue'
       },
-      url: '/ajax/student/',
-      columns: [{
-        name: 'Name',
-        field: 'name',
-        sort_key: 'name'
-      }, {
-        name: 'Email',
-        field: 'email',
-        sort_key: 'email'
-      }, {
-        name: 'Mobile',
-        field: 'mobile'
-      }, {
-        name: 'PID'
-      }, {
-        name: 'File Number'
-      }, {
-        name: 'Status'
-      }, {
-        name: 'Action'
-      }],
       academic_status: ['Back Continue', 'Continue', 'Drop Out'],
-      status: ['Active', 'In-Active'],
-      filterBox: false
+      status: ['Active', 'In-Active']
     };
   }
 });
@@ -324,28 +285,44 @@ var render = function() {
               key: "default",
               fn: function(ref) {
                 var data = ref.data
-                return _vm._l(data, function(tr, idx) {
+                return _vm._l(data, function(tr, indextr) {
                   return _c(
                     "vs-tr",
-                    { key: idx, attrs: { data: tr } },
+                    { key: indextr, attrs: { data: tr } },
                     [
-                      _c("vs-td", [
+                      _c("vs-td", { attrs: { data: data[indextr].email } }, [
                         _vm._v(
                           "\n                    " +
-                            _vm._s(idx + 1) +
+                            _vm._s(data[indextr].email) +
                             "\n                "
                         )
                       ]),
                       _vm._v(" "),
-                      _vm._l(_vm.columns, function(col, indx) {
-                        return _c("vs-td", { key: indx }, [
-                          col.field
-                            ? _c("span", [_vm._v(_vm._s(data[idx][col.field]))])
-                            : _vm._e()
-                        ])
-                      })
+                      _c("vs-td", { attrs: { data: data[indextr].username } }, [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(data[indextr].username) +
+                            "\n                "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("vs-td", { attrs: { data: data[indextr].id } }, [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(data[indextr].website) +
+                            "\n                "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("vs-td", { attrs: { data: data[indextr].id } }, [
+                        _vm._v(
+                          "\n                    " +
+                            _vm._s(data[indextr].id) +
+                            "\n                "
+                        )
+                      ])
                     ],
-                    2
+                    1
                   )
                 })
               }
@@ -368,26 +345,23 @@ var render = function() {
             "template",
             { slot: "thead" },
             [
-              _c("vs-th", { attrs: { "sort-key": "index" } }, [
-                _vm._v("\n                SN. NO.\n            ")
+              _c("vs-th", { attrs: { "sort-key": "email" } }, [
+                _vm._v("\n                Email\n            ")
               ]),
               _vm._v(" "),
-              _vm._l(_vm.columns, function(col, i) {
-                return _c(
-                  "vs-th",
-                  {
-                    key: i,
-                    attrs: { "sort-key": col.sort_key ? col.sort_key : "" }
-                  },
-                  [
-                    _vm._v(
-                      "\n                " + _vm._s(col.name) + "\n            "
-                    )
-                  ]
-                )
-              })
+              _c("vs-th", { attrs: { "sort-key": "username" } }, [
+                _vm._v("\n                Name\n            ")
+              ]),
+              _vm._v(" "),
+              _c("vs-th", { attrs: { "sort-key": "website" } }, [
+                _vm._v("\n                Website\n            ")
+              ]),
+              _vm._v(" "),
+              _c("vs-th", { attrs: { "sort-key": "id" } }, [
+                _vm._v("\n                Nro\n            ")
+              ])
             ],
-            2
+            1
           )
         ],
         2
@@ -395,7 +369,7 @@ var render = function() {
       _vm._v(" "),
       _c("vs-pagination", {
         staticClass: "my-3",
-        attrs: { total: 1 },
+        attrs: { total: 3 },
         model: {
           value: _vm.currentPage,
           callback: function($$v) {
@@ -540,207 +514,135 @@ var render = function() {
                   { staticClass: "col-md-12 mb-2" },
                   [
                     _c(
-                      "vs-collapse",
-                      { staticClass: "custom-collapse" },
+                      "vs-button",
+                      {
+                        attrs: {
+                          type: "filled",
+                          color: "primary",
+                          icon: "double_arrow"
+                        }
+                      },
                       [
-                        _c("vs-collapse-item", [
-                          _c(
-                            "div",
-                            { attrs: { slot: "header" }, slot: "header" },
-                            [
-                              _c(
-                                "vs-button",
-                                {
-                                  attrs: {
-                                    type: "filled",
-                                    color: "primary",
-                                    icon: "double_arrow"
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                        Filter Students\n                                    "
-                                  )
-                                ]
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "filterBox" }, [
-                            _c("div", { staticClass: "col-md-12" }, [
-                              _c("div", { staticClass: "row" }, [
-                                _c("div", { staticClass: "col-md-1" }, [
-                                  _vm._v("REG. NO.")
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "col-md-2" },
-                                  [
-                                    _c("vs-input", {
-                                      staticClass: "inputx",
-                                      model: {
-                                        value: _vm.searchData.reg_no,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.searchData,
-                                            "reg_no",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "searchData.reg_no"
-                                      }
-                                    })
-                                  ],
-                                  1
-                                ),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "col-md-1" }, [
-                                  _vm._v("REG. Date.")
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "col-md-3" },
-                                  [
-                                    _c("datepicker", {
-                                      model: {
-                                        value: _vm.searchData.fromRegDate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.searchData,
-                                            "fromRegDate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "searchData.fromRegDate"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("i", { staticClass: "fa fa-compress" }),
-                                    _vm._v(" "),
-                                    _c("datepicker", {
-                                      model: {
-                                        value: _vm.searchData.toRegDate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.searchData,
-                                            "toRegDate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "searchData.toRegDate"
-                                      }
-                                    })
-                                  ],
-                                  1
-                                ),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "col-md-1" }, [
-                                  _vm._v(
-                                    "\n                                                Status\n                                            "
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "col-md-2 px-0" },
-                                  [
-                                    _c("v-select", {
-                                      attrs: {
-                                        options: _vm.academic_status,
-                                        placeholder: "Select Academic Status"
-                                      },
-                                      model: {
-                                        value: _vm.searchData.academic_status,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.searchData,
-                                            "academic_status",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "searchData.academic_status"
-                                      }
-                                    })
-                                  ],
-                                  1
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "col-md-2 px-0" },
-                                  [
-                                    _c("v-select", {
-                                      attrs: {
-                                        options: _vm.status,
-                                        placeholder: "Select Status"
-                                      },
-                                      model: {
-                                        value: _vm.searchData.status,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.searchData,
-                                            "status",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "searchData.status"
-                                      }
-                                    })
-                                  ],
-                                  1
-                                )
-                              ])
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "col-md-12 mb-2 pl-0" },
-                              [
-                                _c(
-                                  "vs-button",
-                                  {
-                                    attrs: {
-                                      type: "filled",
-                                      color: "#00b8cf",
-                                      icon: "double_arrow"
-                                    },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.alert(_vm.searchData)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                            Filter\n                                        "
-                                    )
-                                  ]
-                                )
-                              ],
-                              1
-                            )
-                          ])
-                        ])
-                      ],
-                      1
+                        _vm._v(
+                          "\n                            Filter Students\n                        "
+                        )
+                      ]
                     )
                   ],
                   1
                 ),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-1" }, [
+                      _vm._v("REG. NO.")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-2" },
+                      [
+                        _c("vs-input", {
+                          staticClass: "inputx",
+                          model: {
+                            value: _vm.searchData.reg_no,
+                            callback: function($$v) {
+                              _vm.$set(_vm.searchData, "reg_no", $$v)
+                            },
+                            expression: "searchData.reg_no"
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-1" }, [
+                      _vm._v("REG. Date.")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "col-md-2" },
+                      [
+                        _c("datepicker", {
+                          model: {
+                            value: _vm.searchData.fromRegDate,
+                            callback: function($$v) {
+                              _vm.$set(_vm.searchData, "fromRegDate", $$v)
+                            },
+                            expression: "searchData.fromRegDate"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("i", { staticClass: "fa fa-compress" }),
+                        _vm._v(" "),
+                        _c("datepicker", {
+                          model: {
+                            value: _vm.searchData.toRegDate,
+                            callback: function($$v) {
+                              _vm.$set(_vm.searchData, "toRegDate", $$v)
+                            },
+                            expression: "searchData.toRegDate"
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-1" }, [
+                      _vm._v(
+                        "\n                                Status\n                            "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("select", { staticClass: "custom-select" }, [
+                        _c("option", { attrs: { selected: "" } }, [
+                          _vm._v("Choose...")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "1" } }, [
+                          _vm._v("One")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "2" } }, [
+                          _vm._v("Two")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "3" } }, [
+                          _vm._v("Three")
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("select", { staticClass: "custom-select" }, [
+                        _c("option", { attrs: { selected: "" } }, [
+                          _vm._v("Choose...")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "1" } }, [
+                          _vm._v("One")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "2" } }, [
+                          _vm._v("Two")
+                        ]),
+                        _vm._v(" "),
+                        _c("option", { attrs: { value: "3" } }, [
+                          _vm._v("Three")
+                        ])
+                      ])
+                    ])
+                  ])
+                ]),
                 _vm._v(" "),
                 _c(
                   "div",
                   { staticClass: "col-md-12" },
                   [
                     _c("student-table", {
-                      attrs: {
-                        searchData: _vm.searchData,
-                        url: _vm.url,
-                        columns: _vm.columns
-                      }
+                      attrs: { searchData: _vm.searchData }
                     })
                   ],
                   1

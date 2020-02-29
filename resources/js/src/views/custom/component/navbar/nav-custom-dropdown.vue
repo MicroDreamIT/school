@@ -2,14 +2,12 @@
     <div>
         <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer my-dropdown">
             <div class="text-right leading-tight hidden sm:block">
-                <p class="font-semibold">Admin Control</p>
+                <p class="font-semibold inline-block">Admin Control</p>
                 <i class="fa fa-angle-down"></i>
             </div>
             <vs-dropdown-menu class="vx-navbar-dropdown">
-                <ul style="min-width: 9rem">
-
-                    <li
-                            class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                <ul>
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
                         <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">Edit Profile</small>

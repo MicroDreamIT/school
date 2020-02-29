@@ -25,8 +25,9 @@ mix.js('resources/js/app.js', 'public/js')
         }
     })
     .sass('resources/sass/app.scss', 'public/css').options({
-        postCss:[require('autoprefixer'), require('postcss-rtl')]
-    })
+    postCss: [require('autoprefixer'), require('postcss-rtl')],
+    // processCssUrls: false
+})
     .postCss('resources/assets/css/main.css', 'public/css', [
         tailwindcss('tailwind.js'), require('postcss-rtl')()
     ])
@@ -37,7 +38,7 @@ mix.js('resources/js/app.js', 'public/js')
     .copyDirectory('node_modules/material-icons/iconfont/material-icons.css', 'public/css/material-icons/material-icons.css') // Material Icon fonts css
     .copy('node_modules/prismjs/themes/prism-tomorrow.css', 'public/css/prism-tomorrow.css') // Prism Tomorrow theme css
     .copyDirectory('resources/assets/images', 'public/images')
-    .browserSync({proxy:'localhost:8000'}); // Copy all images from resources to public folder
+    .browserSync({proxy: 'localhost:8000'}); // Copy all images from resources to public folder
 
 
 // Change below options according to your requirement
@@ -50,8 +51,7 @@ if (mix.inProduction()) {
         }
     });
     mix.setResourceRoot("/demo/vuexy-vuejs-laravel-admin-template/demo-1/");
-}
-else{
+} else {
     mix.webpackConfig({
         output: {
             chunkFilename: 'js/chunks/[name].js',

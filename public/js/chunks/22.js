@@ -2443,7 +2443,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, ".swiper-inner[data-v-2a938e98] {\n  position: relative;\n  overflow: hidden;\n  height: 330px;\n}[dir] .swiper-inner[data-v-2a938e98] {\n  padding: 15px;\n}\n.swiper-container[data-v-2a938e98] {\n  width: 300px !important;\n  height: 300px;\n  position: absolute;\n  top: 50%;\n}\n[dir] .swiper-container[data-v-2a938e98] {\n  margin-top: -150px;\n}\n[dir=ltr] .swiper-container[data-v-2a938e98] {\n  left: 50%;\n  margin-left: -150px;\n}\n[dir=rtl] .swiper-container[data-v-2a938e98] {\n  right: 50%;\n  margin-right: -150px;\n}\n[dir] .swiper-slide[data-v-2a938e98] {\n  background-position: center;\n  background-size: cover;\n}\n", ""]);
+exports.push([module.i, ".swiper-inner[data-v-2a938e98] {\n  position: relative;\n  overflow: hidden;\n  height: 330px;\n}[dir] .swiper-inner[data-v-2a938e98] {\n  padding: 15px;\n}\n.swiper-container[data-v-2a938e98] {\n  width: 300px !important;\n  height: 300px;\n  position: absolute;\n  top: 50%;\n}\n[dir] .swiper-container[data-v-2a938e98] {\n  margin-top: -150px;\n}\n[dir=ltr] .swiper-container[data-v-2a938e98] {\n  left: 50%;\n  margin-left: -150px;\n}\n[dir=rtl] .swiper-container[data-v-2a938e98] {\n  right: 50%;\n  margin-right: -150px;\n}\n[dir] .swiper-slide[data-v-2a938e98] {\n  background-position: center;\n  background-size: cover;\n}\r\n", ""]);
 
 // exports
 
@@ -2462,7 +2462,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, ".swiper-slide[data-v-b1ed9074] {\n  font-size: 18px;\n  min-height: 300px;\n}[dir] .swiper-slide[data-v-b1ed9074] {\n  text-align: center;\n  background: #444 !important;\n}\n.swiper-slide img[data-v-b1ed9074] {\n  width: auto;\n  height: auto;\n  max-width: 100%;\n  /*max-height: 100%;*/\n  position: absolute;\n  top: 50%;\n}\n[dir=ltr] .swiper-slide img[data-v-b1ed9074] {\n  transform: translate(-50%, -50%);\n  left: 50%;\n}\n[dir=rtl] .swiper-slide img[data-v-b1ed9074] {\n  transform: translate(50%, -50%);\n  right: 50%;\n}\n", ""]);
+exports.push([module.i, ".swiper-slide[data-v-b1ed9074] {\n  font-size: 18px;\n  min-height: 300px;\n}[dir] .swiper-slide[data-v-b1ed9074] {\n  text-align: center;\n  background: #444 !important;\n}\n.swiper-slide img[data-v-b1ed9074] {\n  width: auto;\n  height: auto;\n  max-width: 100%;\n  /*max-height: 100%;*/\n  position: absolute;\n  top: 50%;\n}\n[dir=ltr] .swiper-slide img[data-v-b1ed9074] {\n  transform: translate(-50%, -50%);\n  left: 50%;\n}\n[dir=rtl] .swiper-slide img[data-v-b1ed9074] {\n  transform: translate(50%, -50%);\n  right: 50%;\n}\r\n", ""]);
 
 // exports
 
@@ -2482,7 +2482,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, ".swiper-slide[data-v-15c8272e] {\n  font-size: 18px;\n  color: #fff;\n  box-sizing: border-box;\n  justify-content: space-around !important;\n}[dir] .swiper-slide[data-v-15c8272e] {\n  padding: 40px 60px;\n  background-color: transparent !important;\n}\n.parallax-bg[data-v-15c8272e] {\n  position: absolute;\n  top: 0;\n  width: 130%;\n  height: 100%;\n  -webkit-background-size: cover;\n}\n[dir] .parallax-bg[data-v-15c8272e] {\n  background-size: cover;\n  background-position: center;\n  background-image: url(" + escape(__webpack_require__(/*! ../../../../../../assets/images/pages/carousel/banner-4.jpg */ "./resources/assets/images/pages/carousel/banner-4.jpg")) + ");\n}\n[dir=ltr] .parallax-bg[data-v-15c8272e] {\n  left: 0;\n}\n[dir=rtl] .parallax-bg[data-v-15c8272e] {\n  right: 0;\n}\n.swiper-slide .title[data-v-15c8272e] {\n  font-size: 41px;\n  font-weight: 300;\n}\n.swiper-slide .subtitle[data-v-15c8272e] {\n  font-size: 21px;\n}\n.swiper-slide .text[data-v-15c8272e] {\n  font-size: 14px;\n  max-width: 400px;\n  line-height: 1.3;\n}\n", ""]);
+exports.push([module.i, ".swiper-slide[data-v-15c8272e] {\n  font-size: 18px;\n  color: #fff;\n  box-sizing: border-box;\n  justify-content: space-around !important;\n}[dir] .swiper-slide[data-v-15c8272e] {\n  padding: 40px 60px;\n  background-color: transparent !important;\n}\n.parallax-bg[data-v-15c8272e] {\n  position: absolute;\n  top: 0;\n  width: 130%;\n  height: 100%;\n  -webkit-background-size: cover;\n}\n[dir] .parallax-bg[data-v-15c8272e] {\n  background-size: cover;\n  background-position: center;\n  background-image: url(" + escape(__webpack_require__(/*! ../../../../../../assets/images/pages/carousel/banner-4.jpg */ "./resources/assets/images/pages/carousel/banner-4.jpg")) + ");\n}\n[dir=ltr] .parallax-bg[data-v-15c8272e] {\n  left: 0;\n}\n[dir=rtl] .parallax-bg[data-v-15c8272e] {\n  right: 0;\n}\n.swiper-slide .title[data-v-15c8272e] {\n  font-size: 41px;\n  font-weight: 300;\n}\n.swiper-slide .subtitle[data-v-15c8272e] {\n  font-size: 21px;\n}\n.swiper-slide .text[data-v-15c8272e] {\n  font-size: 14px;\n  max-width: 400px;\n  line-height: 1.3;\n}\r\n", ""]);
 
 // exports
 

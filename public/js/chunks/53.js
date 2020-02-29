@@ -592,7 +592,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../../node_mod
 
 
 // module
-exports.push([module.i, ".list-item { transition: all .5s\n}\n", ""]);
+exports.push([module.i, ".list-item { transition: all .5s\n}\r\n", ""]);
 
 // exports
 

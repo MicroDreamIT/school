@@ -14,10 +14,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
 
-
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
-
 Vue.use(Vuesax)
 Vue.component('v-select', vSelect)
 // axios
@@ -95,6 +93,20 @@ Vue.use(VueGoogleMaps, {
 import {VueHammer} from 'vue2-hammer'
 
 Vue.use(VueHammer)
+
+
+import dataTable from './views/custom/component/table/data-table'
+Vue.component('data-table', dataTable);
+import Datepicker from 'vuejs-datepicker';
+Vue.component('datepicker', Datepicker);
+import VueQuillEditor from 'vue-quill-editor'
+
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor, /* { default global options } */);
 
 // PrismJS
 import 'prismjs'

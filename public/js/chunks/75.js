@@ -354,7 +354,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "/*=========================================================================================\n    File Name: search.scss\n    Description: Search page styles\n    ----------------------------------------------------------------------------------------\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\n      Author: Pixinvent\n    Author URL: http://www.themeforest.net/user/pixinvent\n==========================================================================================*/\n.search-tab-filter {\n  padding: 0.5rem 1rem;\n  border-radius: 25px;\n  margin-right: 1rem;\n  margin-bottom: 1.5rem;\n  background: #fff;\n  cursor: pointer;\n}", ""]);
+exports.push([module.i, "/*=========================================================================================\r\n    File Name: search.scss\r\n    Description: Search page styles\r\n    ----------------------------------------------------------------------------------------\r\n    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template\r\n      Author: Pixinvent\r\n    Author URL: http://www.themeforest.net/user/pixinvent\r\n==========================================================================================*/\n.search-tab-filter {\n  padding: 0.5rem 1rem;\n  border-radius: 25px;\n  margin-right: 1rem;\n  margin-bottom: 1.5rem;\n  background: #fff;\n  cursor: pointer;\n}", ""]);
 
 // exports
 

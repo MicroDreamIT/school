@@ -118,6 +118,47 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                /*for transport*/
+                {
+                    path:'/transport/user',
+                    name:'transport.user',
+                    component:()=>import('./views/custom/transport/user/detail'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/user/add',
+                    name:'transport.userCreate',
+                    component:()=>import('./views/custom/transport/user/registration'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/user/history',
+                    name:'transport.history',
+                    component:()=>import('./views/custom/transport/user/history'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/route',
+                    name:'transport.route',
+                    component:()=>import('./views/custom/transport/route'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/vehicle',
+                    name:'transport.vehicle',
+                    component:()=>import('./views/custom/transport/vehicle'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
                 /*for more*/
                 {
                     path:'/assignment',

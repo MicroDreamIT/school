@@ -16,7 +16,7 @@
                     <div class="row p-4">
                         <div class="col-md-6">
                             <h4> Create Books Status</h4><br>
-                            <div class="form-group row">
+                            <div class="form-group row mb-3">
                                 <label class="col-sm-3"> Books Status</label>
                                 <vs-input class="col-sm-9"></vs-input>
                             </div>
@@ -28,8 +28,9 @@
                         </div>
                         <div class="col-md-6">
                             <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; Days List
-                                List</h4>
+                                <i class="fa fa-list" aria-hidden="true"></i>
+                                Books Status List
+                            </h4>
                             <div class="clearfix mt-3">
                                 <div class="easy-link-menu">
                                     <a class="btn-success btn-sm bulk-action-btn">

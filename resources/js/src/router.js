@@ -177,7 +177,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/book-status',
+                    path:'/books-status',
                     name:'academics.books-status',
                     component:()=>import('./views/custom/academics/books-status'),
                     meta:{

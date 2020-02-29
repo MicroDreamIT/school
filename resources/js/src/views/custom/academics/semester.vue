@@ -28,7 +28,7 @@
                                 <vs-select class="col-sm-7"></vs-select>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-3">Course Fint and Add</label>
+                                <label class="col-sm-3">Course Find and Add</label>
                                 <vs-select class="col-sm-7"></vs-select>
                             </div>
                 

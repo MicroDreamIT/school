@@ -2,35 +2,20 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Details</h2>
+                <h2 class="pageTitle">Student Report Manager</h2>
                 <div class="p-2">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    <router-link :to="'/report/student'">
+                        <vs-button type="filled" class="smBtn">Student</vs-button>
                     </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    <router-link :to="'/report/staff'">
+                        <vs-button type="filled" class="smBtn">Staff</vs-button>
                     </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">
-                            Primary
-                        </vs-button>
-                    </router-link>
-
                 </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
-                    <div class="row p-4">
+                    <div class="row p-2">
                         <div class="col-md-12 mb-2">
                             <vs-collapse class="custom-collapse">
                                 <vs-collapse-item>
@@ -160,24 +145,13 @@
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
-                        <div class="col-md-12 ">
+                        <div class="col-md-12">
                             <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students
+                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students Report
                                 List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
                             <br>
                             <div class="table-header">
-                                Students Record list on table. Filter Students using the filter.
+                                Student Report Record list on table. Filter Student Report using the filter.
                             </div>
                             <div class="dt-buttons btn-group action-group mt-3">
                                 <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"

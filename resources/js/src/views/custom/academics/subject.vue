@@ -23,15 +23,15 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <p>Subject Type</p>
-                            <vs-select></vs-select>
+                            <v-select></v-select>
                         </div>
                         <div class="d-flex justify-content-between">
                             <p>Class Type</p>
-                            <vs-select></vs-select>
+                            <v-select></v-select>
                         </div>
                         <div class="d-flex justify-content-between">
                             <p>Teacher/Staff</p>
-                            <vs-select></vs-select>
+                            <v-select></v-select>
                         </div>
                         <div class="d-flex justify-content-between">
                             <p>Description</p>

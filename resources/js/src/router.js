@@ -119,6 +119,65 @@ const router = new Router({
                     }
                 },
 
+
+                /* for notice*/
+                 {
+                    path:'/info/notice',
+                    name:'info.notice',
+                    component:()=>import('./views/custom/alert/notice/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/notice/add',
+                    name:'info.noticeCreate',
+                    component:()=>import('./views/custom/alert/notice/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email',
+                    name:'info.smsEmail',
+                    component:()=>import('./views/custom/alert/smsemail/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/add',
+                    name:'info.smsEmailCreate',
+                    component:()=>import('./views/custom/alert/smsemail/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/student-guardian',
+                    name:'info.smsEmailStudentGuardian',
+                    component:()=>import('./views/custom/alert/smsemail/student-guardian'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/staff',
+                    name:'info.smsEmailStaff',
+                    component:()=>import('./views/custom/alert/smsemail/staff'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/individual',
+                    name:'info.smsEmailIndividual',
+                    component:()=>import('./views/custom/alert/smsemail/individual'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
                 /* url for academic section */
                 {
                     path:'/faculty',

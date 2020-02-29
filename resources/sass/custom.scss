@@ -100,3 +100,23 @@ button:focus {
     width:60px!important;
   }
 }
+.custom-collapse{
+  .vs-collapse-item{
+    cursor: default;
+  }
+  .vs-collapse-item--header{
+    width: fit-content;
+    .vs-icon{
+      display: none;
+    }
+  }
+  .vs-collapse-item--content{
+    overflow: unset;
+    .con-content--item{
+      opacity: 0;
+    }
+  }
+}
+.btn-sm{
+  cursor: pointer;
+}

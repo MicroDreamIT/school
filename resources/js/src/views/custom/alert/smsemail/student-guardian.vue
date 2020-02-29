@@ -2,35 +2,44 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Details</h2>
-                <div class="p-2">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                <h2 class="pageTitle">SMS / Email Manager</h2>
+                <div>
+                    <router-link :to="'/info/notice'">
+                        <vs-button type="filled" class="smBtn">Notice</vs-button>
                     </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
+                    <router-link :to="'/info/sms-email'">
+                        <vs-button type="filled" class="smBtn">Sms/Email</vs-button>
                     </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">
-                            Primary
-                        </vs-button>
-                    </router-link>
-
                 </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
-                    <div class="row p-2">
+                    <div class="row mx-0">
+                        <div class="col-md-12">
+                            <br>
+                            <h4 class="header large lighter blue">
+                                SMS / Email
+                            </h4><br>
+                        </div>
+                        <div class="col-md-12">
+                            <router-link :to="'/info/sms-email'">
+                                <vs-button type="filled" class="smBtn">Detail</vs-button>
+                            </router-link>
+                            <router-link :to="'/info/sms-email/add'">
+                                <vs-button type="filled" class="smBtn">Group Message</vs-button>
+                            </router-link>
+                            <router-link :to="'/info/sms-email/student-guardian'">
+                                <vs-button type="filled" class="smBtn">Student & Guardian</vs-button>
+                            </router-link>
+                            <router-link :to="'/info/sms-email/staff'">
+                                <vs-button type="filled" class="smBtn">Staff</vs-button>
+                            </router-link>
+                            <router-link :to="'/info/sms-email/individual'">
+                                <vs-button type="filled" class="smBtn">Individual</vs-button>
+                            </router-link>
+                        </div>
+                        <vs-divider class="mx-3"></vs-divider>
                         <div class="col-md-12 mb-2">
                             <vs-collapse class="custom-collapse">
                                 <vs-collapse-item>
@@ -160,10 +169,32 @@
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
+                        <vs-divider class="mx-3"></vs-divider>
+                        <div class="col-md-12 row">
+                            <div class="col-md-8">
+                                <p>Type</p>
+                                <vs-radio v-model="type"  vs-value="sms">Sms</vs-radio>
+                                <vs-radio v-model="type" vs-value="email">Email</vs-radio>
+                                <p>Message</p>
+                                <vs-textarea v-model="message" height="200px"/>
+                            </div>
+                            <div class="col-md-4">
+                                <p>Message Send Groups</p>
+                                <vs-checkbox v-model="send_group" class="my-2">Student</vs-checkbox>
+                                <vs-checkbox v-model="send_group" class="my-2">Guardian</vs-checkbox>
+                                <vs-checkbox v-model="send_group" class="my-2">Father</vs-checkbox>
+                                <vs-checkbox v-model="send_group" class="my-2">Mother</vs-checkbox>
+                            </div>
+                        </div>
+                        <vs-divider></vs-divider>
+                        <div class="row mx-0 mb-4">
+                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
+                            <vs-button class="my-round mx-2">Send</vs-button>
+                        </div>
                         <div class="col-md-12">
                             <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students
-                                List</h4>
+                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; SMS / Email List
+                             </h4>
                             <div class="clearfix mt-3">
                                 <div class="easy-link-menu">
                                     <a class="btn-success btn-sm bulk-action-btn">
@@ -177,34 +208,16 @@
                             </div>
                             <br>
                             <div class="table-header">
-                                Students Record list on table. Filter Students using the filter.
+                                SMS / Email Record list on table. Filter SMS / Email using the filter.
                             </div>
-                            <div class="dt-buttons btn-group action-group mt-3">
-                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Copy</span></button>
-                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>PDF</span>
-                                </button>
-                                <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                    <span>JSON</span>
-                                </button>
-                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                            <student-table :headers="tableHeader"
-                                           :url="url"
-                                           :no-data-message="'No matching records found'"
-                                           :searchField="searchData"
-                                           :has-search="true"
-                                           :has-multiple="true"
-                                           :has-pagination="true"
+                            <data-table :headers="tableHeader1"
+                                        :url="'/student'"
+                                        :no-data-message="'No matching records found'"
+                                        :searchField="searchData"
+                                        :hasSearch="false"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
+                                    <vs-td :data="props.data.username">
                                         {{props.data.email}}
                                     </vs-td>
 
@@ -220,7 +233,7 @@
                                         {{props.data.id}}
                                     </vs-td>
                                 </template>
-                            </student-table>
+                            </data-table>
                         </div>
                     </div>
                 </vs-card>
@@ -231,34 +244,20 @@
 </template>
 
 <script>
-    import StudentTable from '../component/table/student-table'
+
     export default {
-        components: {
-            StudentTable
-        },
         data() {
             return {
-                searchData: {
-                    academic_status: null,
-                    status: null
-                },
-                url: '/ajax/student/',
-                tableHeader: [
+                send_group: null,
+                type:'sms',
+                message:'',
+                searchData:{},
+                tableHeader1: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
                     {name: 'Mobile', field: 'mobile'},
                     {name: 'PID'},
                 ],
-                academic_status: ['Back Continue',
-                    'Continue',
-                    'Drop Out',
-                    'New Admission',
-                    'Online Registration',
-                    'Pass Out</option',
-                    'Transfer in',
-                    'Transfer Out'],
-                status: ['Active', 'In-Active'],
-                filterBox: false,
             }
         },
 

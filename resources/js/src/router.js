@@ -118,6 +118,130 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                /*for transport*/
+                {
+                    path:'/transport/user',
+                    name:'transport.user',
+                    component:()=>import('./views/custom/transport/user/detail'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/user/add',
+                    name:'transport.userCreate',
+                    component:()=>import('./views/custom/transport/user/registration'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/user/history',
+                    name:'transport.history',
+                    component:()=>import('./views/custom/transport/user/history'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/route',
+                    name:'transport.route',
+                    component:()=>import('./views/custom/transport/route'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/transport/vehicle',
+                    name:'transport.vehicle',
+                    component:()=>import('./views/custom/transport/vehicle'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*for more*/
+                {
+                    path:'/assignment',
+                    name:'assignment',
+                    component:()=>import('./views/custom/more/assignment/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/assignment/add',
+                    name:'assignmentCreate',
+                    component:()=>import('./views/custom/more/assignment/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/download',
+                    name:'download',
+                    component:()=>import('./views/custom/more/upload-download'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
+                /* for notice*/
+                 {
+                    path:'/info/notice',
+                    name:'info.notice',
+                    component:()=>import('./views/custom/alert/notice/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/notice/add',
+                    name:'info.noticeCreate',
+                    component:()=>import('./views/custom/alert/notice/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email',
+                    name:'info.smsEmail',
+                    component:()=>import('./views/custom/alert/smsemail/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/add',
+                    name:'info.smsEmailCreate',
+                    component:()=>import('./views/custom/alert/smsemail/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/student-guardian',
+                    name:'info.smsEmailStudentGuardian',
+                    component:()=>import('./views/custom/alert/smsemail/student-guardian'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/staff',
+                    name:'info.smsEmailStaff',
+                    component:()=>import('./views/custom/alert/smsemail/staff'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/info/sms-email/individual',
+                    name:'info.smsEmailIndividual',
+                    component:()=>import('./views/custom/alert/smsemail/individual'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
 
                 /* url for academic section */
                 {

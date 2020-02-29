@@ -2,41 +2,38 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Course Manager</h2>
-                <h2 class="pageTitle">notification bar</h2>
+                <h2 class="pageTitle">Route Manager</h2>
             </div>
             <vs-card>
-                <div class="row">
+                <div class="row mx-0">
                     <div class="col-md-4">
-                        <div>Create Course</div>
-                        <div class="d-flex justify-content-between">
-                            <p>Subject</p>
-                            <vs-input></vs-input>
+                        <h4>Create Route</h4>
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <p class="flex-1">Route</p>
+                            <vs-input class="flex-1 text-uppercase"></vs-input>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Code</p>
-                            <vs-input></vs-input>
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <p class="flex-1">Rent</p>
+                           <vs-input class="flex-1 text-uppercase"></vs-input>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Credit Hour</p>
-                            <vs-input></vs-input>
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <p class="flex-1">Desc.</p>
+                            <vs-input class="flex-1 text-uppercase"></vs-input>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Subject Type</p>
-                            <v-select></v-select>
+
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <p class="flex-1">Find Vehicles & Add</p>
+                            <v-select class="flex-1"></v-select>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Class Type</p>
-                            <v-select></v-select>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Teacher/Staff</p>
-                            <v-select></v-select>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Description</p>
-                            <vs-input></vs-input>
-                        </div>
+                        <vs-divider></vs-divider>
+                        <vs-buttun class="smBtn">Add Vehicle</vs-buttun>
+                        <table>
+                            <tr>
+                                <th>Number|Model</th>
+                                <th>Type</th>
+                            </tr>
+                            <tr></tr>
+                        </table>
                         <vs-divider></vs-divider>
                         <vs-button color="#00b8cf"
                                    type="filled"
@@ -45,8 +42,7 @@
                     </div>
                     <div class="col-md-8">
                         <h4 class="header large lighter blue">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Create Course
-                            List</h4>
+                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Route List</h4>
                         <div class="clearfix mt-3">
                             <div class="easy-link-menu">
                                 <a class="btn-success btn-sm bulk-action-btn">
@@ -60,27 +56,11 @@
                         </div>
                         <br>
                         <div class="table-header">
-                            Course Record list on table. Filter Course using the filter.
-                        </div>
-                        <div class="dt-buttons btn-group action-group mt-3">
-                            <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                    aria-controls="DataTables_Table_0">
-                                <span>Copy</span></button>
-                            <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                    aria-controls="DataTables_Table_0">
-                                <span>PDF</span>
-                            </button>
-                            <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                <span>JSON</span>
-                            </button>
-                            <button class="btn btn-secondary buttons-print" tabindex="0"
-                                    aria-controls="DataTables_Table_0">
-                                <span>Print</span>
-                            </button>
+                           Route Record list on table. Filter Route using the filter.
                         </div>
                         <data-table :headers="tableHeader"
                                     :url="'/student'"
-                                    :no-data-message="'No Month data found. Please Filter Month to show.'"
+                                    :no-data-message="'No Route data found. Please Filter Route to show.'"
                                     :searchField="searchData"
                                     :hasSearch="true"
                                     :has-multiple="true"

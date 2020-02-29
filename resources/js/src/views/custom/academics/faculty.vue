@@ -15,7 +15,7 @@
            <vs-card>
                <div class="row p-4">
                    <div class="col-md-4"><br>
-                       <h4> Create Faculty/Level/Class</h4><br>
+                       <h4> <i class="fa fa-search"></i> Create Faculty/Level/Class</h4><br>
                        <div class="form-group">
                            <label>Faculty/Class</label>
                            <vs-input></vs-input>

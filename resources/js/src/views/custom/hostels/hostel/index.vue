@@ -19,7 +19,7 @@
             <vs-card>
                 <div class="row mx-0">
                     <div class="mb-2 col-md-12">
-                        <router-link :to="'/hostel/food'">
+                        <router-link :to="'/hostel'">
                             <vs-button type="filled" class="smBtn">Detail</vs-button>
                         </router-link>
                         <router-link :to="'/hostel/add'">

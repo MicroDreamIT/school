@@ -55,14 +55,11 @@
                 :total="totalItems"
                 :pagination="hasPagination"
                 :multiple="hasMultiple"
-                max-items="3"
+                :max-items="5"
                 :search="hasSearch"
                 :data="data"
                 :noDataText="noDataMessage"
                 description
-                :description-items="10"
-                description-title="Showing"
-                description-connector="of"
         >
 
             <template slot="thead">

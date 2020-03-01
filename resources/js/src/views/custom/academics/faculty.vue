@@ -47,6 +47,7 @@
                                            :searchField="searchData"
                                            :hasSearch="true"
                                            :has-multiple="true"
+                                           :has-pagination="true"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td :data="props.data.username" class="pointer-none">

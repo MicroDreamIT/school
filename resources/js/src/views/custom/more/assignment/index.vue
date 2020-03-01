@@ -67,7 +67,7 @@
                                                         ></v-select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>Subject</label>
                                                         <v-select :options="['A','B']"
@@ -76,9 +76,9 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group mb-3">
-                                                        <label class="col-sm-3"> Date</label>
+                                                        <label> Date From </label>
                                                         <datepicker v-model="searchData.start_date"/>
                                                         <br>
                                                         <label>To</label>

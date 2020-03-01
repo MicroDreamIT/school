@@ -2,52 +2,42 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Vehicle Manager</h2>
-                <div>
-                    <router-link :to="'/transport/user'">
-                        <vs-button type="filled" class="smBtn">User</vs-button>
+                <h2 class="pageTitle">Room Type Manager</h2>
+                <div class="mb-2">
+                    <router-link :to="'/hostel/resident'">
+                        <vs-button type="filled" class="smBtn">Resident</vs-button>
                     </router-link>
-                    <router-link :to="'/transport/route'">
-                        <vs-button type="filled" class="smBtn">Route</vs-button>
+                    <router-link :to="'/hostel'">
+                        <vs-button type="filled" class="smBtn">Hostel</vs-button>
                     </router-link>
-                    <router-link :to="'/transport/vehicle'">
-                        <vs-button type="filled" class="smBtn">Vehicle</vs-button>
+                    <router-link :to="'/hostel/food'">
+                        <vs-button type="filled" class="smBtn">Food & Meal</vs-button>
                     </router-link>
                 </div>
+                <vs-divider></vs-divider>
             </div>
             <vs-card>
                 <div class="row mx-0">
+                    <div class="mb-2 col-md-12">
+                        <router-link :to="'/hostel/food'">
+                            <vs-button type="filled" class="smBtn">Detail</vs-button>
+                        </router-link>
+                        <router-link :to="'/hostel/add'">
+                            <vs-button type="filled" class="smBtn">Add Hostel</vs-button>
+                        </router-link>
+                        <router-link :to="'/hostel/room-type'">
+                            <vs-button type="filled" class="smBtn">Room Type</vs-button>
+                        </router-link>
+                        <router-link :to="'/bed-status'">
+                            <vs-button type="filled" class="smBtn">Bed status</vs-button>
+                        </router-link>
+                    </div>
                     <div class="col-md-4">
-                        <h4>Create Vehicle</h4>
+                        <h4>Create Room Type</h4>
                         <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Number</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <p class="flex-1">Room Type</p>
+                            <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Type</p>
-                           <vs-input class="flex-1 text-uppercase"></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Model</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Desc.</p>
-                            <vs-textarea type="file" class="flex-1" height="100px"></vs-textarea>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Find Stuff & Add</p>
-                            <v-select class="flex-1"></v-select>
-                        </div>
-                        <vs-divider></vs-divider>
-                        <vs-buttun class="smBtn">Add Staff</vs-buttun>
-                        <table>
-                            <tr>
-                                <th>Name</th>
-                                <th>Designation</th>
-                            </tr>
-                            <tr></tr>
-                        </table>
                         <vs-divider></vs-divider>
                         <vs-button color="#00b8cf"
                                    type="filled"
@@ -56,7 +46,7 @@
                     </div>
                     <div class="col-md-8">
                         <h4 class="header large lighter blue">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Vehicle List</h4>
+                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Room Type List</h4>
                         <div class="clearfix mt-3">
                             <div class="easy-link-menu">
                                 <a class="btn-success btn-sm bulk-action-btn">
@@ -70,11 +60,11 @@
                         </div>
                         <br>
                         <div class="table-header">
-                           Vehicle Record list on table. Filter Vehicle using the filter.
+                            Room Type Record list on table. Filter Room Type using the filter.
                         </div>
                         <data-table :headers="tableHeader"
                                     :url="'/student'"
-                                    :no-data-message="'No Download data found. Please Filter Download to show.'"
+                                    :no-data-message="'No Room Type data found. Please Filter Room Type to show.'"
                                     :searchField="searchData"
                                     :hasSearch="true"
                                     :has-multiple="true"

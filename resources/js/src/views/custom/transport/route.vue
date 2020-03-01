@@ -21,15 +21,15 @@
                         <h4>Create Route</h4>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Route</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Rent</p>
-                           <vs-input class="flex-1 text-uppercase"></vs-input>
+                           <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Desc.</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
 
                         <div class="d-flex justify-content-between flex-wrap">

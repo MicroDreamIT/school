@@ -47,10 +47,6 @@
             </button>
         </div>
         <vs-table
-                :sst="true"
-                @search="handleSearch"
-                @change-page="handleChangePage"
-                @sort="handleSort"
                 v-model="selected"
                 :total="totalItems"
                 :pagination="hasPagination"

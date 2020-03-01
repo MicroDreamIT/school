@@ -99,6 +99,7 @@ import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
 Vue.component('data-table', dataTable);
 Vue.component('ow-data-table', owDataTable);
+Vue.component('student-table', require('./views/custom/component/table/student-table').default);
 import Datepicker from 'vuejs-datepicker';
 Vue.component('datepicker', Datepicker);
 import VueQuillEditor from 'vue-quill-editor'

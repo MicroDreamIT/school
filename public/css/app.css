@@ -26336,6 +26336,12 @@ button:focus {
   height: 100%;
 }
 
+@media (max-width: 425px) {
+  [dir] .dt-buttons .btn-secondary {
+    padding: 0.8rem 1.25rem !important;
+  }
+}
+
 * {
   text-decoration: none !important;
 }
@@ -26352,6 +26358,12 @@ button:focus {
 
 [dir] .action-group .btn-secondary:hover {
   box-shadow: 0 8px 25px -8px #6c757d;
+}
+
+@media (max-width: 425px) {
+  [dir] .action-group .btn-secondary {
+    padding: 0.8rem 1.25rem !important;
+  }
 }
 
 button.vs-tabs--btn {

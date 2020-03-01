@@ -3,17 +3,17 @@ export default [
         icon: "HomeIcon",
         i18n: "Dashboard",
         url: "/",
-        slug:'dashboard'
+        slug: 'dashboard'
     },
     {
-        url:null,
+        url: null,
         name: "Student & Staff",
         icon: "HomeIcon",
         submenu: [
             {
                 url: null,
                 name: "Student",
-                submenu : [
+                submenu: [
                     {
                         url: [
                             {
@@ -24,12 +24,12 @@ export default [
                             {
                                 url: "/student/import",
                                 name: "Bulk Import",
-                                slug: "Bulk Import"
+                                slug: "Student Bulk Import"
                             },
                             {
                                 url: "/student/registration",
                                 name: "Registration",
-                                slug: "Registration"
+                                slug: "Student Registration"
                             },
                             {
                                 url: "/student/transfer",
@@ -44,7 +44,7 @@ export default [
                             {
                                 url: "/student/note",
                                 name: "Create Notes",
-                                slug: "Create Notes"
+                                slug: "Student Create Notes"
                             }
                         ]
                     }
@@ -53,7 +53,7 @@ export default [
             {
                 url: null,
                 name: "Guardian",
-                submenu : [
+                submenu: [
                     {
                         url: [
                             {
@@ -64,7 +64,7 @@ export default [
                             {
                                 url: "/guardian/registration",
                                 name: "Registration",
-                                slug: "Registration"
+                                slug: "Guardian Registration"
                             },
                         ]
                     }
@@ -73,7 +73,7 @@ export default [
             {
                 url: null,
                 name: "Staff",
-                submenu : [
+                submenu: [
                     {
                         url: [
                             {
@@ -84,27 +84,27 @@ export default [
                             {
                                 url: "/staff/add",
                                 name: "Registration",
-                                slug: "Registration"
+                                slug: "Staff Registration"
                             },
                             {
                                 url: "/staff/import",
                                 name: "Bulk Import",
-                                slug: "Bulk Import"
+                                slug: "Staff Bulk Import"
                             },
                             {
                                 url: "/staff/document",
                                 name: "Document Upload",
-                                slug: "Document Upload"
+                                slug: "Staff Document Upload"
                             },
                             {
                                 url: "/staff/note",
                                 name: "Create Notes",
-                                slug: "Create Notes"
+                                slug: "Staff Create Notes"
                             },
                             {
                                 url: "/staff/designation",
                                 name: "Designation",
-                                slug: "Designation"
+                                slug: "Staff Designation"
                             },
                         ]
                     }
@@ -283,17 +283,17 @@ export default [
                             {
                                 url: "/library/book/add",
                                 name: "Add New",
-                                slug: "Add New"
+                                slug: "Add New Book"
                             },
                             {
                                 url: "/library/book/import",
                                 name: "Bulk Import",
-                                slug: "Bulk Import"
+                                slug: "Library Bulk Import"
                             },
                             {
                                 url: "/library/book/category",
                                 name: "Category",
-                                slug: "Category"
+                                slug: "Library Category"
                             },
                         ]
                     }
@@ -319,11 +319,6 @@ export default [
                                 url: "/library/staff",
                                 name: "Staff Member",
                                 slug: "Staff Member"
-                            },
-                            {
-                                url: "/library/book/category",
-                                name: "Category",
-                                slug: "Category"
                             },
                         ]
                     }
@@ -360,11 +355,11 @@ export default [
                             {
                                 url: "/attendance/student",
                                 name: "Regular Attendance",
-                                slug: "Subject Wise Attendance"
+                                slug: "Regular Attendance"
                             },
                             {
-                                url: "/attendance/student",
-                                name: "Regular Attendance",
+                                url: "/attendance/subject",
+                                name: "Subject Wise Attendance",
                                 slug: "Subject Wise Attendance"
                             },
                         ]
@@ -384,7 +379,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Examination",
         icon: "HomeIcon",
         submenu: [
@@ -421,7 +416,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Certificate",
         icon: "HomeIcon",
         submenu: [
@@ -469,7 +464,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Hostels",
         icon: "HomeIcon",
         submenu: [
@@ -485,7 +480,7 @@ export default [
                     {
                         url: "/hostel/resident/add",
                         name: "Registration",
-                        slug: "Registration"
+                        slug: "Room Registration"
                     },
                     {
                         url: "/hostel/resident/history",
@@ -506,7 +501,7 @@ export default [
                     {
                         url: "/hostel/room-type",
                         name: "Registration",
-                        slug: "Registration"
+                        slug: "Hostel Registration"
                     },
                 ]
             },
@@ -539,7 +534,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Transport",
         icon: "HomeIcon",
         submenu: [
@@ -555,7 +550,7 @@ export default [
                     {
                         url: "/transport/user/add",
                         name: "Registration",
-                        slug: "Registration"
+                        slug: "Transport Registration"
                     },
                     {
                         url: "/transport/user/history",
@@ -577,7 +572,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "More",
         icon: "HomeIcon",
         submenu: [
@@ -594,19 +589,19 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Report Links",
         icon: "HomeIcon",
         submenu: [
             {
                 url: "/report/student",
                 name: "Student Detail",
-                slug: "Student Detail"
+                slug: "Report Student Detail"
             },
             {
                 url: "/report/staff",
                 name: "Staff Detail",
-                slug: "Staff Detail"
+                slug: "Report Staff Detail"
             },
             {
                 url: "/account/fees",
@@ -671,7 +666,7 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Alert",
         icon: "HomeIcon",
         submenu: [
@@ -681,14 +676,14 @@ export default [
                 slug: "User Notice"
             },
             {
-                url: "/info/smsemail",
+                url: "/info/sms-email",
                 name: "SMS / E-mail",
                 slug: "SMS / E-mail"
             },
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Academics",
         icon: "HomeIcon",
         submenu: [
@@ -788,457 +783,6 @@ export default [
             }
         ]
     }
-    ]
+]
 
 
-
-    /* --------------------------------------------------------- */
-//     {
-//         url: null,
-//         name: "Student And Stuff",
-//         icon: "HomeIcon",
-//         submenu: [
-//             {
-//               url:null,
-//               name:'Student',
-//               submenu:[
-//                 {
-//                   url: '/student',
-//                   name: "Student Detail",
-//                   slug: "Student Detail",
-//                 },
-//                 {
-//                   url: '/student/registration',
-//                   name: "Student Registration",
-//                   slug: "Student registration",
-//                 },
-//                 {
-//                   url: '/student/import',
-//                   name: "Bulk Import",
-//                   slug: "Bulk Import",
-//                 },
-//                 {
-//                   url: '/student/transfer',
-//                   name: "Transfer Student",
-//                   slug: "Transfer Student",
-//                 },
-//                 {
-//                   url: '/student/document',
-//                   name: "Document Upload",
-//                   slug: "Document Upload",
-//                 },
-//                 {
-//                   url: '/student/note',
-//                   name: "Create Notes",
-//                   slug: "Create Notes",
-//                 },
-//               ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Guardian',
-//                 submenu:[
-//                     {
-//                         url: '/guardian',
-//                         name: "Guardian Detail",
-//                         slug: "Guardian Detail",
-//                     },
-//                     {
-//                         url: '/guardian/registration',
-//                         name: "Registration",
-//                         slug: "Registration",
-//                     },
-//
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Staff',
-//                 submenu:[
-//                     {
-//                         url: '/staff',
-//                         name: "Staff Detail",
-//                         slug: "Staff Detail",
-//                     },
-//                     {
-//                         url: '/staff/import',
-//                         name: "Bulk Import",
-//                         slug: "Bulk Import",
-//                     },
-//                     {
-//                         url: '/staff/document',
-//                         name: "Document Upload",
-//                         slug: "Document Upload",
-//                     },
-//                     {
-//                         url: '/staff/note',
-//                         name: "Create Notes",
-//                         slug: "Create Notes",
-//                     },
-//                     {
-//                         url: '/staff/designation',
-//                         name: "Designation",
-//                         slug: "Designation",
-//                     },
-//
-//                 ]
-//             }
-//         ]
-//     },
-//
-//     {
-//         url: null,
-//         name: "Account",
-//         icon: "HomeIcon",
-//         submenu: [
-//             {
-//                 url:null,
-//                 name:'Fees Collection',
-//                 submenu:[
-//                     {
-//                         url: '/account/fees',
-//                         name: "Receive Detail",
-//                         slug: "Receive Detail",
-//                     },
-//                     {
-//                         url: '/account/fees/quick-receive',
-//                         name: "Quick Receive",
-//                         slug: "Quick Receive",
-//                     },
-//                     {
-//                         url: '/account/fees/collection',
-//                         name: "Collect Fees",
-//                         slug: "Collect Fees",
-//                     },
-//                     {
-//                         url: '/account/fees/balance',
-//                         name: "Balance Fees Report",
-//                         slug: "Balance Fees Report",
-//                     },
-//                     {
-//                         url: '/account/fees/master/add',
-//                         name: "AddFees",
-//                         slug: "Add Fees",
-//                     },
-//                     {
-//                         url: '/account/fees/head',
-//                         name: "Fees Head",
-//                         slug: "Fees Head",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Pay Roll',
-//                 submenu:[
-//                     {
-//                         url: '/payroll',
-//                         name: "Paid Detail",
-//                         slug: "Paid Detail",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Salary Pay",
-//                         slug: "Salary pay",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Add Payroll",
-//                         slug: "Add Payroll",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Balance Salary Report",
-//                         slug: "Balance Salary Report",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Salary Head",
-//                         slug: "Salary Head",
-//                     },
-//
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Ledger And Transaction',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Transaction",
-//                         slug: "Transaction",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Ledger",
-//                         slug: "Ledger",
-//                     },
-//
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Bank',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Manage Bank Account",
-//                         slug: "Manage Bank Account",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Add New Bank",
-//                         slug: "Add New Bank",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Transaction Detail",
-//                         slug: "Transaction Detail",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "New Transaction",
-//                         slug: "New Transaction",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Report',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Cash Book",
-//                         slug: "Cash Book",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Free Collection Head",
-//                         slug: "Free Collection Head",
-//                     },
-//                 ]
-//             },
-//         ]
-//     },
-//
-//     // urls for library
-//     {
-//         url: null,
-//         name: "Library",
-//         icon: "HomeIcon",
-//         submenu: [
-//             {
-//                 url:null,
-//                 name:'Books',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Receive Detail",
-//                         slug: "Receive Detail",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Pay Roll',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Paid Detail",
-//                         slug: "Paid Detail",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Ledger And Transaction',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Transaction",
-//                         slug: "Transaction",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Ledger",
-//                         slug: "Ledger",
-//                     },
-//
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Bank',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Manage Bank Account",
-//                         slug: "Manage Bank Account",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Add New Bank",
-//                         slug: "Add New Bank",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Transaction Detail",
-//                         slug: "Transaction Detail",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "New Transaction",
-//                         slug: "New Transaction",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Report',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Cash Book",
-//                         slug: "Cash Book",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Free Collection Head",
-//                         slug: "Free Collection Head",
-//                     },
-//                 ]
-//             },
-//         ]
-//     },
-//     {
-//         url: null,
-//         name: "Academics",
-//         icon: "HomeIcon",
-//         submenu: [
-//             {
-//                 url:null,
-//                 name:'Academic Level',
-//                 submenu:[
-//                     {
-//                         url: '/faculty',
-//                         name: "Faculty",
-//                         slug: "Faculty",
-//                     },
-//                     {
-//                         url: '/semester',
-//                         name: "Semester",
-//                         slug: "Semester",
-//                     },
-//                     {
-//                         url: '/student-batch',
-//                         name: "Student Batch",
-//                         slug: "Student Batch",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Grading',
-//                 submenu:[
-//                     {
-//                         url: '/grading',
-//                         name: "Grading",
-//                         slug: "Grading",
-//                     },
-//                     {
-//                         url: '/subject',
-//                         name: "Subject",
-//                         slug: "Subject",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Status',
-//                 submenu:[
-//                     {
-//                         url: '/student-status',
-//                         name: "Student Status",
-//                         slug: "Student Status",
-//                     },
-//                     {
-//                         url: '/attendance-status',
-//                         name: "Attendance Status",
-//                         slug: "Attendance Status",
-//                     },
-//                     {
-//                         url: '/books-status',
-//                         name: "Book Status",
-//                         slug: "Book Status",
-//                     },
-//                     {
-//                         url: '/bed-status',
-//                         name: "Bed Status",
-//                         slug: "Bed Status",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Date & Time',
-//                 submenu:[
-//                     {
-//                         url: '/year',
-//                         name: "Year",
-//                         slug: "Year",
-//                     },
-//                     {
-//                         url: '/month',
-//                         name: "Month",
-//                         slug: "Month",
-//                     },
-//                     {
-//                         url: '/day',
-//                         name: "Day",
-//                         slug: "Day",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'Report',
-//                 submenu:[
-//                     {
-//                         url: '/',
-//                         name: "Cash Book",
-//                         slug: "Cash Book",
-//                     },
-//                     {
-//                         url: '/',
-//                         name: "Free Collection Head",
-//                         slug: "Free Collection Head",
-//                     },
-//                 ]
-//             },
-//             {
-//                 url:null,
-//                 name:'More',
-//                 submenu:[
-//                     {
-//                         url: '/assignment',
-//                         name: "Assignment",
-//                         slug: "Assignment",
-//                     },
-//                     {
-//                         url: '/download',
-//                         name: "Upload & Download",
-//                         slug: "Upload & Download",
-//                     },
-//                 ]
-//             },
-//             {
-//                 icon: "HomeIcon",
-//                 i18n: "Payment Method",
-//                 url: "/payment-method",
-//                 slug:'payment-method'
-//             },
-//         ]
-//     },
-//
-// ]
-//

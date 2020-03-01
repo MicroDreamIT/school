@@ -416,7 +416,7 @@ export default [
                 name:'Report',
                 submenu:[
                     {
-                        url: '/cash-book',
+                        url: '/',
                         name: "Cash Book",
                         slug: "Cash Book",
                     },

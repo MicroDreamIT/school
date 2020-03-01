@@ -118,6 +118,88 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                /*for hostels*/
+                {
+                    path:'/hostel',
+                    name:'hostel',
+                    component:()=>import('./views/custom/hostels/hostel/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/add',
+                    name:'hostel.create',
+                    component:()=>import('./views/custom/hostels/hostel/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/room-type',
+                    name:'hostel.roomType',
+                    component:()=>import('./views/custom/hostels/hostel/room-type'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/food',
+                    name:'hostel.food',
+                    component:()=>import('./views/custom/hostels/food/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                 {
+                    path:'/hostel/food/eating-time',
+                    name:'hostel.eatingTime',
+                    component:()=>import('./views/custom/hostels/food/eating-time'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                 {
+                    path:'/hostel/food/category',
+                    name:'hostel.foodCategory',
+                    component:()=>import('./views/custom/hostels/food/category'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/food/item',
+                    name:'hostel.foodItem',
+                    component:()=>import('./views/custom/hostels/food/item'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/resident',
+                    name:'hostel.resident',
+                    component:()=>import('./views/custom/hostels/resident/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/resident/add',
+                    name:'hostel.residentCreate',
+                    component:()=>import('./views/custom/hostels/resident/registration'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/hostel/resident/history',
+                    name:'hostel.residentHistory',
+                    component:()=>import('./views/custom/hostels/resident/history'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
                 /*for transport*/
                 {
                     path:'/transport/user',
@@ -350,6 +432,33 @@ const router = new Router({
                 },
 
                 /* url for academic section end */
+
+                /* url for more section start */
+                {
+                    path:'/assignment',
+                    name:'more.assignment.index',
+                    component:()=>import('./views/custom/more/assignment/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/assignment/add',
+                    name:'more.assignment.create',
+                    component:()=>import('./views/custom/more/assignment/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/download',
+                    name:'more.upload-download',
+                    component:()=>import('./views/custom/more/upload-download'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /* url for more section end */
 
                 // =============================================================================
                 // Application Routes

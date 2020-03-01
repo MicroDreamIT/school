@@ -2,7 +2,14 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Year Manager</h2><br>
+                <h2 class="pageTitle">Year Manager</h2>
+                <div  role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
+                    <button type="button" data-dismiss="alert" aria-label="Close" class="close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    Please, Create Year and Active
+                </div>
             </div>
             <div class="col-md-12">
                 <vs-card>

@@ -3,6 +3,17 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Route Manager</h2>
+                <div>
+                    <router-link :to="'/transport/user'">
+                        <vs-button type="filled" class="smBtn">User</vs-button>
+                    </router-link>
+                    <router-link :to="'/transport/route'">
+                        <vs-button type="filled" class="smBtn">Route</vs-button>
+                    </router-link>
+                    <router-link :to="'/transport/vehicle'">
+                        <vs-button type="filled" class="smBtn">Vehicle</vs-button>
+                    </router-link>
+                </div>
             </div>
             <vs-card>
                 <div class="row mx-0">
@@ -10,15 +21,15 @@
                         <h4>Create Route</h4>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Route</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Rent</p>
-                           <vs-input class="flex-1 text-uppercase"></vs-input>
+                           <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Desc.</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <vs-input class="flex-2 text-uppercase"></vs-input>
                         </div>
 
                         <div class="d-flex justify-content-between flex-wrap">

@@ -76,8 +76,7 @@
                         </div>
                         <div class="col-md-7">
                             <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; Days List
-                                List
+                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; Bed List
                             </h4>
                             <div class="clearfix mt-3">
                                 <div class="easy-link-menu">

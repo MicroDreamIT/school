@@ -3,11 +3,22 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Vehicle Manager</h2>
+                <div>
+                    <router-link :to="'/transport/user'">
+                        <vs-button type="filled" class="smBtn">User</vs-button>
+                    </router-link>
+                    <router-link :to="'/transport/route'">
+                        <vs-button type="filled" class="smBtn">Route</vs-button>
+                    </router-link>
+                    <router-link :to="'/transport/vehicle'">
+                        <vs-button type="filled" class="smBtn">Vehicle</vs-button>
+                    </router-link>
+                </div>
             </div>
             <vs-card>
                 <div class="row mx-0">
                     <div class="col-md-4">
-                        <div>Create Vehicle</div>
+                        <h4>Create Vehicle</h4>
                         <div class="d-flex justify-content-between flex-wrap">
                             <p class="flex-1">Number</p>
                             <vs-input class="flex-1 text-uppercase"></vs-input>

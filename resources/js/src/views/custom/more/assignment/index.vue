@@ -75,7 +75,6 @@
                                                         ></v-select>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4">
                                                     <div class="form-group mb-3">
                                                         <label> Date From </label>

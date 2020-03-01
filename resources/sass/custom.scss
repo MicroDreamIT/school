@@ -89,20 +89,24 @@ button:focus {
 .vs-tabs--ul {
   margin-bottom: 0;
 }
-.mBox{
+
+.mBox {
   display: flex;
   padding: 10px 5px;
-  div:first-child{
-    flex:3;
-    border-right:3px solid #FFFFFF;
+
+  div:first-child {
+    flex: 3;
+    border-right: 3px solid #FFFFFF;
   }
-  div:last-child{
-    flex:1;
+
+  div:last-child {
+    flex: 1;
   }
 }
-.ow-tr{
-  .vs-con-input-label{
-    width:60px!important;
+
+.ow-tr {
+  .vs-con-input-label {
+    width: 60px !important;
   }
 }
 .custom-collapse{
@@ -110,32 +114,48 @@ button:focus {
   .vs-collapse-item{
     cursor: default;
   }
-  .vs-collapse-item--header{
+
+  .vs-collapse-item--header {
     width: fit-content;
-    .vs-icon{
+
+    .vs-icon {
       display: none;
     }
   }
-  .vs-collapse-item--content{
+
+  .vs-collapse-item--content {
     overflow: unset;
-    .con-content--item{
+
+    .con-content--item {
       opacity: 0;
     }
   }
 }
-.btn-sm{
+
+.btn-sm {
   cursor: pointer;
 }
-.mdInput{
-  .vs-input{
+
+.mdInput {
+  .vs-input {
     width: auto;
   }
 }
-.flex-2{
-  flex: 2!important;
+
+.flex-2 {
+  flex: 2 !important;
 }
-.vs-con-textarea{
-  .vs-textarea{
+
+.vs-con-textarea {
+  .vs-textarea {
     height: 100%;
+  }
+}
+
+.dt-buttons {
+  @media (max-width: 425px) {
+    .btn-secondary {
+      padding: 0.8rem 1.25rem !important;
+    }
   }
 }

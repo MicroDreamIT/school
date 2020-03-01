@@ -1,22 +1,3 @@
-/*=========================================================================================
-  File Name: router.js
-  Description: Routes for vue-router. Lazy loading is enabled.
-  Object Strucutre:
-                    path => router path
-                    name => router name
-                    component(lazy loading) => component to load
-                    meta : {
-                      rule => which user can have access (ACL)
-                      breadcrumb => Add breadcrumb to specific page
-                      pageTitle => Display title besides breadcrumb
-                    }
-  ----------------------------------------------------------------------------------------
-  Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
-  Author: Pixinvent
-  Author URL: http://www.themeforest.net/user/pixinvent
-==========================================================================================*/
-
-
 import Vue from 'vue'
 import Router from 'vue-router'
 import auth from "@/auth/authService";
@@ -38,7 +19,7 @@ const router = new Router({
             // MAIN LAYOUT ROUTES
             // =============================================================================
             path: '',
-            component: () => import('./layouts/main/Main.vue'),
+            component: () => import('./layouts/main/Main'),
             children: [
 
                 // =============================================================================
@@ -56,7 +37,7 @@ const router = new Router({
                 {
                     path: '/student',
                     name: 'student.index',
-                    component: () => import('./views/custom/student/index.vue'),
+                    component: () => import('./views/custom/student/index'),
                     meta: {
                         rule: 'admin'
                     }
@@ -64,7 +45,7 @@ const router = new Router({
                 {
                     path: '/student/import',
                     name: 'student.bulk-import',
-                    component: () => import('./views/custom/student/bulk-import.vue'),
+                    component: () => import('./views/custom/student/bulk-import'),
                     meta: {
                         rule: 'admin'
                     }
@@ -72,7 +53,7 @@ const router = new Router({
                 {
                     path: '/student/registration',
                     name: 'student.registration',
-                    component: () => import('./views/custom/student/registration.vue'),
+                    component: () => import('./views/custom/student/registration'),
                     meta: {
                         rule: 'admin'
                     }
@@ -80,7 +61,7 @@ const router = new Router({
                 {
                     path: '/student/:id/details',
                     name: 'student.view',
-                    component: () => import('./views/custom/student/details.vue'),
+                    component: () => import('./views/custom/student/details'),
                     meta: {
                         rule: 'admin'
                     }
@@ -89,7 +70,7 @@ const router = new Router({
                 {
                     path: '/student/transfer',
                     name: 'student.transfer',
-                    component: () => import('./views/custom/student/transfer.vue'),
+                    component: () => import('./views/custom/student/transfer'),
                     meta: {
                         rule: 'admin'
                     }
@@ -97,7 +78,7 @@ const router = new Router({
                 {
                     path: '/student/document',
                     name: 'student.document',
-                    component: () => import('./views/custom/student/document.vue'),
+                    component: () => import('./views/custom/student/document'),
                     meta: {
                         rule: 'admin'
                     }
@@ -105,7 +86,7 @@ const router = new Router({
                 {
                     path: '/student/note',
                     name: 'student.note',
-                    component: () => import('./views/custom/student/note.vue'),
+                    component: () => import('./views/custom/student/note'),
                     meta: {
                         rule: 'admin'
                     }
@@ -244,7 +225,7 @@ const router = new Router({
                 },
                 {
                     path:'/account/fees/master',
-                    name:'account.balance',
+                    name:'account.master',
                     component:()=>import('./views/custom/account/fees/master-detail'),
                     meta:{
                         rule: 'admin'
@@ -358,7 +339,7 @@ const router = new Router({
                 },
                 {
                     path:'/account/bank-transaction/add',
-                    name:'account.bankTransaction',
+                    name:'account.bankTransactionCreate',
                     component:()=>import('./views/custom/account/bank/bank-transaction'),
                     meta:{
                         rule: 'admin'
@@ -650,7 +631,7 @@ const router = new Router({
                 },
                 {
                     path:'/certificate/generate',
-                    name:'certificate.attendance',
+                    name:'certificate.generate',
                     component:()=>import('./views/custom/certificate/print'),
                     meta:{
                         rule: 'admin'
@@ -666,7 +647,7 @@ const router = new Router({
                 },
                 {
                     path:'/certificate/template/add',
-                    name:'certificate.template',
+                    name:'certificate.templateCreate',
                     component:()=>import('./views/custom/certificate/templateCreate'),
                     meta:{
                         rule: 'admin'

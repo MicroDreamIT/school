@@ -14,314 +14,294 @@ export default [
                 url: null,
                 name: "Student",
                 submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/student",
-                                name: "Student Detail",
-                                slug: "Student Detail"
-                            },
-                            {
-                                url: "/student/import",
-                                name: "Bulk Import",
-                                slug: "Student Bulk Import"
-                            },
-                            {
-                                url: "/student/registration",
-                                name: "Registration",
-                                slug: "Student Registration"
-                            },
-                            {
-                                url: "/student/transfer",
-                                name: "Transfer Student",
-                                slug: "Transfer Student"
-                            },
-                            {
-                                url: "/student/document",
-                                name: "Document Upload",
-                                slug: "Document Upload"
-                            },
-                            {
-                                url: "/student/note",
-                                name: "Create Notes",
-                                slug: "Student Create Notes"
-                            }
-                        ]
+                        url: "/student",
+                        name: "Student Detail",
+                        slug: "Student Detail"
+                    },
+                    {
+                        url: "/student/import",
+                        name: "Bulk Import",
+                        slug: "Student Bulk Import"
+                    },
+                    {
+                        url: "/student/registration",
+                        name: "Registration",
+                        slug: "Student Registration"
+                    },
+                    {
+                        url: "/student/transfer",
+                        name: "Transfer Student",
+                        slug: "Transfer Student"
+                    },
+                    {
+                        url: "/student/document",
+                        name: "Document Upload",
+                        slug: "Document Upload"
+                    },
+                    {
+                        url: "/student/note",
+                        name: "Create Notes",
+                        slug: "Student Create Notes"
                     }
                 ]
+
             },
             {
                 url: null,
                 name: "Guardian",
                 submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/guardian",
-                                name: "Guardian Detail",
-                                slug: "Guardian Detail"
-                            },
-                            {
-                                url: "/guardian/registration",
-                                name: "Registration",
-                                slug: "Guardian Registration"
-                            },
-                        ]
-                    }
+                        url: "/guardian",
+                        name: "Guardian Detail",
+                        slug: "Guardian Detail"
+                    },
+                    {
+                        url: "/guardian/registration",
+                        name: "Registration",
+                        slug: "Guardian Registration"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Staff",
                 submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/staff",
-                                name: "Staff Detail",
-                                slug: "Staff Detail"
-                            },
-                            {
-                                url: "/staff/add",
-                                name: "Registration",
-                                slug: "Staff Registration"
-                            },
-                            {
-                                url: "/staff/import",
-                                name: "Bulk Import",
-                                slug: "Staff Bulk Import"
-                            },
-                            {
-                                url: "/staff/document",
-                                name: "Document Upload",
-                                slug: "Staff Document Upload"
-                            },
-                            {
-                                url: "/staff/note",
-                                name: "Create Notes",
-                                slug: "Staff Create Notes"
-                            },
-                            {
-                                url: "/staff/designation",
-                                name: "Designation",
-                                slug: "Staff Designation"
-                            },
-                        ]
-                    }
+                        url: "/staff",
+                        name: "Staff Detail",
+                        slug: "Staff Detail"
+                    },
+                    {
+                        url: "/staff/add",
+                        name: "Registration",
+                        slug: "Staff Registration"
+                    },
+                    {
+                        url: "/staff/import",
+                        name: "Bulk Import",
+                        slug: "Staff Bulk Import"
+                    },
+                    {
+                        url: "/staff/document",
+                        name: "Document Upload",
+                        slug: "Staff Document Upload"
+                    },
+                    {
+                        url: "/staff/note",
+                        name: "Create Notes",
+                        slug: "Staff Create Notes"
+                    },
+                    {
+                        url: "/staff/designation",
+                        name: "Designation",
+                        slug: "Staff Designation"
+                    },
+
                 ]
             }
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Account",
         icon: "HomeIcon",
         submenu: [
             {
                 url: null,
                 name: "Fees Collection",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/account/fees",
-                                name: "Receive Detail",
-                                slug: "Receive Detail"
-                            },
-                            {
-                                url: "/account/fees/quick-receive",
-                                name: "Quick Receive",
-                                slug: "Quick Receive"
-                            },
-                            {
-                                url: "/account/fees/collection",
-                                name: "Collect Fees",
-                                slug: "Collect Fees"
-                            },
-                            {
-                                url: "/account/fees/balance",
-                                name: "Balance Fees Report",
-                                slug: "Balance Fees Report"
-                            },
-                            {
-                                url: "/account/fees/master/add",
-                                name: "Add Fees",
-                                slug: "Add Fees"
-                            },
-                            {
-                                url: "/account/fees/head",
-                                name: "Fees Head",
-                                slug: "Fees Head"
-                            },
-                        ]
-                    }
+                        url: "/account/fees",
+                        name: "Receive Detail",
+                        slug: "Receive Detail"
+                    },
+                    {
+                        url: "/account/fees/quick-receive",
+                        name: "Quick Receive",
+                        slug: "Quick Receive"
+                    },
+                    {
+                        url: "/account/fees/collection",
+                        name: "Collect Fees",
+                        slug: "Collect Fees"
+                    },
+                    {
+                        url: "/account/fees/balance",
+                        name: "Balance Fees Report",
+                        slug: "Balance Fees Report"
+                    },
+                    {
+                        url: "/account/fees/master/add",
+                        name: "Add Fees",
+                        slug: "Add Fees"
+                    },
+                    {
+                        url: "/account/fees/head",
+                        name: "Fees Head",
+                        slug: "Fees Head"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Payroll",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/account/payroll",
-                                name: "Paid Detail",
-                                slug: "Paid Detail"
-                            },
-                            {
-                                url: "/account/salary/payment",
-                                name: "Salary Pay",
-                                slug: "Salary Pay"
-                            },
-                            {
-                                url: "/account/payroll/master/add",
-                                name: "Add Payroll",
-                                slug: "Add Payroll"
-                            },
-                            {
-                                url: "/account/payroll/balance",
-                                name: "Balance Salary Report",
-                                slug: "Balance Salary Report"
-                            },
-                            {
-                                url: "/account/payroll/head",
-                                name: "Salary Head",
-                                slug: "Salary Head"
-                            },
-                        ]
-                    }
+                        url: "/account/payroll",
+                        name: "Paid Detail",
+                        slug: "Paid Detail"
+                    },
+                    {
+                        url: "/account/salary/payment",
+                        name: "Salary Pay",
+                        slug: "Salary Pay"
+                    },
+                    {
+                        url: "/account/payroll/master/add",
+                        name: "Add Payroll",
+                        slug: "Add Payroll"
+                    },
+                    {
+                        url: "/account/payroll/balance",
+                        name: "Balance Salary Report",
+                        slug: "Balance Salary Report"
+                    },
+                    {
+                        url: "/account/payroll/head",
+                        name: "Salary Head",
+                        slug: "Salary Head"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Ledger & Transaction",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/account/transaction",
-                                name: "Transaction",
-                                slug: "Transaction"
-                            },
-                            {
-                                url: "/account/transaction-head",
-                                name: "Ledger",
-                                slug: "Ledger"
-                            },
-                        ]
-                    }
+                        url: "/account/transaction",
+                        name: "Transaction",
+                        slug: "Transaction"
+                    },
+                    {
+                        url: "/account/transaction-head",
+                        name: "Ledger",
+                        slug: "Ledger"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Bank",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/account/bank",
-                                name: "Manage Bank Account",
-                                slug: "Manage Bank Account"
-                            },
-                            {
-                                url: "/account/bank/add",
-                                name: "Add New Bank",
-                                slug: "Add New Bank"
-                            },
-                            {
-                                url: "/account/bank-transaction",
-                                name: "Transaction Detail",
-                                slug: "Transaction Detail"
-                            },
-                            {
-                                url: "/account/bank-transaction/add",
-                                name: "New Transaction",
-                                slug: "New Transaction"
-                            },
-                        ]
-                    }
+                        url: "/account/bank",
+                        name: "Manage Bank Account",
+                        slug: "Manage Bank Account"
+                    },
+                    {
+                        url: "/account/bank/add",
+                        name: "Add New Bank",
+                        slug: "Add New Bank"
+                    },
+                    {
+                        url: "/account/bank-transaction",
+                        name: "Transaction Detail",
+                        slug: "Transaction Detail"
+                    },
+                    {
+                        url: "/account/bank-transaction/add",
+                        name: "New Transaction",
+                        slug: "New Transaction"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Report",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/account/report/cash-book",
-                                name: "Cash Book",
-                                slug: "Cash Book"
-                            },
-                            {
-                                url: "/account/report/fee-collection-head",
-                                name: "Fee Collection Head",
-                                slug: "Fee Collection Head"
-                            },
-                        ]
-                    }
+                        url: "/account/report/cash-book",
+                        name: "Cash Book",
+                        slug: "Cash Book"
+                    },
+                    {
+                        url: "/account/report/fee-collection-head",
+                        name: "Fee Collection Head",
+                        slug: "Fee Collection Head"
+                    },
+
                 ]
             },
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Library",
         icon: "HomeIcon",
         submenu: [
             {
                 url: null,
                 name: "Books",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/library/book",
-                                name: "Book Detail",
-                                slug: "Book Detail"
-                            },
-                            {
-                                url: "/library/book/add",
-                                name: "Add New",
-                                slug: "Add New Book"
-                            },
-                            {
-                                url: "/library/book/import",
-                                name: "Bulk Import",
-                                slug: "Library Bulk Import"
-                            },
-                            {
-                                url: "/library/book/category",
-                                name: "Category",
-                                slug: "Library Category"
-                            },
-                        ]
-                    }
+                        url: "/library/book",
+                        name: "Book Detail",
+                        slug: "Book Detail"
+                    },
+                    {
+                        url: "/library/book/add",
+                        name: "Add New",
+                        slug: "Add New Book"
+                    },
+                    {
+                        url: "/library/book/import",
+                        name: "Bulk Import",
+                        slug: "Library Bulk Import"
+                    },
+                    {
+                        url: "/library/book/category",
+                        name: "Category",
+                        slug: "Library Category"
+                    },
+
                 ]
             },
             {
                 url: null,
                 name: "Members",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/library/member",
-                                name: "Membership",
-                                slug: "Membership"
-                            },
-                            {
-                                url: "/library/student",
-                                name: "Student Member",
-                                slug: "Student Member"
-                            },
-                            {
-                                url: "/library/staff",
-                                name: "Staff Member",
-                                slug: "Staff Member"
-                            },
-                        ]
-                    }
+                        url: "/library/member",
+                        name: "Membership",
+                        slug: "Membership"
+                    },
+                    {
+                        url: "/library/student",
+                        name: "Student Member",
+                        slug: "Student Member"
+                    },
+                    {
+                        url: "/library/staff",
+                        name: "Staff Member",
+                        slug: "Staff Member"
+                    },
+
                 ]
             },
             {
@@ -342,29 +322,27 @@ export default [
         ]
     },
     {
-        url:null,
+        url: null,
         name: "Attendance",
         icon: "HomeIcon",
         submenu: [
             {
                 url: null,
                 name: "Student Attendance",
-                submenu : [
+                submenu: [
+
                     {
-                        url: [
-                            {
-                                url: "/attendance/student",
-                                name: "Regular Attendance",
-                                slug: "Regular Attendance"
-                            },
-                            {
-                                url: "/attendance/subject",
-                                name: "Subject Wise Attendance",
-                                slug: "Subject Wise Attendance"
-                            },
-                        ]
-                    }
+                        url: "/attendance/student",
+                        name: "Regular Attendance",
+                        slug: "Regular Attendance"
+                    },
+                    {
+                        url: "/attendance/subject",
+                        name: "Subject Wise Attendance",
+                        slug: "Subject Wise Attendance"
+                    },
                 ]
+
             },
             {
                 url: "/attendance/staff",

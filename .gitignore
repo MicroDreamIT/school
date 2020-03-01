@@ -97,3 +97,5 @@ fabric.properties
 /.idea/viholding.iml
 /.idea/misc.xml
 /.idea/modules.xml
+/public/js/chunks/
+/public/js/

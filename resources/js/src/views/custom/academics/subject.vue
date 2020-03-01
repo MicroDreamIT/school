@@ -15,9 +15,7 @@
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-5">
-
-                            <h4><i class="fa fa-search"></i> Create Course</h4>
-
+                            <h4><i class="fa fa-search"></i> Create Course</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Subject</label>
                                 <vs-input class="col-sm-9" placeholder="e.g. English"></vs-input>

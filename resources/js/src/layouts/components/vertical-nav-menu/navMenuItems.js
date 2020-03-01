@@ -443,6 +443,12 @@ export default [
                     },
                 ]
             },
+            {
+                icon: "HomeIcon",
+                i18n: "Payment Method",
+                url: "/payment-method",
+                slug:'payment-method'
+            },
         ]
     },
 

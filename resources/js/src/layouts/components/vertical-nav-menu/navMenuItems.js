@@ -427,6 +427,22 @@ export default [
                     },
                 ]
             },
+            {
+                url:null,
+                name:'More',
+                submenu:[
+                    {
+                        url: '/assignment',
+                        name: "Assignment",
+                        slug: "Assignment",
+                    },
+                    {
+                        url: '/download',
+                        name: "Upload & Download",
+                        slug: "Upload & Download",
+                    },
+                ]
+            },
         ]
     },
 

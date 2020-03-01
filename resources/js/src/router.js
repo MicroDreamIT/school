@@ -301,8 +301,8 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/book-status',
-                    name:'academics.book-status',
+                    path:'/books-status',
+                    name:'academics.books-status',
                     component:()=>import('./views/custom/academics/books-status'),
                     meta:{
                         rule: 'admin'
@@ -350,6 +350,33 @@ const router = new Router({
                 },
 
                 /* url for academic section end */
+
+                /* url for more section start */
+                {
+                    path:'/assignment',
+                    name:'more.assignment.index',
+                    component:()=>import('./views/custom/more/assignment/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/assignment/add',
+                    name:'more.assignment.create',
+                    component:()=>import('./views/custom/more/assignment/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/download',
+                    name:'more.upload-download',
+                    component:()=>import('./views/custom/more/upload-download'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /* url for more section end */
 
                 // =============================================================================
                 // Application Routes

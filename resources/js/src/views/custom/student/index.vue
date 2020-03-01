@@ -30,7 +30,7 @@
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
-                    <div class="row p-2">
+                    <div class="row p-4">
                         <div class="col-md-12 mb-2">
                             <vs-collapse class="custom-collapse">
                                 <vs-collapse-item>
@@ -160,7 +160,7 @@
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 ">
                             <h4 class="header large lighter blue">
                                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students
                                 List</h4>

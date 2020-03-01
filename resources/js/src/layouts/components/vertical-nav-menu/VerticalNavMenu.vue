@@ -31,8 +31,9 @@
 
           <!-- Logo -->
           <router-link tag="div" class="vx-logo cursor-pointer flex items-center" to="/">
-            <logo class="w-10 mr-4 fill-current text-primary" />
-            <span class="vx-logo-text text-primary" v-show="isMouseEnter || !reduce" v-if="title">{{ title }}</span>
+            <!--<logo class="w-10 mr-4 fill-current text-primary" />-->
+            <i class="fa fa-graduation-cap fa-2x mr-3 w-10 fill-current text-primary" ></i>
+            <span class="vx-logo-text text-primary" v-show="isMouseEnter || !reduce" v-if="title">Edu MIS</span>
           </router-link>
           <!-- /Logo -->
 

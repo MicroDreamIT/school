@@ -242,7 +242,7 @@
                     academic_status: null,
                     status: null
                 },
-                url: '/ajax/student/',
+                url: '/json/student/',
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
@@ -261,6 +261,19 @@
                 filterBox: false,
             }
         },
+
+        created() {
+            this.getList()
+        },
+
+        methods:{
+            getList(){
+                this.$http.get(this.url)
+                    .then(res=>{
+                        console.log(res.data)
+                    })
+            }
+        }
 
     }
 

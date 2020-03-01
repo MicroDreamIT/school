@@ -161,47 +161,14 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12 ">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students
-                                List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Students Record list on table. Filter Students using the filter.
-                            </div>
-                            <div class="dt-buttons btn-group action-group mt-3">
-                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Copy</span></button>
-                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>PDF</span>
-                                </button>
-                                <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                    <span>JSON</span>
-                                </button>
-                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                            <student-table :headers="tableHeader"
-                                           :url="url"
-                                           :no-data-message="'No matching records found'"
+                            <ow-data-table :headers="tableHeader"
+                                           :tableHeader="'Student List'"
+                                           :suggestText="'Student Record list on table. Filter Students using the filter.'"
+                                           :url="'/student'"
+                                           :noDataMessage="'No Student data found. Please Filter Student to show.'"
                                            :searchField="searchData"
-                                           :has-search="true"
+                                           :hasSearch="true"
                                            :has-multiple="true"
-                                           :has-pagination="true"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td :data="props.data.username" class="pointer-none">
@@ -220,7 +187,7 @@
                                         {{props.data.id}}
                                     </vs-td>
                                 </template>
-                            </student-table>
+                            </ow-data-table>
                         </div>
                     </div>
                 </vs-card>
@@ -231,10 +198,8 @@
 </template>
 
 <script>
-    import StudentTable from '../component/table/student-table'
     export default {
         components: {
-            StudentTable
         },
         data() {
             return {

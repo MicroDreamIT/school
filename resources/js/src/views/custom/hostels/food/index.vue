@@ -2,49 +2,59 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Vehicle Manager</h2>
-                <div>
-                    <router-link :to="'/transport/user'">
-                        <vs-button type="filled" class="smBtn">User</vs-button>
+                <h2 class="pageTitle">Food Schedule Manager</h2>
+                <div class="mb-2">
+                    <router-link :to="'/hostel/resident'">
+                        <vs-button type="filled" class="smBtn">Resident</vs-button>
                     </router-link>
-                    <router-link :to="'/transport/route'">
-                        <vs-button type="filled" class="smBtn">Route</vs-button>
+                    <router-link :to="'/hostel'">
+                        <vs-button type="filled" class="smBtn">Hostel</vs-button>
                     </router-link>
-                    <router-link :to="'/transport/vehicle'">
-                        <vs-button type="filled" class="smBtn">Vehicle</vs-button>
+                    <router-link :to="'/hostel/food'">
+                        <vs-button type="filled" class="smBtn">Food & Meal</vs-button>
                     </router-link>
                 </div>
+                <vs-divider class="mx-3"></vs-divider>
             </div>
             <vs-card>
                 <div class="row mx-0">
+                    <div class="mb-2 col-md-12">
+                        <router-link :to="'/hostel/food'">
+                            <vs-button type="filled" class="smBtn">Food & Meal</vs-button>
+                        </router-link>
+                        <router-link :to="'/hostel/food/eating-time'">
+                            <vs-button type="filled" class="smBtn">Eating Time</vs-button>
+                        </router-link>
+                        <router-link :to="'/hostel/food/category'">
+                            <vs-button type="filled" class="smBtn">Food Category</vs-button>
+                        </router-link>
+                        <router-link :to="'/hostel/food/item'">
+                            <vs-button type="filled" class="smBtn">Food Item</vs-button>
+                        </router-link>
+                    </div>
                     <div class="col-md-4">
-                        <h4>Create Vehicle</h4>
+                        <h4>Create Food Schedule</h4>
                         <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Number</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <p class="flex-1">Hostels</p>
+                            <v-select class="flex-2"></v-select>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Type</p>
-                           <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <p class="flex-1">Day</p>
+                            <v-select class="flex-2"></v-select>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Model</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
+                            <p class="flex-1">Time</p>
+                            <v-select class="flex-2"></v-select>
                         </div>
                         <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Desc.</p>
-                            <vs-textarea type="file" class="flex-1" height="100px"></vs-textarea>
+                            <p class="flex-1">Find Food Item & Add</p>
+                            <v-select class="flex-2"></v-select>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Find Stuff & Add</p>
-                            <v-select class="flex-1"></v-select>
-                        </div>
+                         <vs-buttun class="smBtn">Add Food</vs-buttun>
                         <vs-divider></vs-divider>
-                        <vs-buttun class="smBtn">Add Staff</vs-buttun>
                         <table>
                             <tr>
-                                <th>Name</th>
-                                <th>Designation</th>
+                                <th>Item</th>
                             </tr>
                             <tr></tr>
                         </table>
@@ -56,7 +66,7 @@
                     </div>
                     <div class="col-md-8">
                         <h4 class="header large lighter blue">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Vehicle List</h4>
+                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Food Item List</h4>
                         <div class="clearfix mt-3">
                             <div class="easy-link-menu">
                                 <a class="btn-success btn-sm bulk-action-btn">
@@ -70,7 +80,7 @@
                         </div>
                         <br>
                         <div class="table-header">
-                           Vehicle Record list on table. Filter Vehicle using the filter.
+                            Food Item Record list on table. Filter Food Item using the filter.
                         </div>
                         <data-table :headers="tableHeader"
                                     :url="'/student'"

@@ -126,3 +126,11 @@ button:focus {
     width: auto;
   }
 }
+.flex-2{
+  flex: 2!important;
+}
+.vs-con-textarea{
+  .vs-textarea{
+    height: 100%;
+  }
+}

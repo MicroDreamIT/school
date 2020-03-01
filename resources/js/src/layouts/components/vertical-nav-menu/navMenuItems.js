@@ -416,7 +416,7 @@ export default [
                 name:'Report',
                 submenu:[
                     {
-                        url: '/',
+                        url: '/cash-book',
                         name: "Cash Book",
                         slug: "Cash Book",
                     },
@@ -442,6 +442,12 @@ export default [
                         slug: "Upload & Download",
                     },
                 ]
+            },
+            {
+                icon: "HomeIcon",
+                i18n: "Payment Method",
+                url: "/payment-method",
+                slug:'payment-method'
             },
         ]
     },

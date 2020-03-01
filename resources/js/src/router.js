@@ -24,7 +24,7 @@ import auth from "@/auth/authService";
 // import firebase from 'firebase/app'
 // import 'firebase/auth'
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
     mode: 'history',
@@ -52,6 +52,7 @@ const router = new Router({
                         rule: 'admin',
                     }
                 },
+                /*student*/
                 {
                     path: '/student',
                     name: 'student.index',
@@ -68,7 +69,6 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                // Registration
                 {
                     path: '/student/registration',
                     name: 'student.registration',
@@ -110,10 +110,572 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                /*staff*/
                 {
-                    path:'/guardian/details',
+                    path: '/staff',
+                    name: 'staff.index',
+                    component: () => import('./views/custom/staff/index.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/staff/import',
+                    name: 'staff.bulk-import',
+                    component: () => import('./views/custom/staff/bulk-import.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/staff/registration',
+                    name: 'staff.registration',
+                    component: () => import('./views/custom/staff/registration.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/staff/:id/details',
+                    name: 'staff.view',
+                    component: () => import('./views/custom/staff/details.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+
+                {
+                    path: '/staff/document',
+                    name: 'staff.document',
+                    component: () => import('./views/custom/staff/document.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/staff/note',
+                    name: 'staff.note',
+                    component: () => import('./views/custom/staff/note.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/staff/designation',
+                    name: 'staff.designation',
+                    component: () => import('./views/custom/staff/designation.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                /*guardian*/
+                {
+                    path:'/guardian',
+                    name:'guardian',
+                    component:()=>import('./views/custom/guardian/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/guardian/registration',
+                    name:'guardian.create',
+                    component:()=>import('./views/custom/guardian/registration'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/guardian/:id/details',
                     name:'guardian.details',
                     component:()=>import('./views/custom/guardian/details'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*account*/
+                {
+                    path:'/account/fees',
+                    name:'account.fees',
+                    component:()=>import('./views/custom/account/fees/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/quick-receive',
+                    name:'account.quickReceive',
+                    component:()=>import('./views/custom/account/fees/quick-receive'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/collection',
+                    name:'account.collection',
+                    component:()=>import('./views/custom/account/fees/collect'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/balance',
+                    name:'account.balance',
+                    component:()=>import('./views/custom/account/fees/balance-report'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/master/add',
+                    name:'account.create',
+                    component:()=>import('./views/custom/account/fees/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/head',
+                    name:'account.head',
+                    component:()=>import('./views/custom/account/fees/fees-head'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/master',
+                    name:'account.balance',
+                    component:()=>import('./views/custom/account/fees/master-detail'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/fees/collection/:id/view',
+                    name:'account.views',
+                    component:()=>import('./views/custom/account/fees/views'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
+                {
+                    path:'/account/payroll',
+                    name:'account.payrollHistory',
+                    component:()=>import('./views/custom/account/payroll/history'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/salary/payment',
+                    name:'account.salaryPayment',
+                    component:()=>import('./views/custom/account/payroll/salary-pay'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/payroll/master/add',
+                    name:'account.payrollCreate',
+                    component:()=>import('./views/custom/account/payroll/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/payroll/balance',
+                    name:'account.payrollBalance',
+                    component:()=>import('./views/custom/account/payroll/balance-salary'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/payroll/master',
+                    name:'account.payroll',
+                    component:()=>import('./views/custom/account/payroll/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/payroll/head',
+                    name:'account.payrollHead',
+                    component:()=>import('./views/custom/account/payroll/payroll-head'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+
+                {
+                    path:'/account/transaction',
+                    name:'account.transaction',
+                    component:()=>import('./views/custom/account/ledger/transaction-details'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/transaction/add',
+                    name:'account.transactionCreate',
+                    component:()=>import('./views/custom/account/ledger/transactionCreate'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/transaction-head',
+                    name:'account.transactionHead',
+                    component:()=>import('./views/custom/account/ledger/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/bank',
+                    name:'account.bank',
+                    component:()=>import('./views/custom/account/bank/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/bank/add',
+                    name:'account.bankCreate',
+                    component:()=>import('./views/custom/account/bank/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/bank-transaction',
+                    name:'account.bankTransaction',
+                    component:()=>import('./views/custom/account/bank/transaction-detail'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/bank-transaction/add',
+                    name:'account.bankTransaction',
+                    component:()=>import('./views/custom/account/bank/bank-transaction'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/report/cash-book',
+                    name:'account.cashBook',
+                    component:()=>import('./views/custom/account/report/cash-book'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/account/report/fee-collection-head',
+                    name:'account.collectionHead',
+                    component:()=>import('./views/custom/account/report/fees-collection-head'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*Library*/
+                {
+                    path:'/library/book',
+                    name:'library.book',
+                    component:()=>import('./views/custom/library/books/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/book/add',
+                    name:'library.bookCreate',
+                    component:()=>import('./views/custom/library/books/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/book/import',
+                    name:'library.bookImport',
+                    component:()=>import('./views/custom/library/books/import'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/book/category',
+                    name:'library.bookCategory',
+                    component:()=>import('./views/custom/library/books/category'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                 {
+                    path:'/library/book/:id/view',
+                    name:'library.bookViews',
+                    component:()=>import('./views/custom/library/books/view'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                 {
+                    path:'/library/member',
+                    name:'library.member',
+                    component:()=>import('./views/custom/library/members/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/member/add',
+                    name:'library.memberCreate',
+                    component:()=>import('./views/custom/library/members/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/student',
+                    name:'library.student',
+                    component:()=>import('./views/custom/library/members/student'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/staff',
+                    name:'library.staff',
+                    component:()=>import('./views/custom/library/members/staff'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/issue-history',
+                    name:'library.issueHistory',
+                    component:()=>import('./views/custom/library/issue-history'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/return-over',
+                    name:'library.returnOver',
+                    component:()=>import('./views/custom/library/return-period'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/library/circulation',
+                    name:'library.circulation',
+                    component:()=>import('./views/custom/library/circulation-setting'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*attendance*/
+                {
+                    path:'/attendance/student',
+                    name:'attendance.student',
+                    component:()=>import('./views/custom/attendance/student/regular'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/student/add',
+                    name:'attendance.studentCreate',
+                    component:()=>import('./views/custom/attendance/student/regular-create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/subject',
+                    name:'attendance.subject',
+                    component:()=>import('./views/custom/attendance/student/subject-wise'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/subject/add',
+                    name:'attendance.subjectCreate',
+                    component:()=>import('./views/custom/attendance/student/subject-wise-create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/subject/alert',
+                    name:'attendance.subjectAlert',
+                    component:()=>import('./views/custom/attendance/student/subject-wise-alert'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/staff',
+                    name:'attendance.staff',
+                    component:()=>import('./views/custom/attendance/staff/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/staff/add',
+                    name:'attendance.staffCreate',
+                    component:()=>import('./views/custom/attendance/staff/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/master',
+                    name:'attendance.master',
+                    component:()=>import('./views/custom/attendance/monthly/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/attendance/master/add',
+                    name:'attendance.masterCreate',
+                    component:()=>import('./views/custom/attendance/monthly/create'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*examination*/
+                {
+                    path:'/exam',
+                    name:'exam',
+                    component:()=>import('./views/custom/examination/index'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/schedule',
+                    name:'exam.schedule',
+                    component:()=>import('./views/custom/examination/schedule'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/schedule/add',
+                    name:'exam.scheduleCreate',
+                    component:()=>import('./views/custom/examination/scheduleCreate'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/admit-card',
+                    name:'exam.admitCard',
+                    component:()=>import('./views/custom/examination/admit-card'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/routine',
+                    name:'exam.routine',
+                    component:()=>import('./views/custom/examination/routine'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/mark-sheet',
+                    name:'exam.markSheet',
+                    component:()=>import('./views/custom/examination/mark-sheet'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/mark-ledger',
+                    name:'exam.markLedger',
+                    component:()=>import('./views/custom/examination/mark-ledger'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/exam/mark-ledger/add',
+                    name:'exam.markLedgerCreate',
+                    component:()=>import('./views/custom/examination/markLedgerCreate'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                /*for certificate*/
+                {
+                    path:'/certificate/issue',
+                    name:'certificate.issue',
+                    component:()=>import('./views/custom/certificate/issue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/attendance',
+                    name:'certificate.attendance',
+                    component:()=>import('./views/custom/certificate/attendence'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/transfer',
+                    name:'certificate.transfer',
+                    component:()=>import('./views/custom/certificate/transfer'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/bonafide',
+                    name:'certificate.bonafide',
+                    component:()=>import('./views/custom/certificate/bonafide'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/generate',
+                    name:'certificate.attendance',
+                    component:()=>import('./views/custom/certificate/print'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/template',
+                    name:'certificate.template',
+                    component:()=>import('./views/custom/certificate/template'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/template/add',
+                    name:'certificate.template',
+                    component:()=>import('./views/custom/certificate/templateCreate'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/course-completion',
+                    name:'certificate.course',
+                    component:()=>import('./views/custom/certificate/course'),
                     meta:{
                         rule: 'admin'
                     }

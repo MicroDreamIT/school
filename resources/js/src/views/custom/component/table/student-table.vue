@@ -1,7 +1,7 @@
 <template>
     <div class="custom-table">
         <div class="row p-4">
-            <div class="col-md-12 mb-2">
+            <div class="col-md-12 mb-2" v-if="filterSection">
                 <vs-collapse class="custom-collapse">
                     <vs-collapse-item>
                         <div slot="header">
@@ -204,6 +204,10 @@
             url: {
                 type: String,
                 default: () => ''
+            },
+            filterSection:{
+                type: Boolean,
+                default: () => false
             },
             tableHeader: {
                 type: String,

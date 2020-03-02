@@ -8,7 +8,7 @@ export default [
     {
         url: null,
         name: "Student & Staff",
-        icon: "HomeIcon",
+        icon: "UsersIcon",
         submenu: [
             {
                 url: null,
@@ -109,7 +109,7 @@ export default [
     {
         url: null,
         name: "Account",
-        icon: "HomeIcon",
+        icon: "PlusSquareIcon",
         submenu: [
             {
                 url: null,
@@ -251,7 +251,7 @@ export default [
     {
         url: null,
         name: "Library",
-        icon: "HomeIcon",
+        icon: "BookIcon",
         submenu: [
             {
                 url: null,
@@ -324,7 +324,7 @@ export default [
     {
         url: null,
         name: "Attendance",
-        icon: "HomeIcon",
+        icon: "CalendarIcon",
         submenu: [
             {
                 url: null,
@@ -359,7 +359,7 @@ export default [
     {
         url: null,
         name: "Examination",
-        icon: "HomeIcon",
+        icon: "FileTextIcon",
         submenu: [
             {
                 url: "/exam/schedule",
@@ -396,7 +396,7 @@ export default [
     {
         url: null,
         name: "Certificate",
-        icon: "HomeIcon",
+        icon: "StarIcon",
         submenu: [
             {
                 url: "/certificate/issue",
@@ -444,7 +444,7 @@ export default [
     {
         url: null,
         name: "Hostels",
-        icon: "HomeIcon",
+        icon: "LayersIcon",
         submenu: [
             {
                 url: null,
@@ -514,7 +514,7 @@ export default [
     {
         url: null,
         name: "Transport",
-        icon: "HomeIcon",
+        icon: "TruckIcon",
         submenu: [
             {
                 url: null,
@@ -535,24 +535,24 @@ export default [
                         name: "User History",
                         slug: "User History"
                     },
-                    {
-                        url: "/transport/route",
-                        name: "Route",
-                        slug: "Route"
-                    },
-                    {
-                        url: "/transport/vehicle",
-                        name: "Vehicle",
-                        slug: "Vehicle"
-                    }
                 ]
+            },
+            {
+                url: "/transport/route",
+                name: "Route",
+                slug: "Route"
+            },
+            {
+                url: "/transport/vehicle",
+                name: "Vehicle",
+                slug: "Vehicle"
             }
         ]
     },
     {
         url: null,
         name: "More",
-        icon: "HomeIcon",
+        icon: "ListIcon",
         submenu: [
             {
                 url: "/assignment",
@@ -569,7 +569,7 @@ export default [
     {
         url: null,
         name: "Report Links",
-        icon: "HomeIcon",
+        icon: "LinkIcon",
         submenu: [
             {
                 url: "/report/student",
@@ -646,7 +646,7 @@ export default [
     {
         url: null,
         name: "Alert",
-        icon: "HomeIcon",
+        icon: "Volume2Icon",
         submenu: [
             {
                 url: "/info/notice",
@@ -663,7 +663,7 @@ export default [
     {
         url: null,
         name: "Academics",
-        icon: "HomeIcon",
+        icon: "AwardIcon",
         submenu: [
             {
                 url: null,
@@ -728,6 +728,7 @@ export default [
                     },
                 ]
             },
+
             {
                 url: null,
                 name: "Year & Month",

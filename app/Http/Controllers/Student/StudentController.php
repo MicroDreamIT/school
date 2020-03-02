@@ -67,6 +67,7 @@ class StudentController extends CollegeBaseController
             ->get();
 
         $data['faculties'] = $this->activeFaculties();
+        $data['semester'] = $this->activeSemester();
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
 

@@ -263,7 +263,9 @@
                 maxItem: 5,
                 searchData: {},
                 item: [],
-                totalData:[]
+                totalData:[],
+                academic_status:[],
+                status:[]
             }
         },
         created() {
@@ -276,7 +278,6 @@
                     .then(res => {
                         this.totalData=res.data.student
                         this.item = res.data.student
-                        aca
                     })
             },
             handleSearch(searching) {
@@ -309,7 +310,7 @@
             doDelete() {
                 alert('doing Delete')
             },
-            doSerialize:{
+            doSerialize(){
 
             }
 

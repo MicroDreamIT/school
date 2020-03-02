@@ -458,6 +458,23 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                /*report*/
+                {
+                    path:'/report/student',
+                    name:'report.student',
+                    component:()=>import('./views/custom/reports/student'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/report/staff',
+                    name:'report.staff',
+                    component:()=>import('./views/custom/reports/staff'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
                 /*attendance*/
                 {
                     path:'/attendance/student',
@@ -601,6 +618,14 @@ const router = new Router({
                     path:'/certificate/issue',
                     name:'certificate.issue',
                     component:()=>import('./views/custom/certificate/issue'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/certificate/issue-history',
+                    name:'certificate.issueHistory',
+                    component:()=>import('./views/custom/certificate/history'),
                     meta:{
                         rule: 'admin'
                     }

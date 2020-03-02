@@ -498,12 +498,12 @@ export default [
                         slug: "Eating Time"
                     },
                     {
-                        url: "/hostel/category",
+                        url: "/hostel/food/category",
                         name: "Food Category",
                         slug: "Food Category"
                     },
                     {
-                        url: "/hostel/item",
+                        url: "/hostel/food/item",
                         name: "Food Item",
                         slug: "Food Item"
                     },
@@ -587,7 +587,7 @@ export default [
                 slug: "Fees Statement"
             },
             {
-                url: "/fees/balance",
+                url: "account/fees/balance",
                 name: "Balance Fees",
                 slug: "Balance Fees"
             },
@@ -637,9 +637,9 @@ export default [
                 slug: "Hostel History"
             },
             {
-                url: "/transfer/user/history",
-                name: "User History",
-                slug: "User History"
+                url: "/transport/user/history",
+                name: "Transport History",
+                slug: "Transport History"
             },
         ]
     },
@@ -700,11 +700,6 @@ export default [
                         name: "Course/Subject",
                         slug: "Course/Subject"
                     },
-                    {
-                        url: "/student-batch",
-                        name: "Batch",
-                        slug: "Batch"
-                    },
                 ]
             },
             {
@@ -722,7 +717,7 @@ export default [
                         slug: "Attendance Status"
                     },
                     {
-                        url: "/book-status",
+                        url: "/books-status",
                         name: "Books Status",
                         slug: "Books Status"
                     },
@@ -755,7 +750,7 @@ export default [
                 ]
             },
             {
-                url: "payment-method",
+                url: "/payment-method",
                 name: "Payment Method",
                 slug: "Payment Method"
             }

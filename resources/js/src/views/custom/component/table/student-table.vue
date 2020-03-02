@@ -18,17 +18,15 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Reg:</label>
-                                            <input placeholder=""
-                                                   class="form-control border-form input-mask-registration"
-                                                   autofocus="" name="" type="text"
-                                            >
+                                            <vs-input v-model="searchData.reg_no">
+                                            </vs-input>
                                         </div>
                                         <div class="form-group">
                                             <label>Batch</label>
-                                            <select class="form-control" name="batch">
-                                                <option value="0">Select Batch</option>
-                                                <option value="1">ACT</option>
-                                            </select>
+                                            <v-select :options="batch"
+                                                      v-model="searchData.batch">
+
+                                            </v-select>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -44,6 +42,8 @@
                                             <label>Academic Status:</label>
                                             <v-select v-model="searchData.academic_status"
                                                       :options="academic_status"
+                                                      label="value"
+                                                      value="id"
                                                       placeholder="Select Academic Status"
                                             >
                                             </v-select>
@@ -51,7 +51,7 @@
                                         <div class="form-group">
                                             <label>Status:</label>
                                             <v-select v-model="searchData.status"
-                                                      :options="status"
+                                                      :options="['Active','In-Active']"
                                                       placeholder="Select Status"
                                             >
                                             </v-select>
@@ -60,8 +60,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Faculty/Class</label>
-                                            <v-select v-model="searchData.class"
-                                                      :options="['BTECH']"
+                                            <v-select v-model="searchData.faculties"
+                                                      :options="faculties"
                                                       placeholder="Select Faculty/Class"
                                             >
                                             </v-select>
@@ -69,8 +69,10 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Sem./Sec.</label>
-                                            <v-select v-model="searchData.sem"
-                                                      :options="['BTECH']"
+                                            <v-select v-model="searchData.semester"
+                                                      :options="semester"
+                                                      label="value"
+                                                      value="id"
                                                       placeholder="Select Sem./Sec."
                                             >
                                             </v-select>
@@ -82,37 +84,25 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Religion:</label>
-                                            <input placeholder=""
-                                                   class="form-control border-form input-mask-registration"
-                                                   autofocus="" name="" type="text"
-                                            >
+                                            <vs-input v-model="searchData.religion"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Caste:</label>
-                                            <input placeholder=""
-                                                   class="form-control border-form input-mask-registration"
-                                                   autofocus="" name="" type="text"
-                                            >
+                                            <vs-input v-model="searchData.caste"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Nationality:</label>
-                                            <input placeholder=""
-                                                   class="form-control border-form input-mask-registration"
-                                                   autofocus="" name="" type="text"
-                                            >
+                                            <vs-input v-model="searchData.nationality"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Mot.Tongue:</label>
-                                            <input placeholder=""
-                                                   class="form-control border-form input-mask-registration"
-                                                   autofocus="" name="" type="text"
-                                            >
+                                            <vs-input v-model="searchData.mot_tounge"></vs-input>
                                         </div>
                                     </div>
                                 </div>
@@ -121,7 +111,7 @@
                                 <vs-button type="filled"
                                            color="#00b8cf"
                                            icon="double_arrow"
-                                           @click="alert(searchData)"
+                                           @click.prevent="doFilter"
                                 >
                                     Filter
                                 </vs-button>
@@ -182,9 +172,10 @@
                         :multiple="hasMultiple"
                         :max-items="maxItem"
                         :search="hasSearch"
-                        :data="item"
+                        :data="mainItem"
                         :noDataText="noDataMessage"
                         description
+                        description-title="Showing"
                 >
 
                     <template slot="thead">
@@ -194,9 +185,8 @@
                         </vs-th>
                     </template>
                     <template slot-scope="{data}">
-
                         <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                            <vs-td>{{totalData.indexOf(tr)+1}}</vs-td>
+                            <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
                             <slot name="items" v-bind:data="tr">
                             </slot>
                         </vs-tr>
@@ -263,9 +253,11 @@
                 maxItem: 5,
                 searchData: {},
                 item: [],
-                totalData:[],
-                academic_status:[],
-                status:[]
+                academic_status: [],
+                faculties: [],
+                batch: [],
+                semester: [],
+                mainItem:[]
             }
         },
         created() {
@@ -274,11 +266,22 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url)
-                    .then(res => {
-                        this.totalData=res.data.student
-                        this.item = res.data.student
-                    })
+                this.$http.get(this.url).then(res => {
+                    this.item = res.data.student;
+                    Object.keys(res.data.academic_status).forEach(key => {
+                        this.academic_status.push({id: key, value: res.data.academic_status[key]})
+                    });
+                    this.faculties = res.data.faculties;
+                    this.batch = res.data.batch;
+                    Object.keys(res.data.semester).forEach(key => {
+                        this.semester.push({id: key, value: res.data.semester[key]})
+                    });
+                    this.doSerialize()
+                });
+
+            },
+            doFilter() {
+                alert(this.searchData.semester.id)
             },
             handleSearch(searching) {
                 console.log(searching)
@@ -310,8 +313,22 @@
             doDelete() {
                 alert('doing Delete')
             },
-            doSerialize(){
-
+            doSerialize() {
+                this.mainItem = this.item.map(st => {
+                    return {
+                        id: st.id,
+                        reg_no: st.reg_no,
+                        reg_date: st.reg_date,
+                        faculty: this.faculties[st.faculty],
+                        semester: this.semester.filter(d => d.id == st.semester)[0].value,
+                        batch: this.batch[st.batch],
+                        academic_status: this.academic_status.filter(d => d.id == st.academic_status)[0].value,
+                        first_name: st.first_name?st.first_name:'',
+                        middle_name: st.middle_name?st.middle_name:'',
+                        last_name: st.last_name?st.last_name:'',
+                        status: st.status
+                    }
+                })
             }
 
         }

@@ -44,16 +44,25 @@
                                         {{props.data.faculty}}
                                     </vs-td>
 
-                                    <vs-td :data="props.data.sem">
-                                        {{props.data.username}}
+                                    <vs-td :data="props.data.semester">
+                                        {{props.data.semester}}
                                     </vs-td>
 
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
+                                    <vs-td :data="props.data.reg_no">
+                                        {{props.data.reg_no}}
                                     </vs-td>
 
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
+                                    <vs-td :data="props.data.name">
+                                        {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.academic_status+' '+props.data.status}}
+                                    </vs-td>
+                                    <vs-td>
+                                        Actions
+                                    </vs-td>
+                                    <vs-td>
+                                       Service Activations
                                     </vs-td>
                                 </template>
                     </student-table>
@@ -70,13 +79,7 @@
         },
         data() {
             return {
-                searchData: {
-                    academic_status: null,
-                    status: null
-                },
-                url: '/json/student/',
                 studentHeader: [
-                    {name: 'S.N.', sort_key: 'id'},
                     {name: 'Faculty/Class',  sort_key: 'name'},
                     {name: 'Sem',sort_key:''},
                     {name: 'Reg.Num',sort_key:''},
@@ -90,16 +93,11 @@
         },
 
         created() {
-            this.getList()
+
         },
 
         methods:{
-            getList(){
-                this.$http.get(this.url)
-                    .then(res=>{
-                        console.log(res.data)
-                    })
-            }
+
         }
 
     }

@@ -394,7 +394,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/library/book/:id/view',
                     name:'library.bookViews',
                     component:()=>import('./views/custom/library/books/view'),
@@ -402,10 +402,10 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/library/member',
                     name:'library.member',
-                    component:()=>import('./views/custom/library/members/index'),
+                    component:()=>import('./views/custom/library/members/index.vue'),
                     meta:{
                         rule: 'admin'
                     }
@@ -719,7 +719,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/hostel/food/eating-time',
                     name:'hostel.eatingTime',
                     component:()=>import('./views/custom/hostels/food/eating-time'),
@@ -727,7 +727,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/hostel/food/category',
                     name:'hostel.foodCategory',
                     component:()=>import('./views/custom/hostels/food/category'),
@@ -836,7 +836,7 @@ const router = new Router({
                 },
 
                 /* for notice*/
-                 {
+                {
                     path:'/info/notice',
                     name:'info.notice',
                     component:()=>import('./views/custom/alert/notice/index'),

@@ -2,7 +2,7 @@
     <div>
         <div class="row mx-0">
             <div class="col-md-12">
-                <h2 class="pageTitle">Hostel Manager</h2>
+                <h2 class="pageTitle">Resident Manager</h2>
                 <div class="mb-2">
                     <router-link :to="'/hostel/resident'">
                         <vs-button type="filled" class="smBtn">Resident</vs-button>

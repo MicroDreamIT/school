@@ -109,8 +109,8 @@ const router = new Router({
                     }
                 },
                 {
-                    path: '/staff/registration',
-                    name: 'staff.registration',
+                    path: '/staff/add',
+                    name: 'staff.create',
                     component: () => import('./views/custom/staff/registration.vue'),
                     meta: {
                         rule: 'admin'

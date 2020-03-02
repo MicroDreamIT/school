@@ -14,6 +14,7 @@ export default [
                 url: null,
                 name: "Student",
                 submenu: [
+
                     {
                         url: "/student",
                         name: "Student Detail",
@@ -44,13 +45,14 @@ export default [
                         name: "Create Notes",
                         slug: "Student Create Notes"
                     }
-
                 ]
+
             },
             {
                 url: null,
                 name: "Guardian",
                 submenu: [
+
                     {
                         url: "/guardian",
                         name: "Guardian Detail",
@@ -61,12 +63,14 @@ export default [
                         name: "Registration",
                         slug: "Guardian Registration"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Staff",
                 submenu: [
+
                     {
                         url: "/staff",
                         name: "Staff Detail",
@@ -97,6 +101,7 @@ export default [
                         name: "Designation",
                         slug: "Staff Designation"
                     },
+
                 ]
             }
         ]
@@ -110,6 +115,7 @@ export default [
                 url: null,
                 name: "Fees Collection",
                 submenu: [
+
                     {
                         url: "/account/fees",
                         name: "Receive Detail",
@@ -140,12 +146,14 @@ export default [
                         name: "Fees Head",
                         slug: "Fees Head"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Payroll",
                 submenu: [
+
                     {
                         url: "/account/payroll",
                         name: "Paid Detail",
@@ -171,12 +179,14 @@ export default [
                         name: "Salary Head",
                         slug: "Salary Head"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Ledger & Transaction",
                 submenu: [
+
                     {
                         url: "/account/transaction",
                         name: "Transaction",
@@ -187,12 +197,14 @@ export default [
                         name: "Ledger",
                         slug: "Ledger"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Bank",
                 submenu: [
+
                     {
                         url: "/account/bank",
                         name: "Manage Bank Account",
@@ -213,12 +225,14 @@ export default [
                         name: "New Transaction",
                         slug: "New Transaction"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Report",
                 submenu: [
+
                     {
                         url: "/account/report/cash-book",
                         name: "Cash Book",
@@ -229,6 +243,7 @@ export default [
                         name: "Fee Collection Head",
                         slug: "Fee Collection Head"
                     },
+
                 ]
             },
         ]
@@ -242,6 +257,7 @@ export default [
                 url: null,
                 name: "Books",
                 submenu: [
+
                     {
                         url: "/library/book",
                         name: "Book Detail",
@@ -262,12 +278,14 @@ export default [
                         name: "Category",
                         slug: "Library Category"
                     },
+
                 ]
             },
             {
                 url: null,
                 name: "Members",
                 submenu: [
+
                     {
                         url: "/library/member",
                         name: "Membership",
@@ -283,6 +301,7 @@ export default [
                         name: "Staff Member",
                         slug: "Staff Member"
                     },
+
                 ]
             },
             {
@@ -311,6 +330,7 @@ export default [
                 url: null,
                 name: "Student Attendance",
                 submenu: [
+
                     {
                         url: "/attendance/student",
                         name: "Regular Attendance",
@@ -322,6 +342,7 @@ export default [
                         slug: "Subject Wise Attendance"
                     },
                 ]
+
             },
             {
                 url: "/attendance/staff",

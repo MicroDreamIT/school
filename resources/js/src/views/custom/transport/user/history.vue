@@ -19,7 +19,7 @@
                <vs-card>
                    <div class="row mx-0">
                        <div class="col-md-12 p-4">
-                           <h4 class=""> Transport History List</h4>
+                           <h4 class=""><i class="fa fa-list"></i> Transport History List</h4>
                            <router-link :to="'/transport/user'">
                                <vs-button type="filled" class="smBtn">Detail</vs-button>
                            </router-link>
@@ -30,6 +30,7 @@
                                <vs-button type="filled" class="smBtn">History</vs-button>
                            </router-link>
                        </div>
+                       <br>
                        <div class="col-md-12 mb-2">
                            <vs-collapse class="custom-collapse">
                                <vs-collapse-item>
@@ -37,6 +38,7 @@
                                        <vs-button type="filled"
                                                   color="primary"
                                                   icon="double_arrow"
+                                                  class="rounded"
                                        >
                                            Filter Transport User
                                        </vs-button>

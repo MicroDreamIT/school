@@ -14,6 +14,7 @@
                         <vs-button type="filled" class="smBtn">Vehicle</vs-button>
                     </router-link>
                 </div>
+                <br>
             </div>
            <div class="col-md-12">
                <vs-card>
@@ -31,7 +32,7 @@
                            </router-link>
                        </div>
                        <vs-divider></vs-divider>
-                       <div class="row p-4">
+                       <div class="row p-4 w-100">
                             <div class="col-md-12">
                                 <h4>Transport User</h4><br>
                             </div>
@@ -44,7 +45,7 @@
                                <div class="col-md-4">
                                    <div class="form-group">
                                        <label>Reg No:</label>
-                                       <vs-input></vs-input>
+                                       <vs-input class="w-100"></vs-input>
                                    </div>
                                </div>
                                <div class="col-md-4">

@@ -14,7 +14,7 @@
                         <vs-button type="filled" class="smBtn">Vehicle</vs-button>
                     </router-link>
                 </div>
-                
+                <br>
             </div>
            <div class="col-md-12">
                <vs-card>
@@ -31,6 +31,7 @@
                                <vs-button type="filled" class="smBtn">History</vs-button>
                            </router-link>
                        </div>
+                      
                        <vs-divider></vs-divider>
                        <div class="col-md-12 mb-2">
                            <vs-collapse class="custom-collapse">
@@ -39,6 +40,7 @@
                                        <vs-button type="filled"
                                                   color="primary"
                                                   icon="double_arrow"
+                                                  class="rounded"
                                        >
                                            Filter Transport User
                                        </vs-button>

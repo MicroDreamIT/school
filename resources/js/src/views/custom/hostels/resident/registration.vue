@@ -15,54 +15,66 @@
                     </router-link>
                 </div>
                 <vs-divider></vs-divider>
-            </div>
-            <vs-card>
-                <div class="row mx-0">
-                    <div class="mb-2 col-md-12">
-                        <router-link :to="'/hostel/resident'">
-                            <vs-button type="filled" class="smBtn">Detail</vs-button>
-                        </router-link>
-                        <router-link :to="'/hostel/resident/add'">
-                            <vs-button type="filled" class="smBtn">Registration</vs-button>
-                        </router-link>
-                        <router-link :to="'/hostel/resident/history'">
-                            <vs-button type="filled" class="smBtn">History</vs-button>
-                        </router-link>
-                    </div>
-                    <vs-divider class="mx-3"></vs-divider>
-                    <div class="col-md-12"><h4>Create Resident</h4></div>
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Type</p>
-                            <v-select class="flex-2 "></v-select>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Hostel</p>
-                            <v-select class="flex-2 "></v-select>
-                        </div>
-
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">REG No.</p>
-                            <vs-input class="flex-2 "></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Room.</p>
-                            <v-select class="flex-2 "></v-select>
-                            <p class="flex-1">Bed</p>
-                            <v-select class="flex-2 "></v-select>
-                        </div>
-                    </div>
-                    <vs-divider class="mx-3"></vs-divider>
-                    <div class="row mx-0">
-                        <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                        <vs-button class="my-round mx-2">Save</vs-button>
-                        <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
-                    </div>
+                <div class="mb-4 col-md-12">
+                    <router-link :to="'/hostel/resident'">
+                        <vs-button type="filled" class="smBtn">Detail</vs-button>
+                    </router-link>
+                    <router-link :to="'/hostel/resident/add'">
+                        <vs-button type="filled" class="smBtn">Registration</vs-button>
+                    </router-link>
+                    <router-link :to="'/hostel/resident/history'">
+                        <vs-button type="filled" class="smBtn"> History </vs-button>
+                    </router-link>
                 </div>
-
-            </vs-card>
+            </div>
+           <div class="col-md-12">
+               <vs-card>
+                   <div class="row p-4">
+                       <div class="col-md-12">
+                           <h4>Create Resident</h4>
+                           <div class="row mt-4 w-100">
+                               <div class="col-md-4">
+                                   <div class="forn-group  ">
+                                       <label>Type</label>
+                                       <vs-select class="w-100"></vs-select>
+                                   </div>
+                               </div>
+                               <div class="col-md-4">
+                                   <div class="forn-group ">
+                                       <label>Reg No</label>
+                                       <vs-select class=w-100 ></vs-select>
+                                   </div>
+                               </div>
+                               <div class="col-md-4">
+                                   <div class="forn-group  ">
+                                       <label>Hostel</label>
+                                       <vs-select class="w-100"></vs-select>
+                                   </div>
+                               </div>
+                               <div class="col-md-4">
+                                   <div class="forn-group ">
+                                       <label>Room</label>
+                                       <vs-select class=w-100 ></vs-select>
+                                   </div>
+                               </div>
+                               <div class="col-md-4">
+                                   <div class="forn-group ">
+                                       <label>Bed</label>
+                                       <vs-select class=w-100 ></vs-select>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <vs-divider class="mx-3"></vs-divider>
+                       <div class="row mx-0">
+                           <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
+                           <vs-button class="my-round mx-2">Save</vs-button>
+                           <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                       </div>
+                   </div>
+    
+               </vs-card>
+           </div>
         </div>
     </div>
 </template>

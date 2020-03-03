@@ -35,9 +35,9 @@
                         </div>
                         <div class="col-md-4"><br>
                             <h4>Create Room Type</h4>
-                            <div class="d-flex justify-content-between flex-wrap">
-                                <p class="flex-1">Room Type</p>
-                                <vs-input class="flex-2 text-uppercase"></vs-input>
+                            <div class="form-group row mt-3">
+                                <label  class="col-sm-3">Room Type</label>
+                                <vs-input class="col-sm-9"></vs-input>
                             </div>
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"

@@ -135,7 +135,6 @@
 				</vs-card>
 			</div>
 		</div>
-	
 	</div>
 </template>
 

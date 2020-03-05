@@ -3,12 +3,19 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Assignment Manager</h2>
+                <div  role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
+                    <button type="button" data-dismiss="alert" aria-label="Close" class="close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    Please, Create Year and Active
+                </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row mx-0">
-                        <div class="col-md-12">
+                        <div class="col-md-12 pt-2">
                             <router-link :to="'/assignment'">
                                 <vs-button type="filled" class="smBtn">Assignment Detail</vs-button>
                             </router-link>
@@ -76,13 +83,9 @@
                 </vs-card>
             </div>
         </div>
-
     </div>
 </template>
-
 <script>
-
-
     export default {
         data() {
             return {

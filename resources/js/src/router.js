@@ -298,7 +298,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/account/transaction/add',
+                    path:'/account/transaction/add', // @@ 1
                     name:'account.transactionCreate',
                     component:()=>import('./views/custom/account/ledger/transactionCreate'),
                     meta:{
@@ -394,7 +394,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/library/book/:id/view',
                     name:'library.bookViews',
                     component:()=>import('./views/custom/library/books/view'),
@@ -402,16 +402,16 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/library/member',
                     name:'library.member',
-                    component:()=>import('./views/custom/library/members/index'),
+                    component:()=>import('./views/custom/library/members/index.vue'),
                     meta:{
                         rule: 'admin'
                     }
                 },
                 {
-                    path:'/library/member/add',
+                    path:'/library/member/add', // @@ 2
                     name:'library.memberCreate',
                     component:()=>import('./views/custom/library/members/create'),
                     meta:{
@@ -485,7 +485,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/attendance/student/add',
+                    path:'/attendance/student/add', // @@ 3
                     name:'attendance.studentCreate',
                     component:()=>import('./views/custom/attendance/student/regular-create'),
                     meta:{
@@ -501,7 +501,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/attendance/subject/add',
+                    path:'/attendance/subject/add', // @@ 4
                     name:'attendance.subjectCreate',
                     component:()=>import('./views/custom/attendance/student/subject-wise-create'),
                     meta:{
@@ -509,7 +509,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/attendance/subject/alert',
+                    path:'/attendance/subject/alert', // @@ 5
                     name:'attendance.subjectAlert',
                     component:()=>import('./views/custom/attendance/student/subject-wise-alert'),
                     meta:{
@@ -525,7 +525,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/attendance/staff/add',
+                    path:'/attendance/staff/add', // @@ 6
                     name:'attendance.staffCreate',
                     component:()=>import('./views/custom/attendance/staff/create'),
                     meta:{
@@ -541,7 +541,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/attendance/master/add',
+                    path:'/attendance/master/add', // @ 7
                     name:'attendance.masterCreate',
                     component:()=>import('./views/custom/attendance/monthly/create'),
                     meta:{
@@ -566,7 +566,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/exam/schedule/add',
+                    path:'/exam/schedule/add', // @@ 8
                     name:'exam.scheduleCreate',
                     component:()=>import('./views/custom/examination/scheduleCreate'),
                     meta:{
@@ -606,7 +606,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/exam/mark-ledger/add',
+                    path:'/exam/mark-ledger/add', // @@ 9
                     name:'exam.markLedgerCreate',
                     component:()=>import('./views/custom/examination/markLedgerCreate'),
                     meta:{
@@ -671,7 +671,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/certificate/template/add',
+                    path:'/certificate/template/add', // @@ 10
                     name:'certificate.templateCreate',
                     component:()=>import('./views/custom/certificate/templateCreate'),
                     meta:{
@@ -696,7 +696,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/hostel/add',
+                    path:'/hostel/add', // @@ 11
                     name:'hostel.create',
                     component:()=>import('./views/custom/hostels/hostel/create'),
                     meta:{
@@ -719,7 +719,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/hostel/food/eating-time',
                     name:'hostel.eatingTime',
                     component:()=>import('./views/custom/hostels/food/eating-time'),
@@ -727,7 +727,7 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                 {
+                {
                     path:'/hostel/food/category',
                     name:'hostel.foodCategory',
                     component:()=>import('./views/custom/hostels/food/category'),
@@ -819,7 +819,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/assignment/add',
+                    path:'/assignment/add', // @@ 12
                     name:'assignmentCreate',
                     component:()=>import('./views/custom/more/assignment/create'),
                     meta:{
@@ -836,7 +836,7 @@ const router = new Router({
                 },
 
                 /* for notice*/
-                 {
+                {
                     path:'/info/notice',
                     name:'info.notice',
                     component:()=>import('./views/custom/alert/notice/index'),
@@ -845,7 +845,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/info/notice/add',
+                    path:'/info/notice/add', // @@ 13
                     name:'info.noticeCreate',
                     component:()=>import('./views/custom/alert/notice/create'),
                     meta:{
@@ -861,7 +861,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/info/sms-email/add',
+                    path:'/info/sms-email/add', // @@ 14
                     name:'info.smsEmailCreate',
                     component:()=>import('./views/custom/alert/smsemail/create'),
                     meta:{
@@ -869,7 +869,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/info/sms-email/student-guardian',
+                    path:'/info/sms-email/student-guardian', // @@ 15
                     name:'info.smsEmailStudentGuardian',
                     component:()=>import('./views/custom/alert/smsemail/student-guardian'),
                     meta:{
@@ -877,7 +877,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/info/sms-email/staff',
+                    path:'/info/sms-email/staff', // @@ 16
                     name:'info.smsEmailStaff',
                     component:()=>import('./views/custom/alert/smsemail/staff'),
                     meta:{
@@ -885,7 +885,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/info/sms-email/individual',
+                    path:'/info/sms-email/individual', // @@ 17
                     name:'info.smsEmailIndividual',
                     component:()=>import('./views/custom/alert/smsemail/individual'),
                     meta:{
@@ -1011,7 +1011,7 @@ const router = new Router({
                     }
                 },
                 {
-                    path:'/assignment/add',
+                    path:'/assignment/add', // @@ 18
                     name:'more.assignment.create',
                     component:()=>import('./views/custom/more/assignment/create'),
                     meta:{

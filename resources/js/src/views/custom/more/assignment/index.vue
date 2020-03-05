@@ -3,21 +3,33 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Assignment Manager</h2>
+                <div  role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
+                    <button type="button" data-dismiss="alert" aria-label="Close" class="close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    Please, Create Year and Active
+                </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row mx-0">
-                        <div class="col-md-12">
+                        <div class="col-md-12 pt-2">
                             <router-link :to="'/assignment'">
-                                <vs-button type="filled" class="smBtn">Assignment Detail</vs-button>
+                                <vs-button type="filled" class="smBtn">
+                                    <i class="fa fa-list"></i>
+                                    Assignment Detail</vs-button>
                             </router-link>
                             <router-link :to="'/assignment/add'">
-                                <vs-button type="filled" class="smBtn">New Assignment</vs-button>
+                                <vs-button type="filled" class="smBtn">
+                                    <i class="fa fa-plus"></i>
+                                    New Assignment
+                                </vs-button>
                             </router-link>
                         </div>
                         <vs-divider class="mx-3"></vs-divider>
-                        <div class="col-md-12 mb-2">
+                        <div class="col-md-12 mb-2 p-0">
                             <vs-collapse class="custom-collapse">
                                 <vs-collapse-item>
                                     <div slot="header">
@@ -55,7 +67,7 @@
                                                         ></v-select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>Subject</label>
                                                         <v-select :options="['A','B']"
@@ -63,15 +75,13 @@
                                                         ></v-select>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Publish Date</label>
-                                                        <div class="d-flex justify-content-between flex-wrap">
-                                                            <datepicker v-model="searchData.start_date"/>
-                                                            <label>To</label>
-                                                            <datepicker v-model="searchData.end_date"/>
-                                                        </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-3">
+                                                        <label> Date From </label>
+                                                        <datepicker v-model="searchData.start_date"/>
+                                                        <br>
+                                                        <label>To</label>
+                                                        <datepicker v-model="searchData.end_date"/>
                                                     </div>
                                                 </div>
                                             </div>

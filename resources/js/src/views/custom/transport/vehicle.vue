@@ -3,7 +3,7 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Vehicle Manager</h2>
-                <div>
+                <div class="mb-3">
                     <router-link :to="'/transport/user'">
                         <vs-button type="filled" class="smBtn">User</vs-button>
                     </router-link>
@@ -15,92 +15,102 @@
                     </router-link>
                 </div>
             </div>
-            <vs-card>
-                <div class="row mx-0">
-                    <div class="col-md-4">
-                        <h4>Create Vehicle</h4>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Number</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Type</p>
-                           <vs-input class="flex-1 text-uppercase"></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Model</p>
-                            <vs-input class="flex-1 text-uppercase"></vs-input>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Desc.</p>
-                            <vs-textarea type="file" class="flex-1" height="100px"></vs-textarea>
-                        </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Find Stuff & Add</p>
-                            <v-select class="flex-1"></v-select>
-                        </div>
-                        <vs-divider></vs-divider>
-                        <vs-buttun class="smBtn">Add Staff</vs-buttun>
-                        <table>
-                            <tr>
-                                <th>Name</th>
-                                <th>Designation</th>
-                            </tr>
-                            <tr></tr>
-                        </table>
-                        <vs-divider></vs-divider>
-                        <vs-button color="#00b8cf"
-                                   type="filled"
-                                   class="my-round">Create
-                        </vs-button>
-                    </div>
-                    <div class="col-md-8">
-                        <h4 class="header large lighter blue">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Vehicle List</h4>
-                        <div class="clearfix mt-3">
-                            <div class="easy-link-menu">
-                                <a class="btn-success btn-sm bulk-action-btn">
-                                    <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                <a class="btn-warning btn-sm bulk-action-btn">
-                                    <i class="fa fa-remove" aria-hidden="true"></i>
-                                    In-Active</a>
-                                <a class="btn-danger btn-sm bulk-action-btn">
-                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+            <div class="col-md-12">
+                <vs-card>
+                    <div class="row p-4">
+                        <div class="col-md-4">
+                            <h4>Create Vehicle</h4><br>
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Number</label>
+                                <vs-input class="col-sm-9"></vs-input>
                             </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Type</label>
+                                <vs-input class="col-sm-9"></vs-input>
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Model</label>
+                                <vs-input class="col-sm-9"></vs-input>
+                            </div>
+                            <div class="form-group   mb-3">
+                                <label >Desc</label>
+                                <vs-textarea type="file" height="100px"></vs-textarea>
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-sm-3">Find Stuff & Add</label>
+                                <v-select class="col-sm-9"></v-select>
+                            </div>
+                            <vs-divider></vs-divider>
+                            <vs-buttun class="vs-component vs-button smBtn vs-button-primary vs-button-filled">Add Staff</vs-buttun>
+                            <br>
+                            <table class="table mt-4">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Designation</th>
+                                    </tr>
+                                </thead>
+                               <tbody>
+                                   <tr>
+                                       <td></td>
+                                       <td></td>
+                                   </tr>
+                               </tbody>
+                            </table>
+                            <vs-divider></vs-divider>
+                            <vs-button color="#00b8cf"
+                                       type="filled"
+                                       class="my-round">Create
+                            </vs-button>
                         </div>
-                        <br>
-                        <div class="table-header">
-                           Vehicle Record list on table. Filter Vehicle using the filter.
+                        <div class="col-md-8">
+                            <h4 class="header large lighter blue">
+                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Vehicle List</h4>
+                            <div class="clearfix mt-3">
+                                <div class="easy-link-menu">
+                                    <a class="btn-success btn-sm bulk-action-btn">
+                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
+                                    <a class="btn-warning btn-sm bulk-action-btn">
+                                        <i class="fa fa-remove" aria-hidden="true"></i>
+                                        In-Active</a>
+                                    <a class="btn-danger btn-sm bulk-action-btn">
+                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="table-header">
+                                Vehicle Record list on table. Filter Vehicle using the filter.
+                            </div>
+                            <data-table :headers="tableHeader"
+                                        :url="'/student'"
+                                        :no-data-message="'No Download data found. Please Filter Download to show.'"
+                                        :searchField="searchData"
+                                        :hasSearch="true"
+                                        :has-multiple="true"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.username" class="pointer-none">
+                                        {{props.data.email}}
+                                    </vs-td>
+                        
+                                    <vs-td :data="props.data.username">
+                                        {{props.data.username}}
+                                    </vs-td>
+                        
+                                    <vs-td :data="props.data.id">
+                                        {{props.data.website}}
+                                    </vs-td>
+                        
+                                    <vs-td :data="props.id">
+                                        {{props.data.id}}
+                                    </vs-td>
+                                </template>
+                            </data-table>
                         </div>
-                        <data-table :headers="tableHeader"
-                                    :url="'/student'"
-                                    :no-data-message="'No Download data found. Please Filter Download to show.'"
-                                    :searchField="searchData"
-                                    :hasSearch="true"
-                                    :has-multiple="true"
-                        >
-                            <template slot="items" slot-scope="props">
-                                <vs-td :data="props.data.username" class="pointer-none">
-                                    {{props.data.email}}
-                                </vs-td>
-
-                                <vs-td :data="props.data.username">
-                                    {{props.data.username}}
-                                </vs-td>
-
-                                <vs-td :data="props.data.id">
-                                    {{props.data.website}}
-                                </vs-td>
-
-                                <vs-td :data="props.id">
-                                    {{props.data.id}}
-                                </vs-td>
-                            </template>
-                        </data-table>
                     </div>
-                </div>
-
-            </vs-card>
+    
+                </vs-card>
+            </div>
         </div>
     </div>
 </template>

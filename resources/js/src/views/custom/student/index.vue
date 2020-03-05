@@ -53,7 +53,7 @@
                                 {{props.data.reg_no}}
                             </vs-td>
 
-                            <vs-td :data="props.data.name">
+                            <vs-td :data="props.data.first_name">
                                 {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
                             </vs-td>
                             <vs-td>
@@ -80,9 +80,9 @@
         data() {
             return {
                 studentHeader: [
-                    {name: 'Faculty/Class', sort_key: 'name'},
+                    {name: 'Faculty/Class', sort_key: 'faculty'},
                     {name: 'Sem', sort_key: ''},
-                    {name: 'Reg.Num', sort_key: ''},
+                    {name: 'Reg.Num', sort_key: 'reg_no'},
                     {name: 'Student Name', sort_key: ''},
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},

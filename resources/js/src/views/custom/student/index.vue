@@ -29,6 +29,7 @@
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
+       
                 <vs-card>
                     <student-table :headers="studentHeader"
                                    :tableHeader="'Student List'"

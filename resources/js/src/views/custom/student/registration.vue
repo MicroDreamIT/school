@@ -1,6 +1,7 @@
 <template>
 	<div class="row">
 		<div class="col-md-12">
+			
 			<h2 class="pageTitle">Students Manager</h2>
 			<div class="p-2">
 				<router-link :to="'/student'">

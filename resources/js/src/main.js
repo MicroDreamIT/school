@@ -157,7 +157,12 @@ new Vue({
             let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
             console.log(fullscreenElement)
             // if in fullscreen mode fullscreenElement won't be null
-        }
+        },
+        getMethod_and_id() {
+            let id = this.$route.params?this.$route.params.id:null;
+            let method = this.$route.path.includes('edit')?'Edit':'';
+            return [id, method];
+        },
 
 
     },

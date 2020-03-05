@@ -992,7 +992,15 @@ const router = new Router({
                 },
                 {
                     path:'/payment-method',
-                    name:'academics.payment-method',
+                    name:'academics.paymentMethod',
+                    component:()=>import('./views/custom/academics/payment-method'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/payment-method/:id/edit',
+                    name:'paymentMethodEdit',
                     component:()=>import('./views/custom/academics/payment-method'),
                     meta:{
                         rule: 'admin'

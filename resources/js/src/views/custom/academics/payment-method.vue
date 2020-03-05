@@ -22,19 +22,28 @@
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-4">
-                            <h4> Create Payment Method</h4><br>
+                            <h4> <span v-if="method!='Edit'">Create</span>
+                                <span v-else>Update</span> Payment Method</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3"> Status</label>
                                 <vs-input
                                         class="col-sm-9"
                                         v-model="status"
-
                                 ></vs-input>
                             </div>
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
                                        class="my-round"
+                                       v-if="method=='Edit'"
+                                       @click.prevent="update"
+                            >
+                                Update
+                            </vs-button>
+                            <vs-button color="#00b8cf"
+                                       type="filled"
+                                       class="my-round"
+                                       v-else
                                        @click.prevent="create"
                             >
                                 Create
@@ -68,7 +77,19 @@
 
 
                                     <vs-td>
+                                        <div class="action-own">
 
+                                            <a class="btn btn-success btn-sm waves-effect waves-light pointer-all"
+                                               title="Edit"
+                                               @click.stop="edit(props.data.id)">
+                                                <i class="fa fa-pencil"></i>
+                                            </a >
+                                            <a class="btn btn-danger btn-sm bootbox-confirm waves-effect waves-light pointer-all"
+                                               title="Delete"
+                                               @click.stop="delete(props.data.id)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </div>
                                     </vs-td>
 
                                 </template>
@@ -96,17 +117,28 @@
                 hasNotification: 'Please, Create Year and Active',
                 status: '',
                 status2: [],
-                button: ''
+                button: '',
+                method: '',
+                id: null
             }
+        },
+        created() {
+            let method_id= this.$root.getMethod_and_id()
+            this.method=method_id[1]
+            this.id=method_id[0]
+            console.log(this.id,this.method)
         },
         methods: {
             create() {
                 alert(this.status)
             },
-            edit() {
-
+            edit(id) {
+                this.$router.push({name:'paymentMethodEdit',params:{id:id}})
             },
-            delete() {
+            delete(id) {
+            },
+            update(){
+              alert('update')
             },
             changeStatus() {
                 alert(this.status2)

@@ -97,8 +97,6 @@ Vue.use(VueHammer)
 
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
-import status from './views/custom/component/table/status'
-Vue.component('status',status);
 Vue.component('data-table', dataTable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);

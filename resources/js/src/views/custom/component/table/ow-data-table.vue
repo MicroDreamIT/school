@@ -47,13 +47,13 @@
             </button>
         </div>
         <vs-table
-                v-model="selected"
+                 :multiple =hasMultiple
+                 v-model="selected"
                 :total="totalItems"
                 :pagination="hasPagination"
-                :multiple="hasMultiple"
                 :max-items="5"
                 :search="hasSearch"
-                :data="data"
+                :data="items"
                 :noDataText="noDataMessage"
                 description
         >
@@ -131,13 +131,14 @@
             return {
                 selected: [],
                 totalItems: 10,
-                data: [
+                itemData: [
                     {
                         "id": 1,
                         "name": "Leanne Graham",
                         "username": "Bret",
                         "email": "Sincere@april.biz",
                         "website": "hildegard.org",
+                        'status':'Active'
                     },
                     {
                         "id": 2,
@@ -145,6 +146,7 @@
                         "username": "Antonette",
                         "email": "Shanna@melissa.tv",
                         "website": "anastasia.net",
+                        'status':'Active'
                     },
                     {
                         "id": 3,
@@ -152,6 +154,7 @@
                         "username": "Samantha",
                         "email": "Nathan@yesenia.net",
                         "website": "ramiro.info",
+                        'status':'In-Active'
                     },
                     {
                         "id": 4,
@@ -159,6 +162,7 @@
                         "username": "Karianne",
                         "email": "Julianne.OConner@kory.org",
                         "website": "kale.biz",
+                        'status':'In-Active'
                     },
                     {
                         "id": 5,
@@ -203,13 +207,17 @@
                         "website": "ambrose.net",
                     }
                 ],
+                items:[]
 
             }
+        },
+        created() {
+          this.getData()
         },
 
         methods: {
             getData() {
-                this.items = this.data
+                this.items = this.itemData
             },
             handleSearch(searching) {
                 console.log(searching)

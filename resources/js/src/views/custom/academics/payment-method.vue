@@ -55,8 +55,15 @@
 
                                     </vs-td>
 
-                                    <vs-td >
-                                        <status></status>
+                                    <vs-td>
+                                        <vs-switch color="success"
+                                                   :checked="props.data.status=='Active'?true:false"
+                                                   @click.stop="changeStatus(props.data.id)"
+                                                   class="pointer-all"
+                                        >
+                                            <span slot="on">Active</span>
+                                            <span slot="off">In-Active</span>
+                                        </vs-switch>
                                     </vs-td>
 
 
@@ -87,7 +94,9 @@
                     {name: 'Action', sort_key: ''},
                 ],
                 hasNotification: 'Please, Create Year and Active',
-                status: ''
+                status: '',
+                status2: [],
+                button: ''
             }
         },
         methods: {
@@ -100,7 +109,7 @@
             delete() {
             },
             changeStatus() {
-
+                alert(this.status2)
             }
         }
     }

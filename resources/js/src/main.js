@@ -97,8 +97,6 @@ Vue.use(VueHammer)
 
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
-import status from './views/custom/component/table/status'
-Vue.component('status',status);
 Vue.component('data-table', dataTable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
@@ -159,7 +157,12 @@ new Vue({
             let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
             console.log(fullscreenElement)
             // if in fullscreen mode fullscreenElement won't be null
-        }
+        },
+        getMethod_and_id() {
+            let id = this.$route.params?this.$route.params.id:null;
+            let method = this.$route.path.includes('edit')?'Edit':'';
+            return [id, method];
+        },
 
 
     },

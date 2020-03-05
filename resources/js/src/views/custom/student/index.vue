@@ -65,7 +65,7 @@
                                  <a class="btn btn-primary btn-sm waves-effect waves-light" title="View" @click="viewItems()">
                                      <i class="fa fa-eye"></i>
                                  </a>
-                                 <a   class="btn btn-success btn-sm waves-effect waves-light"title="Edit"   @click="editItems()">
+                                 <a class="btn btn-success btn-sm waves-effect waves-light"title="Edit"   @click="editItems()">
                                      <i class="fa fa-pencil"></i>
                                  </a>
                                  <a class="btn btn-danger btn-sm bootbox-confirm waves-effect waves-light"title="Delete"  @click="deleteItems()">

@@ -44,7 +44,6 @@
                                            :suggestText="'Faculty/Level/Class Record list on table. Filter Faculty/Level/Class using the filter.'"
                                            :url="'/student'"
                                            :noDataMessage="'No Faculty data found. Please Filter Faculty to show.'"
-                                           :searchField="searchData"
                                            :hasSearch="true"
                                            :has-multiple="true"
                                            :has-pagination="true"

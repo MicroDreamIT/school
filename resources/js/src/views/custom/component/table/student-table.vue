@@ -8,6 +8,7 @@
                             <vs-button type="filled"
                                        color="primary"
                                        icon="double_arrow"
+                                       class="rounded"
                             >
                                 Filter Students
                             </vs-button>

@@ -59,7 +59,7 @@
 											   class="btn btn-warning btn-sm waves-effect waves-light text-white">
 												<i class="fa fa-certificate"></i> Academic Info</a>
 										</li>
-										<li class="">
+										<li>
 											<a data-toggle="tab" href="#profileimage"
 											   class="btn btn-warning btn-sm waves-effect waves-light text-white">
 												<i class="fa fa-image"></i> Profile Images</a>

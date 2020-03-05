@@ -61,7 +61,17 @@
                                 {{props.data.academic_status+' '+props.data.status}}
                             </vs-td>
                             <vs-td>
-                                Actions
+                             <div class="action-own">
+                                 <a class="btn btn-primary btn-sm waves-effect waves-light" title="View" @click="viewItems()">
+                                     <i class="fa fa-eye"></i>
+                                 </a>
+                                 <a class="btn btn-success btn-sm waves-effect waves-light"title="Edit"   @click="editItems()">
+                                     <i class="fa fa-pencil"></i>
+                                 </a>
+                                 <a class="btn btn-danger btn-sm bootbox-confirm waves-effect waves-light"title="Delete"  @click="deleteItems()">
+                                     <i class="fa fa-trash-o"></i>
+                                 </a>
+                             </div>
                             </vs-td>
                             <vs-td>
                                 Service Activations
@@ -97,7 +107,18 @@
 
         },
 
-        methods: {}
+        methods: {
+            viewItems(){
+                alert("hey hasib im view ")
+            },
+            editItems(){
+                alert("hey hasib im edit ")
+            },
+            deleteItems(){
+                alert("hey hasib im delete ")
+            },
+            
+        }
 
     }
 

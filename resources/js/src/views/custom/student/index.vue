@@ -1,5 +1,6 @@
 <template>
     <div>
+        <pop-up v-if="modal"></pop-up>
         <div class="row">
             <div class="col-md-12 mb-2">
                 <h2 class="pageTitle">Details</h2>
@@ -150,7 +151,17 @@
                                 </div>
                             </vs-td>
                             <vs-td>
-                                Service Activations
+                                <div class="action-own">
+                                    <a class="icons-only" >
+                                        <i class="fa fa-book"></i>
+                                    </a>
+                                    <a class="icons-only" @click.prevent="getModal()">
+                                        <i class="fa fa-bed"></i>
+                                    </a>
+                                    <a class="icons-only" >
+                                        <i class="fa fa-car"></i>
+                                    </a>
+                                </div>
                             </vs-td>
                         </template>
                     </student-table>
@@ -163,7 +174,8 @@
 
 <script>
     export default {
-        components: {},
+        components: {
+        },
         data() {
             return {
                 studentHeader: [
@@ -175,7 +187,8 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
-                hasNotification:''
+                hasNotification:'',
+                modal:false,
 
             }
         },
@@ -185,6 +198,11 @@
         },
 
         methods: {
+
+            getModal(){
+                this.modal = true
+            },
+           
             viewItems(id) {
                 this.$router.push({name:'studentView',params:{id:id}})
             },

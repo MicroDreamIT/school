@@ -28,9 +28,7 @@
 	        }
 	    },
 		methods:{
-            closeModal(){
-                this.modal = false
-            },
+  
 		},
 	}
 </script>

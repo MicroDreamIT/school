@@ -202,6 +202,9 @@
             getModal(){
                 this.modal = true
             },
+            closeModal(){
+                this.modal = false
+            },
            
             viewItems(id) {
                 this.$router.push({name:'studentView',params:{id:id}})

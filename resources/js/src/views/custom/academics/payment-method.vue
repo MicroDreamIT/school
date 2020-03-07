@@ -141,7 +141,7 @@
               alert('update')
             },
             changeStatus() {
-                alert(this.status2)
+                alert('')
             }
         }
     }

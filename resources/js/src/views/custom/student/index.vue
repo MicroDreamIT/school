@@ -65,7 +65,7 @@
             <div class="col-md-12">
                  <div role="alert"
                       class="mt-2 alert alert-success alert-dismissible display-block"
-                     v-if="$root.hasNotification">
+                     v-if="hasNotification">
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
@@ -106,7 +106,13 @@
                             </vs-td>
 
                             <vs-td :data="props.data.first_name">
-                                {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                <a @click.stop="viewItems(props.data.id)"
+                                   class="pointer-all text-primary"
+                                   title="View"
+                                >
+                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                </a>
+
                             </vs-td>
                             <vs-td>
                                 <div class="d-flex">
@@ -169,6 +175,7 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
+                hasNotification:''
 
             }
         },
@@ -178,8 +185,8 @@
         },
 
         methods: {
-            viewItems() {
-                alert("hey hasib im view ")
+            viewItems(id) {
+                this.$router.push({name:'studentView',params:{id:id}})
             },
             editItems() {
                 alert("hey hasib im edit ")

@@ -7,62 +7,77 @@
             <div class="col-md-12">
                 <div class="row mx-0">
                     <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn" icon="list">
+                        <vs-button type="filled" class="smBtn">
                             <i class="fa fa-list" aria-hidden="true"></i>
-                            Detail</vs-button>
+                            Detail
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/'">
+                    <router-link :to="'/student/registration'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-plus" aria-hidden="true"></i>
-                            Registration</vs-button>
+                            Registration
+                        </vs-button>
                     </router-link>
                     <router-link :to="'/student/import'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-upload" aria-hidden="true"></i>
-                            Bulk Registration</vs-button>
+                            Bulk Registration
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/transfer-student'">
+                    <router-link :to="'/student/transfer'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-exchange" aria-hidden="true"></i>
-                            Transfer</vs-button>
+                            Transfer
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/doc-upload'">
+                    <router-link :to="'/student/document'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-files-o" aria-hidden="true"></i>
-                            Documents</vs-button>
+                            Documents
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/create-notes'">
+                    <router-link :to="'/student/note'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-sticky-note" aria-hidden="true"></i>
                             Notes
                         </vs-button>
                     </router-link>
-                    <router-link :to="'/'">
+                    <router-link :to="'/account/fees'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Balance Fees</vs-button>
+                            Balance Fees
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/'">
+                    <router-link :to="'/library/student'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Library</vs-button>
+                            Library
+                        </vs-button>
                     </router-link>
-                    <router-link :to="'/'">
+                    <router-link :to="'/attendance/student'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Attendance</vs-button>
+                            Attendance
+                        </vs-button>
                     </router-link>
                 </div>
             </div>
-        <div class="col-md-12">
-            <div class="mt-2 alert alert-success alert-dismissible display-block" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-                <i class="ace-icon fa fa-hand-o-right"></i>
-                Please, Create Year and Active
+            <div class="col-md-12">
+                 <div role="alert"
+                      class="mt-2 alert alert-success alert-dismissible display-block"
+                     v-if="hasNotification">
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click=""
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{hasNotification}}
+                </div>
             </div>
-        </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-row vs-justify="center">
@@ -74,7 +89,7 @@
                                     <i class="fa fa-download"></i> CSV Template for Bulk Student Import
                                 </h4>
                                 <hr>
-                                <vs-input type="file"></vs-input>
+                                <vs-input type="file" v-model="file"></vs-input>
                                 <hr>
                                 <vs-button color="primary" class="rounded" type="filled">Upload</vs-button>
                           
@@ -88,10 +103,15 @@
 </template>
 
 <script>
-    import Button from "../../components/vuesax/button/Button";
+
     export default {
         name: "bulk-import",
-        components: {Button}
+        data(){
+            return{
+                hasNotification:'',
+                file:null
+            }
+        }
     }
 </script>
 

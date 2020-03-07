@@ -60,7 +60,7 @@ const router = new Router({
                 },
                 {
                     path: '/student/:id/details',
-                    name: 'student.view',
+                    name: 'studentView',
                     component: () => import('./views/custom/student/details'),
                     meta: {
                         rule: 'admin'

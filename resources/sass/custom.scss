@@ -3,6 +3,13 @@
   .text-primary{
     color:$primary;
   }
+  .footer-modal{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem 0;
+    border-top: 1px solid #ededed;
+  }
   .own-modal{
     position: fixed;
     top: 0;
@@ -23,24 +30,24 @@
         border-radius: 5px;
         position: relative;
         background: #fff;
-        @media(max-width: 768px){
-          width: 80%;
-        }
+          @media(max-width: 768px){
+              width: 80%;
+          }
           .header{
-            background-color: #f8f8f8;
-            border-radius: .42rem;
-            padding: .8rem;
-            .close-modal{
-              position: absolute;
-              padding: .2rem .62rem;
-              top: 16px;
-              right: 20px;
-              font-size: 13px;
-              cursor: pointer;
-              &:hover{
-                box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+              background-color: #f8f8f8;
+              border-radius: .42rem;
+              padding: .8rem;
+              .close-modal{
+                    position: absolute;
+                    padding: .2rem .62rem;
+                    top: 16px;
+                    right: 20px;
+                    font-size: 13px;
+                    cursor: pointer;
+                    &:hover{
+                      box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.1);
+                    }
               }
-            }
           }
           .body{
             padding: 1rem;

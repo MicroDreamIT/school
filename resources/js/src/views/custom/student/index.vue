@@ -170,8 +170,29 @@
         <vs-popup class="holamundo"
                   :title="residentUser.reg_no+' | Manage Resident'"
                   :active.sync="residentModal">
-
-
+           
+            <div class="form-group mt-3">
+                <label class="col-sm-12">Hostel</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12">Room</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12">Bed</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="footer-modal">
+                <button type="button"
+                        class="btn btn-default pull-right mr-1"
+                        @click="$emit('close')">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-success pull-right">
+                    Assign Bed
+                </button>
+            </div>
         </vs-popup>
         <vs-popup class="holamundo"
                   :title="transportUser.reg_no+' | Manage Transport User'"

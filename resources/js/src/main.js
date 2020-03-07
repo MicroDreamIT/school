@@ -94,10 +94,10 @@ Vue.use(VueGoogleMaps, {
 import {VueHammer} from 'vue2-hammer'
 
 Vue.use(VueHammer)
-
-
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
+import popUp from './views/custom/component/modal/pop-up'
+Vue.component('pop-up', popUp);
 Vue.component('data-table', dataTable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
@@ -133,6 +133,7 @@ new Vue({
         }
     },
     methods: {
+
         toggleMaximize() {
             if (this.isMaximized) {
                 if (document.exitFullscreen) {

@@ -1,35 +1,86 @@
 <template>
     <div>
-        <div class="row ">
-            <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 mb-2">
                 <h2 class="pageTitle">Details</h2>
-                <div class="p-2">
+            </div>
+            <div class="col-md-12">
+                <div class="row mx-0">
                     <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
                         <vs-button type="filled" class="smBtn">
-                            Primary
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                            Detail
                         </vs-button>
                     </router-link>
-
+                    <router-link :to="'/student/registration'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Registration
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/import'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-upload" aria-hidden="true"></i>
+                            Bulk Registration
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/transfer'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-exchange" aria-hidden="true"></i>
+                            Transfer
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/document'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>
+                            Documents
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/note'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
+                            Notes
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/account/fees'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                            Balance Fees
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                            Library
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/attendance/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Attendance
+                        </vs-button>
+                    </router-link>
+                </div>
+            </div>
+            <div class="col-md-12">
+                 <div role="alert"
+                      class="mt-2 alert alert-success alert-dismissible display-block"
+                     v-if="hasNotification">
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click=""
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{hasNotification}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
-       
+
                 <vs-card>
                     <student-table :headers="studentHeader"
                                    :tableHeader="'Student List'"
@@ -55,23 +106,48 @@
                             </vs-td>
 
                             <vs-td :data="props.data.first_name">
-                                {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                <a @click.stop="viewItems(props.data.id)"
+                                   class="pointer-all text-primary"
+                                   title="View"
+                                >
+                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                </a>
+
                             </vs-td>
                             <vs-td>
-                                {{props.data.academic_status+' '+props.data.status}}
+                                <div class="d-flex">
+                                    {{props.data.academic_status}}
+                                    <vs-switch color="success"
+                                               :checked="props.data.status=='active'?true:false"
+                                               @click.stop="changeStatus(props.data.id)"
+                                               class="pointer-all ml-2"
+                                    >
+                                        <span slot="on">Active</span>
+                                        <span slot="off">In-Active</span>
+                                    </vs-switch>
+                                </div>
+
                             </vs-td>
                             <vs-td>
-                             <div class="action-own">
-                                 <a class="btn btn-primary btn-sm waves-effect waves-light" title="View" @click="viewItems()">
-                                     <i class="fa fa-eye"></i>
-                                 </a>
-                                 <a class="btn btn-success btn-sm waves-effect waves-light"title="Edit"   @click="editItems()">
-                                     <i class="fa fa-pencil"></i>
-                                 </a>
-                                 <a class="btn btn-danger btn-sm bootbox-confirm waves-effect waves-light"title="Delete"  @click="deleteItems()">
-                                     <i class="fa fa-trash-o"></i>
-                                 </a>
-                             </div>
+                                <div class="action-own">
+                                    <a class="btn btn-primary btn-sm pointer-all"
+                                       title="View"
+                                       @click.stop="viewItems(props.data.id)"
+
+                                    >
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
                             </vs-td>
                             <vs-td>
                                 Service Activations
@@ -99,6 +175,7 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
+                hasNotification:''
 
             }
         },
@@ -108,16 +185,18 @@
         },
 
         methods: {
-            viewItems(){
-                alert("hey hasib im view ")
+            viewItems(id) {
+                this.$router.push({name:'studentView',params:{id:id}})
             },
-            editItems(){
+            editItems() {
                 alert("hey hasib im edit ")
             },
-            deleteItems(){
+            deleteItems() {
                 alert("hey hasib im delete ")
             },
-            
+            changeStatus() {
+
+            }
         }
 
     }

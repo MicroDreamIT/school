@@ -17,9 +17,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <div class="form-group">
+                                        <div class="form-group ">
                                             <label>Reg:</label>
-                                            <vs-input v-model="searchData.reg_no">
+                                            <vs-input v-model="searchData.reg_no" class="w-100">
                                             </vs-input>
                                         </div>
                                         <div class="form-group">
@@ -85,25 +85,25 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Religion:</label>
-                                            <vs-input v-model="searchData.religion"></vs-input>
+                                            <vs-input v-model="searchData.religion"  class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Caste:</label>
-                                            <vs-input v-model="searchData.caste"></vs-input>
+                                            <vs-input v-model="searchData.caste"  class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Nationality:</label>
-                                            <vs-input v-model="searchData.nationality"></vs-input>
+                                            <vs-input v-model="searchData.nationality"  class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Mot.Tongue:</label>
-                                            <vs-input v-model="searchData.mot_tounge"></vs-input>
+                                            <vs-input v-model="searchData.mot_tounge"  class="w-100"></vs-input>
                                         </div>
                                     </div>
                                 </div>

@@ -62,15 +62,15 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12">
-                 <div role="alert"
-                      class="mt-2 alert alert-success alert-dismissible display-block"
-                     v-if="hasNotification">
+            <div class="col-md-12" v-if="hasNotification">
+                <div role="alert"
+                     class="mt-2 alert alert-success alert-dismissible display-block"
+                     >
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click=""
+                            @click="hasNotification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
@@ -175,7 +175,7 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
-                hasNotification:''
+                hasNotification: 'Student create succesffull'
 
             }
         },
@@ -186,7 +186,7 @@
 
         methods: {
             viewItems(id) {
-                this.$router.push({name:'studentView',params:{id:id}})
+                this.$router.push({name: 'studentView', params: {id: id}})
             },
             editItems() {
                 alert("hey hasib im edit ")

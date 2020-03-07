@@ -10,22 +10,38 @@
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
                         <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
-                        <small class="ml-2 ">Edit Profile</small>
+                        <small class="ml-2 ">User & Roles</small>
                     </li>
-                    <li
-                            class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
                         <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
-                        <small class="ml-2 ">Edit Profile</small>
+                        <small class="ml-2 ">User Activity</small>
                     </li>
-                    <li
-                            class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
                         <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
-                        <small class="ml-2 ">Edit Profile</small>
+                        <small class="ml-2 ">General Setting</small>
                     </li>
-
-
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                            @click="$router.push('/pages/profile').catch(() => {})">
+                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <small class="ml-2 ">SMS Setting</small>
+                    </li>
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                            @click="$router.push('/pages/profile').catch(() => {})">
+                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <small class="ml-2 ">Email Setting</small>
+                    </li>
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                            @click="$router.push('/pages/profile').catch(() => {})">
+                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <small class="ml-2 ">Alert Setting</small>
+                    </li>
+                    <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
+                            @click="$router.push('/pages/profile').catch(() => {})">
+                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <small class="ml-2 ">Payment Gateway</small>
+                    </li>
                 </ul>
             </vs-dropdown-menu>
         </vs-dropdown>

@@ -13,7 +13,8 @@ import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
-
+import { VueMaskDirective } from 'v-mask'
+Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
 Vue.use(Vuesax)

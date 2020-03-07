@@ -31,7 +31,6 @@
         "cross-env": "5.1",
         "echarts": "4.2.1",
         "file-saver": "2.0.1",
-        "firebase": "6.0.4",
         "instantsearch.css": "7.3.1",
         "jsonwebtoken": "8.5.1",
         "laravel-mix": "4.0.7",
@@ -88,6 +87,7 @@
     "dependencies": {
         "bootstrap": "^4.4.1",
         "font-awesome": "^4.7.0",
+        "v-mask": "^2.0.2",
         "vue-chartjs": "^3.5.0"
     }
 }

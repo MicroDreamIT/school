@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="row">
+         <div class="row">
             <div class="col-md-12 mb-2">
-                <h2 class="pageTitle">Import</h2>
+                <h2 class="pageTitle">Details</h2>
             </div>
             <div class="col-md-12">
                 <div class="row mx-0">
@@ -62,15 +62,15 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12">
-                 <div role="alert"
-                      class="mt-2 alert alert-success alert-dismissible display-block"
-                     v-if="hasNotification">
+            <div class="col-md-12" v-if="hasNotification">
+                <div role="alert"
+                     class="mt-2 alert alert-success alert-dismissible display-block"
+                     >
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click=""
+                            @click="hasNotification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
@@ -85,13 +85,21 @@
                         <vs-card class="p-4">
                                 <h4>Import</h4>
                                 <hr>
-                                <h4 class="text-capitalize">
+                                <p class="md:text-xl sm:text-lg font-bold">
                                     <i class="fa fa-download"></i> CSV Template for Bulk Student Import
-                                </h4>
+                                </p>
                                 <hr>
-                                <vs-input type="file" v-model="file"></vs-input>
+                                <vs-input type="file"
+                                          v-model="file"
+                                          class="w-100"></vs-input>
                                 <hr>
-                                <vs-button color="primary" class="rounded" type="filled">Upload</vs-button>
+                                <vs-button color="primary"
+                                           class="rounded"
+                                           type="filled"
+                                           @click="upload"
+                                >
+                                    Upload
+                                </vs-button>
                           
                         </vs-card>
                     </vs-col>
@@ -110,6 +118,11 @@
             return{
                 hasNotification:'',
                 file:null
+            }
+        },
+        methods:{
+            upload(){
+
             }
         }
     }

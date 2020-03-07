@@ -151,7 +151,7 @@
                             </vs-td>
                             <vs-td>
                                 <div class="action-own">
-                                    <a class="icons-only pointer-all">
+                                    <a class="icons-only pointer-all" @click.stop="quickMember(props.data)">
                                         <i class="fa fa-book "></i>
                                     </a>
                                     <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
@@ -230,6 +230,9 @@
             },
             changeStatus() {
 
+            },
+            quickMember(user){
+                //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
             }
         }
 

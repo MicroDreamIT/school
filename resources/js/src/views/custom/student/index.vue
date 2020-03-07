@@ -1,6 +1,5 @@
 <template>
     <div>
-        <pop-up v-if="modal"></pop-up>
         <div class="row">
             <div class="col-md-12 mb-2">
                 <h2 class="pageTitle">Details</h2>
@@ -66,7 +65,7 @@
             <div class="col-md-12" v-if="hasNotification">
                 <div role="alert"
                      class="mt-2 alert alert-success alert-dismissible display-block"
-                     >
+                >
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
@@ -152,13 +151,13 @@
                             </vs-td>
                             <vs-td>
                                 <div class="action-own">
-                                    <a class="icons-only" >
-                                        <i class="fa fa-book"></i>
+                                    <a class="icons-only pointer-all">
+                                        <i class="fa fa-book "></i>
                                     </a>
-                                    <a class="icons-only" @click.prevent="getModal()">
+                                    <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
                                         <i class="fa fa-bed"></i>
                                     </a>
-                                    <a class="icons-only" >
+                                    <a class="icons-only pointer-all"  @click.stop="openTransportModal(props.data)">
                                         <i class="fa fa-car"></i>
                                     </a>
                                 </div>
@@ -168,14 +167,23 @@
                 </vs-card>
             </div>
         </div>
+        <vs-popup class="holamundo"
+                  :title="residentUser.reg_no+' | Manage Resident'"
+                  :active.sync="residentModal">
 
+
+        </vs-popup>
+        <vs-popup class="holamundo"
+                  :title="transportUser.reg_no+' | Manage Transport User'"
+                  :active.sync="transportModal">
+
+        </vs-popup>
     </div>
 </template>
 
 <script>
     export default {
-        components: {
-        },
+        components: {},
         data() {
             return {
                 studentHeader: [
@@ -187,8 +195,11 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
-                hasNotification:'',
-                modal:false,
+                hasNotification: '',
+                residentModal:false,
+                transportModal:false,
+                residentUser:{},
+                transportUser:{}
 
             }
         },
@@ -199,11 +210,13 @@
 
         methods: {
 
-            getModal(){
-                this.modal = true
+            openResidentModal(user) {
+                this.residentModal=true;
+                this.residentUser=user
             },
-            closeModal(){
-                this.modal = false
+            openTransportModal(user) {
+                this.transportModal=true;
+                this.transportUser=user
             },
 
             viewItems(id) {

@@ -47,8 +47,8 @@
             </button>
         </div>
         <vs-table
-                 :multiple =hasMultiple
-                 v-model="selected"
+                :multiple=hasMultiple
+                v-model="selected"
                 :total="totalItems"
                 :pagination="hasPagination"
                 :max-items="5"
@@ -138,7 +138,7 @@
                         "username": "Bret",
                         "email": "Sincere@april.biz",
                         "website": "hildegard.org",
-                        'status':'Active'
+                        'status': 'Active'
                     },
                     {
                         "id": 2,
@@ -146,7 +146,7 @@
                         "username": "Antonette",
                         "email": "Shanna@melissa.tv",
                         "website": "anastasia.net",
-                        'status':'Active'
+                        'status': 'Active'
                     },
                     {
                         "id": 3,
@@ -154,7 +154,7 @@
                         "username": "Samantha",
                         "email": "Nathan@yesenia.net",
                         "website": "ramiro.info",
-                        'status':'In-Active'
+                        'status': 'In-Active'
                     },
                     {
                         "id": 4,
@@ -162,7 +162,7 @@
                         "username": "Karianne",
                         "email": "Julianne.OConner@kory.org",
                         "website": "kale.biz",
-                        'status':'In-Active'
+                        'status': 'In-Active'
                     },
                     {
                         "id": 5,
@@ -207,27 +207,22 @@
                         "website": "ambrose.net",
                     }
                 ],
-                items:[]
+                items: []
 
             }
         },
         created() {
-          this.getData()
+            this.getData()
         },
 
         methods: {
             getData() {
-                this.items = this.itemData
+                this.$http.get(this.url).then(res => {
+                    this.item = res.data
+                    console.log(this.item)
+                })
             },
-            handleSearch(searching) {
-                console.log(searching)
-            },
-            handleChangePage(page) {
-                console.log(page)
-            },
-            handleSort(key, active) {
-                console.log(key, active)
-            },
+
             doActive() {
                 alert('doing active')
             },

@@ -16,7 +16,7 @@
                    <div class="row p-4">
                        <div class="col-md-4">
                            <h4> Create Student Status</h4> <br>
-                           <div class="forn-group row">
+                           <div class="form-group row">
                                <label class="col-sm-3">Status</label>
                                <vs-input class="col-sm-9"></vs-input>
                            </div>

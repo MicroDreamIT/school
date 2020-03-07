@@ -40,25 +40,25 @@
 								</h4><br>
 								<div class="form-group row">
 									<label class="col-sm-3 col-form-label">Reg No</label>
-									<div class="col-sm-7">
-										<vs-input/>
+									<div class="col-sm-9">
+										<vs-input class="w-100"/>
 									</div>
 								</div>
 								<div class="form-group row">
 									<label class="col-sm-3 col-form-label">Title</label>
-									<div class="col-sm-7">
-										<vs-input/>
+									<div class="col-sm-9">
+										<vs-input class="w-100"/>
 									</div>
 								</div>
 								<div class="form-group row">
 									<label class="col-sm-3 col-form-label">Select File</label>
-									<div class="col-sm-7">
-										<vs-input type="file"></vs-input>
+									<div class="col-sm-9">
+										<vs-input type="file" class="w-100"></vs-input>
 									</div>
 								</div>
-								<div class="form-group row">
+								<div class="form-group ">
 									<label class="col-sm-3 col-form-label">Description</label>
-									<div class="col-sm-7">
+									<div class="col-sm-12">
 										<vs-textarea  />
 									</div>
 								</div>

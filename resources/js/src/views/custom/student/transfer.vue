@@ -37,7 +37,7 @@
 			<vs-divider class="mx-3"/>
 			<div class="col-md-12">
 				<vs-card>
-					<div class="row p-2">
+					<div class="row p-4">
 						<div class="col-md-12 mb-2 p-0">
 							<vs-collapse class="custom-collapse p-0">
 								<vs-collapse-item class="p-0">

@@ -62,7 +62,7 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="hasNotification">
+            <div class="col-md-12" v-if="notification">
                 <div role="alert"
                      class="mt-2 alert alert-success alert-dismissible display-block"
                 >
@@ -70,12 +70,12 @@
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click="hasNotification=''"
+                            @click="notification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{hasNotification}}
+                    {{notification}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
@@ -216,7 +216,7 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
-                hasNotification: '',
+                notification: '',
                 residentModal:false,
                 transportModal:false,
                 residentUser:{},

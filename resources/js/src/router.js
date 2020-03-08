@@ -66,6 +66,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path: '/student/:id/edit',
+                    name: 'studentEdit',
+                    component: () => import('./views/custom/student/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
 
                 {
                     path: '/student/transfer',
@@ -84,9 +92,25 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/student/document/:id/edit',
+                    name: 'student.documentEdit',
+                    component: () => import('./views/custom/student/documentEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/student/note',
                     name: 'student.note',
                     component: () => import('./views/custom/student/note'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/student/note/:id/edit',
+                    name: 'student.noteEdit',
+                    component: () => import('./views/custom/student/noteEdit'),
                     meta: {
                         rule: 'admin'
                     }
@@ -170,6 +194,14 @@ const router = new Router({
                     path:'/guardian/:id/details',
                     name:'guardian.details',
                     component:()=>import('./views/custom/guardian/details'),
+                    meta:{
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path:'/guardian/:id/edit',
+                    name:'guardianEdit',
+                    component:()=>import('./views/custom/guardian/edit'),
                     meta:{
                         rule: 'admin'
                     }

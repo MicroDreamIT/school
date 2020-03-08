@@ -82,49 +82,66 @@
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-2">
-						<h4 class="ml-4">Student Notes Manager</h4>
+						<h4 class="ml-4">Student Documents Manager</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">
                                 <br>
                                 <h4 class="header large lighter blue">
                                     <i class="fa fa-search" aria-hidden="true"></i>
-                                    Create Student Notes
+                                    Edit Student Documents
                                 </h4><br>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Reg No</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="note.reg_no" class="w-100"/>
+                                        <vs-input v-model="document.reg_no" class="w-100"/>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Sub</label>
+                                    <label class="col-sm-3 col-form-label">Title</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="note.subject" class="w-100"/>
+                                        <vs-input v-model="document.title" class="w-100"/>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Select File</label>
+                                    <div class="col-sm-9">
+                                        <vs-input type="file" v-model="document.document_file"
+                                        class="w-100">
 
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Note</label>
+                                        </vs-input>
+                                    </div>
+                                </div>
+                                <div class="row" v-if="document.document_file">
+                                    <label class="col-sm-3 col-form-label">Old File</label>
                                     <div class="col-sm-9">
-                                        <vs-textarea v-model="note.note"/>
+                                        <vs-input type="file"
+                                        class="w-100">
+                                            <a :href="document.document_file"></a>
+                                        </vs-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Description</label>
+                                    <div class="col-sm-9">
+                                        <vs-textarea v-model="document.description" />
                                     </div>
                                 </div>
                                 <hr>
-                                <button class="btn btn-info waves-effect waves-light">
+                                <button class="btn btn-info waves-effect waves-light" type="submit">
                                     <i class="fa fa-save bigger-110"></i>
-                                    Create
+                                    upload
                                 </button>
                             </div>
                             <div class="col-md-8"><br>
 
                                 <ow-data-table :headers="tableHeader"
-                                               :tableHeader="'Student Notes List'"
+                                               :tableHeader="'Student Documents List'"
                                                :url="'/json/student/'"
-                                               :noDataMessage="'No Student Note data found. Please Filter Student Note to show.'"
+                                               :noDataMessage="'No Student Document data found. Please Filter Student Document to show.'"
                                                :has-search="true"
                                                :has-multiple="true"
                                                :has-pagination="true"
-                                               :suggestText="'Student Notes Record list on table. Filter Student Notes using the filter.'"
+                                               :suggestText="'Student Documents Record list on table. Filter Student Documents using the filter.'"
                                 >
                                     <template slot="items" slot-scope="props">
                                         <vs-td :data="props.data.reg_no">
@@ -138,7 +155,7 @@
                                         </vs-td>
 
                                         <vs-td>
-                                            {{props.data.note}}
+                                            {{props.data.document}}
                                         </vs-td>
 
                                         <vs-td>
@@ -188,12 +205,12 @@
 
                 tableHeader: [
                     {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Student Notes'},
+                    {name: 'Student Documents'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
 				notification:'',
-				note:{}
+                document:{}
             }
         },
         methods: {

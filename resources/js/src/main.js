@@ -163,6 +163,9 @@ new Vue({
             let method = this.$route.path.includes('edit')?'Edit':'';
             return [id, method];
         },
+        parseDate(date){
+            return date.toString().substr(0,10)
+        }
 
 
     },

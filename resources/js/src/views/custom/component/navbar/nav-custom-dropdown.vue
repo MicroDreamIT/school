@@ -14,32 +14,32 @@
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="ActivityIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">User Activity</small>
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="SettingsIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">General Setting</small>
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="MessageCircleIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">SMS Setting</small>
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="MailIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">Email Setting</small>
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="BellIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">Alert Setting</small>
                     </li>
                     <li  class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                             @click="$router.push('/pages/profile').catch(() => {})">
-                        <feather-icon icon="UserIcon" svgClasses="w-4 h-4"/>
+                        <feather-icon icon="CreditCardIcon" svgClasses="w-4 h-4"/>
                         <small class="ml-2 ">Payment Gateway</small>
                     </li>
                 </ul>

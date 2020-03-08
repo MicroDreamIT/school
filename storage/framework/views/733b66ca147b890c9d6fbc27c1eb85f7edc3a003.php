@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token(), false); ?>">
     <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico"> -->
 
-    <title>Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template</title>
+    <title> Dashboard | Edu MIS</title>
     <!-- Styles -->
     <link rel="stylesheet" href="<?php echo e(asset(mix('css/main.css')), false); ?>">
     <link rel="stylesheet" href="<?php echo e(asset(mix('css/iconfont.css')), false); ?>">

@@ -119,7 +119,7 @@
                                     {{props.data.academic_status}}
                                     <vs-switch color="success"
                                                :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
+                                               @click.stop="changeStatus(props.data.id, props.data.status)"
                                                class="pointer-all ml-2"
                                     >
                                         <span slot="on">Active</span>
@@ -249,8 +249,13 @@
             deleteItems() {
                 alert("hey hasib im delete ")
             },
-            changeStatus() {
-
+            changeStatus(id, status) {
+                let val = status==='active'?'in-active':'active'
+                // console.log(id, status)
+                let url ='/json/student/'+id+'/'+ val
+                this.$http.get('/json/student/'+id+'/'+ val).then(res=>{
+                    console.log(res.data)
+                })
             },
             quickMember(user){
                 //  params: {reg_no: user.reg_no,user_type:1,status:user.status}

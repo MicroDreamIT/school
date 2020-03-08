@@ -32,6 +32,7 @@ use App\Traits\SmsEmailScope;
 use App\Traits\UserScope;
 use App\User;
 use Carbon\Carbon;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -960,8 +961,9 @@ class StudentController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+//        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
+        return response()->json([$this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.']);
+//        return redirect()->route($this->base_route);
     }
 
     public function inActive(request $request, $id)
@@ -986,7 +988,10 @@ class StudentController extends CollegeBaseController
         }
 
         $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+//        dd($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
+
+        return response()->json([$this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.']);
+//        return redirect()->route($this->base_route);
     }
 
     public function bulkAction(Request $request)

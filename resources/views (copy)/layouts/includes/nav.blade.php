@@ -194,7 +194,6 @@
                                     <li><a href="{{ route('info.smsemail') }}">Upload/Download</a></li>
                                 </ul>
                             </li>
-
                         </ul>
                     </li>
                 </ul>
@@ -210,15 +209,13 @@
                     <li>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Admin Control
-                            &nbsp;
                             <i class="ace-icon fa fa-angle-down bigger-110"></i>
                         </a>
 
                         <ul class="dropdown-menu dropdown-light-blue dropdown-caret">
-                            <li> <a href="{{ route('user') }}"> <i class="ace-icon fa fa-user bigger-110 blue"></i> Users & Roles </a></li>
-                            <li> <a href="{{ route('super-suit.user-activity') }}"> <i class="ace-icon fa fa-history bigger-110 blue"></i> User Activity </a>
-                            </li>
-                            <li><a href="{{ route('setting.general') }}"><i class="fa fa-cog fa fa-cogs bigger-110 blue"></i>&nbsp;General Setting <span class="red">*</span></a></li>
+                            <li> <a href="{{ route('user') }}"> <i class=" fa fa-user "></i> Users & Roles </a></li>
+                            <li> <a href="{{ route('super-suit.user-activity') }}"> <i class="fa fa-history "></i> User Activity </a>  </li>
+                            <li><a href="{{ route('setting.general') }}"><i class="fa fa-cog fa fa-cogs bigger-110 blue"></i>&nbsp; General Setting <span class="red">*</span></a></li>
                             <li><a href="{{ route('setting.sms') }}"><i class="fa fa-mobile fa fa-cogs bigger-110 blue"></i>&nbsp;SMS Setting</a></li>
                             <li><a href="{{ route('setting.email') }}"><i class="fa fa-envelope fa fa-cogs bigger-110 blue"></i>&nbsp;E-Mail Setting</a></li>
                             <li><a href="{{ route('setting.alert') }}"><i class="fa fa-bell icon-animated-bell fa fa-cogs bigger-110 blue"></i>&nbsp;Alert Setting</a></li>

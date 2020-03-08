@@ -96,11 +96,10 @@ import {VueHammer} from 'vue2-hammer'
 Vue.use(VueHammer)
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
-import popUp from './views/custom/component/modal/pop-up'
-Vue.component('pop-up', popUp);
 Vue.component('data-table', dataTable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
+Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
 import Datepicker from 'vuejs-datepicker';
 Vue.component('datepicker', Datepicker);
 import VueQuillEditor from 'vue-quill-editor'
@@ -165,6 +164,9 @@ new Vue({
             let method = this.$route.path.includes('edit')?'Edit':'';
             return [id, method];
         },
+        parseDate(date){
+            return date.toString().substr(0,10)
+        }
 
 
     },

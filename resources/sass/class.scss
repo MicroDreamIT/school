@@ -45,13 +45,7 @@ button.vs-tabs--btn {
   color: #979797;
 }
 
-.btn-success {
-  background-color: #28c76f !important;
 
-  &:hover {
-    box-shadow: 0 8px 25px -8px #28c76f;
-  }
-}
 
 .badge {
   border-radius: 10rem !important;
@@ -60,22 +54,26 @@ button.vs-tabs--btn {
   font-weight: normal !important;
 }
 
-.btn-danger {
-  background: #ea5455 !important;
+.btn-success {
+  background-color: #28c76f !important;
+  &:hover {
+    box-shadow: 0 8px 25px -8px #28c76f;
+    color:#fff;
+  }
 }
 
 .btn-warning {
   background-color: #ff9f43 !important;
-
   &:hover {
     box-shadow: 0 8px 25px -8px #ff9f43;
+    color:#fff!important;
   }
 }
 
 .btn-danger {
   background-color: #ea5455 !important;
-
   &:hover {
     box-shadow: 0 8px 25px -8px #ea5455;
+    color:#fff;
   }
 }

@@ -1,302 +1,176 @@
 <template>
-	<div>
-		<div class="row ">
-			<div class="col-md-12">
-				<h2 class="pageTitle">Transfer</h2>
-				<div class="p-2">
-					<router-link :to="'/student'">
-						<vs-button type="filled" class="smBtn">Detail</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Registration</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Bulk Registration</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Transfers</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Docuemnts</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn"> Notes</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn"> Balance Fees</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn"> Library</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn"> Attendance</vs-button>
-					</router-link>
-				
-				</div>
-			</div>
-			<vs-divider class="mx-3"/>
-			<div class="col-md-12">
-				<vs-card>
-					<div class="row p-2">
-						<div class="col-md-12 mb-2 p-0">
-							<vs-collapse class="custom-collapse p-0">
-								<vs-collapse-item class="p-0">
-									<div slot="header" class="p-0">
-										<h4 class="header large lighter blue mb-4 p-0">
-											Transfer
-										</h4>
-										<vs-button type="filled"
-										            color="primary"
-										            icon="double_arrow"
-										            class="my-rounded"
-										>
-											Filter Students
-										</vs-button>
-									</div>
-									<div class="filterBox">
-										<div class="col-md-12">
-											<div class="row">
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Reg No:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
-													</div>
-													<div class="form-group">
-														<label>Batch</label>
-														<select class="form-control" name="batch">
-															<option value="0">Select Batch</option>
-															<option value="1">ACT</option>
-														</select>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Reg Date From</label>
-														<datepicker v-model="searchData.fromRegDate"/>
-														<label>To</label>
-														<datepicker v-model="searchData.toRegDate"/>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Academic Status:</label>
-														<v-select v-model="searchData.academic_status"
-														          :options="academic_status"
-														          placeholder="Select Academic Status"
-														>
-														</v-select>
-													</div>
-													<div class="form-group">
-														<label>Status:</label>
-														<v-select v-model="searchData.status"
-														          :options="status"
-														          placeholder="Select Status"
-														>
-														</v-select>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Faculty/Class</label>
-														<v-select v-model="searchData.class"
-														          :options="['BTECH']"
-														          placeholder="Select Faculty/Class"
-														>
-														</v-select>
-													
-													</div>
-													<div class="form-group">
-														<label>Sem./Sec.</label>
-														<v-select v-model="searchData.sem"
-														          :options="['BTECH']"
-														          placeholder="Select Sem./Sec."
-														>
-														</v-select>
-													</div>
-												
-												</div>
-											</div>
-											<div class="row  mb-3">
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Religion:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Caste:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Nationality:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
-													</div>
-												</div>
-												<div class="col-md-3">
-													<div class="form-group">
-														<label>Mot.Tongue:</label>
-														<input placeholder=""
-														       class="form-control border-form input-mask-registration"
-														       autofocus="" name="" type="text"
-														>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-md-12 mb-2 pl-0">
-											<vs-button type="filled"
-											           color="#00b8cf"
-											           icon="double_arrow"
-											           @click="alert(searchData)"
-											>
-												Filter
-											</vs-button>
-										</div>
-									</div>
-								</vs-collapse-item>
-							</vs-collapse>
-						</div>
-						<div class="col-md-12">
-							<div class="row">
-								<div class="col-md-12">
-									<h4 class="header large lighter blue mb-4 ">
-										<i class="fa fa-list" aria-hidden="true"></i> Student list
-									</h4>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label>Faculty/Class</label>
-										<v-select v-model="searchData.sem"
-										          :options="['BTECH']"
-										          placeholder="Select Sem./Sec."
-										>
-										</v-select>
-									</div>
-									<div class="form-group">
-										<label>status</label>
-										<select class="form-control" id="transfer-status" name="student_status">
-											<option value="0">Select Academic Status</option>
-											<option value="4">Back Continue</option>
-											<option value="2">Continue</option>
-											<option value="5">Drop Out</option>
-											<option value="1">New Admission</option>
-											<option value="8">Online Registration</option>
-											<option value="3">Pass Out</option>
-											<option value="6">Transfer in</option>
-											<option value="7">Transfer Out</option>
-										</select>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">
-										<label>Sem/Sec</label>
-										<v-select v-model="searchData.sem"
-										          :options="['BTECH']"
-										          placeholder="Select Sem./Sec."
-										>
-										</v-select>
-									</div>
-									<div class="form-group  pt-1"><br>
-										<button type="submit" class="btn btn-success btn-sm m-1 waves-effect waves-light"
-										        id="student-transfer-btn">
-											<i class="fa fa-check" aria-hidden="true"></i> Transfer
-										</button>
-										<button type="reset" class="btn btn-warning btn-sm m-1 waves-effect waves-light text-white"><i
-												class="fa fa-check" aria-hidden="true"></i> Reset
-										</button>
-									</div>
-								</div>
-							</div>
-						
-						</div>
-						<div class="col-md-12">
-							<br>
-							<student-table :headers="tableHeader"
-							               :url="url"
-							               :no-data-message="'No matching records found'"
-							               :searchField="searchData"
-							               :has-search="true"
-							               :has-multiple="true"
-							               :has-pagination="true"
-							>
-								<template slot="items" slot-scope="props">
-									<vs-td :data="props.data.username" class="pointer-none">
-										{{props.data.email}}
-									</vs-td>
-									
-									<vs-td :data="props.data.username">
-										{{props.data.username}}
-									</vs-td>
-									
-									<vs-td :data="props.data.id">
-										{{props.data.website}}
-									</vs-td>
-									
-									<vs-td :data="props.id">
-										{{props.data.id}}
-									</vs-td>
-								</template>
-							</student-table>
-						</div>
-					</div>
-				</vs-card>
-			</div>
-		</div>
-	
-	</div>
+    <div>
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <h2 class="pageTitle">Student Manager</h2>
+            </div>
+            <div class="col-md-12">
+                <div class="row mx-0">
+                    <router-link :to="'/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                            Detail
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/registration'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Registration
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/import'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-upload" aria-hidden="true"></i>
+                            Bulk Registration
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/transfer'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-exchange" aria-hidden="true"></i>
+                            Transfer
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/document'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>
+                            Documents
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/student/note'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
+                            Notes
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/account/fees'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                            Balance Fees
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                            Library
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/attendance/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Attendance
+                        </vs-button>
+                    </router-link>
+                </div>
+            </div>
+            <div class="col-md-12" v-if="notification">
+                <div role="alert"
+                     class="mt-2 alert alert-success alert-dismissible display-block"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="notification=''"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{notification}}
+                </div>
+            </div>
+            <vs-divider class="mx-3"/>
+            <div class="col-md-12">
+                <vs-card>
+                    <div class="row p-2">
+                        <div class="col-md-12 ">
+                            <h4>Transfer</h4>
+                            <student-table :headers="studentHeader"
+                                           :tableHeader="'Student List'"
+                                           :suggestText="'Student Record list on table. Filter Students using the filter.'"
+                                           :url="'/json/student/'"
+                                           :noDataMessage="'No Student data found. Please Filter Student to show.'"
+                                           :hasSearch="false"
+                                           :has-multiple="true"
+                                           :has-pagination="true"
+                                           :filterSection="true"
+                                           :printSection="false"
+                                           :actionBtn="false"
+                                           :transferSection="true"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.faculty" class="pointer-none">
+                                        {{props.data.faculty}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.semester">
+                                        {{props.data.semester}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.reg_date">
+                                        {{$root.parseDate(props.data.reg_date)}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.reg_date">
+                                        {{props.data.reg_no}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.first_name">
+                                        <a @click.stop="viewItems(props.data.id)"
+                                           class="pointer-all text-primary"
+                                           title="View"
+                                        >
+                                            {{props.data.first_name+' '+props.data.middle_name+''+props.data.last_name}}
+                                        </a>
+
+                                    </vs-td>
+                                    <vs-td>
+                                        <div class="d-flex">
+                                            {{props.data.academic_status}}
+                                            <vs-switch color="success"
+                                                       :checked="props.data.status=='active'?true:false"
+                                                       @click.stop="changeStatus(props.data.id)"
+                                                       class="pointer-all ml-2"
+                                            >
+                                                <span slot="on">Active</span>
+                                                <span slot="off">In-Active</span>
+                                            </vs-switch>
+                                        </div>
+                                    </vs-td>
+
+                                </template>
+                            </student-table>
+                        </div>
+                    </div>
+                </vs-card>
+            </div>
+        </div>
+
+    </div>
 </template>
 
 <script>
-    import Datepicker from 'vuejs-datepicker';
-    import StudentTable from '../component/table/student-table'
 
     export default {
-        components: {
-            StudentTable,
-            Datepicker
-        },
         data() {
             return {
-                searchData: {
-                    academic_status: null,
-                    status: null
-                },
-                url: '/ajax/student/',
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                studentHeader: [
+                    {name: 'Faculty/Class', sort_key: 'faculty'},
+                    {name: 'Sem./Sec.', sort_key: 'semester'},
+                    {name: 'Reg.Date', sort_key: 'reg_date'},
+                    {name: 'Reg.Num.', sort_key: 'reg_no'},
+                    {name: 'Name Of student', sort_key: 'first_name'},
+                    {name: 'status', sort_key: ''},
                 ],
-                academic_status: ['Back Continue',
-                    'Continue',
-                    'Drop Out',
-                    'New Admission',
-                    'Online Registration',
-                    'Pass Out</option',
-                    'Transfer in',
-                    'Transfer Out'],
-                status: ['Active', 'In-Active'],
-                filterBox: false,
+                notification: '',
             }
         },
+        methods: {
+            viewItems(id) {
+                this.$router.push({name: 'studentView', params: {id: id}})
+            },
+
+            changeStatus() {
+
+            },
+        }
 
     }
 

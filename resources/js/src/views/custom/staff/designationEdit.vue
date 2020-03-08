@@ -83,35 +83,23 @@
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-2">
-						<h4 class="ml-4">Staff Notes Manager</h4>
+						<h4 class="ml-4">Designation</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">
                                 <br>
                                 <h4 class="header large lighter blue">
                                     <i class="fa fa-search" aria-hidden="true"></i>
-                                    Create Staff Notes
+                                    Edit Designation
                                 </h4><br>
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Reg No</label>
+                                    <label class="col-sm-3 col-form-label">Designation</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="note.reg_no" class="w-100"/>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Sub</label>
-                                    <div class="col-sm-9">
-                                        <vs-input v-model="note.subject" class="w-100"/>
+                                        <vs-input v-model="designation" class="w-100"/>
                                     </div>
                                 </div>
 
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Note</label>
-                                    <div class="col-sm-9">
-                                        <vs-textarea v-model="note.note"/>
-                                    </div>
-                                </div>
-                                <hr>
-                                <button class="btn btn-info waves-effect waves-light">
+                                <vs-divider/>
+                                <button class="btn btn-info waves-effect waves-light" @click.prevent="create">
                                     <i class="fa fa-save bigger-110"></i>
                                     Create
                                 </button>
@@ -119,32 +107,23 @@
                             <div class="col-md-8"><br>
 
                                 <ow-data-table :headers="tableHeader"
-                                               :tableHeader="'Staff Notes List'"
+                                               :tableHeader="'Designation List'"
                                                :url="'/json/student/'"
-                                               :noDataMessage="'No Staff Note data found. Please Filter Staff Note to show.'"
+                                               :noDataMessage="'No Designation data found. Please Filter Designation to show.'"
                                                :has-search="true"
                                                :has-multiple="true"
                                                :has-pagination="true"
-                                               :suggestText="'Staff Notes Record list on table. Filter Staff Notes using the filter.'"
+                                               :print-section="false"
+                                               :suggestText="'Designation Record list on table. Filter Designation using the filter.'"
                                 >
                                     <template slot="items" slot-scope="props">
-                                        <vs-td :data="props.data.reg_no">
-                                            <a @click.stop="viewItems(props.data.id)"
-                                               class="pointer-all text-primary"
-                                               title="View"
-                                            >
-                                                {{props.data.reg_no}}
-                                            </a>
-
-                                        </vs-td>
-
                                         <vs-td>
-                                            {{props.data.note}}
+
                                         </vs-td>
+
 
                                         <vs-td>
                                             <div class="d-flex">
-                                                {{props.data.academic_status}}
                                                 <vs-switch color="success"
                                                            :checked="props.data.status=='active'?true:false"
                                                            @click.stop="changeStatus(props.data.id)"
@@ -188,19 +167,15 @@
             return {
 
                 tableHeader: [
-                    {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Staff Notes'},
+                    {name: 'Designation', sort_key: 'designation'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
 				notification:'',
-				note:{}
+				designation:null
             }
         },
         methods: {
-            viewItems(id) {
-                this.$router.push({name: 'studentView', params: {id: id}})
-            },
             editItems() {
                 alert("hey hasib im edit ")
             },

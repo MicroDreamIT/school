@@ -85,25 +85,25 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Religion:</label>
-                                            <vs-input v-model="searchData.religion"  class="w-100"></vs-input>
+                                            <vs-input v-model="searchData.religion" class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Caste:</label>
-                                            <vs-input v-model="searchData.caste"  class="w-100"></vs-input>
+                                            <vs-input v-model="searchData.caste" class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Nationality:</label>
-                                            <vs-input v-model="searchData.nationality"  class="w-100"></vs-input>
+                                            <vs-input v-model="searchData.nationality" class="w-100"></vs-input>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Mot.Tongue:</label>
-                                            <vs-input v-model="searchData.mot_tounge"  class="w-100"></vs-input>
+                                            <vs-input v-model="searchData.mot_tounge" class="w-100"></vs-input>
                                         </div>
                                     </div>
                                 </div>
@@ -167,6 +167,60 @@
                         <span>Print</span>
                     </button>
                 </div>
+                <div v-if="transferSection">
+                    <div class="col-md-12">
+                        <div class="row mx-0">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Faculty/Class</label>
+                                    <v-select v-model="transferred.faculty"
+                                              :options="faculties"
+                                              placeholder="Select Faculty/Class"
+                                    >
+                                    </v-select>
+
+                                </div>
+                                <div class="form-group">
+                                    <label>Academic Status:</label>
+                                    <v-select v-model="transferred.academic_status"
+                                              :options="academic_status"
+                                              label="value"
+                                              value="id"
+                                              placeholder="Select Academic Status"
+                                    >
+                                    </v-select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Sem./Sec.</label>
+                                    <v-select v-model="transferred.semester"
+                                              :options="semester"
+                                              label="value"
+                                              value="id"
+                                              placeholder="Select Sem./Sec."
+                                    >
+                                    </v-select>
+                                </div>
+                                <div class="form-group  pt-1"><br>
+                                    <button type="submit" class="btn btn-success btn-sm m-1 waves-effect waves-light"
+                                            id="student-transfer-btn" @click="doTransfer">
+                                        <i class="fa fa-check" aria-hidden="true"></i> Transfer
+                                    </button>
+                                    <button type="reset"
+                                            class="btn btn-warning btn-sm m-1 waves-effect waves-light text-white"
+                                            @click="doReset"
+                                    >
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <vs-divider></vs-divider>
+                </div>
                 <vs-table
                         v-model="selected"
                         :pagination="hasPagination"
@@ -206,7 +260,7 @@
                 type: String,
                 default: () => ''
             },
-            filterSection:{
+            filterSection: {
                 type: Boolean,
                 default: () => false
             },
@@ -249,20 +303,25 @@
             hasMultiple: {
                 type: Boolean,
                 default: () => false
+            },
+            transferSection: {
+                type: Boolean,
+                default: () => false
             }
         },
 
         data() {
             return {
                 selected: [],
-                maxItem: 5,
+                maxItem: 10,
                 searchData: {},
                 item: [],
                 academic_status: [],
                 faculties: [],
                 batch: [],
                 semester: [],
-                mainItem:[]
+                mainItem: [],
+                transferred: {}
             }
         },
         created() {
@@ -328,12 +387,22 @@
                         semester: this.semester.filter(d => d.id == st.semester)[0].value,
                         batch: this.batch[st.batch],
                         academic_status: this.academic_status.filter(d => d.id == st.academic_status)[0].value,
-                        first_name: st.first_name?st.first_name:'',
-                        middle_name: st.middle_name?st.middle_name:'',
-                        last_name: st.last_name?st.last_name:'',
+                        first_name: st.first_name ? st.first_name : '',
+                        middle_name: st.middle_name ? st.middle_name : '',
+                        last_name: st.last_name ? st.last_name : '',
                         status: st.status
                     }
                 })
+            },
+            doTransfer() {
+                var ids = [];
+                this.selected.forEach(d => {
+                    ids.push(d.id)
+                })
+                alert(ids)
+            },
+            doReset() {
+                this.transferred = {faculty: null, semester: null, academic_status: null}
             }
 
         }

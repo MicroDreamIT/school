@@ -4,17 +4,17 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Payment Method Manager</h2>
                 <div role="alert" class="mt-2 alert alert-success alert-dismissible display-block"
-                     v-if="hasNotification">
+                     v-if="notification">
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click="hasNotification=''"
+                            @click="notification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{hasNotification}}
+                    {{notification}}
                 </div>
             </div>
             <vs-divider class="mx-3"></vs-divider>
@@ -114,7 +114,7 @@
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},
                 ],
-                hasNotification: 'Please, Create Year and Active',
+                notification: 'Please, Create Year and Active',
                 status: '',
                 status2: [],
                 button: '',

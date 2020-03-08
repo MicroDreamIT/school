@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-md-12 mb-2">
-                <h2 class="pageTitle">Details</h2>
+                <h2 class="pageTitle">Student Manager</h2>
             </div>
             <div class="col-md-12">
                 <div class="row mx-0">
@@ -62,7 +62,7 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="hasNotification">
+            <div class="col-md-12" v-if="notification">
                 <div role="alert"
                      class="mt-2 alert alert-success alert-dismissible display-block"
                 >
@@ -70,12 +70,12 @@
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click="hasNotification=''"
+                            @click="notification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{hasNotification}}
+                    {{notification}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
@@ -151,7 +151,7 @@
                             </vs-td>
                             <vs-td>
                                 <div class="action-own">
-                                    <a class="icons-only pointer-all">
+                                    <a class="icons-only pointer-all" @click.stop="quickMember(props.data)">
                                         <i class="fa fa-book "></i>
                                     </a>
                                     <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
@@ -216,7 +216,7 @@
                     {name: 'Action', sort_key: ''},
                     {name: 'Service Activation', sort_key: ''},
                 ],
-                hasNotification: '',
+                notification: '',
                 residentModal:false,
                 transportModal:false,
                 residentUser:{},
@@ -251,6 +251,9 @@
             },
             changeStatus() {
 
+            },
+            quickMember(user){
+                //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
             }
         }
 

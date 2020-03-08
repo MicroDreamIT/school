@@ -1,266 +1,257 @@
 <template>
     <div>
-        <div class="row ">
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <h2 class="pageTitle">Staff Manager</h2>
+            </div>
             <div class="col-md-12">
-                <h2 class="pageTitle">Details</h2>
-                <div class="p-2">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
+                <div class="row mx-0">
+                    <router-link :to="'/staff'">
                         <vs-button type="filled" class="smBtn">
-                            Primary
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                            Detail
+                        </vs-button>
+                    </router-link>
+                     <router-link :to="'/staff/add'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Registration
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/staff/import'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-upload" aria-hidden="true"></i>
+                            Bulk Registration
                         </vs-button>
                     </router-link>
 
+                    <router-link :to="'/staff/document'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-files-o" aria-hidden="true"></i>
+                            Documents
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/staff/note'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
+                            Notes
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/staff/payroll'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
+                            Payroll
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/staff'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calculator" aria-hidden="true"></i>
+                            Library
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/attendance/staff'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Attendance
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/staff/designation'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            Designation
+                        </vs-button>
+                    </router-link>
+                </div>
+            </div>
+            <div class="col-md-12" v-if="notification">
+                <div role="alert"
+                     class="mt-2 alert alert-success alert-dismissible display-block"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="notification=''"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{notification}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
+
                 <vs-card>
-                    <div class="row p-4">
-                        <div class="col-md-12 mb-2">
-                            <vs-collapse class="custom-collapse">
-                                <vs-collapse-item>
-                                    <div slot="header">
-                                        <vs-button type="filled"
-                                                   color="primary"
-                                                   icon="double_arrow"
-                                        >
-                                            Filter Students
-                                        </vs-button>
-                                    </div>
-                                    <div class="filterBox">
-                                        <div class="col-md-12">
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Reg:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Batch</label>
-                                                        <select class="form-control" name="batch">
-                                                            <option value="0">Select Batch</option>
-                                                            <option value="1">ACT</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Reg Date From</label>
-                                                        <datepicker v-model="searchData.fromRegDate"/>
-                                                        <label>To</label>
-                                                        <datepicker v-model="searchData.toRegDate"/>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                       <label>Academic Status:</label>
-                                                        <v-select v-model="searchData.academic_status"
-																  :options="academic_status"
-																  placeholder="Select Academic Status"
-														>
-                                                        </v-select>
-                                                    </div>
-                                                    <div class="form-group">
-														 <label>Status:</label>
-                                                        <v-select v-model="searchData.status"
-																  :options="status"
-																  placeholder="Select Status"
-														>
-                                                        </v-select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Faculty/Class</label>
-														<v-select v-model="searchData.class"
-																  :options="['BTECH']"
-																  placeholder="Select Faculty/Class"
-														>
-                                                        </v-select>
+                    <staff-table :headers="staffHeader"
+                                   :tableHeader="'Staff List'"
+                                   :suggestText="'Staff Record list on table. Filter Staffs using the filter.'"
+                                   :url="'/json/student/'"
+                                   :noDataMessage="'No Staff data found. Please Filter Staff to show.'"
+                                   :hasSearch="true"
+                                   :has-multiple="true"
+                                   :has-pagination="true"
+                                   :filterSection="true"
+                    >
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.reg_no">
+                                {{props.data.reg_no}}
+                            </vs-td>
 
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Sem./Sec.</label>
-														<v-select v-model="searchData.sem"
-																  :options="['BTECH']"
-																  placeholder="Select Sem./Sec."
-														>
-                                                        </v-select>
-                                                    </div>
+                            <vs-td :data="props.data.first_name">
+                                <a @click.stop="viewItems(props.data.id)"
+                                   class="pointer-all text-primary"
+                                   title="View"
+                                >
+                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                </a>
 
-                                                </div>
-                                            </div>
-                                            <div class="row  mb-3">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Religion:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Caste:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Nationality:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>Mot.Tongue:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 mb-2 pl-0">
-                                            <vs-button type="filled"
-                                                       color="#00b8cf"
-                                                       icon="double_arrow"
-                                                       @click="alert(searchData)"
-                                            >
-                                                Filter
-                                            </vs-button>
-                                        </div>
-                                    </div>
-                                </vs-collapse-item>
-                            </vs-collapse>
-                        </div>
-                        <div class="col-md-12 ">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Students
-                                List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                            </vs-td>
+                            <vs-td></vs-td>
+                            <vs-td></vs-td>
+                            <vs-td></vs-td>
+                            <vs-td>
+                                <div class="d-flex">
+                                    <vs-switch color="success"
+                                               :checked="props.data.status=='active'?true:false"
+                                               @click.stop="changeStatus(props.data.id)"
+                                               class="pointer-all ml-2"
+                                    >
+                                        <span slot="on">Active</span>
+                                        <span slot="off">In-Active</span>
+                                    </vs-switch>
                                 </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Students Record list on table. Filter Students using the filter.
-                            </div>
-                            <div class="dt-buttons btn-group action-group mt-3">
-                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Copy</span></button>
-                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>PDF</span>
-                                </button>
-                                <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                    <span>JSON</span>
-                                </button>
-                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                            <student-table :headers="tableHeader"
-                                           :url="url"
-                                           :no-data-message="'No matching records found'"
-                                           :searchField="searchData"
-                                           :has-search="true"
-                                           :has-multiple="true"
-                                           :has-pagination="true"
-                            >
-                                <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
-                                        {{props.data.email}}
-                                    </vs-td>
 
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
-                                    </vs-td>
+                            </vs-td>
+                            <vs-td>
+                                <div class="action-own">
+                                    <a class="btn btn-primary btn-sm pointer-all"
+                                       title="View"
+                                       @click.stop="viewItems(props.data.id)"
 
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
-                                    </vs-td>
-
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
-                                    </vs-td>
-                                </template>
-                            </student-table>
-                        </div>
-                    </div>
+                                    >
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
+                            <vs-td>
+                                <div class="action-own">
+                                    <a class="icons-only pointer-all" @click.stop="quickMember(props.data)">
+                                        <i class="fa fa-book "></i>
+                                    </a>
+                                    <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
+                                        <i class="fa fa-bed"></i>
+                                    </a>
+                                    <a class="icons-only pointer-all"  @click.stop="openTransportModal(props.data)">
+                                        <i class="fa fa-car"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
+                        </template>
+                    </staff-table>
                 </vs-card>
             </div>
         </div>
+        <vs-popup class="holamundo"
+                  :title="residentUser.reg_no+' | Manage Resident'"
+                  :active.sync="residentModal">
 
+            <div class="form-group mt-3">
+                <label class="col-sm-12">Hostel</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12">Room</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12">Bed</label>
+                <vs-select class="col-sm-12"></vs-select>
+            </div>
+            <div class="footer-modal">
+                <button type="button"
+                        class="btn btn-default pull-right mr-1"
+                        @click="$emit('close')">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-success pull-right">
+                    Assign Bed
+                </button>
+            </div>
+        </vs-popup>
+        <vs-popup class="holamundo"
+                  :title="transportUser.reg_no+' | Manage Transport User'"
+                  :active.sync="transportModal">
+
+        </vs-popup>
     </div>
 </template>
 
 <script>
-    import StudentTable from '../component/table/student-table'
     export default {
-        components: {
-            StudentTable
-        },
+        components: {},
         data() {
             return {
-                searchData: {
-                    academic_status: null,
-                    status: null
-                },
-                url: '/ajax/student/',
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                staffHeader: [
+                    {name: 'Reg.Num', sort_key: 'reg_no'},
+                    {name: 'Staff Name', sort_key: ''},
+                    {name: 'Phone', sort_key: ''},
+                    {name: 'Designation', sort_key: ''},
+                    {name: 'Qualification', sort_key: ''},
+                    {name: 'Status', sort_key: ''},
+                    {name: 'Action', sort_key: ''},
+                    {name: 'Service Activation', sort_key: ''},
                 ],
-                academic_status: ['Back Continue',
-                    'Continue',
-                    'Drop Out',
-                    'New Admission',
-                    'Online Registration',
-                    'Pass Out</option',
-                    'Transfer in',
-                    'Transfer Out'],
-                status: ['Active', 'In-Active'],
-                filterBox: false,
+                notification: '',
+                residentModal:false,
+                transportModal:false,
+                residentUser:{},
+                transportUser:{}
+
             }
         },
+
+        created() {
+
+        },
+
+        methods: {
+
+            openResidentModal(user) {
+                this.residentModal=true;
+                this.residentUser=user
+            },
+            openTransportModal(user) {
+                this.transportModal=true;
+                this.transportUser=user
+            },
+
+            viewItems(id) {
+                this.$router.push({name: 'studentView', params: {id: id}})
+            },
+            editItems() {
+                alert("hey hasib im edit ")
+            },
+            deleteItems() {
+                alert("hey hasib im delete ")
+            },
+            changeStatus() {
+
+            },
+            quickMember(user){
+                //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
+            }
+        }
 
     }
 

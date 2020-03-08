@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row ">
+        <div class="row">
             <div class="col-md-12">
                 <h2 class="pageTitle">Room Type Manager</h2>
                 <div class="mb-2">

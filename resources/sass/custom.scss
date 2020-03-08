@@ -276,3 +276,17 @@ button:focus {
     }
   }
 }
+.striped-td{
+  .row:nth-child(odd){
+    background: rgba(34, 41, 47, 0.05);
+  }
+  .row{
+    align-items: center;
+    .vs-input{
+      height: 40px;
+      .vs-inputx{
+        height: 30px;
+      }
+    }
+  }
+}

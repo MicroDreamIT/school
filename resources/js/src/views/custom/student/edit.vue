@@ -81,7 +81,7 @@
         <div class="col-md-12 p-0">
             <vs-card class="p-3">
                 <div class="row p-2">
-                    <h4 class="card-title">Registration
+                    <h4 class="card-title">Edit Registration -
                         <router-link class="btn-primary btn-sm ml-2 text-white"
                                      :to="'/student/import'">
                             <i class="fa fa-upload" aria-hidden="true"></i>
@@ -799,9 +799,7 @@
                         </vs-tabs>
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Save</vs-button>
-                            <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                            <vs-button class="my-round mx-2">Update</vs-button>
                         </div>
                     </div>
 

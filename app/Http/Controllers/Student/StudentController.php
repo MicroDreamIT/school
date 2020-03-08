@@ -79,7 +79,6 @@ class StudentController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
-
         return response()->json($data);
     }
 

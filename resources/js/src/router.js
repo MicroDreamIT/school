@@ -148,6 +148,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path: '/staff/:id/edit',
+                    name: 'staffEdit',
+                    component: () => import('./views/custom/staff/edit.vue'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
 
                 {
                     path: '/staff/document',

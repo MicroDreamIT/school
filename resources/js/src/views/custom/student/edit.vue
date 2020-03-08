@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12 mb-2">
-            <h2 class="pageTitle">Details</h2>
+            <h2 class="pageTitle">Student Manager</h2>
         </div>
         <div class="col-md-12">
             <div class="row mx-0">
@@ -153,7 +153,7 @@
                                             <vs-input v-model="student.first_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.middile_name"/>
+                                            <vs-input v-model="student.middle_name"/>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="student.last_name"/>
@@ -315,7 +315,7 @@
                                             <vs-input v-model="student.grandfather_first_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.grandfather_middile_name"/>
+                                            <vs-input v-model="student.grandfather_middle_name"/>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="student.grandfather_last_name"/>
@@ -333,7 +333,7 @@
                                             <vs-input v-model="student.father_first_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.father_middile_name"/>
+                                            <vs-input v-model="student.father_middle_name"/>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="student.father_last_name"/>
@@ -407,7 +407,7 @@
                                             <vs-input v-model="student.mother_first_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.mother_middile_name"/>
+                                            <vs-input v-model="student.mother_middle_name"/>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="student.mother_last_name"/>
@@ -498,7 +498,7 @@
                                                 <vs-input v-model="student.guardian_first_name"/>
                                             </div>
                                             <div class="col-md-3">
-                                                <vs-input v-model="student.guardian_middile_name"/>
+                                                <vs-input v-model="student.guardian_middle_name"/>
                                             </div>
                                             <div class="col-md-3">
                                                 <vs-input v-model="student.guardian_last_name"/>
@@ -843,7 +843,7 @@
             assignGuardian() {
                 if (this.whoGuardian == 'father') {
                     this.student.guardian_first_name = this.student.father_first_name;
-                    this.student.guardian_middile_name = this.student.father_middile_name;
+                    this.student.guardian_middle_name = this.student.father_middle_name;
                     this.student.guardian_last_name = this.student.father_last_name;
                     this.student.guardian_eligibility = this.student.father_eligibility;
                     this.student.guardian_occupation = this.student.father_occupation;
@@ -856,7 +856,7 @@
                     this.student.guardian_relation = 'Father'
                 } else if (this.whoGuardian == 'mother') {
                     this.student.guardian_first_name = this.student.mother_first_name;
-                    this.student.guardian_middile_name = this.student.mother_middile_name;
+                    this.student.guardian_middle_name = this.student.mother_middle_name;
                     this.student.guardian_last_name = this.student.mother_last_name;
                     this.student.guardian_eligibility = this.student.mother_eligibility;
                     this.student.guardian_occupation = this.student.mother_occupation;
@@ -869,7 +869,7 @@
                     this.student.guardian_relation = 'MOTHER'
                 } else {
                     this.student.guardian_first_name = '';
-                    this.student.guardian_middile_name = '';
+                    this.student.guardian_middle_name = '';
                     this.student.guardian_last_name = '';
                     this.student.guardian_eligibility = '';
                     this.student.guardian_occupation = '';

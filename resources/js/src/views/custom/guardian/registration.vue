@@ -56,7 +56,7 @@
                                                 <vs-input v-model="guardian.first_name"/>
                                             </div>
                                             <div class="col-md-3">
-                                                <vs-input v-model="guardian.middile_name"/>
+                                                <vs-input v-model="guardian.middle_name"/>
                                             </div>
                                             <div class="col-md-3">
                                                 <vs-input v-model="guardian.last_name"/>

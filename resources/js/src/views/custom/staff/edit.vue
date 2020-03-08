@@ -82,13 +82,13 @@
         <div class="col-md-12 p-0">
             <vs-card class="p-3">
                 <div class="row p-2">
-                    <h4 class="card-title">Staff Registration
+                    <h4 class="card-title">Edit Registration
                     </h4>
                     <div class="col-md-12">
                         <vs-tabs class="custom-tab mt-2">
                             <vs-tab label="General Information">
                                 <div>
-                                                <span class="badge badge badge-danger badge-pill mr-2">
+                                    <span class="badge badge badge-danger badge-pill mr-2">
 													Red mark input are required. </span>
                                     <vs-divider/>
                                     <div class="row my-2">

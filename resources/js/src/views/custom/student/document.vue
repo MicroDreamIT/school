@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-md-12 mb-2">
-                <h2 class="pageTitle">Details</h2>
+               <h2 class="pageTitle">Student Manager</h2>
             </div>
             <div class="col-md-12">
                 <div class="row mx-0">

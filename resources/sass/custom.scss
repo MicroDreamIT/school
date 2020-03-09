@@ -31,6 +31,9 @@
          }
          &:empty{
            background: transparent!important;
+             @media(max-width: 768px){
+               display: none!important;
+             }
          }
        }
        .content{
@@ -40,6 +43,9 @@
          color: #131313;
          &:empty{
            background: transparent!important;
+           @media(max-width: 768px){
+             display: none!important;
+           }
          }
        }
      }

@@ -283,10 +283,12 @@
                                 <vs-td></vs-td>
                                 <vs-td></vs-td>
                             </vs-tr>
+                            <vs-tr class="totalSection">
+                                <vs-td colspan="10">Total {{getTotal}}</vs-td>
+                            </vs-tr>
                         </template>
 
                     </vs-table>
-                    <div class="totalSection">Total {{getTotal}}</div>
                 </vs-card>
             </div>
         </div>

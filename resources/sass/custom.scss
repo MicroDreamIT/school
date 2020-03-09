@@ -297,3 +297,12 @@ button:focus {
   padding: 10px;
   color:white;
 }
+.vs-switch-success{
+  .text-off{
+    color:white!important;
+  }
+  background: #dc3545!important;
+  &.vs-switch-active{
+    background: #28a745!important;
+  }
+}

@@ -297,7 +297,7 @@ const router = new Router({
                 },
                 {
                     path: '/account/fees/collection/:id/view',
-                    name: 'account.views',
+                    name: 'feesView',
                     component: () => import('./views/custom/account/fees/views'),
                     meta: {
                         rule: 'admin'

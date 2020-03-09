@@ -251,6 +251,7 @@
                 alert("hey hasib im delete ")
             },
             changeStatus() {
+                // this.$http.get()
                 this.$refs.studentTable.getData()
             },
             quickMember(user){

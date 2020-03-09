@@ -281,8 +281,16 @@ const router = new Router({
                 },
                 {
                     path: '/account/fees/head',
-                    name: 'account.head',
+                    name: 'feesHead',
                     component: () => import('./views/custom/account/fees/fees-head'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/account/fees/head/1/edit',
+                    name: 'feesHeadEdit',
+                    component: () => import('./views/custom/account/fees/feesHeadEdit'),
                     meta: {
                         rule: 'admin'
                     }
@@ -297,7 +305,7 @@ const router = new Router({
                 },
                 {
                     path: '/account/fees/collection/:id/view',
-                    name: 'account.views',
+                    name: 'feesView',
                     component: () => import('./views/custom/account/fees/views'),
                     meta: {
                         rule: 'admin'

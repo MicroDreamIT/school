@@ -91,6 +91,7 @@
                                    :has-multiple="true"
                                    :has-pagination="true"
                                    :filterSection="true"
+                                   ref="studentTable"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.faculty" class="pointer-none">
@@ -115,11 +116,11 @@
 
                             </vs-td>
                             <vs-td>
-                                <div class="d-flex">
+                                <div class="d-flex flex-wrap">
                                     {{props.data.academic_status}}
                                     <vs-switch color="success"
                                                :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
+                                               @click.stop="changeStatus(props.data.id,props.data.status)"
                                                class="pointer-all ml-2"
                                     >
                                         <span slot="on">Active</span>
@@ -157,7 +158,7 @@
                                     <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
                                         <i class="fa fa-bed"></i>
                                     </a>
-                                    <a class="icons-only pointer-all"  @click.stop="openTransportModal(props.data)">
+                                    <a class="icons-only pointer-all" @click.stop="openTransportModal(props.data)">
                                         <i class="fa fa-car"></i>
                                     </a>
                                 </div>
@@ -170,23 +171,38 @@
         <vs-popup class="holamundo"
                   :title="residentUser.reg_no+' | Manage Resident'"
                   :active.sync="residentModal">
-           
+
             <div class="form-group mt-3">
                 <label class="col-sm-12">Hostel</label>
-                <vs-select class="col-sm-12"></vs-select>
+                <v-select class="col-sm-12"
+                          v-model="resident.hostel"
+                          :options="hostels"
+                >
+
+                </v-select>
             </div>
             <div class="form-group">
                 <label class="col-sm-12">Room</label>
-                <vs-select class="col-sm-12"></vs-select>
+                <v-select class="col-sm-12"
+                          v-model="resident.room"
+                          :options="rooms"
+                >
+
+                </v-select>
             </div>
             <div class="form-group">
                 <label class="col-sm-12">Bed</label>
-                <vs-select class="col-sm-12"></vs-select>
+                <v-select class="col-sm-12"
+                          v-model="resident.bed"
+                          :options="beds"
+                >
+
+                </v-select>
             </div>
             <div class="footer-modal">
                 <button type="button"
                         class="btn btn-default pull-right mr-1"
-                        @click="$emit('close')">
+                        @click="residentModal=false">
                     Cancel
                 </button>
                 <button type="button" class="btn btn-success pull-right">
@@ -197,7 +213,33 @@
         <vs-popup class="holamundo"
                   :title="transportUser.reg_no+' | Manage Transport User'"
                   :active.sync="transportModal">
+            <div class="form-group mt-3">
+                <label class="col-sm-12">Route</label>
+                <v-select class="col-sm-12"
+                          v-model="transport.route"
+                          :options="routes"
+                >
 
+                </v-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12">Vehicle</label>
+                <v-select class="col-sm-12"
+                          v-model="transport.vehicle"
+                          :options="vehicles">
+
+                </v-select>
+            </div>
+            <div class="footer-modal">
+                <button type="button"
+                        class="btn btn-default pull-right mr-1"
+                        @click="transportModal=false">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-success pull-right">
+                    Assign Transport
+                </button>
+            </div>
         </vs-popup>
     </div>
 </template>
@@ -217,10 +259,17 @@
                     {name: 'Service Activation', sort_key: ''},
                 ],
                 notification: '',
-                residentModal:false,
-                transportModal:false,
-                residentUser:{},
-                transportUser:{}
+                residentModal: false,
+                transportModal: false,
+                residentUser: {},
+                transportUser: {},
+                resident:{},
+                transport:{},
+                hostels:[],
+                beds:[],
+                routes:[],
+                vehicles:[],
+                rooms:[]
 
             }
         },
@@ -232,12 +281,12 @@
         methods: {
 
             openResidentModal(user) {
-                this.residentModal=true;
-                this.residentUser=user
+                this.residentModal = true;
+                this.residentUser = user
             },
             openTransportModal(user) {
-                this.transportModal=true;
-                this.transportUser=user
+                this.transportModal = true;
+                this.transportUser = user
             },
 
             viewItems(id) {
@@ -249,10 +298,16 @@
             deleteItems() {
                 alert("hey hasib im delete ")
             },
-            changeStatus() {
+            changeStatus(id, status) {
+                let stat = status == 'active' ? 'in-active' : 'active'
+                let url = '/json/student/' + id + '/' + stat
+                this.$http.get(url).then(res => {
+                    this.notification = res.data;
+                    this.$refs.studentTable.getData()
+                })
 
             },
-            quickMember(user){
+            quickMember(user) {
                 //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
             }
         }

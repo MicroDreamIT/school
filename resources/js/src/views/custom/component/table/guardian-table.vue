@@ -43,16 +43,16 @@
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                     {{tableHeader}}
                 </h4>
-                <div class="easy-link-menu" v-if="actionBtn">
-                    <a class="btn-success btn-sm bulk-action-btn  mr-1" @click.prevent="doActive">
+                <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn">
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
                         <i class="fa fa-check"></i>
                         Active
                     </a>
-                    <a class="btn-warning btn-sm bulk-action-btn mr-1" @click.prevent="doInActive">
+                    <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
                         <i class="fa fa-remove"></i>
                         In-Active
                     </a>
-                    <a class="btn-danger btn-sm bulk-action-btn mr-1" @click.prevent="doDelete">
+                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
                         <i class="fa fa-trash"></i>
                         Delete
                     </a>

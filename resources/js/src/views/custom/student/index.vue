@@ -91,6 +91,7 @@
                                    :has-multiple="true"
                                    :has-pagination="true"
                                    :filterSection="true"
+                                   ref="studentTable"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.faculty" class="pointer-none">
@@ -250,7 +251,7 @@
                 alert("hey hasib im delete ")
             },
             changeStatus() {
-
+                this.$refs.studentTable.getData()
             },
             quickMember(user){
                 //  params: {reg_no: user.reg_no,user_type:1,status:user.status}

@@ -89,7 +89,6 @@
                            </data-table>
                        </div>
                    </div>
-    
                </vs-card>
            </div>
         </div>

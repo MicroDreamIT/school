@@ -31,7 +31,7 @@
 							Lock User
 						</vs-button>
 					</router-link>
-					<router-link :to="''">
+					<router-link :to="'/'">
 						<vs-button type="filled" class="smBtn btn-danger">
 							<i class="fa fa-users" aria-hidden="true"></i>
 						Delete User

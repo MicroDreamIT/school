@@ -5,20 +5,20 @@
             {{tableHeader}}
         </h4>
         <div class="clearfix mt-3"></div>
-        <div class="easy-link-menu" v-if="actionBtn">
-            <a class="btn-success btn-sm bulk-action-btn  mr-1" @click.prevent="doActive">
-                <i class="fa fa-check"></i>
-                Active
-            </a>
-            <a class="btn-warning btn-sm bulk-action-btn mr-1" @click.prevent="doInActive">
-                <i class="fa fa-remove"></i>
-                In-Active
-            </a>
-            <a class="btn-danger btn-sm bulk-action-btn mr-1" @click.prevent="doDelete">
-                <i class="fa fa-trash"></i>
-                Delete
-            </a>
-        </div>
+        <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn">
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
+                        <i class="fa fa-check"></i>
+                        Active
+                    </a>
+                    <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
+                        <i class="fa fa-remove"></i>
+                        In-Active
+                    </a>
+                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
+                        <i class="fa fa-trash"></i>
+                        Delete
+                    </a>
+                </div>
         <br>
         <div class="table-header" v-if="headerSuggestion">
             {{suggestText}}

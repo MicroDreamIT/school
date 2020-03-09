@@ -89,20 +89,8 @@
                 <div class="row mx-0">
                     <div class="col-md-4 mb-2">
 
-                        <h4> Create Fees Head</h4>
-                        <vs-button color="#00b8cf"
-                                   type="filled"
-                                   class="my-round"
-                                   @click="createFeesHead=true,
-                                       importFeesHead=false">Create
-                        </vs-button>
-                        <vs-button color="#00b8cf"
-                                   type="filled"
-                                   class="my-round"
-                                   @click="importFeesHead=true,
-                                       createFeesHead=false">Import
-                        </vs-button>
-                        <div v-if="createFeesHead">
+                        <h4> Update Fees Head</h4>
+
                             <div class="form-group mt-3 ">
                                 <label class="col-sm-3">Head</label>
                                 <vs-input class="col-sm-12"></vs-input>
@@ -114,28 +102,8 @@
                             <vs-divider></vs-divider>
                             <vs-button color="warning"
                                        type="filled"
-                                       class="my-round">Reset
+                                       class="my-round">Update
                             </vs-button>
-                            <vs-button color="#00b8cf"
-                                       type="filled"
-                                       class="my-round">Create
-                            </vs-button>
-                        </div>
-                        <div v-if="importFeesHead">
-                            <vs-divider></vs-divider>
-                            <h4><i class="fa fa-download">CSV Template</i></h4>
-                            <vs-divider></vs-divider>
-                            <div class="form-group  mt-3 ">
-                                <label class="col-sm-3">File</label>
-                                <vs-input type="file" class="col-sm-12"></vs-input>
-                            </div>
-                            <vs-divider></vs-divider>
-                            <vs-button color="#00b8cf"
-                                       type="filled"
-                                       class="my-round">Import
-                            </vs-button>
-                        </div>
-
                     </div>
                     <div class="col-md-8">
                         <ow-data-table :headers="tableHeader"
@@ -187,8 +155,6 @@
                     {name: 'PID'},
                 ],
                 notification: '',
-                createFeesHead: true,
-                importFeesHead: false
             }
         }
     }

@@ -256,7 +256,7 @@
                     <vs-table
                             v-model="selected"
                             pagination
-                            max-items="10"
+                            :max-items="10"
                             :data="mainItem"
                             description
                             :noDataText="'No Fees Collection data found. Please Filter Fees Collection to show.'"
@@ -283,10 +283,12 @@
                                 <vs-td></vs-td>
                                 <vs-td></vs-td>
                             </vs-tr>
+                            <vs-tr class="totalSection">
+                                <vs-td colspan="10">Total {{getTotal}}</vs-td>
+                            </vs-tr>
                         </template>
 
                     </vs-table>
-                    <div class="w-100 bg-warning-gradient">Total 0</div>
                 </vs-card>
             </div>
         </div>
@@ -320,12 +322,20 @@
 
             }
         },
+        computed: {
+            getTotal(){
+                return 120
+            }
 
+        },
         created() {
-
+            this.getData()
         },
 
         methods: {
+            getData(){
+
+            },
             viewItems() {
                 alert("hey hasib im view ")
             },

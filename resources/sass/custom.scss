@@ -13,6 +13,9 @@
        display: flex;
        justify-content: space-between;
        font-size: 16px;
+       @media(max-width: 768px){
+         flex-direction: column;
+       }
         &:not(:last-child){
           border-bottom: 1px solid rgb($primary,0.2);
         }
@@ -23,6 +26,9 @@
          color: #136ecc;
          flex: 1.4;
          text-align: right;
+         @media(max-width: 768px){
+           text-align: unset;
+         }
          &:empty{
            background: transparent!important;
          }

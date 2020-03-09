@@ -18,7 +18,8 @@
                     </div>
                 </div>
                 <div class="col-md-9">
-                    Name: <vs-button type="filled" class="smBtn"> Student Name Here  </vs-button>
+                    <br>
+                   <p> <vs-button type="filled" class="smBtn"> Student Name Here  </vs-button></p>
                  <div class="data-table">
                         <div class="rows">
                             <div class="header">faculty:</div>
@@ -200,23 +201,24 @@
                         <img :src="`https://upload.wikimedia.org/wikipedia/commons/8/87/Sk.wikipedia.org_QR_Code.png`"
                              class="img-thumbnail mt-3 ">
                     </div>
+                    <br>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Guardian </vs-button>
                     <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail mt-3 ">
+                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Father</vs-button>
                      <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail mt-3 ">
+                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize"> Mother</vs-button>
                      <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail mt-3 ">
+                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
                     </div>
                 </div>
             </div>

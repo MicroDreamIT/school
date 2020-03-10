@@ -962,7 +962,7 @@ class StudentController extends CollegeBaseController
         $row->update($request->all());
 
 //        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
-        return response()->json([$this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.']);
+        return response()->json(['success', $row->reg_no.' '.$this->panel.' Active Successfully.']);
 //        return redirect()->route($this->base_route);
     }
 
@@ -990,7 +990,7 @@ class StudentController extends CollegeBaseController
         $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
 //        dd($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
 
-        return response()->json([$this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.']);
+        return response()->json(['danger', $row->reg_no.' '.$this->panel.' In-Active Successfully.']);
 //        return redirect()->route($this->base_route);
     }
 

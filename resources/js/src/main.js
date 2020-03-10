@@ -128,11 +128,19 @@ new Vue({
     el: '#app',
     data() {
         return {
-            isMaximized: false
+            isMaximized: false,
+            notification:{
+                type:'',
+                message:''
+            }
         }
     },
-    methods: {
 
+    methods: {
+        emptyNotification(){
+            this.notification.type=''
+            this.notification.message=''
+        },
         toggleMaximize() {
             if (this.isMaximized) {
                 if (document.exitFullscreen) {

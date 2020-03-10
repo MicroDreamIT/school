@@ -131,11 +131,17 @@ new Vue({
     data() {
         return {
             isMaximized: false,
-            notification:''
+            notification:{
+                status:'',
+                message:''
+            }
         }
     },
     methods: {
-
+        emptyNotification(){
+            this.notification.status=''
+            this.notification.message=''
+        },
         toggleMaximize() {
             if (this.isMaximized) {
                 if (document.exitFullscreen) {

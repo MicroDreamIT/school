@@ -101,3 +101,4 @@ fabric.properties
 /public/js/
 /public/fonts/vendor/font-awesome/
 /storage/framework/views/
+/public/js/app.js

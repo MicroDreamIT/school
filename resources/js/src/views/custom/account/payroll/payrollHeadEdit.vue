@@ -80,70 +80,53 @@
                         </router-link>
                     </div>
                     <vs-divider/>
+                    <div class="row mx-0">
+                        <div class="col-md-4 mb-2">
 
-                    <staff-table :headers="studentHeader"
-                                 :tableHeader="'Staffs List'"
-                                 :suggestText="'Staffs Record list on table. Filter Staffs using the filter.'"
-                                 :url="'/json/student/'"
-                                 :noDataMessage="'No Staff data found. Please Filter Staff to show.'"
-                                 :hasSearch="true"
-                                 :has-multiple="false"
-                                 :has-pagination="true"
-                                 :filterSection="true"
-                                 :actionBtn="false"
-                                 ref="staffTable"
-                    >
-                        <template slot="items" slot-scope="props">
-                            <vs-td :data="props.data.faculty" class="pointer-none">
-                                {{props.data.faculty}}
-                            </vs-td>
+                            <h4> Edit Payroll Head</h4>
 
-                            <vs-td :data="props.data.semester">
-                                {{props.data.semester}}
-                            </vs-td>
+                            <div class="form-group mt-3 ">
+                                <label class="col-sm-3">Title</label>
+                                <vs-input class="col-sm-12"></vs-input>
+                            </div>
+                            <vs-divider></vs-divider>
+                            <vs-button color="#00b8cf"
+                                       type="filled"
+                                       class="my-round">Update
+                            </vs-button>
+                        </div>
+                        <div class="col-md-8">
+                            <ow-data-table :headers="tableHeader"
+                                           :tableHeader="'Payroll Head List'"
+                                           :suggestText="'Payroll Head Record list on table. Filter Payroll Head using the filter.'"
+                                           :url="'/student'"
+                                           :noDataMessage="'No Payroll Head data found. Please Filter Payroll Head to show.'"
+                                           :hasSearch="true"
+                                           :has-multiple="true"
+                                           :has-pagination="true"
+										   :print-section="false"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.username" class="pointer-none">
+                                        {{props.data.email}}
+                                    </vs-td>
 
-                            <vs-td :data="props.data.reg_no">
-                                {{props.data.reg_no}}
-                            </vs-td>
+                                    <vs-td :data="props.data.username">
+                                        {{props.data.username}}
+                                    </vs-td>
 
-                            <vs-td :data="props.data.first_name">
-                                <a @click.stop="viewItems(props.data.id)"
-                                   class="pointer-all text-primary"
-                                   title="View"
-                                >
-                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
-                                </a>
+                                    <vs-td :data="props.data.id">
+                                        {{props.data.website}}
+                                    </vs-td>
 
-                            </vs-td>
-                            <vs-td></vs-td>
-                            <vs-td>
-                                <div class="d-flex">
-                                    {{props.data.academic_status}}
-                                    <vs-switch color="success"
-                                               :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
-                                               class="pointer-all ml-2"
-                                    >
-                                        <span slot="on">Active</span>
-                                        <span slot="off">In-Active</span>
-                                    </vs-switch>
-                                </div>
+                                    <vs-td :data="props.id">
+                                        {{props.data.id}}
+                                    </vs-td>
+                                </template>
+                            </ow-data-table>
+                        </div>
+                    </div>
 
-                            </vs-td>
-                            <vs-td>
-                                <div class="action-own">
-                                    <a class="btn btn-primary btn-sm pointer-all"
-                                       title="View"
-                                       @click.stop="viewItems(props.data.id)"
-
-                                    >
-                                        <i class="fa fa-calculator"></i>
-                                    </a>
-                                </div>
-                            </vs-td>
-
-                        </template>
-                    </staff-table>
                 </vs-card>
             </div>
         </div>
@@ -151,46 +134,19 @@
 </template>
 
 <script>
+
     export default {
         data() {
             return {
-                studentHeader: [
-                    {name: 'Faculty/Class', sort_key: 'faculty'},
-                    {name: 'Sem./Sec.', sort_key: ''},
-                    {name: 'Reg.No.', sort_key: 'reg_no'},
-                    {name: 'Name', sort_key: ''},
-                    {name: 'Contact. No.', sort_key: ''},
-                    {name: 'Status', sort_key: ''},
-                    {name: 'Action', sort_key: ''},
+                tableHeader: [
+                    {name: 'Email', field: 'email', sort_key: 'email'},
+                    {name: 'Name', field: 'name', sort_key: 'name'},
+                    {name: 'Mobile', field: 'mobile'},
+                    {name: 'PID'},
                 ],
-                notification: '',
-
             }
-        },
-
-        created() {
-
-        },
-
-        methods: {
-            viewItems(id) {
-                this.$router.push({name: 'feesView', params: {id: id}})
-            },
-            editItems() {
-                alert("hey hasib im edit ")
-            },
-            deleteItems() {
-                alert("hey hasib im delete ")
-            },
-            changeStatus() {
-                // this.$http.get()
-                this.$refs.staffTable.getData()
-            },
         }
-
     }
-
-
 </script>
 
 <style scoped>

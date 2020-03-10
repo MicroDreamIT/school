@@ -282,7 +282,7 @@
                                             </datepicker>
                                         </td>
                                         <td>
-                                            <v-select v-model="tr.fee_head" class="w-4/5">
+                                            <v-select v-model="tr.fee_head" >
                                             </v-select>
                                         </td>
                                         <td>
@@ -305,10 +305,14 @@
                                 </draggable>
                             </table>
                         </div>
-
+                        <vs-divider></vs-divider>
+                        <div>
+                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
+                            <vs-button class="my-round mx-2">Add Fee</vs-button>
+                        </div>
 
                     </div>
-                    <div class="col-md-12 ">
+                    <div class="col-md-12 mt-4">
                         <h4 class="header large lighter blue">
                             <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                             Student List

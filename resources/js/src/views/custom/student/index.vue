@@ -62,7 +62,7 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="notification">
+            <div class="col-md-12" v-if="$root.notification">
                 <div role="alert"
                      class="mt-2 alert alert-success alert-dismissible display-block"
                 >
@@ -70,12 +70,12 @@
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click="notification=''"
+                            @click="$root.notification=''"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
+                    {{$root.notification}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
@@ -299,10 +299,9 @@
                 alert("hey hasib im delete ")
             },
             changeStatus(id, status) {
-                let stat = status == 'active' ? 'in-active' : 'active'
+                let stat = status === 'active' ? 'in-active' : 'active'
                 let url = '/json/student/' + id + '/' + stat
                 this.$http.get(url).then(res => {
-                    this.notification = res.data;
                     this.$refs.studentTable.getData()
                 })
 

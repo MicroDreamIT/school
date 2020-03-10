@@ -595,101 +595,107 @@
                                         Academic Info
                                     </h4>
                                     <div>
-                                        <vs-table stripe :data="academicList">
-                                            <template slot="thead">
-                                                <vs-th class="w-12">
-                                                    Sort
-                                                </vs-th>
-                                                <vs-th>
-                                                    Detail
-                                                </vs-th>
-                                                <vs-th class="w-12">
-                                                    <vs-button @click="addRow" class="my-round">
-                                                        New
-                                                    </vs-button>
-                                                </vs-th>
-                                            </template>
-                                            <template slot-scope="{data}">
-                                                <vs-tr :key="i" v-for="(tr, i) in data">
-                                                    <vs-td class="w-12">
-                                                        <vs-button>sort</vs-button>
-                                                    </vs-td>
-
-                                                    <vs-td>
-                                                        <div class="striped-td">
-                                                            <div class="row">
-                                                                <div class="col-md-4">Institution</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.institution">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Board/Training</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.board">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Pass Year</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.pass_year">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Symbol Number</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.symbol_no">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Percentage</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.percentage">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Division/Grade</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.division_grade">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Major Subject</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.major_subject">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-4">Remark</div>
-                                                                <div class="col-md-8">
-                                                                    <vs-input v-model="tr.remarks">
-                                                                    </vs-input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-
-                                                    </vs-td>
-
-                                                    <vs-td class="w-12">
-                                                        <vs-button class="rounded"
-                                                                   color="danger"
-                                                                   @click="removeList(i)">
-                                                            <i class="fa fa-trash"></i>
+                                        <div class="table-responsive mt-4 ">
+                                            <table class="table  table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th class="w-16 align-top">
+                                                        Sort
+                                                    </th>
+                                                    <th class="align-top">
+                                                        Detail
+                                                    </th>
+                                                    <th class="w-16 align-top">
+                                                        <vs-button @click="addRow" class="my-round">
+                                                            New
                                                         </vs-button>
-                                                    </vs-td>
+                                                    </th>
+                                                </tr>
+
+                                                </thead>
+                                                <draggable v-model="academicList" tag="tbody">
+                                                    <tr :key="i" v-for="(tr, i) in academicList">
+                                                        <td class="w-16 align-middle text-center">
+                                                            <vs-button class="my-round">
+                                                                <i class="fa fa-arrows"></i>
+                                                            </vs-button>
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="striped-td">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Institution</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.institution">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Board/Training</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.board">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Pass Year</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.pass_year">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Symbol Number</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.symbol_no">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Percentage</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.percentage">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Division/Grade</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.division_grade">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Major Subject</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.major_subject">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">Remark</div>
+                                                                    <div class="col-md-8">
+                                                                        <vs-input v-model="tr.remarks">
+                                                                        </vs-input>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
 
-                                                </vs-tr>
-                                            </template>
-                                        </vs-table>
+                                                        </td>
+                                                        <td class="w-16 align-middle text-center">
+                                                            <vs-button class="rounded"
+                                                                       color="danger"
+                                                                       @click="removeList(i)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </vs-button>
+                                                        </td>
+
+
+                                                    </tr>
+                                                </draggable>
+                                            </table>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -705,14 +711,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="student.profile_picture"
-                                              v-if="student.profile_picture"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="student.profile_picture"
+                                             v-if="student.profile_picture"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
                                 <vs-divider></vs-divider>
@@ -725,14 +731,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="student.signature"
-                                              v-if="student.signature"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="student.signature"
+                                             v-if="student.signature"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
                                 <vs-divider></vs-divider>
@@ -745,14 +751,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="student.father_picture"
-                                              v-if="student.father_picture"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="student.father_picture"
+                                             v-if="student.father_picture"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
                                 <vs-divider></vs-divider>
@@ -765,14 +771,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="student.mother_picture"
-                                              v-if="student.mother_picture"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="student.mother_picture"
+                                             v-if="student.mother_picture"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
                                 <vs-divider></vs-divider>
@@ -785,14 +791,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="student.guardian_picture"
-                                              v-if="student.guardian_picture"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="student.guardian_picture"
+                                             v-if="student.guardian_picture"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
                             </vs-tab>

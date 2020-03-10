@@ -379,16 +379,32 @@ const router = new Router({
                 },
                 {
                     path: '/account/transaction/add', // @@ 1
-                    name: 'account.transactionCreate',
+                    name: 'transactionCreate',
                     component: () => import('./views/custom/account/ledger/transactionCreate'),
                     meta: {
                         rule: 'admin'
                     }
                 },
                 {
+                    path: '/account/transaction/:id/edit', // @@ 1
+                    name: 'transactionEdit',
+                    component: () => import('./views/custom/account/ledger/transactionEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/account/transaction-head',
-                    name: 'account.transactionHead',
+                    name: 'transactionHead',
                     component: () => import('./views/custom/account/ledger/index'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/account/transaction-head/:id/edit',
+                    name: 'transactionHeadEdit',
+                    component: () => import('./views/custom/account/ledger/edit'),
                     meta: {
                         rule: 'admin'
                     }
@@ -403,8 +419,16 @@ const router = new Router({
                 },
                 {
                     path: '/account/bank/add',
-                    name: 'account.bankCreate',
+                    name: 'bankCreate',
                     component: () => import('./views/custom/account/bank/create'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/account/bank/:id/edit',
+                    name: 'bankEdit',
+                    component: () => import('./views/custom/account/bank/edit'),
                     meta: {
                         rule: 'admin'
                     }
@@ -419,8 +443,16 @@ const router = new Router({
                 },
                 {
                     path: '/account/bank-transaction/add',
-                    name: 'account.bankTransactionCreate',
+                    name: 'bankTransactionCreate',
                     component: () => import('./views/custom/account/bank/bank-transaction'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/account/bank-transaction/:id/edit',
+                    name: 'bankTransactionEdit',
+                    component: () => import('./views/custom/account/bank/transactionEdit'),
                     meta: {
                         rule: 'admin'
                     }

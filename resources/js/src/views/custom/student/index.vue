@@ -296,7 +296,7 @@
                 alert("hey hasib im edit ")
             },
             deleteItems() {
-                alert("hey hasib im delete ")
+
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'

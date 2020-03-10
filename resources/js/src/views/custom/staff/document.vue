@@ -82,7 +82,7 @@
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
-                    <div class="row p-2">
+                    <div class="row p-4">
 						<h4 class="ml-4">Staff Documents Manager</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">

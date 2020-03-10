@@ -197,6 +197,7 @@
             </div>
             <div class="row w-100 mt-4">
                 <div class="col-md-3">
+                    <br>
                     <div class="d-flex justify-content-center align-items-center w-100 ">
                         <img :src="`https://upload.wikimedia.org/wikipedia/commons/8/87/Sk.wikipedia.org_QR_Code.png`"
                              class="img-thumbnail mt-3 ">
@@ -222,7 +223,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
 
     </div>

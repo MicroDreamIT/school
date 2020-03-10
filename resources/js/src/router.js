@@ -360,6 +360,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path: '/account/payroll/head/:id/edit',
+                    name: 'payrollHeadEdit',
+                    component: () => import('./views/custom/account/payroll/payrollHeadEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
 
                 {
                     path: '/account/transaction',

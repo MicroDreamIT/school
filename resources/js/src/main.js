@@ -13,6 +13,7 @@ import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
+import draggable from 'vuedraggable'
 import { VueMaskDirective } from 'v-mask'
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
@@ -97,6 +98,7 @@ Vue.use(VueHammer)
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
 Vue.component('data-table', dataTable);
+Vue.component('draggable', draggable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
 Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
@@ -129,18 +131,11 @@ new Vue({
     data() {
         return {
             isMaximized: false,
-            notification:{
-                type:'',
-                message:''
-            }
+            notification:''
         }
     },
-
     methods: {
-        emptyNotification(){
-            this.notification.type=''
-            this.notification.message=''
-        },
+
         toggleMaximize() {
             if (this.isMaximized) {
                 if (document.exitFullscreen) {

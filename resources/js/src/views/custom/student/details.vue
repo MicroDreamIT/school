@@ -27,6 +27,22 @@
 
                 </div>
             </div>
+            <div class="col-md-12" v-if="$root.notification">
+                <div role="alert"
+                     class="mt-2 alert alert-success alert-dismissible display-block"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="$root.notification=''"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{$root.notification}}
+                </div>
+            </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                    <vs-card class="p-4">

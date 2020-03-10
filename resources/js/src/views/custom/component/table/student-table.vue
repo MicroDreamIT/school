@@ -357,10 +357,49 @@
                 console.log(key, active)
             },
             doActive() {
-                alert('doing active')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/student/bulk-action', {
+                        bulk_action: 'active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status='success'
+                            this.$root.notification.message='Active successfully'
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                }else{
+                    this.$root.notification.status='error'
+                    this.$root.notification.message='select at least one'
+                }
+
             },
             doInActive() {
-                alert('doing Inactive')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/student/bulk-action', {
+                        bulk_action: 'in-active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status='success'
+                            this.$root.notification.message='in-active successfully'
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                }else{
+                    this.$root.notification.status='error'
+                    this.$root.notification.message='select at least one'
+                }
             },
             doCopy() {
                 alert('doing copy')
@@ -375,7 +414,26 @@
                 alert('doing print')
             },
             doDelete() {
-                alert('doing Delete')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/student/bulk-action', {
+                        bulk_action: 'delete',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status='success'
+                            this.$root.notification.message='delete successfully'
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                }else{
+                    this.$root.notification.status='error'
+                    this.$root.notification.message='select at least one'
+                }
             },
             doSerialize() {
                 this.mainItem = this.item.map(st => {

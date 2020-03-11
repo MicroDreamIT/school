@@ -92,8 +92,8 @@ class StudentController extends CollegeBaseController
         $data['semester'] = $this->activeSemester();
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
-
-        return view(parent::loadDataToView($this->view_path.'.registration.register'), compact('data'));
+        return response()->json($data);
+//        return view(parent::loadDataToView($this->view_path.'.registration.register'), compact('data'));
     }
 
     public function register(AddValidation $request)

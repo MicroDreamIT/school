@@ -66,7 +66,7 @@
                     <div class="row mx-0">
                         <div class="col-md-6 mb-2">
 
-                            <h4>Add</h4>
+                            <h4>Update</h4>
                             <div class="row mt-3 ">
                                 <label class="col-sm-3">Date</label>
                                 <datepicker class="col-sm-9">

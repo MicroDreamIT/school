@@ -46,7 +46,7 @@
                         <router-link :to="'/account/transaction'">
                             <vs-button type="filled" class="smBtn">
                                 <i class="fa fa-history" aria-hidden="true"></i>
-                                Transaction Detail
+								Transaction Detail
                             </vs-button>
                         </router-link>
                         <router-link :to="'/account/transaction/add'">
@@ -64,58 +64,57 @@
                     </div>
                     <vs-divider/>
                     <div class="row mx-0">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
 
-                            <h4>Add</h4>
-                            <div class="row mt-3 ">
-                                <label class="col-sm-3">Date</label>
-                                <datepicker class="col-sm-9">
-                                </datepicker>
-                            </div>
-                            <div class="row mt-3 ">
-                                <label class="col-sm-3">Ledger/Transaction Head</label>
-                                <v-select class="col-sm-9">
-                                </v-select>
-                            </div>
-                            <div class="row mt-3 ">
-                                <label class="col-sm-3">Account Type</label>
-                                <v-select class="col-sm-9">
-                                </v-select>
-                            </div>
-                            <div class="row mt-3 ">
-                                <label class="col-sm-3">Amount</label>
-                                <vs-input class="col-sm-9"
-                                          type="number"
-                                          placeholder="amount">
+                            <h4>Edit Ledger</h4>
 
-                                </vs-input>
-                            </div>
-                            <div class="row mt-3 ">
-                                <label class="col-sm-3">Description</label>
-                                <div class="col-sm-9">
-                                     <vs-textarea
-                                          placeholder="Description">
-                                     </vs-textarea>
+                            <div class="form-group mt-3 ">
+                                <label class="col-sm-3">Title</label>
+                                <vs-input class="col-sm-12"
+								placeholder="e.g. Room Rent">
 
-                                </div>
+								</vs-input>
                             </div>
+							<div class="form-group mt-3 ">
+                                <label class="col-sm-3">Group</label>
+                                <v-select class="col-sm-12">
 
+								</v-select>
+                            </div>
                             <vs-divider></vs-divider>
-                            <div>
-                                <vs-button color="warning"
-                                           type="filled"
-                                           class="my-round">Reset
-                                </vs-button>
-                                <vs-button color="#00b8cf"
-                                           type="filled"
-                                           class="my-round">Save
-                                </vs-button>
-                                <vs-button color="success"
-                                           type="filled"
-                                           class="my-round">Save And Another
-                                </vs-button>
-                            </div>
+                            <vs-button color="#00b8cf"
+                                       type="filled"
+                                       class="my-round">Update
+                            </vs-button>
+                        </div>
+                        <div class="col-md-8">
+                            <ow-data-table :headers="tableHeader"
+                                           :tableHeader="'Transaction Ledger List'"
+                                           :suggestText="'Transaction Ledger Record list on table. Filter Transaction Ledger using the filter.'"
+                                           :url="'/student'"
+                                           :noDataMessage="'No Ledger Record found. Please Filter Ledger Record to show.'"
+                                           :hasSearch="true"
+                                           :has-multiple="true"
+                                           :has-pagination="true"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.username" class="pointer-none">
+                                        {{props.data.email}}
+                                    </vs-td>
 
+                                    <vs-td :data="props.data.username">
+                                        {{props.data.username}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.id">
+                                        {{props.data.website}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.id">
+                                        {{props.data.id}}
+                                    </vs-td>
+                                </template>
+                            </ow-data-table>
                         </div>
                     </div>
 
@@ -133,8 +132,8 @@
                 tableHeader: [
                     {name: 'Transaction Ledger', sort_key: ''},
                     {name: 'Group', sort_key: ''},
-                    {name: 'Status', sort_key: ''},
-                    {name: 'Action', sort_key: ''},
+                    {name: 'Status',sort_key: ''},
+                    {name: 'Action',sort_key: ''},
                 ],
             }
         }

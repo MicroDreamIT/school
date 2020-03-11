@@ -4,7 +4,6 @@
             <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
             {{tableHeader}}
         </h4>
-        <div class="clearfix mt-3"></div>
         <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn">
                     <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
                         <i class="fa fa-check"></i>

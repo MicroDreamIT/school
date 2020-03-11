@@ -93,14 +93,14 @@
                                         <div class="col-md-5">
                                             <div class="form-group ">
                                                 <label>ISBN Number</label>
-                                                <vs-input v-model="searchData.bank" class="w-100">
+                                                <vs-input v-model="searchData.isbn_number" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group ">
                                                 <label>Code</label>
-                                                <vs-input v-model="searchData.account_name" class="w-100">
+                                                <vs-input v-model="searchData.name" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>

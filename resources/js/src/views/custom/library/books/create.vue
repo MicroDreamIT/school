@@ -76,7 +76,7 @@
                     </div>
                     <vs-divider/>
                     <h4 class="d-inline-block mr-4"><i class="fa fa-plus"></i> Books </h4>
-                    <router-link :to="'/'">
+                    <router-link :to="'/library/book/import'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-upload" aria-hidden="true"></i>
                             Bulk Import From CSV

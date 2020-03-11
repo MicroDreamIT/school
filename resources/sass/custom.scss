@@ -343,6 +343,13 @@ button:focus {
 
     .con-content--item {
       opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .open-item {
+    .con-content--item {
+      pointer-events: all !important;
     }
   }
 }
@@ -465,6 +472,27 @@ button:focus {
         }
       }
 
+    }
+  }
+}
+
+.count-number {
+  background: #FF9F43;
+  padding: 3px 5px;
+  border-radius: 5px;
+  margin-left: 3px;
+  font-size: 11px;
+}
+
+.radio-btn {
+  .vs-radio--label {
+    p {
+      padding: 6px 10px;
+      color: white;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin: 0 5px;
+      font-size: 11px;
     }
   }
 }

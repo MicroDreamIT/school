@@ -483,3 +483,16 @@ button:focus {
   margin-left: 3px;
   font-size: 11px;
 }
+
+.radio-btn {
+  .vs-radio--label {
+    p {
+      padding: 6px 10px;
+      color: white;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin: 0 5px;
+      font-size: 11px;
+    }
+  }
+}

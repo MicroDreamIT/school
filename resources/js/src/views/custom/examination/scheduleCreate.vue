@@ -110,7 +110,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 ">
-                        <div class="table-responsive mt-4 " :style="scheduleList.length>0?'padding-bottom: 300px;':''">
+                        <div class="table-responsive mt-4 " :style="scheduleList.length>0?'padding-bottom: 250px;':''">
                             <table class="table  table-striped fees-sort-table">
                                 <thead>
                                 <tr>
@@ -155,19 +155,19 @@
                                         <td class="w-6">
                                             <vs-input type="number"/>
                                         </td>
-                                         <td class="w-6">
+                                        <td class="w-6">
                                             <vs-input type="number"/>
                                         </td>
-                                         <td class="w-6">
+                                        <td class="w-6">
                                             <vs-input type="number"/>
                                         </td>
-                                         <td class="w-6">
+                                        <td class="w-6">
                                             <vs-input type="number"/>
                                         </td>
-                                         <td class="w-12">
-                                             <vs-button @click="deleteRow(i)">
-                                                 <i class="fa fa-trash"></i>
-                                             </vs-button>
+                                        <td class="w-12">
+                                            <vs-button @click="deleteRow(i)">
+                                                <i class="fa fa-trash"></i>
+                                            </vs-button>
                                         </td>
 
 
@@ -175,7 +175,19 @@
                                 </draggable>
                             </table>
                         </div>
-
+                        <vs-divider></vs-divider>
+                        <button class="btn btn-default " type="submit">
+                            <i class="fa fa-history"></i>
+                            Reset
+                        </button>
+                        <button class="btn btn-primary " type="submit">
+                            <i class="fa fa-save"></i>
+                            Save
+                        </button>
+                        <button class="btn btn-success " type="submit">
+                            <i class="fa fa-save"></i>
+                            Save & Add Another
+                        </button>
                     </div>
                 </vs-card>
             </div>
@@ -201,7 +213,7 @@
                 note: {},
                 mainItem: [],
                 searchData: {},
-                scheduleList: [{subject:''},{subject:''}]
+                scheduleList: [{subject: ''}, {subject: ''}]
             }
         },
         methods: {
@@ -217,7 +229,7 @@
             changeStatus() {
 
             },
-            deleteRow(i){
+            deleteRow(i) {
 
             }
         }

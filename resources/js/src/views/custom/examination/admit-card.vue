@@ -22,8 +22,7 @@
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
-                <vs-card class="row">
-
+                <vs-card>
                     <div class="col-md-12 mb-2">
                         <vs-collapse class="custom-collapse">
                             <vs-collapse-item>
@@ -149,7 +148,7 @@
                             <i class="fa fa-list" aria-hidden="true"></i>
                             Target Exam List
                         </h4>
-                        <div class="row">
+                        <div class="row p-2">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Year</label>
@@ -198,7 +197,8 @@
                                 <vs-radio>Admit Card With Schedule</vs-radio>
                             </div>
                             <vs-divider></vs-divider>
-                            <vs-button><i class="fa fa-print"></i>
+                            <vs-button class="my-round" color="#00cfe8">
+                                <i class="fa fa-print"></i>
                             Print Admit Card
                             </vs-button>
                             <vs-divider></vs-divider>

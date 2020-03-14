@@ -26,7 +26,7 @@
                     <div class="col-md-12 mb-2">
                         <h4 class="header large lighter blue">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                           Meet Your Target Exam
+                            Meet Your Target Exam
                         </h4>
                         <div class="row p-2">
                             <div class="col-md-3">
@@ -72,57 +72,13 @@
                                     </v-select>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <vs-radio>Admit Card</vs-radio>
-                                <vs-radio>Admit Card With Schedule</vs-radio>
-                            </div>
                             <vs-divider></vs-divider>
                             <vs-button class="my-round" color="#00cfe8">
                                 <i class="fa fa-print"></i>
-                            Print Admit Card
+                                Print Routine/Schedule
                             </vs-button>
-                            <vs-divider></vs-divider>
 
                         </div>
-
-                        <div class="table-header">
-                            Exams Record list on table. Filter Exams using the filter.
-                        </div>
-                    </div>
-                    <div class="col-md-12 ">
-                        <vs-table
-                                pagination
-                                :max-items="10"
-                                :data="mainItem"
-                                description
-                                :noDataText="'No Exam Mark Ledger data found. Please Filter Exam Mark Ledger to show.'"
-                                description-title="Showing"
-                        >
-
-                            <template slot="thead">
-                                <vs-th>S.N.</vs-th>
-                                <vs-th :sort-key="thead.sort_key?thead.sort_key:''"
-                                       v-for="(thead,indx) in tableHeader"
-                                       :key="indx">
-                                    {{thead.name}}
-                                </vs-th>
-                            </template>
-                            <template slot-scope="{data}">
-                                <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                    <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                    <vs-td></vs-td>
-                                </vs-tr>
-                            </template>
-
-                        </vs-table>
                     </div>
                 </vs-card>
             </div>

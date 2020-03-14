@@ -3,6 +3,19 @@ $primary: #7367f0;
   margin: 2.5px 1.5px !important;
 }
 
+.own-modify-tr{
+ .w-120{
+   width: 120px;
+ }
+  .w-60{
+    width: 90px;
+  }
+  .vs-con-input-label{
+    width: auto;
+  }
+
+}
+
 .text-primary {
   color: $primary !important;
 }

@@ -119,9 +119,7 @@
 								<div class="action-own">
 									<a class="btn btn-primary btn-sm pointer-all"
 									   title="View"
-									   @click.stop="viewItems(props.data.id)"
-									
-									>
+									   @click.stop="viewItems(props.data.id)" >
 										<i class="fa fa-calculator"></i>
 									</a>
 								</div>

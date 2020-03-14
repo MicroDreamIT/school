@@ -137,7 +137,7 @@
 
         data() {
             return {
-                title:'',
+
                 tableHeader: [
                     {name: 'Reg. No.', sort_key: 'reg_no'},
                     {name: 'Student Notes'},
@@ -145,7 +145,7 @@
                     {name: 'Action'},
                 ],
 				notification:'',
-				searchData:{}
+				note:{}
             }
         },
         methods: {

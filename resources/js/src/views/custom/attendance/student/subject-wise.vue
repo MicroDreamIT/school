@@ -140,28 +140,37 @@
                                                                   class="w-100"></vs-input>
                                                     </div>
                                                 </div>
-												<div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Year</label>
                                                         <v-select v-model="searchData.mot_tounge"
                                                                   class="w-100">
-														</v-select>
-														<label>Month</label>
-                                                        <v-select v-model="searchData.mot_tounge"
-                                                                  class="w-100">
-														</v-select>
+                                                        </v-select>
+
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Month</label>
+                                                        <v-select v-model="searchData.mot_tounge"
+                                                                  class="w-100">
+                                                        </v-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Subject</label>
                                                         <v-select v-model="searchData.mot_tounge"
                                                                   class="w-100">
-														</v-select>
-														<label>Type</label>
+                                                        </v-select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Type</label>
                                                         <v-select v-model="searchData.mot_tounge"
                                                                   class="w-100">
-														</v-select>
+                                                        </v-select>
                                                     </div>
                                                 </div>
 
@@ -234,17 +243,17 @@
 
                                 <template slot="thead">
                                     <vs-th>S.N.</vs-th>
-									<vs-th>Year</vs-th>
-									<vs-th>Month</vs-th>
-									<vs-th>Reg.Num</vs-th>
-									<vs-th>Student Name</vs-th>
-									<vs-th v-for="(i,idx) in 32" :key="idx">{{i}} </vs-th>
-									<vs-th>PRESENT</vs-th>
-									<vs-th>ABSENT</vs-th>
-									<vs-th>LATE</vs-th>
-									<vs-th>LEAVE</vs-th>
-									<vs-th>HOLIDAY</vs-th>
-									<vs-th>ACTION</vs-th>
+                                    <vs-th>Year</vs-th>
+                                    <vs-th>Month</vs-th>
+                                    <vs-th>Reg.Num</vs-th>
+                                    <vs-th>Student Name</vs-th>
+                                    <vs-th v-for="(i,idx) in 32" :key="idx">{{i}}</vs-th>
+                                    <vs-th>PRESENT</vs-th>
+                                    <vs-th>ABSENT</vs-th>
+                                    <vs-th>LATE</vs-th>
+                                    <vs-th>LEAVE</vs-th>
+                                    <vs-th>HOLIDAY</vs-th>
+                                    <vs-th>ACTION</vs-th>
                                 </template>
                                 <template slot-scope="{data}">
                                     <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">

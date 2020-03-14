@@ -327,7 +327,14 @@
         created() {
             this.getData()
         },
-
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    console.log(val)
+                }
+            }
+        },
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {

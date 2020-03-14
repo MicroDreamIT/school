@@ -853,7 +853,11 @@
         },
         methods: {
             postData(){
-                // this.$http.post()
+                this.$http.post('/json/student/register', this.student)
+                    .then(res=>{
+                        console.log(res)
+                    })
+                    .catch()
             },
             copyPermanent() {
                 if (this.copyPerm) {

@@ -75,7 +75,6 @@
                                                :has-search="true"
                                                :has-multiple="true"
                                                :has-pagination="true"
-                                               :print-section="false"
                                                :suggestText="'Exams Record list on table. Filter Exams using the filter.'"
                                 >
                                     <template slot="items" slot-scope="props">

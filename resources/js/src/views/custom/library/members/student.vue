@@ -1,35 +1,51 @@
 <template>
 	<div>
 		<div class="row ">
-			<div class="col-md-12">
-				<h2 class="pageTitle">Library Member Student </h2>
-				<div role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
-					<button type="button" data-dismiss="alert" aria-label="Close" class="close">
-						<span aria-hidden="true">×</span>
-					</button>
-					<i class="ace-icon fa fa-hand-o-right"></i>
-					Please, Create Year and Active
-				</div>
-				<div class="p-2">
-					<router-link :to="'/student'">
-						<vs-button type="filled" class="smBtn">Student Fee</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Staff Payroll</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Ledger</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Transacrion</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Bank</vs-button>
-					</router-link>
-				
-				</div>
-			</div>
-			<vs-divider class="mx-3"/>
+            <div class="col-md-12">
+                <h2 class="pageTitle">Books Manager
+                </h2>
+                <div class="p-2">
+                    <router-link :to="'/library/book'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-book" aria-hidden="true"></i>
+                            Book Detail
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/issue-history'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-history" aria-hidden="true"></i>
+                            Issue History
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/member'">
+
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Membership
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Students Member
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/staff'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Staffs Member
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/return-over'">
+                        <vs-button type="filled" class="smBtn" color="warning">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            Return Period Over
+                        </vs-button>
+                    </router-link>
+
+                </div>
+            </div>
+            <vs-divider class="mx-3"/>
 			<div class="col-md-12">
 				<vs-card>
 					<student-table :headers="studentHeader"

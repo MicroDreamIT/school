@@ -1,164 +1,250 @@
 <template>
-	<div>
-		<div class="row ">
-			<div class="col-md-12">
-				<h2 class="pageTitle">Members Manager
-				</h2>
-				<div role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
-					<button type="button" data-dismiss="alert" aria-label="Close" class="close">
-						<span aria-hidden="true">×</span>
-					</button>
-					<i class="ace-icon fa fa-hand-o-right"></i>
-					Please, Create Year and Active
-				</div>
-				<div class="p-2">
-					<router-link :to="'/student'">
-						<vs-button type="filled" class="smBtn">Student Fee</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Staff Payroll</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Ledger</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Transacrion</vs-button>
-					</router-link>
-					<router-link :to="'/'">
-						<vs-button type="filled" class="smBtn">Bank</vs-button>
-					</router-link>
-				
-				</div>
-			</div>
-			<vs-divider class="mx-3"/>
-			<div class="col-md-12">
-				<vs-card>
-					<div class="p-2">
-						<router-link :to="'/student'">
-							<vs-button type="filled" class="smBtn">
-								<i class="fa fa-history" aria-hidden="true"></i> Receive History
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn">
-								<i class="fa fa-list" aria-hidden="true"></i>
-								Master Detail
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn"><i class="fa fa-plus" aria-hidden="true"></i>Add Fees
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn"><i class="fa fa-calculator" aria-hidden="true"></i>Quick
-								Receive
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn"><i class="fa fa-calculator" aria-hidden="true"></i>Collect
-								Fees
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn"><i class="fa fa-money" aria-hidden="true"></i>Balance
-								Fees
-							</vs-button>
-						</router-link>
-						<router-link :to="'/'">
-							<vs-button type="filled" class="smBtn"><i class="fa fa-header" aria-hidden="true"></i> Fees
-								Head
-							</vs-button>
-						</router-link>
-					</div>
-					<vs-divider/>
-					
-					<student-table :headers="studentHeader"
-					               :tableHeader="' Members List'"
-					               :suggestText="'Fees Collection Record list on table. Filter Fees Collection using the filter.'"
-					               :url="'/json/student/'"
-					               :noDataMessage="'No Student data found. Please Filter Student to show.'"
-					               :hasSearch="true"
-					               :has-multiple="true"
-					               :has-pagination="true"
-					               :filterSection="true"
-					>
-						<template slot="items" slot-scope="props">
-							<vs-td :data="props.data.faculty" class="pointer-none">
-								{{props.data.faculty}}
-							</vs-td>
-							
-							<vs-td :data="props.data.semester">
-								{{props.data.semester}}
-							</vs-td>
-							
-							<vs-td :data="props.data.reg_no">
-								{{props.data.reg_no}}
-							</vs-td>
-							
-							<vs-td :data="props.data.name">
-								{{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
-							</vs-td>
-							<vs-td>
-								{{props.data.academic_status+' '+props.data.status}}
-							</vs-td>
-							<vs-td>
-								status
-							</vs-td>
-							<vs-td>
-								Service Activations
-							</vs-td>
-						</template>
-					</student-table>
-				 
-				</vs-card>
-			</div>
-		</div>
-	
-	</div>
+    <div>
+        <div class="row ">
+            <div class="col-md-12">
+                <h2 class="pageTitle">Books Manager
+                </h2>
+                <div class="p-2">
+                    <router-link :to="'/library/book'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-book" aria-hidden="true"></i>
+                            Book Detail
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/issue-history'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-history" aria-hidden="true"></i>
+                            Issue History
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/member'">
+
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Membership
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/student'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Students Member
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/staff'">
+                        <vs-button type="filled" class="smBtn">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Staffs Member
+                        </vs-button>
+                    </router-link>
+                    <router-link :to="'/library/return-over'">
+                        <vs-button type="filled" class="smBtn" color="warning">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            Return Period Over
+                        </vs-button>
+                    </router-link>
+
+                </div>
+            </div>
+            <vs-divider class="mx-3"/>
+            <div class="col-md-12">
+                <vs-card>
+                    <div class="p-2">
+                        <router-link :to="'/library/member'">
+                            <vs-button type="filled" class="smBtn">
+                                <i class="fa fa-users" aria-hidden="true"></i>
+                                Member Detail
+                            </vs-button>
+                        </router-link>
+                        <router-link :to="'/library/member/add'">
+                            <vs-button type="filled" class="smBtn">
+                                <i class="fa fa-list" aria-hidden="true"></i>
+                                New Member
+                            </vs-button>
+                        </router-link>
+                    </div>
+                    <vs-divider/>
+
+                    <vs-collapse class="custom-collapse">
+                        <vs-collapse-item>
+                            <div slot="header">
+                                <vs-button type="filled"
+                                           color="primary"
+                                           icon="double_arrow"
+                                           class="rounded"
+                                >
+                                    Filter Members
+                                </vs-button>
+                            </div>
+                            <div class="filterBox">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group ">
+                                                <label>Member Type</label>
+                                                <v-select v-model="searchData.isbn_number" >
+                                                </v-select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="form-group ">
+                                                <label>REG. NO.</label>
+                                                <vs-input v-model="searchData.name" class="w-100">
+                                                </vs-input>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group ">
+                                                <label>Status</label>
+                                                <v-select v-model="searchData.status">
+                                                </v-select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-2 pl-0">
+                                    <vs-button type="filled"
+                                               color="#00b8cf"
+                                               icon="double_arrow"
+                                               @click.prevent="doFilter"
+                                    >
+                                        Filter
+                                    </vs-button>
+                                </div>
+                            </div>
+                        </vs-collapse-item>
+                    </vs-collapse>
+                    <h4 class="header large lighter blue mt-4">
+                        <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
+                        Members List
+                    </h4>
+                    <div class="easy-link-menu d-flex flex-wrap">
+                        <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
+                            <i class="fa fa-check"></i>
+                            Active
+                        </a>
+                        <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
+                            <i class="fa fa-remove"></i>
+                            In-Active
+                        </a>
+                        <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
+                            <i class="fa fa-trash"></i>
+                            Delete
+                        </a>
+                    </div>
+                    <br>
+                    <div class="table-header">
+                        Members Record list on table. Filter Members using the filter.
+                    </div>
+                    <div class="dt-buttons btn-group action-group my-3">
+                        <button class="btn btn-secondary buttons-copy "
+
+                                @click.prevent="doCopy"
+                        >
+                            <span>Copy</span>
+                        </button>
+                        <button class="btn btn-secondary buttons-pdf "
+                                @click.prevent="doPdf"
+                        >
+                            <span>PDF</span>
+                        </button>
+                        <button class="btn btn-secondary"
+                                @click.prevent="doJson"
+                        >
+                            <span>JSON</span>
+                        </button>
+                        <button class="btn btn-secondary buttons-print"
+                                @click.prevent="doPrint"
+                        >
+                            <span>Print</span>
+                        </button>
+                    </div>
+                    <vs-table
+                            v-model="selected"
+                            pagination
+                            :max-items="10"
+                            :data="mainItem"
+                            description
+                            search
+                            :multiple="true"
+                            :noDataText="'No Member data found. Please Filter Member to show.'"
+                            description-title="Showing"
+                    >
+
+                        <template slot="thead">
+                            <vs-th>S.N.</vs-th>
+                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in tableHeader"
+                                   :key="indx">
+                                {{thead.name}}
+                            </vs-th>
+                        </template>
+                        <template slot-scope="{data}">
+                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
+                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
+                                <vs-td></vs-td>
+                                <vs-td></vs-td>
+                                <vs-td></vs-td>
+                                <vs-td></vs-td>
+                                <vs-td></vs-td>
+                                <vs-td></vs-td>
+                            </vs-tr>
+                        </template>
+
+                    </vs-table>
+                </vs-card>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
+
     export default {
-        components: {},
         data() {
             return {
-                studentHeader: [
-                    {name: 'Faculty/Class', sort_key: 'name'},
-                    {name: 'Sem', sort_key: ''},
-                    {name: 'Reg.Num', sort_key: ''},
-                    {name: 'Student Name', sort_key: ''},
-                    {name: 'Status', sort_key: ''},
+                selected: [],
+                tableHeader: [
+                    {name: 'Date', sort_key: ''},
+                    {name: 'Ledger/Head', sort_key: ''},
+                    {name: 'Dr Amount', sort_key: ''},
+                    {name: 'Cr Amount', sort_key: ''},
+                    {name: 'Description', sort_key: ''},
                     {name: 'Action', sort_key: ''},
-                    {name: 'Service Activation', sort_key: ''},
                 ],
+                searchData: {},
+                mainItem: []
 
             }
         },
-
-        created() {
-
-        },
-
         methods: {
-            viewItems() {
-                alert("hey hasib im view ")
-            },
-            editItems() {
-                alert("hey hasib im edit ")
-            },
-            deleteItems() {
-                alert("hey hasib im delete ")
-            },
+            doFilter() {
 
+            },
+            doActive() {
+
+            },
+            doInActive() {
+
+            },
+            doDelete() {
+
+            },
+            doCopy() {
+                alert('doing copy')
+            },
+            doPdf() {
+                alert('doing pdf')
+            },
+            doJson() {
+                alert('doing json')
+            },
+            doPrint() {
+                alert('doing print')
+            },
         }
-
     }
-
-
 </script>
 
 <style scoped>
 
 </style>
-
-

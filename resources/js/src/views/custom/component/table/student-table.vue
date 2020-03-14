@@ -162,7 +162,7 @@
                         <span>JSON</span>
                     </button>
                     <button class="btn btn-secondary buttons-print"
-                            @click.prevent="doPrint"
+                           v-print="'#studentTableMain'"
                     >
                         <span>Print</span>
                     </button>
@@ -231,6 +231,7 @@
                         :noDataText="noDataMessage"
                         description
                         description-title="Showing"
+                        class="container"
                 >
 
                     <template slot="thead">
@@ -250,6 +251,10 @@
                 </vs-table>
             </div>
         </div>
+        <div class="d-none" ref="studentTableMain">
+            <slot name="printSection" :data="mainItem" ></slot>
+        </div>
+
     </div>
 </template>
 
@@ -402,7 +407,7 @@
                 }
             },
             doCopy() {
-                alert('doing copy')
+                this.$copyText(this.$refs.studentTableMain.innerText)
             },
             doPdf() {
                 alert('doing pdf')

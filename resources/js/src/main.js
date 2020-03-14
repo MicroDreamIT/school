@@ -15,6 +15,9 @@ import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
 import draggable from 'vuedraggable'
 import { VueMaskDirective } from 'v-mask'
+import Print from 'vue-print-nb'
+
+Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
 import Vuesax from 'vuesax'

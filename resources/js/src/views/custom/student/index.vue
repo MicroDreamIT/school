@@ -165,12 +165,12 @@
                             </vs-td>
                         </template>
 
-                        <template slot="printSection" slot-scope="props">
-                            <div id="studentTableMain" >
-                                <div v-for="item in props">{{item}}</div>
+                        <template slot="printSection" slot-scope="props" >
+                            <div id="studentTableMain"  >
+                                <div v-for="item in props"> {{item}} </div>
+                                <br>
                             </div>
                         </template>
-
                     </student-table>
                 </vs-card>
             </div>

@@ -120,7 +120,6 @@
                 button: '',
             }
         },
-
         methods: {
             create() {
                 alert(this.status)

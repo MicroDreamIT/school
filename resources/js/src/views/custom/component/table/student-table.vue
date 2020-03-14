@@ -231,6 +231,8 @@
                         :noDataText="noDataMessage"
                         description
                         description-title="Showing"
+                        class="container"
+                        ref="studentTableMain"
                 >
 
                     <template slot="thead">
@@ -402,7 +404,7 @@
                 }
             },
             doCopy() {
-                alert('doing copy')
+
             },
             doPdf() {
                 alert('doing pdf')

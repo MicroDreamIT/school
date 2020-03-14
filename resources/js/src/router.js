@@ -1113,7 +1113,7 @@ const router = new Router({
                 {
                     path: '/payment-method/:id/edit',
                     name: 'paymentMethodEdit',
-                    component: () => import('./views/custom/academics/payment-method'),
+                    component: () => import('./views/custom/academics/paymentEdit'),
                     meta: {
                         rule: 'admin'
                     }

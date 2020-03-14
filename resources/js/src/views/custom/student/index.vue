@@ -164,10 +164,18 @@
                                 </div>
                             </vs-td>
                         </template>
+
+                        <template slot="printSection" slot-scope="props">
+                            <div id="studentTableMain" >
+                                <div v-for="item in props">{{item}}</div>
+                            </div>
+                        </template>
+
                     </student-table>
                 </vs-card>
             </div>
         </div>
+
         <vs-popup class="holamundo"
                   :title="residentUser.reg_no+' | Manage Resident'"
                   :active.sync="residentModal">
@@ -241,6 +249,7 @@
                 </button>
             </div>
         </vs-popup>
+
     </div>
 </template>
 
@@ -263,13 +272,13 @@
                 transportModal: false,
                 residentUser: {},
                 transportUser: {},
-                resident:{},
-                transport:{},
-                hostels:[],
-                beds:[],
-                routes:[],
-                vehicles:[],
-                rooms:[]
+                resident: {},
+                transport: {},
+                hostels: [],
+                beds: [],
+                routes: [],
+                vehicles: [],
+                rooms: []
 
             }
         },

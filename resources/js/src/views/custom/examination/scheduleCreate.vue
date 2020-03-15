@@ -110,8 +110,8 @@
                         </div>
                     </div>
                     <div class="col-md-12 ">
-                        <div class="table-responsive mt-4 " :style="scheduleList.length>0?'padding-bottom: 250px;':''">
-                            <table class="table  table-striped fees-sort-table">
+                        <div class="table-responsive overflow mt-4 " :style="scheduleList.length>0?'padding-bottom: 250px;':''">
+                            <table class="table  table-striped">
                                 <thead>
                                 <tr>
                                     <th>Sort</th>
@@ -128,49 +128,41 @@
 
                                 </thead>
                                 <draggable v-model="scheduleList" tag="tbody">
-                                    <tr :key="i" v-for="(tr, i) in scheduleList">
+                                    <tr :key="i" v-for="(tr, i) in scheduleList" class="own-modify-tr">
                                         <td class="w-12">
                                             <vs-button class="my-round">
                                                 <i class="fa fa-arrows"></i>
                                             </vs-button>
                                         </td>
                                         <td>
-                                            <vs-input v-model="tr.subject" disable>
-
-                                            </vs-input>
+                                            <vs-input v-model="tr.subject" disabled> </vs-input>
                                         </td>
-                                        <td>
-                                            <datepicker v-model="tr.due_date">
-                                            </datepicker>
+                                        <td class="w-120">
+                                            <datepicker v-model="tr.due_date" placeholder="Date"> </datepicker>
                                         </td>
-                                        <td>
+                                        <td  class="w-120">
                                             <vs-input type="time"/>
                                         </td>
-                                        <td>
-
+                                        <td  class="w-120">
                                             <vs-input type="time"/>
-
                                         </td>
-
-                                        <td class="w-6">
+                                        <td class="w-90">
                                             <vs-input type="number"/>
                                         </td>
-                                        <td class="w-6">
+                                        <td class="w-90">
                                             <vs-input type="number"/>
                                         </td>
-                                        <td class="w-6">
+                                        <td class="w-90">
                                             <vs-input type="number"/>
                                         </td>
-                                        <td class="w-6">
+                                        <td class="w-90">
                                             <vs-input type="number"/>
                                         </td>
-                                        <td class="w-12">
-                                            <vs-button @click="deleteRow(i)">
+                                        <td class="text-right">
+                                            <vs-button @click="deleteRow(i)" color="danger">
                                                 <i class="fa fa-trash"></i>
                                             </vs-button>
                                         </td>
-
-
                                     </tr>
                                 </draggable>
                             </table>

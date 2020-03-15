@@ -28,9 +28,7 @@ class FacultyController extends CollegeBaseController
             ->orderBy('faculty')
             ->with('semester')
             ->get();
-
-//       return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
-return response()->json($data['faculty']);
+            return response()->json($data['faculty']);
     }
 
     public function store(AddValidation $request)
@@ -174,7 +172,5 @@ return response()->json($data['faculty']);
         $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
         return redirect()->route($this->base_route);
     }
-    public function semester(){
-    return $this->belongsTo('App\Model\FacultySemester');
-    }
+
 }

@@ -333,7 +333,11 @@
             searchData:{
                 deep:true,
                 handler(val){
-                    console.log(val)
+                    const searchParams = new URLSearchParams();
+                    const search = val;
+
+                    Object.keys(search).forEach(key => searchParams.append(key, search[key]));
+                    console.log(searchParams.toString())
                 }
             }
         },

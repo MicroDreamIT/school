@@ -130,16 +130,8 @@ __webpack_require__.r(__webpack_exports__);
       notification: 'Please, Create Year and Active',
       status: '',
       status2: [],
-      button: '',
-      method: '',
-      id: null
+      button: ''
     };
-  },
-  created: function created() {
-    var method_id = this.$root.getMethod_and_id();
-    this.method = method_id[1];
-    this.id = method_id[0];
-    console.log(this.id, this.method);
   },
   methods: {
     create: function create() {

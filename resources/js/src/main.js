@@ -14,13 +14,14 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'vue-select/dist/vue-select.css'
 import vSelect from 'vue-select'
 import draggable from 'vuedraggable'
-import { VueMaskDirective } from 'v-mask'
+import {VueMaskDirective} from 'v-mask'
 import Print from 'vue-print-nb'
-
+import moment from 'moment'
 Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
+
 Vue.use(Vuesax)
 Vue.component('v-select', vSelect)
 // axios
@@ -100,12 +101,14 @@ import {VueHammer} from 'vue2-hammer'
 Vue.use(VueHammer)
 import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
+
 Vue.component('data-table', dataTable);
 Vue.component('draggable', draggable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
 Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
 import Datepicker from 'vuejs-datepicker';
+
 Vue.component('datepicker', Datepicker);
 import VueQuillEditor from 'vue-quill-editor'
 
@@ -134,16 +137,21 @@ new Vue({
     data() {
         return {
             isMaximized: false,
-            notification:{
-                status:'',
-                message:''
+            notification: {
+                status: '',
+                message: ''
             }
         }
     },
+    watch: {
+        '$route'(to, from) {
+            this.emptyNotification()
+        }
+    },
     methods: {
-        emptyNotification(){
-            this.notification.status=''
-            this.notification.message=''
+        emptyNotification() {
+            this.notification.status = ''
+            this.notification.message = ''
         },
         toggleMaximize() {
             if (this.isMaximized) {
@@ -164,21 +172,24 @@ new Vue({
                     this.$el.webkitRequestFullScreen(this.$el.ALLOW_KEYBOARD_INPUT);
                 }
             }
-            this.isMaximized=!this.isMaximized
+            this.isMaximized = !this.isMaximized
         },
         onFullScreenChange() {
             let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
-            console.log(fullscreenElement)
-            // if in fullscreen mode fullscreenElement won't be null
         },
-        getMethod_and_id() {
-            let id = this.$route.params?this.$route.params.id:null;
-            let method = this.$route.path.includes('edit')?'Edit':'';
-            return [id, method];
+        objectToArray(obj) {
+            let array = []
+            Object.keys(obj).forEach(key => {
+                array.push({id: key, value: obj[key]})
+            });
+            return array;
         },
-        parseDate(date){
-            return date.toString().substr(0,10)
-        }
+        parseDate(date) {
+            return date.toString().substr(0, 10)
+        },
+        formatPicker(event) {
+            return moment(event).format('YYYY-MM-DD');
+        },
 
 
     },

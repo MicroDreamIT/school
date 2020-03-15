@@ -33,9 +33,17 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Reg Date From</label>
-                                            <datepicker v-model="searchData.fromRegDate"/>
+                                            <datepicker
+                                                    :value="searchData.reg_start_date"
+                                                    :format="'yyyy-MM-dd'"
+                                                    @input="searchData.reg_start_date=$root.formatPicker($event)"
+                                            />
                                             <label>To</label>
-                                            <datepicker v-model="searchData.toRegDate"/>
+                                            <datepicker
+                                                    v-model="searchData.reg_end_date"
+                                                    :format="'yyyy-MM-dd'"
+                                                    @input="searchData.reg_end_date=$root.formatPicker($event)"
+                                            />
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -44,7 +52,7 @@
                                             <v-select v-model="searchData.academic_status"
                                                       :options="academic_status"
                                                       label="value"
-                                                      value="id"
+                                                      :reduce="a => a.id"
                                                       placeholder="Select Academic Status"
                                             >
                                             </v-select>
@@ -61,19 +69,22 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Faculty/Class</label>
-                                            <v-select v-model="searchData.faculties"
+                                            <v-select v-model="searchData.faculty"
                                                       :options="faculties"
+                                                      label="value"
+                                                      :reduce="a => a.id"
                                                       placeholder="Select Faculty/Class"
+                                                      @input="findSemester(searchData.faculty)"
                                             >
                                             </v-select>
 
                                         </div>
                                         <div class="form-group">
                                             <label>Sem./Sec.</label>
-                                            <v-select v-model="searchData.semester"
+                                            <v-select v-model="searchData.semester_select"
                                                       :options="semester"
-                                                      label="value"
-                                                      value="id"
+                                                      label="semester"
+                                                      :reduce="a => a.id"
                                                       placeholder="Select Sem./Sec."
                                             >
                                             </v-select>
@@ -103,7 +114,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Mot.Tongue:</label>
-                                            <vs-input v-model="searchData.mot_tounge" class="w-100"></vs-input>
+                                            <vs-input v-model="searchData.mother_tongue" class="w-100"></vs-input>
                                         </div>
                                     </div>
                                 </div>
@@ -162,7 +173,7 @@
                         <span>JSON</span>
                     </button>
                     <button class="btn btn-secondary buttons-print"
-                           v-print="'#studentTableMain'"
+                            v-print="'#studentTableMain'"
                     >
                         <span>Print</span>
                     </button>
@@ -175,7 +186,10 @@
                                     <label>Faculty/Class</label>
                                     <v-select v-model="transferred.faculty"
                                               :options="faculties"
+                                              label="value"
+                                              :reduce="a => a.id"
                                               placeholder="Select Faculty/Class"
+                                              @input="findSemesterTransfer(transferred.faculty)"
                                     >
                                     </v-select>
 
@@ -185,7 +199,7 @@
                                     <v-select v-model="transferred.academic_status"
                                               :options="academic_status"
                                               label="value"
-                                              value="id"
+                                              :reduce="a => a.id"
                                               placeholder="Select Academic Status"
                                     >
                                     </v-select>
@@ -195,9 +209,9 @@
                                 <div class="form-group">
                                     <label>Sem./Sec.</label>
                                     <v-select v-model="transferred.semester"
-                                              :options="semester"
-                                              label="value"
-                                              value="id"
+                                              :options="semesterTransfer"
+                                              label="semester"
+                                              :reduce="a => a.id"
                                               placeholder="Select Sem./Sec."
                                     >
                                     </v-select>
@@ -252,7 +266,7 @@
             </div>
         </div>
         <div class="d-none" ref="studentTableMain">
-            <slot name="printSection" :data="mainItem" ></slot>
+            <slot name="printSection" :data="mainItem"></slot>
         </div>
 
     </div>
@@ -326,7 +340,8 @@
                 batch: [],
                 semester: [],
                 mainItem: [],
-                transferred: {}
+                transferred: {},
+                semesterTransfer: []
             }
         },
         created() {
@@ -337,29 +352,43 @@
             getData() {
                 this.$http.get(this.url).then(res => {
                     this.item = res.data.student;
-                    Object.keys(res.data.academic_status).forEach(key => {
-                        this.academic_status.push({id: key, value: res.data.academic_status[key]})
-                    });
-                    this.faculties = res.data.faculties;
+                    this.academic_status = this.$root.objectToArray(res.data.academic_status)
+                    this.faculties = this.$root.objectToArray(res.data.faculties);
                     this.batch = res.data.batch;
-                    Object.keys(res.data.semester).forEach(key => {
-                        this.semester.push({id: key, value: res.data.semester[key]})
-                    });
                     this.doSerialize()
                 });
 
             },
+            findSemester(faculty) {
+                if (faculty) {
+                    this.$http.post('/json/student/find-semester', {
+                        faculty_id: faculty
+                    }).then(res => {
+                        this.semester = res.data.semester
+                    }).catch(err => {
+                        alert(err.response.message)
+                    })
+                }
+
+            },
+            findSemesterTransfer(faculty) {
+                if (faculty) {
+                    this.$http.post('/json/student/find-semester', {
+                        faculty_id: faculty
+                    }).then(res => {
+                        this.semesterTransfer = res.data.semester
+                    }).catch(err => {
+                        alert(err.response.message)
+                    })
+                }
+
+            },
+
             doFilter() {
-                alert(this.searchData.semester.id)
-            },
-            handleSearch(searching) {
-                console.log(searching)
-            },
-            handleChangePage(page) {
-                console.log(page)
-            },
-            handleSort(key, active) {
-                console.log(key, active)
+                this.$http.get(this.url,{params:this.searchData}).then(res => {
+                    this.item = res.data.student;
+                    this.doSerialize()
+                });
             },
             doActive() {
                 if (this.selected.length > 0) {
@@ -370,17 +399,17 @@
                         })
                     })
                         .then(res => {
-                            this.$root.notification.status='success'
-                            this.$root.notification.message='Active successfully'
+                            this.$root.notification.status = 'success'
+                            this.$root.notification.message = 'Active successfully'
                             this.selected = [];
                             this.getData()
                         })
                         .catch(err => {
                             alert(err.response.message)
                         })
-                }else{
-                    this.$root.notification.status='error'
-                    this.$root.notification.message='select at least one'
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
                 }
 
             },
@@ -393,17 +422,17 @@
                         })
                     })
                         .then(res => {
-                            this.$root.notification.status='success'
-                            this.$root.notification.message='in-active successfully'
+                            this.$root.notification.status = 'success'
+                            this.$root.notification.message = 'in-active successfully'
                             this.selected = [];
                             this.getData()
                         })
                         .catch(err => {
                             alert(err.response.message)
                         })
-                }else{
-                    this.$root.notification.status='error'
-                    this.$root.notification.message='select at least one'
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
                 }
             },
             doCopy() {
@@ -427,17 +456,17 @@
                         })
                     })
                         .then(res => {
-                            this.$root.notification.status='success'
-                            this.$root.notification.message='delete successfully'
+                            this.$root.notification.status = 'success'
+                            this.$root.notification.message = 'delete successfully'
                             this.selected = [];
                             this.getData()
                         })
                         .catch(err => {
                             alert(err.response.message)
                         })
-                }else{
-                    this.$root.notification.status='error'
-                    this.$root.notification.message='select at least one'
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
                 }
             },
             doSerialize() {
@@ -446,8 +475,8 @@
                         id: st.id,
                         reg_no: st.reg_no,
                         reg_date: st.reg_date,
-                        faculty: this.faculties[st.faculty],
-                        semester: this.semester.filter(d => d.id == st.semester)[0].value,
+                        faculty: this.faculties[st.faculty].value,
+                        semester: st.semester,
                         batch: this.batch[st.batch],
                         academic_status: this.academic_status.filter(d => d.id == st.academic_status)[0].value,
                         first_name: st.first_name ? st.first_name : '',
@@ -467,7 +496,6 @@
             doReset() {
                 this.transferred = {faculty: null, semester: null, academic_status: null}
             }
-
         }
     }
 </script>

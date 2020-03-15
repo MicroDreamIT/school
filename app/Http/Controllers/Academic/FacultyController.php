@@ -26,13 +26,9 @@ class FacultyController extends CollegeBaseController
        $data = [];
        $data['faculty'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')
+            ->with('semester')
             ->get();
-
-       $data['semester'] = Semester::select('id', 'semester')
-            ->Active()
-            ->get();
-
-       return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+            return response()->json($data['faculty']);
     }
 
     public function store(AddValidation $request)
@@ -176,4 +172,5 @@ class FacultyController extends CollegeBaseController
         $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
         return redirect()->route($this->base_route);
     }
+
 }

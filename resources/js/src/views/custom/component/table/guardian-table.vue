@@ -198,15 +198,6 @@
             doFilter() {
                 alert(this.searchData.semester.id)
             },
-            handleSearch(searching) {
-                console.log(searching)
-            },
-            handleChangePage(page) {
-                console.log(page)
-            },
-            handleSort(key, active) {
-                console.log(key, active)
-            },
             doActive() {
                 alert('doing active')
             },

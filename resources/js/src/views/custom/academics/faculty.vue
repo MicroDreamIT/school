@@ -3,14 +3,24 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Faculty/Level/Class Manager</h2>
-                <div role="alert" class="mt-2 alert alert-success alert-dismissible display-block">
-                    <button type="button" data-dismiss="alert" aria-label="Close" class="close">
+            </div>
+            <div class="col-md-12" v-if="$root.notification.status">
+                <div role="alert"
+                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="$root.emptyNotification()"
+                    >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    Please, Create Year and Active
+                    {{$root.notification.message}}
                 </div>
             </div>
+            <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-4">
@@ -18,51 +28,108 @@
                             <h4><i class="fa fa-search"></i> Create Faculty/Level/Class</h4><br>
                             <div class="form-group">
                                 <label>Faculty/Class</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input
+                                        class="w-100"
+                                        placeholder="e.g. Class One/Bachelor of Business Admin.."
+                                        v-validate="'required'"
+                                        v-model="faculty.faculty"
+                                        data-vv-name="faculty"
+                                        :danger="errors.first('faculty')?true:false"
+                                        :danger-text="errors.first('faculty')"
+                                >
+
+                                </vs-input>
                             </div>
                             <div class="form-group">
                                 <label>Faculty/ClassCode</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input
+                                        class="w-100"
+                                        v-validate="'required'"
+                                        v-model="faculty.faculty_code"
+                                        data-vv-name="faculty_code"
+                                        :danger="errors.first('faculty_code')?true:false"
+                                        :danger-text="errors.first('faculty_code')"
+                                >
+
+                                </vs-input>
                             </div>
                             <div class="form-group">
-                                <label>Semister/section</label>
+                                <label>Semester/section</label>
                                 <div class="d-flex">
-                                    <vs-checkbox class="flex-1">1</vs-checkbox>
-                                    <vs-checkbox class="flex-1">3</vs-checkbox>
+                                    <vs-checkbox
+                                            class="flex-1"
+                                            v-model="faculty.semester"
+                                            vs-value="1"
+                                    >1
+                                    </vs-checkbox>
+                                    <vs-checkbox
+                                            class="flex-1"
+                                            v-model="faculty.semester"
+                                            vs-value="3"
+                                    >3
+                                    </vs-checkbox>
                                 </div>
 
                             </div>
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
-                                       class="my-round">Create
+                                       class="my-round"
+                                       @click="submit"
+                            >
+                                Create
                             </vs-button>
                         </div>
                         <div class="col-md-8"><br>
                             <ow-data-table :headers="tableHeader"
                                            :tableHeader="'Faculty/Level/Class List'"
                                            :suggestText="'Faculty/Level/Class Record list on table. Filter Faculty/Level/Class using the filter.'"
-                                           :url="'/student'"
+                                           :url="'/json/faculty'"
                                            :noDataMessage="'No Faculty data found. Please Filter Faculty to show.'"
                                            :hasSearch="true"
                                            :has-multiple="true"
                                            :has-pagination="true"
+                                           ref="facultyTable"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
-                                        {{props.data.email}}
+                                    <vs-td>
+                                        {{'['+props.data.id+']-'+props.data.faculty+'-['+props.data.faculty_code+']'}}
                                     </vs-td>
 
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
+                                    <vs-td>
+                                        <div>
+                                            <span v-for="sem in props.data.semester">
+                                                {{sem.id+'-['+sem.semester+']'}}
+                                            </span>
+                                        </div>
                                     </vs-td>
 
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
+                                    <vs-td>
+                                        <div class="d-flex flex-wrap">
+                                    <vs-switch color="success"
+                                               :checked="props.data.status=='active'?true:false"
+                                               @click.stop="changeStatus(props.data.id,props.data.status)"
+                                               class="pointer-all ml-2"
+                                    >
+                                        <span slot="on">Active</span>
+                                        <span slot="off">In-Active</span>
+                                    </vs-switch>
+                                </div>
                                     </vs-td>
 
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
+                                    <vs-td>
+                                        <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
                                     </vs-td>
                                 </template>
                             </ow-data-table>
@@ -82,14 +149,39 @@
         name: "payment-method",
         data() {
             return {
-                searchData: {},
+                faculty: {semester:[]},
                 tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                    {name: 'Code-Faculty/Level/Class', sort_key: 'email'},
+                    {name: 'Sem./Sec.', sort_key: ''},
+                    {name: 'status', sort_key: ''},
+                    {name: 'Action'},
                 ],
             }
+        },
+        methods: {
+            submit() {
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        console.log(this.faculty)
+                    }
+                })
+            },
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active'
+                let url = '/json/faculty/' + id + '/' + stat
+                this.$http.get(url).then(res => {
+                    this.$refs.facultyTable.getData()
+                    this.$root.notification.status = res.data[0]
+                    this.$root.notification.message = res.data[1]
+                })
+
+            },
+            editItems() {
+                alert("hey hasib im edit ")
+            },
+            deleteItems() {
+
+            },
         }
     }
 </script>

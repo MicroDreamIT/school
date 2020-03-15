@@ -68,7 +68,6 @@ class StudentController extends CollegeBaseController
             ->get();
 
         $data['faculties'] = $this->activeFaculties();
-        $data['semester'] = $this->activeSemester();
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
 
@@ -1049,7 +1048,7 @@ class StudentController extends CollegeBaseController
         } else {
             $response['message'] = 'Invalid request!!';
         }
-        return response()->json(json_encode($response));
+        return response()->json($response);
     }
 
     public function transfer(Request $request)

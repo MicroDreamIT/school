@@ -1244,14 +1244,6 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
-                {
-                    path: '/setting/general',
-                    name: 'generalSetting',
-                    component: () => import('./views/custom/user/general-setting'),
-                    meta: {
-                        rule: 'admin'
-                    }
-                },
                 /* url for more section end */
 
 

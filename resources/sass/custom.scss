@@ -2,6 +2,36 @@ $primary: #7367f0;
 .smBtn {
   margin: 2.5px 1.5px !important;
 }
+.overflow{
+  overflow-x: scroll;
+}
+.own-modify-tr{
+   @media(max-width: 768px){
+     input[readonly="readonly"]{
+       width:120px;
+     }
+     input[type="time"]{
+       width: 90px;
+     }
+     .w-120{
+       width: unset;
+     }
+     .vs-con-input-label{
+       width: 80px;
+     }
+   }
+    @media(min-width:1024px ){
+        .w-120{
+          width: 120px;
+        }
+        .w-90{
+          width: 90px;
+        }
+        .vs-con-input-label{
+          width: auto;
+        }
+    }
+}
 
 .text-primary {
   color: $primary !important;

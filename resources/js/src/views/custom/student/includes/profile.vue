@@ -75,7 +75,7 @@
             <!--per mamanent address -->
             <div class="row w-100 mt-4">
                 <div class="col-md-12 mx-auto">
-                    <vs-button type="filled" class="smBtn text-capitalize"> permanent address </vs-button>
+                    <vs-button type="filled" class="smBtn text-capitalize"> Permanent Address </vs-button>
                     <br>
                    <div class="data-table">
                        <div class="rows">
@@ -97,7 +97,7 @@
             <!--temporary address-->
             <div class="row w-100 mt-4">
                 <div class="col-md-12 mx-auto">
-                    <vs-button type="filled" class="smBtn text-capitalize"> temporarry address </vs-button>
+                    <vs-button type="filled" class="smBtn text-capitalize"> Temporary Address </vs-button>
                     <br>
                     <div class="data-table">
                         <div class="rows">
@@ -119,7 +119,7 @@
             <!--parential info -->
             <div class="row w-100 mt-4">
                 <div class="col-md-12 mx-auto">
-                    <vs-button type="filled" class="smBtn text-capitalize">personal info</vs-button>
+                    <vs-button type="filled" class="smBtn text-capitalize">Personal Info</vs-button>
                     <br>
                     <div class="data-table">
                         <div class="rows">
@@ -155,7 +155,7 @@
             <!--guardian info  -->
             <div class="row w-100 mt-4">
                 <div class="col-md-12 mx-auto">
-                    <vs-button type="filled" class="smBtn text-capitalize">guardian info</vs-button>
+                    <vs-button type="filled" class="smBtn text-capitalize">Guardian Info</vs-button>
                     <br>
                     <div class="data-table">
                         <div class="rows">

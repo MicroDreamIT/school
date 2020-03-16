@@ -1,538 +1,270 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[11],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js&":
-/*!******************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  extends: vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Line"],
-  props: {
-    chartdata: {
-      type: Object,
-      default: null
-    },
-    options: {
-      type: Object,
-      default: null
-    }
-  },
-  mounted: function mounted() {
-    this.renderChart(this.chartdata, this.options);
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js&":
-/*!**************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _component_chart_LineChart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component/chart/LineChart */ "./resources/js/src/views/custom/component/chart/LineChart.vue");
-/* harmony import */ var _component_table_data_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./component/table/data-table */ "./resources/js/src/views/custom/component/table/data-table.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    ChartjsComponentLineChart: _component_chart_LineChart__WEBPACK_IMPORTED_MODULE_0__["default"],
-    DataTable: _component_table_data_table__WEBPACK_IMPORTED_MODULE_1__["default"]
-  },
+  components: {},
   data: function data() {
     return {
-      collectionData: {
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [{
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9, 1.1, 0],
-            label: "Fee Collection",
-            borderColor: "#7367F0",
-            fill: true
-          }, {
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9, 0.2, 0.4],
-            label: "Salary",
-            borderColor: "#28C76F",
-            fill: true
-          }]
-        },
-        options: {
-          title: {
-            display: true,
-            text: 'Fees Collection'
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            xAxes: [{
-              gridLines: {
-                offsetGridLines: true
-              }
-            }]
-          }
-        }
-      },
-      compareData: {
-        data: {
-          labels: [],
-          datasets: [{
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9],
-            label: "Collected Fee",
-            borderColor: "#7367F0",
-            fill: true
-          }, {
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9],
-            label: "Due Fee",
-            borderColor: "#28C76F",
-            fill: true
-          }]
-        },
-        options: {
-          title: {
-            display: true,
-            text: 'Fee Compare'
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            xAxes: [{
-              gridLines: {
-                offsetGridLines: true
-              }
-            }]
-          }
-        }
-      },
-      transaction: {
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [{
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9],
-            label: "Debit",
-            borderColor: "#7367F0",
-            fill: false
-          }, {
-            data: [0.1, 0.3, 0.5, 0.1, 0.2, 0.1, 0.3, 0.2, 0.7, 0.9],
-            label: "Credit",
-            borderColor: "#28C76F",
-            fill: false
-          }]
-        },
-        options: {
-          title: {
-            display: true,
-            text: 'Transaction'
-          },
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      },
-      feesCollection: [{
-        name: 'Reg.No.',
-        sort_key: 'reg_no'
-      }, {
-        name: 'Fees Title',
-        sort_key: 'title'
-      }, {
-        name: 'Date',
-        sort_key: 'date'
-      }, {
-        name: 'Amount'
-      }],
-      staffPayroll: [{
-        name: 'Reg.No.',
-        sort_key: 'reg_no'
-      }, {
-        name: 'PayFor',
-        sort_key: 'pay_for'
-      }, {
-        name: 'Date',
-        sort_key: 'date'
-      }, {
-        name: 'Amount'
-      }],
-      transactionTable: [{
-        name: 'TrHead',
-        sort_key: 'reg_no'
-      }, {
-        name: 'Date',
-        sort_key: 'date'
-      }, {
-        name: 'Dr.Amount'
-      }, {
-        name: 'Cr.Amount'
-      }],
-      tableHeader1: [{
-        name: 'Email',
-        field: 'email',
-        sort_key: 'email'
-      }, {
-        name: 'Name',
-        field: 'name',
-        sort_key: 'name'
-      }, {
-        name: 'Mobile',
-        field: 'mobile'
-      }, {
-        name: 'PID'
-      }],
-      searchData: {}
+      selectedStudent: null,
+      students: ['dsad', 'sadsad'],
+      receive_date: '',
+      receive_amount: null,
+      discount: 0,
+      note: '',
+      payment_method: 'cash',
+      isPrint: 'no_print'
     };
   },
-  computed: {
-    myStyles: function myStyles() {
-      return {
-        height: "400px",
-        position: 'relative'
-      };
-    }
+  created: function created() {},
+  methods: {
+    verifyStudent: function verifyStudent() {},
+    quickCollect: function quickCollect() {}
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380&":
-/*!******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380& ***!
-  \******************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&":
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -545,864 +277,796 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h3", [_vm._v("\n        Dashboard\n    ")]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row mt-2" }, [
-      _c(
-        "div",
-        { staticClass: "col-md-10" },
-        [
-          _c("chartjs-component-line-chart", {
-            style: _vm.myStyles,
-            attrs: {
-              chartdata: _vm.collectionData.data,
-              options: _vm.collectionData.options
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col-md-2" },
-        [
-          _c("chartjs-component-line-chart", {
-            style: _vm.myStyles,
-            attrs: {
-              chartdata: _vm.compareData.data,
-              options: _vm.compareData.options
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col-md-12" },
-        [
-          _c("chartjs-component-line-chart", {
-            style: _vm.myStyles,
-            attrs: {
-              chartdata: _vm.transaction.data,
-              options: _vm.transaction.options
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-9" }, [
-        _c("div", { staticClass: "row mx-0" }, [
-          _c(
-            "div",
-            { staticClass: "col-md-12" },
-            [
-              _c("div", { staticClass: "myTitle" }, [_vm._v("Accounting")]),
-              _vm._v(" "),
-              _c(
-                "vs-tabs",
-                [
-                  _c("vs-tab", { attrs: { label: "Fees Collection" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.feesCollection,
-                            url: "/fees-collection",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    {
-                                      staticClass: "pointer-none",
-                                      attrs: { data: props.data.username }
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("vs-tab", { attrs: { label: "Staff Payroll" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.staffPayroll,
-                            url: "/staff-payroll",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("vs-tab", { attrs: { label: "Transaction" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.transactionTable,
-                            url: "/transaction",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ])
-                ],
-                1
-              )
-            ],
-            1
-          ),
+    _c(
+      "div",
+      { staticClass: "row " },
+      [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("h2", { staticClass: "pageTitle" }, [
+            _vm._v("Receive Detail\n            ")
+          ]),
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "col-md-12" },
+            { staticClass: "p-2" },
             [
-              _c("div", { staticClass: "myTitle" }, [_vm._v("Library")]),
-              _vm._v(" "),
               _c(
-                "vs-tabs",
+                "router-link",
+                { attrs: { to: "/account/fees" } },
                 [
-                  _c("vs-tab", { attrs: { label: "Book Issue" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.tableHeader1,
-                            url: "/student",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("vs-tab", { attrs: { label: "Return Period Over" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.tableHeader1,
-                            url: "/student",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ])
+                  _c(
+                    "vs-button",
+                    { staticClass: "smBtn", attrs: { type: "filled" } },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-user",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Student Fee\n                    "
+                      )
+                    ]
+                  )
                 ],
                 1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-md-12" },
-            [
-              _c("div", { staticClass: "myTitle" }, [_vm._v("Attendance")]),
+              ),
               _vm._v(" "),
               _c(
-                "vs-tabs",
+                "router-link",
+                { attrs: { to: "/account/payroll" } },
                 [
-                  _c("vs-tab", { attrs: { label: "Booklet" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.tableHeader1,
-                            url: "/student",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ])
+                  _c(
+                    "vs-button",
+                    { staticClass: "smBtn", attrs: { type: "filled" } },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-user-secret",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Staff Payroll\n                    "
+                      )
+                    ]
+                  )
                 ],
                 1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-md-12" },
-            [
-              _c("div", { staticClass: "myTitle" }, [
-                _vm._v("Up Coming Birthday")
-              ]),
+              ),
               _vm._v(" "),
               _c(
-                "vs-tabs",
+                "router-link",
+                { attrs: { to: "/account/transaction-head" } },
                 [
-                  _c("vs-tab", { attrs: { label: "Student Birthday" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.tableHeader1,
-                            url: "/student",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("vs-tab", { attrs: { label: "Staff Birthday" } }, [
-                    _c(
-                      "div",
-                      { staticClass: "con-tab-ejemplo" },
-                      [
-                        _c("data-table", {
-                          attrs: {
-                            headers: _vm.tableHeader1,
-                            url: "/student",
-                            "no-data-message": "No matching records found",
-                            searchField: _vm.searchData,
-                            hasSearch: false
-                          },
-                          scopedSlots: _vm._u([
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.email) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.username } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.username) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "vs-td",
-                                    { attrs: { data: props.data.id } },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(props.data.website) +
-                                          "\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("vs-td", { attrs: { data: props.id } }, [
-                                    _vm._v(
-                                      "\n                                            " +
-                                        _vm._s(props.data.id) +
-                                        "\n                                        "
-                                    )
-                                  ])
-                                ]
-                              }
-                            }
-                          ])
-                        })
-                      ],
-                      1
-                    )
-                  ])
+                  _c(
+                    "vs-button",
+                    { staticClass: "smBtn", attrs: { type: "filled" } },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-list",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Ledger\n                    "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "router-link",
+                { attrs: { to: "/account/transaction" } },
+                [
+                  _c(
+                    "vs-button",
+                    { staticClass: "smBtn", attrs: { type: "filled" } },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-list",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Transactions\n                    "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "router-link",
+                { attrs: { to: "/account/bank" } },
+                [
+                  _c(
+                    "vs-button",
+                    { staticClass: "smBtn", attrs: { type: "filled" } },
+                    [
+                      _c("i", {
+                        staticClass: "fa fa-bank",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Bank\n                    "
+                      )
+                    ]
+                  )
                 ],
                 1
               )
             ],
             1
           )
-        ])
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col-md-3" },
-        [
-          _c("div", { staticClass: "myTitle" }, [_vm._v("Overall Summary")]),
-          _vm._v(" "),
-          _vm._m(0),
-          _vm._v(" "),
-          _vm._m(1),
-          _vm._v(" "),
-          _c("vs-divider"),
-          _vm._v(" "),
-          _vm._m(2),
-          _vm._v(" "),
-          _c("vs-divider"),
-          _vm._v(" "),
-          _vm._m(3)
-        ],
-        1
-      )
-    ])
+        ]),
+        _vm._v(" "),
+        _c("vs-divider", { staticClass: "mx-3" }),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-md-12" },
+          [
+            _c(
+              "vs-card",
+              [
+                _c(
+                  "div",
+                  { staticClass: "p-2" },
+                  [
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-history",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Receive History\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/master" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-list",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Master Detail\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/master/add" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-plus",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Add Fees\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/quick-receive" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-calculator",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Quick Receive\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/collection" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-calculator",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Collect Fees\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/balance" } },
+                      [
+                        _c(
+                          "vs-button",
+                          {
+                            staticClass: "smBtn",
+                            attrs: { type: "filled", color: "warning" }
+                          },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-money",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Balance Fees\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "router-link",
+                      { attrs: { to: "/account/fees/head" } },
+                      [
+                        _c(
+                          "vs-button",
+                          { staticClass: "smBtn", attrs: { type: "filled" } },
+                          [
+                            _c("i", {
+                              staticClass: "fa fa-header",
+                              attrs: { "aria-hidden": "true" }
+                            }),
+                            _vm._v(
+                              "\n                            Fees Head\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("vs-divider"),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "col-md-12 " },
+                  [
+                    _c("h4", { staticClass: "header large lighter blue" }, [
+                      _c("i", {
+                        staticClass: "fa fa-search",
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(
+                        "\n                        Search & Verify Student Before Collect\n                    "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "vs-select",
+                      {
+                        staticClass: "w-100",
+                        attrs: { autocomplete: "" },
+                        model: {
+                          value: _vm.selectedStudent,
+                          callback: function($$v) {
+                            _vm.selectedStudent = $$v
+                          },
+                          expression: "selectedStudent"
+                        }
+                      },
+                      _vm._l(_vm.students, function(item, index) {
+                        return _c("vs-select-item", {
+                          key: index,
+                          attrs: { value: item, text: item }
+                        })
+                      }),
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("vs-divider"),
+                _vm._v(" "),
+                _c(
+                  "vs-button",
+                  { staticClass: "smBtn", on: { click: _vm.verifyStudent } },
+                  [
+                    _c("i", { staticClass: "fa fa-user" }),
+                    _vm._v(
+                      "\n                    Verify Student for Collect Fees\n                "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.selectedStudent
+                  ? _c(
+                      "div",
+                      { staticClass: "col-sm-12 mt-2" },
+                      [
+                        _c("div", { staticClass: "row w-100" }, [
+                          _c("div", { staticClass: "col-md-3" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "d-flex justify-content-center align-items-center w-100 "
+                              },
+                              [
+                                _vm.selectedStudent.profile_picture
+                                  ? _c("img", {
+                                      staticClass: "img-thumbnail mt-3 ",
+                                      attrs: {
+                                        src: _vm.selectedStudent.profile_picture
+                                      }
+                                    })
+                                  : _c("img", {
+                                      staticClass: "img-thumbnail mt-3 ",
+                                      attrs: {
+                                        src: __webpack_require__(/*! ../../../../../../assets/images/profile-default.jpg */ "./resources/assets/images/profile-default.jpg")
+                                      }
+                                    })
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-9" }, [
+                            _c("div", { staticClass: "data-table" }, [
+                              _c("div", { staticClass: "rows" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Name")
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "content" },
+                                  [
+                                    _c(
+                                      "router-link",
+                                      {
+                                        attrs: {
+                                          to: {
+                                            name: "studentView",
+                                            params: {
+                                              id: _vm.selectedStudent.id
+                                            }
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                            " +
+                                            _vm._s(_vm.selectedStudent.name) +
+                                            "sdfds\n                                        "
+                                        )
+                                      ]
+                                    )
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Reg. No.:")
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "content" },
+                                  [
+                                    _c(
+                                      "router-link",
+                                      {
+                                        attrs: {
+                                          to: {
+                                            name: "studentView",
+                                            params: {
+                                              id: _vm.selectedStudent.id
+                                            }
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                            " +
+                                            _vm._s(_vm.selectedStudent.reg_no) +
+                                            "sfddsfds\n                                        "
+                                        )
+                                      ]
+                                    )
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "rows" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Univ.Reg.:")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm.selectedStudent.university_reg_no
+                                    )
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("DOB:")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v(
+                                    _vm._s(_vm.selectedStudent.date_of_birth)
+                                  )
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "rows" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Faculty/Class:")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v("123")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Sem./Sec.:")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v(" 06/01/2020")
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "rows" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Gender :")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v("1235")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Blood Group :")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v(" 06/01/2020")
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "rows" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Nationality :")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v("male")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("E-mail :")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v(" a+")
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "rows2" }, [
+                                _c("div", { staticClass: "header" }, [
+                                  _vm._v("Balance Fee :")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "content" }, [
+                                  _vm._v("islam")
+                                ])
+                              ])
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("vs-divider"),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row mx-0 my-2" }, [
+                          _c("div", { staticClass: "col-sm-2" }, [
+                            _vm._v("Receive Date")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-2" },
+                            [
+                              _c("datepicker", {
+                                model: {
+                                  value: _vm.receive_date,
+                                  callback: function($$v) {
+                                    _vm.receive_date = $$v
+                                  },
+                                  expression: "receive_date"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-2" }, [
+                            _vm._v("Receive Amount")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-2" },
+                            [
+                              _c("vs-input", {
+                                attrs: { type: "number", required: "" },
+                                model: {
+                                  value: _vm.receive_amount,
+                                  callback: function($$v) {
+                                    _vm.receive_amount = $$v
+                                  },
+                                  expression: "receive_amount"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-2" }, [
+                            _vm._v("Discount Amount")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-2" },
+                            [
+                              _c("vs-input", {
+                                attrs: { type: "number", required: "" },
+                                model: {
+                                  value: _vm.discount,
+                                  callback: function($$v) {
+                                    _vm.discount = $$v
+                                  },
+                                  expression: "discount"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row mx-0 my-2" }, [
+                          _c("div", { staticClass: "col-sm-2 " }, [
+                            _vm._v("Payment Method")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-10" },
+                            [
+                              _c(
+                                "vs-radio",
+                                {
+                                  attrs: { "vs-value": "cash" },
+                                  model: {
+                                    value: _vm.payment_method,
+                                    callback: function($$v) {
+                                      _vm.payment_method = $$v
+                                    },
+                                    expression: "payment_method"
+                                  }
+                                },
+                                [_vm._v("Cash")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "vs-radio",
+                                {
+                                  attrs: { "vs-value": "bank" },
+                                  model: {
+                                    value: _vm.payment_method,
+                                    callback: function($$v) {
+                                      _vm.payment_method = $$v
+                                    },
+                                    expression: "payment_method"
+                                  }
+                                },
+                                [_vm._v("Bank")]
+                              )
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row mx-0 my-2" }, [
+                          _c("div", { staticClass: "col-sm-2" }, [
+                            _vm._v("Note")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-10" },
+                            [
+                              _c("vs-textarea", {
+                                model: {
+                                  value: _vm.note,
+                                  callback: function($$v) {
+                                    _vm.note = $$v
+                                  },
+                                  expression: "note"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row mx-0 my-2" }, [
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-2" },
+                            [
+                              _c(
+                                "vs-radio",
+                                {
+                                  attrs: { "vs-value": "no_print" },
+                                  model: {
+                                    value: _vm.isPrint,
+                                    callback: function($$v) {
+                                      _vm.isPrint = $$v
+                                    },
+                                    expression: "isPrint"
+                                  }
+                                },
+                                [_vm._v("No Print")]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-3" },
+                            [
+                              _c(
+                                "vs-radio",
+                                {
+                                  attrs: { "vs-value": "short_print" },
+                                  model: {
+                                    value: _vm.isPrint,
+                                    callback: function($$v) {
+                                      _vm.isPrint = $$v
+                                    },
+                                    expression: "isPrint"
+                                  }
+                                },
+                                [_vm._v("Print Short Print")]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-sm-3" },
+                            [
+                              _c(
+                                "vs-radio",
+                                {
+                                  attrs: { "vs-value": "long_print" },
+                                  model: {
+                                    value: _vm.isPrint,
+                                    callback: function($$v) {
+                                      _vm.isPrint = $$v
+                                    },
+                                    expression: "isPrint"
+                                  }
+                                },
+                                [_vm._v("Print Detail Receipt")]
+                              )
+                            ],
+                            1
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("vs-divider"),
+                        _vm._v(" "),
+                        _c(
+                          "vs-button",
+                          {
+                            staticClass: "w-100 my-round",
+                            on: { click: _vm.quickCollect }
+                          },
+                          [_vm._v("Quick Collect")]
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "py-3" }, [
-      _c("div", { staticClass: "miniTitle" }, [_vm._v("Student Status")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox bg-light" }, [
-        _c("div", [_vm._v("Active")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("4")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox font-weight-bold" }, [
-        _c("div", [_vm._v("Total Student:")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("4")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "py-3" }, [
-      _c("div", { staticClass: "miniTitle" }, [_vm._v("Academic Status")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox bg-light" }, [
-        _c("div", [_vm._v("New Admission")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("4")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox font-weight-bold" }, [
-        _c("div", [_vm._v("Total Student:")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("4")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "py-3" }, [
-      _c("div", { staticClass: "miniTitle" }, [_vm._v("Stuff Status")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox bg-light" }, [
-        _c("div", [_vm._v("Active")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("3")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox font-weight-bold" }, [
-        _c("div", [_vm._v("Total Stuff:")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("3")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "py-3" }, [
-      _c("div", { staticClass: "miniTitle" }, [_vm._v("Book Status")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox bg-light" }, [
-        _c("div", [_vm._v("Available")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("2")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mBox font-weight-bold" }, [
-        _c("div", [_vm._v("Total Book:")]),
-        _vm._v(" "),
-        _c("div", [_vm._v("2")])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/component/chart/LineChart.vue":
-/*!*********************************************************************!*\
-  !*** ./resources/js/src/views/custom/component/chart/LineChart.vue ***!
-  \*********************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _LineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LineChart.vue?vue&type=script&lang=js& */ "./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-var render, staticRenderFns
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  _LineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"],
-  render,
-  staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/src/views/custom/component/chart/LineChart.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************!*\
-  !*** ./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./LineChart.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/component/chart/LineChart.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LineChart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/src/views/custom/dashboard.vue":
+/***/ "./resources/assets/images/profile-default.jpg":
 /*!*****************************************************!*\
-  !*** ./resources/js/src/views/custom/dashboard.vue ***!
+  !*** ./resources/assets/images/profile-default.jpg ***!
   \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/profile-default.jpg?a4eb6109097a3408128df34c0271410c";
+
+/***/ }),
+
+/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue":
+/*!**********************************************************************!*\
+  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue ***!
+  \**********************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dashboard.vue?vue&type=template&id=6f48b380& */ "./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380&");
-/* harmony import */ var _dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboard.vue?vue&type=script&lang=js& */ "./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& */ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&");
+/* harmony import */ var _quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./quick-receive.vue?vue&type=script&lang=js& */ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -1411,50 +1075,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  null,
+  "5ac5cef2",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/src/views/custom/dashboard.vue"
+component.options.__file = "resources/js/src/views/custom/account/fees/quick-receive.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************/
+/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./dashboard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/dashboard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./quick-receive.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380& ***!
-  \************************************************************************************/
+/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&":
+/*!*****************************************************************************************************************!*\
+  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& ***!
+  \*****************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./dashboard.vue?vue&type=template&id=6f48b380& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/dashboard.vue?vue&type=template&id=6f48b380&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_dashboard_vue_vue_type_template_id_6f48b380___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

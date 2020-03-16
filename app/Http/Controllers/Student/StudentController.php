@@ -270,7 +270,7 @@ class StudentController extends CollegeBaseController
             ->first();
 
         if (!$data['student']){
-            request()->session()->flash($this->message_warning, "Not a Valid Student");
+            request()->session()->flash($this->message_warning, "Not a Vali d Student");
             return redirect()->route($this->base_route);
         }
 
@@ -512,6 +512,7 @@ class StudentController extends CollegeBaseController
         $data['guardian_login'] = User::where([['role_id',7],['hook_id',$data['student']->guardian_id]])->first();
 
         $data['url'] = URL::current();
+        return response()->json($data);
         return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 

@@ -104,8 +104,14 @@
         },
         data() {
             return {
-                currentView: 'profile'
+                currentView: 'profile',
+                datas:null
             }
+        },
+        created() {
+            this.$http.get('/json/student/4/view').then(res=>{
+                this.datas = res.data
+            })
         }
     }
 </script>

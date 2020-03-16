@@ -85,7 +85,7 @@
 
                             </div>
                             <vs-divider></vs-divider>
-                            <button class="btn btn-info waves-effect waves-light">
+                            <button class="btn btn-info ">
                                 <i class="fa fa-save bigger-110"></i>
                                 Create
                             </button>

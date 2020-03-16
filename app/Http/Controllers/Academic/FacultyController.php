@@ -29,9 +29,7 @@ class FacultyController extends CollegeBaseController
             ->orderBy('faculty')
             ->with('semester')
             ->get();
-
-//       return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
-return response()->json($data['faculty']);
+            return response()->json($data['faculty']);
     }
 
     public function store(AddValidation $request)

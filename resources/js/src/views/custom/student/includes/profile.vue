@@ -14,7 +14,7 @@
             <div class="row w-100">
                 <div class="col-md-3">
                     <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail mt-3 ">
+                        <img :src="profile.student_image" class="img-thumbnail mt-3 ">
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -23,51 +23,51 @@
                  <div class="data-table">
                         <div class="rows">
                             <div class="header">faculty:</div>
-                            <div class="content">BTECH</div>
+                            <div class="content">{{profile.faculty}}</div>
                             <div class="header">semester:</div>
-                            <div class="content">1</div>
+                            <div class="content">{{profile.semester}}</div>
                         </div>
                         <div class="rows">
                             <div class="header">batch:</div>
-                            <div class="content">ACT</div>
+                            <div class="content">{{profile.batch}}</div>
                             <div class="header"></div>
                             <div class="content"> </div>
                         </div>
                         <div class="rows">
                             <div class="header">Reg no:</div>
-                            <div class="content">123</div>
+                            <div class="content">{{profile.reg_no}}</div>
                             <div class="header">reg date</div>
-                            <div class="content"> 06/01/2020 </div>
+                            <div class="content"> {{profile.reg_date}} </div>
                         </div>
                         <div class="rows">
                             <div class="header">univ.reg:</div>
-                            <div class="content">1235</div>
+                            <div class="content">{{profile.university_reg}}</div>
                             <div class="header">Dob:</div>
                             <div class="content"> 06/01/2020 </div>
                         </div>
                         <div class="rows">
                             <div class="header">gender: </div>
-                            <div class="content">male</div>
+                            <div class="content"> {{profile.gender}} </div>
                             <div class="header">blood group:</div>
-                            <div class="content"> a+ </div>
+                            <div class="content">  {{profile.blood_group}}  </div>
                         </div>
                         <div class="rows">
                             <div class="header">Religion: </div>
-                            <div class="content">islam</div>
+                            <div class="content"> {{profile.religion}} </div>
                             <div class="header">Caste: </div>
-                            <div class="content"> G </div>
+                            <div class="content">  {{profile.caste}}  </div>
                         </div>
                         <div class="rows">
                             <div class="header">Nationality:</div>
-                            <div class="content">indian</div>
+                            <div class="content"> {{profile.nationality}} </div>
                             <div class="header">Mother Tongue: </div>
-                            <div class="content"> hindi </div>
+                            <div class="content"> {{profile.mother_tongue}}  </div>
                         </div>
                         <div class="rows">
                             <div class="header">E-mail: </div>
-                            <div class="content text-lowercase">admin@gmail.com</div>
+                            <div class="content text-lowercase">{{profile.email}} </div>
                             <div class="header">Mobile No : </div>
-                            <div class="content">  65345345634,45634563456345</div>
+                            <div class="content"> {{profile.mobile_1}} </div>
                         </div>
                  </div>
                 </div>
@@ -80,15 +80,15 @@
                    <div class="data-table">
                        <div class="rows">
                            <div class="header">address:</div>
-                           <div class="content">DEHRADUN</div>
+                           <div class="content">{{profile.address}} </div>
                            <div class="header"></div>
                            <div class="content"></div>
                        </div>
                        <div class="rows">
                            <div class="header">state:</div>
-                           <div class="content">uk</div>
+                           <div class="content">{{profile.state}} </div>
                            <div class="header">country</div>
-                           <div class="content">ind</div>
+                           <div class="content">{{profile.country}} </div>
                        </div>
                    </div>
                    
@@ -102,15 +102,15 @@
                     <div class="data-table">
                         <div class="rows">
                             <div class="header">address:</div>
-                            <div class="content">DEHRADUN</div>
+                            <div class="content">{{profile.temp_address}} </div>
                             <div class="header"></div>
                             <div class="content"></div>
                         </div>
                         <div class="rows">
                             <div class="header">state:</div>
-                            <div class="content">uk</div>
+                            <div class="content">{{profile.temp_state}} </div>
                             <div class="header">country</div>
-                            <div class="content">ind</div>
+                            <div class="content">{{profile.temp_country}} </div>
                         </div>
                     </div>
         
@@ -124,29 +124,29 @@
                     <div class="data-table">
                         <div class="rows">
                             <div class="header">grand father:</div>
-                            <div class="content">loli makai</div>
+                            <div class="content"> {{profile.grandfather_first_name}} {{profile.grandfather_middle_name}} {{profile.grandfather_last_name}}  </div>
                             <div class="header">father name:</div>
-                            <div class="content">dsfdsf</div>
+                            <div class="content"> {{profile.father_first_name}} {{profile.father_middle_name}} {{profile.father_last_name}} </div>
                             <div class="header">Eligibility </div>
-                            <div class="content">dsfdsf</div>
+                            <div class="content">{{profile.father_eligibility}} </div>
                             <div class="header">Occupation  </div>
-                            <div class="content">dsfdsf</div>
+                            <div class="content">{{profile.father_occupation}}</div>
                         </div>
                         <div class="rows">
                             <div class="header">office:</div>
-                            <div class="content">sadsad</div>
+                            <div class="content">{{profile.father_office}} </div>
                             <div class="header">Office Num :</div>
-                            <div class="content">020121</div>
+                            <div class="content">{{profile.father_office_number}} </div>
                             <div class="header">Residence :</div>
-                            <div class="content">sadsad</div>
+                            <div class="content">{{profile.father_residence_number}} </div>
                         </div>
                         <div class="rows">
                             <div class="header">mobile:</div>
-                            <div class="content">34324324</div>
+                            <div class="content">{{profile.father_mobile_1}} </div>
                             <div class="header">mobile 2 :</div>
-                            <div class="content">020121</div>
+                            <div class="content">{{profile.father_mobile_2}} </div>
                             <div class="header">email :</div>
-                            <div class="content">admin@gmail.com</div>
+                            <div class="content">{{profile.father_email}} </div>
                         </div>
                     </div>
         
@@ -160,33 +160,33 @@
                     <div class="data-table">
                         <div class="rows">
                             <div class="header">Guardian Name :</div>
-                            <div class="content">loli makai sdf</div>
+                            <div class="content">{{profile.guardian_first_name}} {{profile.guardian_middle_name}} {{profile.guardian_last_name}} </div>
                             <div class="header">Eligibility :</div>
-                            <div class="content">dsfdsf</div>
+                            <div class="content">{{profile.guardian_eligibility}} </div>
                             <div class="header">Occupation  </div>
-                            <div class="content">dsfdsf</div>
+                            <div class="content">{{profile.guardian_occupation}} </div>
                         </div>
                         <div class="rows">
                             <div class="header">Office:</div>
-                            <div class="content">34324324</div>
+                            <div class="content">{{profile.guardian_office}} </div>
                             <div class="header">office number 2 :</div>
-                            <div class="content">020121</div>
+                            <div class="content">{{profile.guardian_office_number}} </div>
                             <div class="header">Residence  :</div>
-                            <div class="content">sasdsdd</div>
+                            <div class="content"> {{profile.guardian_residence_number}}</div>
                         </div>
                         <div class="rows">
                             <div class="header">mobile:</div>
-                            <div class="content">34324324</div>
+                            <div class="content">{{profile.guardian_mobile_1}}</div>
                             <div class="header">mobile 2 :</div>
-                            <div class="content">020121</div>
+                            <div class="content">{{profile.guardian_mobile_2}}</div>
                             <div class="header">email :</div>
-                            <div class="content">admin@gmail.com</div>
+                            <div class="content">{{profile.guardian_email}}</div>
                         </div>
                         <div class="rows">
                             <div class="header">Relation :</div>
-                            <div class="content">father</div>
+                            <div class="content">{{profile.guardian_relation}}</div>
                             <div class="header">Address :</div>
-                            <div class="content">020121 sad  asdsad</div>
+                            <div class="content">{{profile.guardian_address}}</div>
                             <div class="header"> </div>
                             <div class="content"> </div>
                         </div>
@@ -207,19 +207,19 @@
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Guardian </vs-button>
                     <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
+                        <img :src="profile.guardian_image" class="img-thumbnail my-3 ">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Father</vs-button>
                      <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
+                        <img :src="profile.father_image" class="img-thumbnail my-3 ">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize"> Mother</vs-button>
                      <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-thumbnail my-3 ">
+                        <img :src="profile.mother_image" class="img-thumbnail my-3 ">
                     </div>
                 </div>
             </div>

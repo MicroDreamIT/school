@@ -11,33 +11,42 @@ class Student extends BaseModel
         'religion', 'caste', 'mother_tongue', 'email', 'extra_info', 'student_image', 'student_signature', 'status'];
 
     protected $with = [
-        'faculty',
-        'semester',
-        'batch',
-        'academic_status',
+        'faculty_data',
+        'semester_data',
+        'batch_data',
+        'academic_status_data',
     ];
+
+    protected $appends = ['fullname'];
+
+    public function getFullnameAttribute($value)
+    {
+        $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
+        return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
+
+    }
 
     public function address()
     {
         return $this->hasOne(Addressinfo::class, 'students_id', 'id');
     }
 
-    public function faculty()
+    public function faculty_data()
     {
         return $this->belongsTo(Faculty::class, 'faculty');
     }
 
-    public function semester()
+    public function semester_data()
     {
         return $this->belongsTo(Semester::class, 'semester');
     }
 
-    public function batch()
+    public function batch_data()
     {
         return $this->belongsTo(StudentBatch::class, 'batch');
     }
 
-    public function academic_status()
+    public function academic_status_data()
     {
         return $this->belongsTo(StudentStatus::class, 'academic_status');
     }

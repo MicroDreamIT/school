@@ -23,6 +23,7 @@ class FacultyController extends CollegeBaseController
 
     public function index()
     {
+        //semester,id,gradingType_id
        $data = [];
        $data['faculty'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')

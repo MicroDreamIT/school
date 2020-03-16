@@ -1,71 +1,14 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[13],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -239,32 +182,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: {},
   data: function data() {
     return {
-      selectedStudent: null,
-      students: ['dsad', 'sadsad'],
-      receive_date: '',
-      receive_amount: null,
-      discount: 0,
-      note: '',
-      payment_method: 'cash',
-      isPrint: 'no_print'
+      guardian: {},
+      notification: ''
     };
   },
-  created: function created() {},
-  methods: {
-    verifyStudent: function verifyStudent() {},
-    quickCollect: function quickCollect() {}
-  }
+  methods: {}
 });
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&":
-/*!***********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& ***!
-  \***********************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true&":
+/*!******************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true& ***!
+  \******************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -276,768 +208,604 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      { staticClass: "row " },
-      [
-        _c("div", { staticClass: "col-md-12" }, [
-          _c("h2", { staticClass: "pageTitle" }, [
-            _vm._v("Receive Detail\n            ")
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "p-2" },
-            [
-              _c(
-                "router-link",
-                { attrs: { to: "/account/fees" } },
-                [
-                  _c(
-                    "vs-button",
-                    { staticClass: "smBtn", attrs: { type: "filled" } },
-                    [
-                      _c("i", {
-                        staticClass: "fa fa-user",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Student Fee\n                    "
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "router-link",
-                { attrs: { to: "/account/payroll" } },
-                [
-                  _c(
-                    "vs-button",
-                    { staticClass: "smBtn", attrs: { type: "filled" } },
-                    [
-                      _c("i", {
-                        staticClass: "fa fa-user-secret",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Staff Payroll\n                    "
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "router-link",
-                { attrs: { to: "/account/transaction-head" } },
-                [
-                  _c(
-                    "vs-button",
-                    { staticClass: "smBtn", attrs: { type: "filled" } },
-                    [
-                      _c("i", {
-                        staticClass: "fa fa-list",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Ledger\n                    "
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "router-link",
-                { attrs: { to: "/account/transaction" } },
-                [
-                  _c(
-                    "vs-button",
-                    { staticClass: "smBtn", attrs: { type: "filled" } },
-                    [
-                      _c("i", {
-                        staticClass: "fa fa-list",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Transactions\n                    "
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "router-link",
-                { attrs: { to: "/account/bank" } },
-                [
-                  _c(
-                    "vs-button",
-                    { staticClass: "smBtn", attrs: { type: "filled" } },
-                    [
-                      _c("i", {
-                        staticClass: "fa fa-bank",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Bank\n                    "
-                      )
-                    ]
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("vs-divider", { staticClass: "mx-3" }),
-        _vm._v(" "),
+  return _c(
+    "div",
+    { staticClass: "row" },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-12" }, [
         _c(
           "div",
-          { staticClass: "col-md-12" },
+          { staticClass: "row mx-0" },
           [
             _c(
-              "vs-card",
+              "router-link",
+              { attrs: { to: "/guardian" } },
               [
                 _c(
-                  "div",
-                  { staticClass: "p-2" },
-                  [
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-history",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Receive History\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/master" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-list",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Master Detail\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/master/add" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-plus",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Add Fees\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/quick-receive" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-calculator",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Quick Receive\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/collection" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-calculator",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Collect Fees\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/balance" } },
-                      [
-                        _c(
-                          "vs-button",
-                          {
-                            staticClass: "smBtn",
-                            attrs: { type: "filled", color: "warning" }
-                          },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-money",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Balance Fees\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/account/fees/head" } },
-                      [
-                        _c(
-                          "vs-button",
-                          { staticClass: "smBtn", attrs: { type: "filled" } },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-header",
-                              attrs: { "aria-hidden": "true" }
-                            }),
-                            _vm._v(
-                              "\n                            Fees Head\n                        "
-                            )
-                          ]
-                        )
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c("vs-divider"),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "col-md-12 " },
-                  [
-                    _c("h4", { staticClass: "header large lighter blue" }, [
-                      _c("i", {
-                        staticClass: "fa fa-search",
-                        attrs: { "aria-hidden": "true" }
-                      }),
-                      _vm._v(
-                        "\n                        Search & Verify Student Before Collect\n                    "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "vs-select",
-                      {
-                        staticClass: "w-100",
-                        attrs: { autocomplete: "" },
-                        model: {
-                          value: _vm.selectedStudent,
-                          callback: function($$v) {
-                            _vm.selectedStudent = $$v
-                          },
-                          expression: "selectedStudent"
-                        }
-                      },
-                      _vm._l(_vm.students, function(item, index) {
-                        return _c("vs-select-item", {
-                          key: index,
-                          attrs: { value: item, text: item }
-                        })
-                      }),
-                      1
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c("vs-divider"),
-                _vm._v(" "),
-                _c(
                   "vs-button",
-                  { staticClass: "smBtn", on: { click: _vm.verifyStudent } },
+                  { staticClass: "smBtn", attrs: { type: "filled" } },
                   [
-                    _c("i", { staticClass: "fa fa-user" }),
+                    _c("i", {
+                      staticClass: "fa fa-list",
+                      attrs: { "aria-hidden": "true" }
+                    }),
                     _vm._v(
-                      "\n                    Verify Student for Collect Fees\n                "
+                      "\n                            Detail\n                        "
                     )
                   ]
-                ),
-                _vm._v(" "),
-                _vm.selectedStudent
-                  ? _c(
-                      "div",
-                      { staticClass: "col-sm-12 mt-2" },
-                      [
-                        _c("div", { staticClass: "row w-100" }, [
-                          _c("div", { staticClass: "col-md-3" }, [
-                            _c(
-                              "div",
-                              {
-                                staticClass:
-                                  "d-flex justify-content-center align-items-center w-100 "
-                              },
-                              [
-                                _vm.selectedStudent.profile_picture
-                                  ? _c("img", {
-                                      staticClass: "img-thumbnail mt-3 ",
-                                      attrs: {
-                                        src: _vm.selectedStudent.profile_picture
-                                      }
-                                    })
-                                  : _c("img", {
-                                      staticClass: "img-thumbnail mt-3 ",
-                                      attrs: {
-                                        src: __webpack_require__(/*! ../../../../../../assets/images/profile-default.jpg */ "./resources/assets/images/profile-default.jpg")
-                                      }
-                                    })
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-md-9" }, [
-                            _c("div", { staticClass: "data-table" }, [
-                              _c("div", { staticClass: "rows" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Name")
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "content" },
-                                  [
-                                    _c(
-                                      "router-link",
-                                      {
-                                        attrs: {
-                                          to: {
-                                            name: "studentView",
-                                            params: {
-                                              id: _vm.selectedStudent.id
-                                            }
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _vm._v(
-                                          "\n                                            " +
-                                            _vm._s(_vm.selectedStudent.name) +
-                                            "sdfds\n                                        "
-                                        )
-                                      ]
-                                    )
-                                  ],
-                                  1
-                                ),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Reg. No.:")
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  { staticClass: "content" },
-                                  [
-                                    _c(
-                                      "router-link",
-                                      {
-                                        attrs: {
-                                          to: {
-                                            name: "studentView",
-                                            params: {
-                                              id: _vm.selectedStudent.id
-                                            }
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _vm._v(
-                                          "\n                                            " +
-                                            _vm._s(_vm.selectedStudent.reg_no) +
-                                            "sfddsfds\n                                        "
-                                        )
-                                      ]
-                                    )
-                                  ],
-                                  1
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "rows" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Univ.Reg.:")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v(
-                                    _vm._s(
-                                      _vm.selectedStudent.university_reg_no
-                                    )
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("DOB:")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v(
-                                    _vm._s(_vm.selectedStudent.date_of_birth)
-                                  )
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "rows" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Faculty/Class:")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v("123")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Sem./Sec.:")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v(" 06/01/2020")
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "rows" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Gender :")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v("1235")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Blood Group :")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v(" 06/01/2020")
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "rows" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Nationality :")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v("male")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("E-mail :")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v(" a+")
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "rows2" }, [
-                                _c("div", { staticClass: "header" }, [
-                                  _vm._v("Balance Fee :")
-                                ]),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "content" }, [
-                                  _vm._v("islam")
-                                ])
-                              ])
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("vs-divider"),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "row mx-0 my-2" }, [
-                          _c("div", { staticClass: "col-sm-2" }, [
-                            _vm._v("Receive Date")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-2" },
-                            [
-                              _c("datepicker", {
-                                model: {
-                                  value: _vm.receive_date,
-                                  callback: function($$v) {
-                                    _vm.receive_date = $$v
-                                  },
-                                  expression: "receive_date"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-2" }, [
-                            _vm._v("Receive Amount")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-2" },
-                            [
-                              _c("vs-input", {
-                                attrs: { type: "number", required: "" },
-                                model: {
-                                  value: _vm.receive_amount,
-                                  callback: function($$v) {
-                                    _vm.receive_amount = $$v
-                                  },
-                                  expression: "receive_amount"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "col-sm-2" }, [
-                            _vm._v("Discount Amount")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-2" },
-                            [
-                              _c("vs-input", {
-                                attrs: { type: "number", required: "" },
-                                model: {
-                                  value: _vm.discount,
-                                  callback: function($$v) {
-                                    _vm.discount = $$v
-                                  },
-                                  expression: "discount"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "row mx-0 my-2" }, [
-                          _c("div", { staticClass: "col-sm-2 " }, [
-                            _vm._v("Payment Method")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-10" },
-                            [
-                              _c(
-                                "vs-radio",
-                                {
-                                  attrs: { "vs-value": "cash" },
-                                  model: {
-                                    value: _vm.payment_method,
-                                    callback: function($$v) {
-                                      _vm.payment_method = $$v
-                                    },
-                                    expression: "payment_method"
-                                  }
-                                },
-                                [_vm._v("Cash")]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "vs-radio",
-                                {
-                                  attrs: { "vs-value": "bank" },
-                                  model: {
-                                    value: _vm.payment_method,
-                                    callback: function($$v) {
-                                      _vm.payment_method = $$v
-                                    },
-                                    expression: "payment_method"
-                                  }
-                                },
-                                [_vm._v("Bank")]
-                              )
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "row mx-0 my-2" }, [
-                          _c("div", { staticClass: "col-sm-2" }, [
-                            _vm._v("Note")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-10" },
-                            [
-                              _c("vs-textarea", {
-                                model: {
-                                  value: _vm.note,
-                                  callback: function($$v) {
-                                    _vm.note = $$v
-                                  },
-                                  expression: "note"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "row mx-0 my-2" }, [
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-2" },
-                            [
-                              _c(
-                                "vs-radio",
-                                {
-                                  attrs: { "vs-value": "no_print" },
-                                  model: {
-                                    value: _vm.isPrint,
-                                    callback: function($$v) {
-                                      _vm.isPrint = $$v
-                                    },
-                                    expression: "isPrint"
-                                  }
-                                },
-                                [_vm._v("No Print")]
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-3" },
-                            [
-                              _c(
-                                "vs-radio",
-                                {
-                                  attrs: { "vs-value": "short_print" },
-                                  model: {
-                                    value: _vm.isPrint,
-                                    callback: function($$v) {
-                                      _vm.isPrint = $$v
-                                    },
-                                    expression: "isPrint"
-                                  }
-                                },
-                                [_vm._v("Print Short Print")]
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "col-sm-3" },
-                            [
-                              _c(
-                                "vs-radio",
-                                {
-                                  attrs: { "vs-value": "long_print" },
-                                  model: {
-                                    value: _vm.isPrint,
-                                    callback: function($$v) {
-                                      _vm.isPrint = $$v
-                                    },
-                                    expression: "isPrint"
-                                  }
-                                },
-                                [_vm._v("Print Detail Receipt")]
-                              )
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("vs-divider"),
-                        _vm._v(" "),
-                        _c(
-                          "vs-button",
-                          {
-                            staticClass: "w-100 my-round",
-                            on: { click: _vm.quickCollect }
-                          },
-                          [_vm._v("Quick Collect")]
-                        )
-                      ],
-                      1
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "router-link",
+              { attrs: { to: "/guardian/registration" } },
+              [
+                _c(
+                  "vs-button",
+                  { staticClass: "smBtn", attrs: { type: "filled" } },
+                  [
+                    _c("i", {
+                      staticClass: "fa fa-plus",
+                      attrs: { "aria-hidden": "true" }
+                    }),
+                    _vm._v(
+                      "\n                            Registration\n                        "
                     )
-                  : _vm._e()
+                  ]
+                )
               ],
               1
             )
           ],
           1
         )
-      ],
-      1
-    )
-  ])
+      ]),
+      _vm._v(" "),
+      _vm.notification
+        ? _c("div", { staticClass: "col-md-12" }, [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "mt-2 alert alert-success alert-dismissible display-block",
+                attrs: { role: "alert" }
+              },
+              [
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "alert",
+                      "aria-label": "Close"
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.notification = ""
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _c("i", { staticClass: "ace-icon fa fa-hand-o-right" }),
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(_vm.notification) +
+                    "\n                "
+                )
+              ]
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _c("vs-divider", { staticClass: "mx-3" }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-12 p-0" },
+        [
+          _c("vs-card", { staticClass: "p-3" }, [
+            _c("div", { staticClass: "row p-2" }, [
+              _c("h4", { staticClass: "card-title" }, [
+                _vm._v("Guardian Registration\n                    ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-md-12" },
+                [
+                  _c(
+                    "vs-tabs",
+                    { staticClass: "custom-tab mt-2" },
+                    [
+                      _c(
+                        "vs-tab",
+                        { attrs: { label: "General Information" } },
+                        [
+                          _c(
+                            "div",
+                            [
+                              _c(
+                                "span",
+                                {
+                                  staticClass:
+                                    "badge badge badge-danger badge-pill mr-2"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n\t\t\t\t\t\t\t\t\t\t\t\t\tRed mark input are required. "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("vs-divider"),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-3" }, [
+                                  _vm._v(
+                                    "\n                                                NAME OF Guardian\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-3" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.first_name,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "first_name",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.first_name"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-3" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.middle_name,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "middle_name",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.middle_name"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-3" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.last_name,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "last_name",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.last_name"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Eligibility\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.eligibility,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "eligibility",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.eligibility"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Occupation\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.occupation,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "occupation",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.occupation"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Office\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.office,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.guardian, "office", $$v)
+                                        },
+                                        expression: "guardian.office"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Office Number\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.office_number,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "office_number",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.office_number"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Residence Number\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.residence_number,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "residence_number",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.residence_number"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Mobile 1\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.mobile_1,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "mobile_1",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.mobile_1"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Mobile 2\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.mobile_2,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "mobile_2",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.mobile_2"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                E-mail\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.email,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.guardian, "email", $$v)
+                                        },
+                                        expression: "guardian.email"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row my-2" }, [
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Relation\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.relation,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.guardian,
+                                            "relation",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "guardian.relation"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-2" }, [
+                                  _vm._v(
+                                    "\n                                                Guardian Address\n                                            "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "col-md-4" },
+                                  [
+                                    _c("vs-input", {
+                                      model: {
+                                        value: _vm.guardian.address,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.guardian, "address", $$v)
+                                        },
+                                        expression: "guardian.address"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ],
+                            1
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("vs-tab", { attrs: { label: "Profile Images" } }, [
+                        _c("h4", [_vm._v("Profile Pictures")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-3" }, [
+                            _vm._v("Guardian Profile Picture")
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "col-md-5" },
+                            [
+                              _c("vs-input", {
+                                attrs: { type: "file" },
+                                model: {
+                                  value: _vm.guardian.profile_picture,
+                                  callback: function($$v) {
+                                    _vm.$set(
+                                      _vm.guardian,
+                                      "profile_picture",
+                                      $$v
+                                    )
+                                  },
+                                  expression: "guardian.profile_picture"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "col-md-4 d-flex justify-content-center"
+                            },
+                            [
+                              _vm.guardian.profile_picture
+                                ? _c("img", {
+                                    staticClass: "img-responsive",
+                                    attrs: {
+                                      width: "100px",
+                                      src: _vm.guardian.profile_picture
+                                    }
+                                  })
+                                : _c("img", {
+                                    staticClass: "img-responsive",
+                                    attrs: {
+                                      width: "100px",
+                                      src: __webpack_require__(/*! ../../../../../assets/images/profile-default.jpg */ "./resources/assets/images/profile-default.jpg")
+                                    }
+                                  })
+                            ]
+                          )
+                        ])
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("vs-divider"),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "row mx-0" },
+                    [
+                      _c(
+                        "vs-button",
+                        {
+                          staticClass: "my-round mx-2",
+                          attrs: { color: "warning" }
+                        },
+                        [_vm._v("Reset")]
+                      ),
+                      _vm._v(" "),
+                      _c("vs-button", { staticClass: "my-round mx-2" }, [
+                        _vm._v("Save")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "vs-button",
+                        {
+                          staticClass: "my-round mx-2",
+                          attrs: { color: "#28c76f" }
+                        },
+                        [_vm._v("Save And Add Another")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ])
+          ])
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-12 mb-2" }, [
+      _c("h2", { staticClass: "pageTitle" }, [_vm._v("Guardian Manager")])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -1055,18 +823,18 @@ module.exports = "/images/profile-default.jpg?a4eb6109097a3408128df34c0271410c";
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue":
-/*!**********************************************************************!*\
-  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue ***!
-  \**********************************************************************/
+/***/ "./resources/js/src/views/custom/guardian/registration.vue":
+/*!*****************************************************************!*\
+  !*** ./resources/js/src/views/custom/guardian/registration.vue ***!
+  \*****************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& */ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&");
-/* harmony import */ var _quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./quick-receive.vue?vue&type=script&lang=js& */ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./registration.vue?vue&type=template&id=e633143a&scoped=true& */ "./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true&");
+/* harmony import */ var _registration_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./registration.vue?vue&type=script&lang=js& */ "./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -1075,50 +843,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _registration_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "5ac5cef2",
+  "e633143a",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/src/views/custom/account/fees/quick-receive.vue"
+component.options.__file = "resources/js/src/views/custom/guardian/registration.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************/
+/***/ "./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./quick-receive.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_registration_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./registration.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/guardian/registration.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_registration_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&":
-/*!*****************************************************************************************************************!*\
-  !*** ./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& ***!
-  \*****************************************************************************************************************/
+/***/ "./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true&":
+/*!************************************************************************************************************!*\
+  !*** ./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true& ***!
+  \************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../../node_modules/vue-loader/lib??vue-loader-options!./quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/account/fees/quick-receive.vue?vue&type=template&id=5ac5cef2&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../../node_modules/vue-loader/lib??vue-loader-options!./registration.vue?vue&type=template&id=e633143a&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/src/views/custom/guardian/registration.vue?vue&type=template&id=e633143a&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_quick_receive_vue_vue_type_template_id_5ac5cef2_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_registration_vue_vue_type_template_id_e633143a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

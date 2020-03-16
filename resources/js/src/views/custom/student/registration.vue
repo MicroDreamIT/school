@@ -61,7 +61,7 @@
                 </router-link>
             </div>
         </div>
-        <div class="col-md-12" v-if="notification">
+        <div class="col-md-12" v-if="$root.notification.success">
             <div role="alert"
                  class="mt-2 alert alert-success alert-dismissible display-block"
             >
@@ -69,12 +69,12 @@
                         data-dismiss="alert"
                         aria-label="Close"
                         class="close"
-                        @click="notification=''"
+                        @click="$root.emptyNotification()"
                 >
                     <span aria-hidden="true">×</span>
                 </button>
                 <i class="ace-icon fa fa-hand-o-right"></i>
-                {{notification}}
+                {{$root.notification.message}}
             </div>
         </div>
         <vs-divider class="mx-3"/>
@@ -128,7 +128,11 @@
                                             Sem./Sec.
                                         </div>
                                         <div class="col-md-3">
-                                            <v-select v-model="student.semester" :options="semester"/>
+
+                                            <v-select v-model="student.semester"
+                                                      label="value"
+                                                      value="id"
+                                                      :options="semester"/>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -806,7 +810,7 @@
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
                             <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Save</vs-button>
+                            <vs-button class="my-round mx-2" @click="postData()">Save</vs-button>
                             <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
                         </div>
                     </div>
@@ -835,7 +839,26 @@
 
             }
         },
+        created(){
+            this.$http.get('/json/student/registration').then(res=>{
+                Object.keys(res.data.academic_status).forEach(key => {
+                    this.academic_status.push({id: key, value: res.data.academic_status[key]})
+                });
+                this.faculties = res.data.faculties;
+                this.batch = res.data.batch;
+                Object.keys(res.data.semester).forEach(key => {
+                    this.semester.push({id: key, value: res.data.semester[key]})
+                });
+            })
+        },
         methods: {
+            postData(){
+                this.$http.post('/json/student/register', this.student)
+                    .then(res=>{
+                        console.log(res)
+                    })
+                    .catch()
+            },
             copyPermanent() {
                 if (this.copyPerm) {
                     this.student.temp_address = this.student.address,

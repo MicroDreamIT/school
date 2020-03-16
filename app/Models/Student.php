@@ -6,13 +6,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends BaseModel
 {
-    protected $fillable = ['created_by', 'last_updated_by', 'reg_no', 'reg_date', 'university_reg','faculty','semester','batch',
+    protected $fillable = ['created_by', 'last_updated_by', 'reg_no', 'reg_date', 'university_reg', 'faculty', 'semester', 'batch',
         'academic_status', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'gender', 'blood_group', 'nationality',
-        'religion', 'caste','mother_tongue', 'email', 'extra_info', 'student_image','student_signature','status'];
+        'religion', 'caste', 'mother_tongue', 'email', 'extra_info', 'student_image', 'student_signature', 'status'];
+
+    protected $with = [
+        'faculty',
+        'semester',
+        'batch',
+        'academic_status',
+    ];
 
     public function address()
     {
-        return $this->hasOne(Addressinfo::class,'students_id', 'id');
+        return $this->hasOne(Addressinfo::class, 'students_id', 'id');
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class, 'faculty');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(StudentBatch::class, 'batch');
+    }
+
+    public function academic_status()
+    {
+        return $this->belongsTo(StudentStatus::class, 'academic_status');
     }
 
     public function parents()
@@ -25,10 +52,10 @@ class Student extends BaseModel
         return $this->hasOne(StudentGuardian::class, 'students_id', 'id');
     }
 
-   /* public function guardian()
-    {
-        return $this->belongsTo(StudentGuardian::class);
-    }*/
+    /* public function guardian()
+     {
+         return $this->belongsTo(StudentGuardian::class);
+     }*/
 
     public function academicInfo()
     {
@@ -38,12 +65,12 @@ class Student extends BaseModel
 
     public function studentNotes()
     {
-        return $this->hasMany(Note::class,'member_id','id')->where('member_type','=','student');
+        return $this->hasMany(Note::class, 'member_id', 'id')->where('member_type', '=', 'student');
     }
 
     public function studentDocuments()
     {
-        return $this->hasMany(Document::class,'member_id','id')->where('member_type','=','student');
+        return $this->hasMany(Document::class, 'member_id', 'id')->where('member_type', '=', 'student');
     }
 
 
@@ -66,14 +93,14 @@ class Student extends BaseModel
     //assignment Answer
     public function assignmentAnswers()
     {
-        return $this->hasMany(AssignmentAnswer::class,'students_id','id');
+        return $this->hasMany(AssignmentAnswer::class, 'students_id', 'id');
 
     }
 
     //Library Member
     public function libraryMember()
     {
-        return $this->hasMany(LibraryMember::class,'member_id','id')->where('user_type','=',1);
+        return $this->hasMany(LibraryMember::class, 'member_id', 'id')->where('user_type', '=', 1);
     }
 
     //Library Book Requested by Member
@@ -85,25 +112,25 @@ class Student extends BaseModel
     //transport User
     public function transportUser()
     {
-        return $this->hasMany(TransportUser::class,'member_id','id')->where('user_type','=',1);
+        return $this->hasMany(TransportUser::class, 'member_id', 'id')->where('user_type', '=', 1);
     }
 
     //Hostel Resident
     public function hostelResident()
     {
-        return $this->hasMany(Resident::class,'member_id','id')->where('user_type','=',1);
+        return $this->hasMany(Resident::class, 'member_id', 'id')->where('user_type', '=', 1);
     }
 
     //Regular Attendance
     public function regularAttendance()
     {
-        return $this->hasMany(Attendance::class,'link_id','id')->where('attendees_type','=',1);
+        return $this->hasMany(Attendance::class, 'link_id', 'id')->where('attendees_type', '=', 1);
     }
 
     //Regular Attendance
     public function subjectAttendance()
     {
-        return $this->hasMany(SubjectAttendance::class,'link_id','id');
+        return $this->hasMany(SubjectAttendance::class, 'link_id', 'id');
     }
 
 

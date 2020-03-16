@@ -64,7 +64,7 @@
                            </vs-button>
                        </div>
                        <div class="col-md-12">
-                           <profile v-if="currentView=='profile'"/>
+                           <profile :profile="datas.student" v-if="currentView=='profile'"/>
                            <academic v-else-if="currentView=='academic'"/>
                            <fees v-else-if="currentView=='fees'"/>
                            <library v-else-if="currentView=='library'"/>
@@ -105,7 +105,7 @@
         data() {
             return {
                 currentView: 'profile',
-                datas:null
+                datas:{}
             }
         },
         created() {

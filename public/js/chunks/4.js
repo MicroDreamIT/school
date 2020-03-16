@@ -137,7 +137,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       currentView: 'profile',
-      datas: null
+      datas: {}
     };
   },
   created: function created() {
@@ -940,7 +940,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "profile"
+  name: "profile",
+  props: ['profile']
 });
 
 /***/ }),
@@ -1360,7 +1361,7 @@ var render = function() {
                 { staticClass: "col-md-12" },
                 [
                   _vm.currentView == "profile"
-                    ? _c("profile")
+                    ? _c("profile", { attrs: { profile: _vm.datas.student } })
                     : _vm.currentView == "academic"
                     ? _c("academic")
                     : _vm.currentView == "fees"
@@ -2292,286 +2293,298 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      { staticClass: "row mx-0" },
-      [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("vs-divider", { staticClass: "mx-1" }),
-        _vm._v(" "),
+  return _vm.profile
+    ? _c("div", [
         _c(
           "div",
-          { staticClass: "col-md-12 d-flex justify-content-end w-100" },
+          { staticClass: "row mx-0" },
           [
-            _c("vs-button", { staticClass: "smBtn" }, [
-              _c("i", { staticClass: "fa fa-edit" }),
-              _vm._v(" Edit")
-            ]),
-            _vm._v(" |\n            "),
-            _c("vs-button", { staticClass: "smBtn" }, [
-              _c("i", { staticClass: "fa fa-print" }),
-              _vm._v(" Print")
-            ])
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100" }, [
-          _c("div", { staticClass: "col-md-3" }, [
-            _c(
-              "div",
-              {
-                staticClass:
-                  "d-flex justify-content-center align-items-center w-100 "
-              },
-              [
-                _c("img", {
-                  staticClass: "img-thumbnail mt-3 ",
-                  attrs: {
-                    src:
-                      "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                  }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-9" }, [
-            _c("br"),
+            _vm._m(0),
+            _vm._v(" "),
+            _c("vs-divider", { staticClass: "mx-1" }),
             _vm._v(" "),
             _c(
-              "p",
+              "div",
+              { staticClass: "col-md-12 d-flex justify-content-end w-100" },
               [
-                _c(
-                  "vs-button",
-                  { staticClass: "smBtn", attrs: { type: "filled" } },
-                  [_vm._v(" Student Name Here  ")]
-                )
+                _c("vs-button", { staticClass: "smBtn" }, [
+                  _c("i", { staticClass: "fa fa-edit" }),
+                  _vm._v(" Edit")
+                ]),
+                _vm._v(" |\n            "),
+                _c("vs-button", { staticClass: "smBtn" }, [
+                  _c("i", { staticClass: "fa fa-print" }),
+                  _vm._v(" Print")
+                ])
               ],
               1
             ),
             _vm._v(" "),
-            _vm._m(1)
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100 mt-4" }, [
-          _c(
-            "div",
-            { staticClass: "col-md-12 mx-auto" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v(" Permanent Address ")]
-              ),
+            _c("div", { staticClass: "row w-100" }, [
+              _c("div", { staticClass: "col-md-3" }, [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "d-flex justify-content-center align-items-center w-100 "
+                  },
+                  [
+                    _c("img", {
+                      staticClass: "img-thumbnail mt-3 ",
+                      attrs: {
+                        src:
+                          "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                      }
+                    })
+                  ]
+                )
+              ]),
               _vm._v(" "),
-              _c("br"),
-              _vm._v(" "),
-              _vm._m(2)
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100 mt-4" }, [
-          _c(
-            "div",
-            { staticClass: "col-md-12 mx-auto" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v(" Temporary Address ")]
-              ),
-              _vm._v(" "),
-              _c("br"),
-              _vm._v(" "),
-              _vm._m(3)
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100 mt-4" }, [
-          _c(
-            "div",
-            { staticClass: "col-md-12 mx-auto" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v("Personal Info")]
-              ),
-              _vm._v(" "),
-              _c("br"),
-              _vm._v(" "),
-              _vm._m(4)
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100 mt-4" }, [
-          _c(
-            "div",
-            { staticClass: "col-md-12 mx-auto" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v("Guardian Info")]
-              ),
-              _vm._v(" "),
-              _c("br"),
-              _vm._v(" "),
-              _vm._m(5)
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row w-100 mt-4" }, [
-          _c("div", { staticClass: "col-md-3" }, [
-            _c("br"),
+              _c("div", { staticClass: "col-md-9" }, [
+                _c("br"),
+                _vm._v(" "),
+                _c(
+                  "p",
+                  [
+                    _c(
+                      "vs-button",
+                      { staticClass: "smBtn", attrs: { type: "filled" } },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            _vm.profile.first_name +
+                              " " +
+                              _vm.profile.middle_name +
+                              " " +
+                              _vm.profile.last_name
+                          )
+                        )
+                      ]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _vm._m(1)
+              ])
+            ]),
             _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass:
-                  "d-flex justify-content-center align-items-center w-100 "
-              },
-              [
-                _c("img", {
-                  staticClass: "img-thumbnail mt-3 ",
-                  attrs: {
-                    src:
-                      "https://upload.wikimedia.org/wikipedia/commons/8/87/Sk.wikipedia.org_QR_Code.png"
-                  }
-                })
-              ]
-            ),
+            _c("div", { staticClass: "row w-100 mt-4" }, [
+              _c(
+                "div",
+                { staticClass: "col-md-12 mx-auto" },
+                [
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v(" Permanent Address ")]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ],
+                1
+              )
+            ]),
             _vm._v(" "),
-            _c("br")
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-md-3" },
-            [
+            _c("div", { staticClass: "row w-100 mt-4" }, [
               _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v("Guardian ")]
+                "div",
+                { staticClass: "col-md-12 mx-auto" },
+                [
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v(" Temporary Address ")]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm._m(3)
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row w-100 mt-4" }, [
+              _c(
+                "div",
+                { staticClass: "col-md-12 mx-auto" },
+                [
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v("Personal Info")]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm._m(4)
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row w-100 mt-4" }, [
+              _c(
+                "div",
+                { staticClass: "col-md-12 mx-auto" },
+                [
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v("Guardian Info")]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm._m(5)
+                ],
+                1
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row w-100 mt-4" }, [
+              _c("div", { staticClass: "col-md-3" }, [
+                _c("br"),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "d-flex justify-content-center align-items-center w-100 "
+                  },
+                  [
+                    _c("img", {
+                      staticClass: "img-thumbnail mt-3 ",
+                      attrs: {
+                        src:
+                          "https://upload.wikimedia.org/wikipedia/commons/8/87/Sk.wikipedia.org_QR_Code.png"
+                      }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c("br")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-md-3" },
+                [
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v("Guardian ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "d-flex justify-content-center align-items-center w-100 "
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "img-thumbnail my-3 ",
+                        attrs: {
+                          src:
+                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                        }
+                      })
+                    ]
+                  )
+                ],
+                1
               ),
               _vm._v(" "),
               _c(
                 "div",
-                {
-                  staticClass:
-                    "d-flex justify-content-center align-items-center w-100 "
-                },
+                { staticClass: "col-md-3" },
                 [
-                  _c("img", {
-                    staticClass: "img-thumbnail my-3 ",
-                    attrs: {
-                      src:
-                        "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                    }
-                  })
-                ]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-md-3" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v("Father")]
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v("Father")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "d-flex justify-content-center align-items-center w-100 "
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "img-thumbnail my-3 ",
+                        attrs: {
+                          src:
+                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                        }
+                      })
+                    ]
+                  )
+                ],
+                1
               ),
               _vm._v(" "),
               _c(
                 "div",
-                {
-                  staticClass:
-                    "d-flex justify-content-center align-items-center w-100 "
-                },
+                { staticClass: "col-md-3" },
                 [
-                  _c("img", {
-                    staticClass: "img-thumbnail my-3 ",
-                    attrs: {
-                      src:
-                        "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                    }
-                  })
-                ]
+                  _c(
+                    "vs-button",
+                    {
+                      staticClass: "smBtn text-capitalize",
+                      attrs: { type: "filled" }
+                    },
+                    [_vm._v(" Mother")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "d-flex justify-content-center align-items-center w-100 "
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "img-thumbnail my-3 ",
+                        attrs: {
+                          src:
+                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                        }
+                      })
+                    ]
+                  )
+                ],
+                1
               )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-md-3" },
-            [
-              _c(
-                "vs-button",
-                {
-                  staticClass: "smBtn text-capitalize",
-                  attrs: { type: "filled" }
-                },
-                [_vm._v(" Mother")]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "d-flex justify-content-center align-items-center w-100 "
-                },
-                [
-                  _c("img", {
-                    staticClass: "img-thumbnail my-3 ",
-                    attrs: {
-                      src:
-                        "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                    }
-                  })
-                ]
-              )
-            ],
-            1
-          )
-        ])
-      ],
-      1
-    )
-  ])
+            ])
+          ],
+          1
+        )
+      ])
+    : _vm._e()
 }
 var staticRenderFns = [
   function() {

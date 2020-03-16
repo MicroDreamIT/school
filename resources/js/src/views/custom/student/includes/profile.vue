@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="profile">
         <div class="row mx-0">
             <div class="d-flex justify-content-center flex-column align-items-center mt-4 w-100">
                 <h2>Edu MIS</h2>
@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-9">
                     <br>
-                   <p> <vs-button type="filled" class="smBtn"> Student Name Here  </vs-button></p>
+                   <p> <vs-button type="filled" class="smBtn">{{profile.first_name+' '+profile.middle_name+' '+ profile.last_name}}</vs-button></p>
                  <div class="data-table">
                         <div class="rows">
                             <div class="header">faculty:</div>
@@ -230,7 +230,8 @@
 
 <script>
     export default {
-        name: "profile"
+        name: "profile",
+        props:['profile']
     }
 </script>
 

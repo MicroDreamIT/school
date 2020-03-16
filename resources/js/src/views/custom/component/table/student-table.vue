@@ -348,16 +348,16 @@
             this.getData()
         },
         watch:{
-            searchData:{
-                deep:true,
-                handler(val){
-                    const searchParams = new URLSearchParams();
-                    const search = val;
-
-                    Object.keys(search).forEach(key => searchParams.append(key, search[key]));
-                    console.log(searchParams.toString())
-                }
-            }
+            // searchData:{
+            //     deep:true,
+            //     handler(val){
+            //         const searchParams = new URLSearchParams();
+            //         const search = val;
+            //
+            //         Object.keys(search).forEach(key => searchParams.append(key, search[key]));
+            //         // console.log(searchParams.toString())
+            //     }
+            // }
         },
         methods: {
             getData() {

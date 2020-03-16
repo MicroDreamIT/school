@@ -8035,7 +8035,7 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router.push("/user").catch(function() {})
                     }
                   }
                 },
@@ -8058,7 +8058,9 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router
+                        .push("/super-suit/user-activity")
+                        .catch(function() {})
                     }
                   }
                 },
@@ -8081,7 +8083,7 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router.push("/setting/general").catch(function() {})
                     }
                   }
                 },
@@ -8104,7 +8106,7 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router.push("/setting/sms").catch(function() {})
                     }
                   }
                 },
@@ -8125,7 +8127,7 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router.push("/setting/email").catch(function() {})
                     }
                   }
                 },
@@ -8148,7 +8150,7 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router.push("/setting/alert").catch(function() {})
                     }
                   }
                 },
@@ -8171,7 +8173,9 @@ var render = function() {
                     "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                   on: {
                     click: function($event) {
-                      _vm.$router.push("/pages/profile").catch(function() {})
+                      _vm.$router
+                        .push("/setting/payment-gateway")
+                        .catch(function() {})
                     }
                   }
                 },

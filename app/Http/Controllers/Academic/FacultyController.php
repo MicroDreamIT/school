@@ -23,6 +23,7 @@ class FacultyController extends CollegeBaseController
 
     public function index()
     {
+        //semester,id,gradingType_id
        $data = [];
        $data['faculty'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')
@@ -174,7 +175,5 @@ return response()->json($data['faculty']);
         $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
         return redirect()->route($this->base_route);
     }
-    public function semester(){
-    return $this->belongsTo('App\Model\FacultySemester');
-    }
+
 }

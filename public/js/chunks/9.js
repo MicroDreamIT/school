@@ -234,15 +234,6 @@ __webpack_require__.r(__webpack_exports__);
     doFilter: function doFilter() {
       alert(this.searchData.semester.id);
     },
-    handleSearch: function handleSearch(searching) {
-      console.log(searching);
-    },
-    handleChangePage: function handleChangePage(page) {
-      console.log(page);
-    },
-    handleSort: function handleSort(key, active) {
-      console.log(key, active);
-    },
     doActive: function doActive() {
       alert('doing active');
     },

@@ -81,19 +81,19 @@
 											   <div class="row py-2">
 												   <div class="col-md-12">
 													   <div class="form-group row">
-														   <label class="col-sm-3">Authkey</label>
+														   <label>Authkey</label>
 														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
 													   </div>
 													   <div class="form-group row">
-														   <label class="col-sm-3">Sender</label>
+														   <label>Sender</label>
 														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
 													   </div>
 													   <div class="form-group row">
-														   <label class="col-sm-3">Route </label>
+														   <label>Route </label>
 														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
 													   </div>
 													   <div class="form-group row">
-														   <label class="col-sm-3">Country</label>
+														   <label>Country</label>
 														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
 													   </div>
 												   </div>

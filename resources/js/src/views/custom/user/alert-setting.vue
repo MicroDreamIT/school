@@ -56,15 +56,17 @@
 							>
 								<template slot="items" slot-scope="props">
 									<vs-td class="pointer-none">
-										dsfdsf
+										BirthdayWish
 									</vs-td>
 									
 									<vs-td >
-										sdfdsf
+										activate
 									</vs-td>
 									
 									<vs-td>
-										dsf
+										Wish Your Birthday Dear
+										Dear user Sending you smiles for every moment of your special day…Have a
+										wonderful time and a very happy birthday!
 									</vs-td>
 									
 									<vs-td >
@@ -73,8 +75,8 @@
 											<span slot="off">In-Active</span>
 										</vs-switch>
 									</vs-td>
-									<vs-td >
-										<button class="btn btn-primary my-3" color="primary">
+									<vs-td style="min-width: 100px;">
+										<button class="btn btn-primary my-3">
 											<i class="fa fa-pencil"></i>
 											Edit
 										</button>
@@ -99,7 +101,7 @@
             return {
                 tableHeader: [
                     {name: 'Event', field: 'Event', sort_key: 'Event'},
-                    {name: 'Name', field: 'Alert', sort_key: 'Alert'},
+                    {name: 'Alert', field: 'Alert', sort_key: 'Alert'},
                     {name: 'Template', field: 'Template',sort_key:'Template'},
                     {name: 'Status', field: 'Status'},
                     {name: 'Action', field: 'Action'},

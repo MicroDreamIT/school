@@ -82,7 +82,6 @@
                                                     </vs-input>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Sem./Sec.</label>
@@ -92,7 +91,6 @@
                                                     </v-select>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Year</label>

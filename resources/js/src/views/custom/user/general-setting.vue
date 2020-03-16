@@ -6,7 +6,7 @@
 					General Setting Manager
 				</h2>
 				<div class="p-2">
-					<router-link :to="'/setting/general'">
+					<router-link :to="'/'">
 						<vs-button type="filled" class="smBtn">
 							<i class="fa fa-cogs" aria-hidden="true"></i>
 							General setting
@@ -36,7 +36,6 @@
 						    Payment Gateway
 						</vs-button>
 					</router-link>
-				
 				</div>
 				<hr class="own-hr">
 				<br>

@@ -45,11 +45,11 @@
 			<div class="col-md-12">
 				<vs-card>
 					<div class="row px-4">
-						<div class="col-md-12 row w-100">
-							<div class="col-md-12 py-1"><br>
+						<div class="col-md-12 p-0 w-100">
+							<div class="col-md-12 px-3"><br><br>
 								<h4><i class="fa fa-list"></i> SMS Setting List</h4>
 							</div>
-							<div class="dt-buttons btn-group action-group my-1">
+							<div class="dt-buttons btn-group action-group px-3">
 								<button  class="btn btn-secondary buttons-copy ">
 									<span>Copy</span></button>
 								<button  class="btn btn-secondary buttons-pdf ">
@@ -59,44 +59,56 @@
 								<button  class="btn btn-secondary buttons-print">
 									<span>Print</span></button>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 mt-4">
 								<vs-table stripe>
 									<template slot="header">
-										<h3>
-											Users
-										</h3>
+										<h3> </h3>
 									</template>
 									<template slot="thead">
-										<vs-th>
-											Email
-										</vs-th>
-										<vs-th>
-											Name
-										</vs-th>
-										<vs-th>
-											Website
-										</vs-th>
-										<vs-th>
-											Nro
-										</vs-th>
+										<vs-th> S.N </vs-th>
+										<vs-th> Gateway </vs-th>
+										<vs-th> Config </vs-th>
+										<vs-th> Status </vs-th>
+										<vs-th> Action </vs-th>
 									</template>
-									
-									<template slot-scope="{data}">
-										<vs-tr >
-											<vs-tdindextr].email">
-												fdgfd
+									<template>
+										  <vs-tr>
+											<vs-td> 1 </vs-td>
+											<vs-td>
+												<img src="/images/smsgateway/msg91.png" class="gateway">
 											</vs-td>
-											
-											<vs-tdindextr].username">
-												dfgd
+											<vs-td>
+											   <div class="row py-2">
+												   <div class="col-md-12">
+													   <div class="form-group row">
+														   <label class="col-sm-3">Authkey</label>
+														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
+													   </div>
+													   <div class="form-group row">
+														   <label class="col-sm-3">Sender</label>
+														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
+													   </div>
+													   <div class="form-group row">
+														   <label class="col-sm-3">Route </label>
+														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
+													   </div>
+													   <div class="form-group row">
+														   <label class="col-sm-3">Country</label>
+														   <vs-input class=" col-sm-9 w-100" disabled></vs-input>
+													   </div>
+												   </div>
+											   </div>
 											</vs-td>
-											
-											<vs-tdindextr].id">
-												dfg
+											<vs-td>
+												<vs-switch color="success"  class="pointer-all ml-2" >
+													<span slot="on">Active</span>
+													<span slot="off">In-Active</span>
+												</vs-switch>
 											</vs-td>
-											
-											<vs-tdindextr].id">
-												dfg
+											<vs-td>
+												<button type="button" class="btn btn-success">
+													<i class="fa fa-save"></i> Update
+												</button>
 											</vs-td>
 										</vs-tr>
 									</template>

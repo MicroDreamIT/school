@@ -64,7 +64,6 @@
 								<i class="fa fa-filter "></i>
 								Filter
 							</button>
-							
 						</div>
 					</div>
 					<br>
@@ -84,15 +83,12 @@
 								<vs-td :data="props.data.username" class="pointer-none">
 									{{props.data.email}}
 								</vs-td>
-								
 								<vs-td :data="props.data.username">
 									{{props.data.username}}
 								</vs-td>
-								
 								<vs-td :data="props.data.id">
 									{{props.data.website}}
 								</vs-td>
-								
 								<vs-td :data="props.id">
 									{{props.data.id}}
 								</vs-td>

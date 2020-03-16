@@ -13,7 +13,7 @@
                         <i class="fa fa-remove"></i>
                         In-Active
                     </a>
-                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
+                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="allDeletePop=true">
                         <i class="fa fa-trash"></i>
                         Delete
                     </a>
@@ -50,11 +50,12 @@
                 v-model="selected"
                 :total="totalItems"
                 :pagination="hasPagination"
-                :max-items="5"
+                :max-items="10"
                 :search="hasSearch"
                 :data="mainItem"
                 :noDataText="noDataMessage"
                 description
+                stripe
         >
 
             <template slot="thead">
@@ -74,6 +75,28 @@
             </template>
 
         </vs-table>
+        <vs-popup class="holamundo"
+                  :title="'Delete Confirmation'"
+                  :active.sync="allDeletePop">
+            <div class="mt-3">
+                <p class="p-2 my-round delete-pop-text">Are you sure, You Want To delete Using Bulk Action?
+                    Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data</p>
+
+                <p><i class="p-2 ace-icon fa fa-hand-o-right"></i>Are you sure?</p>
+            </div>
+
+            <div class="footer-modal">
+                <vs-button class="smBtn"
+                        @click="allDeletePop=false">
+                    <i class="fa fa-close"></i>
+                    Cancel
+                </vs-button>
+                <vs-button  class="smBtn" color="danger" @click="allDeletePop=false, doDelete()">
+                    <i class="fa fa-trash"></i>
+                    Ok!
+                </vs-button>
+            </div>
+        </vs-popup>
     </div>
 </template>
 
@@ -123,6 +146,14 @@
             hasMultiple: {
                 type: Boolean,
                 default: () => false
+            },
+            mainItem:{
+                type:Array,
+                default:()=>[]
+            },
+            getData:{
+                type:Function,
+                default:()=>function () {}
             }
         },
 
@@ -130,29 +161,56 @@
             return {
                 selected: [],
                 totalItems: 10,
-                items: [],
-                mainItem:[]
-
+                allDeletePop:false
             }
-        },
-        created() {
-            this.getData()
         },
 
         methods: {
-            getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data;
-                    this.mainItem=this.items
-                    console.log(this.mainItem)
-                })
-            },
 
             doActive() {
-                alert('doing active')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/faculty/bulk-action', {
+                        bulk_action: 'active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                } else {
+                    this.$root.notification.status = 'danger';
+                    this.$root.notification.message = 'Please, Check at least one row.'
+                }
+
             },
             doInActive() {
-                alert('doing Inactive')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/faculty/bulk-action', {
+                        bulk_action: 'in-active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                } else {
+                    this.$root.notification.status = 'danger';
+                    this.$root.notification.message = 'Please, Check at least one row.'
+                }
             },
             doCopy() {
                 alert('doing copy')
@@ -167,7 +225,26 @@
                 alert('doing print')
             },
             doDelete() {
-                alert('doing Delete')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/faculty/bulk-action', {
+                        bulk_action: 'delete',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                } else {
+                    this.$root.notification.status = 'danger';
+                    this.$root.notification.message = 'Please, Check at least one row.'
+                }
             }
 
 

@@ -1008,8 +1008,16 @@ const router = new Router({
                 /* url for academic section */
                 {
                     path: '/faculty',
-                    name: 'academics.faculty',
+                    name: 'faculty',
                     component: () => import('./views/custom/academics/faculty'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/faculty/:id/edit',
+                    name: 'facultyEdit',
+                    component: () => import('./views/custom/academics/facultyEdit'),
                     meta: {
                         rule: 'admin'
                     }

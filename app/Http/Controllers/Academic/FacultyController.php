@@ -29,13 +29,17 @@ class FacultyController extends CollegeBaseController
             ->orderBy('faculty')
             ->with('semester')
             ->get();
-            return response()->json($data['faculty']);
+
+      $data['semester'] = Semester::select('id', 'semester')
+            ->Active()
+            ->get();
+
+      return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
-
+        $d=$request->merge(['created_by' => auth()->user()->id]);
         $faculty = Faculty::create($request->all());
 
         $semesters = [];
@@ -50,8 +54,7 @@ class FacultyController extends CollegeBaseController
 
         $faculty->semester()->sync($semesters);
 
-        $request->session()->flash($this->message_success, $this->panel. 'Created Successfully.');
-        return redirect()->route($this->base_route);
+         return response()->json(['success', $faculty->id.' '.$this->panel.' Created Successfully.']);
     }
 
     public function edit($id)
@@ -108,8 +111,7 @@ class FacultyController extends CollegeBaseController
         $row->delete();
         $row->semester()->detach();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+       return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -135,15 +137,13 @@ class FacultyController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', 'Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                     return response()->json(['success', 'Deleted Successfully.']);
 
                 return redirect()->route($this->base_route);
-
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['danger', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -158,8 +158,7 @@ class FacultyController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -170,8 +169,7 @@ class FacultyController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 
 }

@@ -95,8 +95,7 @@
 
                                     <vs-td>
                                         <div class="d-flex flex-column">
-                                            <span v-for="(sem,idx) in props.data.semester"
-                                                  :class="{'p-2':true ,'border-t':idx>0}">
+                                            <span v-for="(sem,idx) in props.data.semester" :class="{'p-2':true ,'border-t':idx>0}">
                                                 {{sem.id+'-['+sem.semester+']'}}
                                             </span>
                                         </div>
@@ -124,7 +123,7 @@
                                             </a>
                                             <a class="btn btn-danger btn-sm pointer-all"
                                                title="Delete"
-                                               @click.stop="deletePopModal(props.data.id)">
+                                               @click.stop="deleteItems(props.data.id)">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>
@@ -137,27 +136,6 @@
                 </vs-card>
             </div>
         </div>
-        <vs-popup class="holamundo"
-                  :title="'Delete Confirmation'"
-                  :active.sync="deletePop">
-            <div class="mt-3">
-                <p class="p-2 my-round delete-pop-text">These items will be permanently deleted and cannot be recovered.</p>
-
-                <p><i class="p-2 ace-icon fa fa-hand-o-right"></i>Are you sure?</p>
-            </div>
-
-            <div class="footer-modal">
-                <vs-button class="smBtn"
-                        @click="deletePop=false, deleteItem= null">
-                    <i class="fa fa-close"></i>
-                    Cancel
-                </vs-button>
-                <vs-button  class="smBtn" color="danger" @click="deletePop=false, deleteItems()">
-                    <i class="fa fa-trash"></i>
-                    Yes,Delete Now!
-                </vs-button>
-            </div>
-        </vs-popup>
     </div>
 </template>
 
@@ -178,9 +156,7 @@
                 url: '/json/faculty',
                 mainItem: [],
                 items: [],
-                semester: [],
-                deletePop: false,
-                deleteItem: null
+                semester: []
             }
         },
         created() {
@@ -206,7 +182,7 @@
                         }).then(res => {
                             this.$root.notification.status = res.data[0]
                             this.$root.notification.message = res.data[1]
-                            this.faculty = {faculty: '', faculty_code: '', semester: []}
+                            this.faculty= {faculty:'',faculty_code:'',semester: []}
                             this.getData()
                         })
                     }
@@ -214,11 +190,11 @@
             },
 
             changeStatus(id, status) {
-                let stat = status === 'active' ? 'in-active' : 'active';
-                let url = '/json/faculty/' + id + '/' + stat;
+                let stat = status === 'active' ? 'in-active' : 'active'
+                let url = '/json/faculty/' + id + '/' + stat
                 this.$http.get(url).then(res => {
-                    this.getData();
-                    this.$root.notification.status = res.data[0];
+                    this.getData()
+                    this.$root.notification.status = res.data[0]
                     this.$root.notification.message = res.data[1]
                 })
 
@@ -226,16 +202,8 @@
             editItems(id) {
                 this.$router.push({name: 'facultyEdit', params: {id: id}})
             },
-            deletePopModal(id) {
-                this.deleteItem = id;
-                this.deletePop = true
-            },
             deleteItems() {
-                this.$http.get('/json/faculty/' + this.deleteItem + '/delete').then(res => {
-                    this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
-                })
+
             },
         }
     }

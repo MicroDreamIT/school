@@ -529,3 +529,20 @@ button:focus {
     }
   }
 }
+.vs-input{
+  .vs-input--icon-validate{
+    display: none;
+  }
+  .con-text-validation{
+    font-size:12px;
+  }
+}
+.delete-pop-text{
+  background: rgba(0, 207, 232, 0.2);
+  color: #00cfe8;
+  font-weight: bold;
+  font-size: 14px;
+}
+.vs-popup{
+  width: 400px!important;
+}

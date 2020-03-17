@@ -7,6 +7,7 @@ use App\Http\Controllers\CollegeBaseController;
 use App\Http\Requests\Academic\Faculty\AddValidation;
 use App\Http\Requests\Academic\Faculty\EditValidation;
 use App\Models\Faculty;
+use App\Models\FacultySemester;
 use App\Models\Semester;
 use Illuminate\Http\Request;
 class FacultyController extends CollegeBaseController
@@ -107,9 +108,9 @@ class FacultyController extends CollegeBaseController
     public function delete(Request $request, $id)
     {
         if (!$row = Faculty::find($id)) return parent::invalidRequest();
-
-        $row->delete();
         $row->semester()->detach();
+        $row->delete();
+
 
        return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);
     }
@@ -131,6 +132,7 @@ class FacultyController extends CollegeBaseController
                             break;
                         case 'delete':
                             $row = Faculty::find($row_id);
+                            $row->semester()->detach();
                             $row->delete();
                             break;
                     }

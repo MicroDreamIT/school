@@ -193,7 +193,7 @@
                 let stat = status === 'active' ? 'in-active' : 'active'
                 let url = '/json/faculty/' + id + '/' + stat
                 this.$http.get(url).then(res => {
-                    this.getData()
+                    this.getData();
                     this.$root.notification.status = res.data[0]
                     this.$root.notification.message = res.data[1]
                 })

@@ -5,19 +5,19 @@
             {{tableHeader}}
         </h4>
         <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn">
-                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
-                        <i class="fa fa-check"></i>
-                        Active
-                    </a>
-                    <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
-                        <i class="fa fa-remove"></i>
-                        In-Active
-                    </a>
-                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="allDeletePop=true">
-                        <i class="fa fa-trash"></i>
-                        Delete
-                    </a>
-                </div>
+            <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
+                <i class="fa fa-check"></i>
+                Active
+            </a>
+            <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
+                <i class="fa fa-remove"></i>
+                In-Active
+            </a>
+            <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="allDeletePop=true">
+                <i class="fa fa-trash"></i>
+                Delete
+            </a>
+        </div>
         <br>
         <div class="table-header" v-if="headerSuggestion">
             {{suggestText}}
@@ -40,7 +40,7 @@
                 <span>JSON</span>
             </button>
             <button class="btn btn-secondary buttons-print"
-                    @click.prevent="doPrint"
+                    v-print="'owTableMain'"
             >
                 <span>Print</span>
             </button>
@@ -59,7 +59,7 @@
         >
 
             <template slot="thead">
-                <vs-th>SN.No.</vs-th>
+                <vs-th :sort-key="'id'">SN.No.</vs-th>
                 <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in headers" :key="indx">
                     {{thead.name}}
                 </vs-th>
@@ -67,7 +67,7 @@
             <template slot-scope="{data}">
                 <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
                     <vs-td class="pointer-none">
-                        {{idx+1}}
+                        {{mainItem.indexOf(tr)+1}}
                     </vs-td>
                     <slot name="items" v-bind:data="tr">
                     </slot>
@@ -75,6 +75,16 @@
             </template>
 
         </vs-table>
+        <div class="d-none" ref="owTable">
+            <div id="owTableMain">
+                <div class="">
+                    <h4 class="text-info">{{tableHeader}} | Edu MIS</h4>
+                </div>
+                <table id="ow-table" ref="owTableMain">
+                    <slot name="printSection" :data="mainItem"></slot>
+                </table>
+            </div>
+        </div>
         <vs-popup class="holamundo"
                   :title="'Delete Confirmation'"
                   :active.sync="allDeletePop">
@@ -87,11 +97,11 @@
 
             <div class="footer-modal">
                 <vs-button class="smBtn"
-                        @click="allDeletePop=false">
+                           @click="allDeletePop=false">
                     <i class="fa fa-close"></i>
                     Cancel
                 </vs-button>
-                <vs-button  class="smBtn" color="danger" @click="allDeletePop=false, doDelete()">
+                <vs-button class="smBtn" color="danger" @click="allDeletePop=false, doDelete()">
                     <i class="fa fa-trash"></i>
                     Ok!
                 </vs-button>
@@ -101,6 +111,8 @@
 </template>
 
 <script>
+
+
     export default {
         props: {
             url: {
@@ -147,13 +159,14 @@
                 type: Boolean,
                 default: () => false
             },
-            mainItem:{
-                type:Array,
-                default:()=>[]
+            mainItem: {
+                type: Array,
+                default: () => []
             },
-            getData:{
-                type:Function,
-                default:()=>function () {}
+            getData: {
+                type: Function,
+                default: () => function () {
+                }
             }
         },
 
@@ -161,7 +174,7 @@
             return {
                 selected: [],
                 totalItems: 10,
-                allDeletePop:false
+                allDeletePop: false,
             }
         },
 
@@ -213,17 +226,30 @@
                 }
             },
             doCopy() {
-                alert('doing copy')
+                this.$copyText(this.$refs.owTable.innerText)
             },
             doPdf() {
-                alert('doing pdf')
+                var doc = this.$root.doc;
+                doc.setFontSize(18)
+                doc.text(this.tableHeader, 14, 22)
+                doc.setFontSize(11)
+                doc.setTextColor(100)
+
+                doc.autoTable({
+                    html: '#ow-table',
+                    startY: 30,
+                    showHead: 'firstPage',
+                })
+                doc.save(this.tableHeader+'.pdf');
             },
             doJson() {
                 alert('doing json')
-            },
+            }
+            ,
             doPrint() {
                 alert('doing print')
-            },
+            }
+            ,
             doDelete() {
                 if (this.selected.length > 0) {
                     this.$http.post('/json/faculty/bulk-action', {

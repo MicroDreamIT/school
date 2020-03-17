@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset(mix('css/material-icons/material-icons.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/vuesax.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/prism-tomorrow.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
+    <link rel="stylesheet" href="{{ asset(mix('css/app.css')) }}" media="screen">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/logo/favicon.png') }}">

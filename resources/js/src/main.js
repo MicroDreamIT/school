@@ -17,6 +17,8 @@ import draggable from 'vuedraggable'
 import {VueMaskDirective} from 'v-mask'
 import Print from 'vue-print-nb'
 import moment from 'moment'
+import * as jsPDF from 'jspdf'
+import 'jspdf-autotable'
 Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
@@ -140,7 +142,8 @@ new Vue({
             notification: {
                 status: '',
                 message: ''
-            }
+            },
+            doc:new jsPDF()
         }
     },
     watch: {

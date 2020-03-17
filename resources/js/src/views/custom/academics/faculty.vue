@@ -89,7 +89,7 @@
                                            :getData="getData"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td>
+                                    <vs-td :data="props.data.faculty">
                                         {{'['+props.data.id+']-'+props.data.faculty+'-[CODE-'+props.data.faculty_code+']'}}
                                     </vs-td>
 
@@ -130,6 +130,50 @@
                                         </div>
                                     </vs-td>
                                 </template>
+
+
+                                    <template slot="printSection" slot-scope="printData">
+                                        <thead>
+                                        <tr>
+                                            <th>SN.No.</th>
+                                            <th>
+                                                Code-Faculty/Level/Class
+                                            </th>
+                                            <th>
+                                                Sem./Sec.
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="(tr, idx) in printData.data">
+                                            <td>
+                                                {{printData.data.indexOf(tr)+1}}
+                                            </td>
+                                            <td>
+                                                {{'['+tr.id+']-'+tr.faculty+'-[CODE-'+tr.faculty_code+']'}}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                            <span v-for="(sem,idx) in tr.semester"
+                                                                  :class="{'p-2':true ,'border-t':idx>0}">
+                                                                {{sem.id+'-['+sem.semester+']'}}
+                                                            </span>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <span v-if="tr.status=='active'" class="p-2 ">Active</span>
+                                                    <span v-else class="p-2">In-Active</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </template>
+
                             </ow-data-table>
                         </div>
                     </div>
@@ -141,18 +185,19 @@
                   :title="'Delete Confirmation'"
                   :active.sync="deletePop">
             <div class="mt-3">
-                <p class="p-2 my-round delete-pop-text">These items will be permanently deleted and cannot be recovered.</p>
+                <p class="p-2 my-round delete-pop-text">These items will be permanently deleted and cannot be
+                    recovered.</p>
 
                 <p><i class="p-2 ace-icon fa fa-hand-o-right"></i>Are you sure?</p>
             </div>
 
             <div class="footer-modal">
                 <vs-button class="smBtn"
-                        @click="deletePop=false, deleteItem= null">
+                           @click="deletePop=false, deleteItem= null">
                     <i class="fa fa-close"></i>
                     Cancel
                 </vs-button>
-                <vs-button  class="smBtn" color="danger" @click="deletePop=false, deleteItems()">
+                <vs-button class="smBtn" color="danger" @click="deletePop=false, deleteItems()">
                     <i class="fa fa-trash"></i>
                     Yes,Delete Now!
                 </vs-button>
@@ -170,9 +215,9 @@
             return {
                 faculty: {semester: []},
                 tableHeader: [
-                    {name: 'Code-Faculty/Level/Class', sort_key: 'email'},
+                    {name: 'Code-Faculty/Level/Class', sort_key: 'faculty'},
                     {name: 'Sem./Sec.', sort_key: ''},
-                    {name: 'status', sort_key: ''},
+                    {name: 'Status', sort_key: ''},
                     {name: 'Action'},
                 ],
                 url: '/json/faculty',
@@ -193,7 +238,6 @@
                     this.items = res.data.faculty;
                     this.mainItem = this.items;
                     this.semester = res.data.semester;
-                    console.log(this.mainItem)
                 })
             },
             submit() {

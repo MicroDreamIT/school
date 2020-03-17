@@ -24,7 +24,6 @@
         </div>
         <div class="dt-buttons btn-group action-group mt-3" v-if="printSection">
             <button class="btn btn-secondary buttons-copy buttons-html5"
-
                     @click.prevent="doCopy"
             >
                 <span>Copy</span>
@@ -226,7 +225,22 @@
                 }
             },
             doCopy() {
-                this.$copyText(this.$refs.owTable.innerText)
+                this.$copyText(this.$refs.owTable.innerText).then(() => {
+                    this.$vs.notify({
+                        title: 'Copy to Clipboard ',
+                        text: 'Copy ' + this.mainItem.length + ' rows to clipboard',
+                        color: 'success',
+                        position: 'top-right'
+                    })
+                }, () => {
+                    this.$vs.notify({
+                        title: 'Copy to Clipboard ',
+                        text: 'Copy unsuccessfull',
+                        color: 'danger',
+                        position: 'top-right'
+                    })
+                })
+
             },
             doPdf() {
                 var doc = this.$root.doc;
@@ -240,7 +254,7 @@
                     startY: 30,
                     showHead: 'firstPage',
                 })
-                doc.save(this.tableHeader+'.pdf');
+                doc.save(this.tableHeader + '.pdf');
             },
             doJson() {
                 alert('doing json')
@@ -271,8 +285,7 @@
                     this.$root.notification.status = 'danger';
                     this.$root.notification.message = 'Please, Check at least one row.'
                 }
-            }
-
+            },
 
         }
     }

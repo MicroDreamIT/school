@@ -13,8 +13,8 @@
             </div>
             <div class="row w-100">
                 <div class="col-md-3">
-                    <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="profile.student_image" class="img-thumbnail mt-3 ">
+                    <div class="d-flex justify-content-center align-items-center w-100">
+                        <img :src="profile.student_image" class="img-responsive border mt-3">
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -206,21 +206,24 @@
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Guardian </vs-button>
-                    <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="profile.guardian_image" class="img-thumbnail my-3 ">
+                    <div class="d-flex justify-content-center align-items-center w-100">
+                        <img v-if="profile.guardian_image" :src="profile.guardian_image" class="img-responsive border my-3">
+                        <img v-else :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-responsive border my-3 ">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize">Father</vs-button>
-                     <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="profile.father_image" class="img-thumbnail my-3 ">
-                    </div>
+                     <div class="d-flex justify-content-center align-items-center w-100">
+                        <img v-if="profile.father_image" :src="profile.father_image" class="img-responsive border my-3">
+                         <img v-else :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-responsive border my-3 ">
+                     </div>
                 </div>
                 <div class="col-md-3">
                     <vs-button type="filled" class="smBtn text-capitalize"> Mother</vs-button>
-                     <div class="d-flex justify-content-center align-items-center w-100 ">
-                        <img :src="profile.mother_image" class="img-thumbnail my-3 ">
-                    </div>
+                     <div class="d-flex justify-content-center align-items-center w-100">
+                         <img v-if="profile.mother_image" :src="profile.mother_image" class="img-responsive border my-3 ">
+                         <img v-else :src="`http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg`" class="img-responsive border my-3 ">
+                     </div>
                 </div>
             </div>
         </div>

@@ -89,6 +89,7 @@ class GuardianController extends CollegeBaseController
         $data['guardian_login'] = User::where([['role_id',7],['hook_id',$data['guardian']->id]])->first();
 
         $data['url'] = URL::current();
+        return response()->json($data);
         return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 
@@ -104,6 +105,7 @@ class GuardianController extends CollegeBaseController
         if (!$data['row'])
             return parent::invalidRequest();
 
+        return response()->json($data);
         return view(parent::loadDataToView($this->view_path.'.registration.edit'), compact('data'));
     }
 

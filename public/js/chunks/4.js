@@ -939,6 +939,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "profile",
   props: ['profile']
@@ -2326,15 +2329,12 @@ var render = function() {
                   "div",
                   {
                     staticClass:
-                      "d-flex justify-content-center align-items-center w-100 "
+                      "d-flex justify-content-center align-items-center w-100"
                   },
                   [
                     _c("img", {
-                      staticClass: "img-thumbnail mt-3 ",
-                      attrs: {
-                        src:
-                          "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                      }
+                      staticClass: "img-responsive border mt-3",
+                      attrs: { src: _vm.profile.student_image }
                     })
                   ]
                 )
@@ -2365,7 +2365,127 @@ var render = function() {
                   1
                 ),
                 _vm._v(" "),
-                _vm._m(1)
+                _c("div", { staticClass: "data-table" }, [
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("faculty:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(_vm._s(_vm.profile.faculty))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [_vm._v("semester:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(_vm._s(_vm.profile.semester))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("batch:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(_vm._s(_vm.profile.batch))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("Reg no:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(_vm._s(_vm.profile.reg_no))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [_vm._v("reg date")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.reg_date) + " ")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("univ.reg:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(_vm._s(_vm.profile.university_reg))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [_vm._v("Dob:")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" 06/01/2020 ")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("gender: ")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.gender) + " ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v("blood group:")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v("  " + _vm._s(_vm.profile.blood_group) + "  ")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v("Religion: ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.religion) + " ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [_vm._v("Caste: ")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v("  " + _vm._s(_vm.profile.caste) + "  ")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v("Nationality:")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.nationality) + " ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v("Mother Tongue: ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.mother_tongue) + "  ")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "rows" }, [
+                    _c("div", { staticClass: "header" }, [_vm._v("E-mail: ")]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content text-lowercase" }, [
+                      _vm._v(_vm._s(_vm.profile.email) + " ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v("Mobile No : ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "content" }, [
+                      _vm._v(" " + _vm._s(_vm.profile.mobile_1) + " ")
+                    ])
+                  ])
+                ])
               ])
             ]),
             _vm._v(" "),
@@ -2385,7 +2505,35 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm._m(2)
+                  _c("div", { staticClass: "data-table" }, [
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("address:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.address) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("state:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.state) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [_vm._v("country")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.country) + " ")
+                      ])
+                    ])
+                  ])
                 ],
                 1
               )
@@ -2407,7 +2555,35 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm._m(3)
+                  _c("div", { staticClass: "data-table" }, [
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("address:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.temp_address) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("state:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.temp_state) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [_vm._v("country")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.temp_country) + " ")
+                      ])
+                    ])
+                  ])
                 ],
                 1
               )
@@ -2429,7 +2605,105 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm._m(4)
+                  _c("div", { staticClass: "data-table" }, [
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("grand father:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(
+                          " " +
+                            _vm._s(_vm.profile.grandfather_first_name) +
+                            " " +
+                            _vm._s(_vm.profile.grandfather_middle_name) +
+                            " " +
+                            _vm._s(_vm.profile.grandfather_last_name) +
+                            "  "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("father name:")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(
+                          " " +
+                            _vm._s(_vm.profile.father_first_name) +
+                            " " +
+                            _vm._s(_vm.profile.father_middle_name) +
+                            " " +
+                            _vm._s(_vm.profile.father_last_name) +
+                            " "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Eligibility ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_eligibility) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Occupation  ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_occupation))
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("office:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_office) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Office Num :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_office_number) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Residence :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(
+                          _vm._s(_vm.profile.father_residence_number) + " "
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("mobile:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_mobile_1) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("mobile 2 :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_mobile_2) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [_vm._v("email :")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.father_email) + " ")
+                      ])
+                    ])
+                  ])
                 ],
                 1
               )
@@ -2451,7 +2725,110 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm._m(5)
+                  _c("div", { staticClass: "data-table" }, [
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Guardian Name :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(
+                          _vm._s(_vm.profile.guardian_first_name) +
+                            " " +
+                            _vm._s(_vm.profile.guardian_middle_name) +
+                            " " +
+                            _vm._s(_vm.profile.guardian_last_name) +
+                            " "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Eligibility :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_eligibility) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Occupation  ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_occupation) + " ")
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("Office:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_office) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("office number 2 :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_office_number) + " ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Residence  :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(
+                          " " + _vm._s(_vm.profile.guardian_residence_number)
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [_vm._v("mobile:")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_mobile_1))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("mobile 2 :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_mobile_2))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [_vm._v("email :")]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_email))
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "rows" }, [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Relation :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_relation))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v("Address :")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" }, [
+                        _vm._v(_vm._s(_vm.profile.guardian_address))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "header" }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content" })
+                    ])
+                  ])
                 ],
                 1
               )
@@ -2498,16 +2875,21 @@ var render = function() {
                     "div",
                     {
                       staticClass:
-                        "d-flex justify-content-center align-items-center w-100 "
+                        "d-flex justify-content-center align-items-center w-100"
                     },
                     [
-                      _c("img", {
-                        staticClass: "img-thumbnail my-3 ",
-                        attrs: {
-                          src:
-                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                        }
-                      })
+                      _vm.profile.guardian_image
+                        ? _c("img", {
+                            staticClass: "img-responsive border my-3",
+                            attrs: { src: _vm.profile.guardian_image }
+                          })
+                        : _c("img", {
+                            staticClass: "img-responsive border my-3 ",
+                            attrs: {
+                              src:
+                                "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                            }
+                          })
                     ]
                   )
                 ],
@@ -2531,16 +2913,21 @@ var render = function() {
                     "div",
                     {
                       staticClass:
-                        "d-flex justify-content-center align-items-center w-100 "
+                        "d-flex justify-content-center align-items-center w-100"
                     },
                     [
-                      _c("img", {
-                        staticClass: "img-thumbnail my-3 ",
-                        attrs: {
-                          src:
-                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                        }
-                      })
+                      _vm.profile.father_image
+                        ? _c("img", {
+                            staticClass: "img-responsive border my-3",
+                            attrs: { src: _vm.profile.father_image }
+                          })
+                        : _c("img", {
+                            staticClass: "img-responsive border my-3 ",
+                            attrs: {
+                              src:
+                                "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                            }
+                          })
                     ]
                   )
                 ],
@@ -2564,16 +2951,21 @@ var render = function() {
                     "div",
                     {
                       staticClass:
-                        "d-flex justify-content-center align-items-center w-100 "
+                        "d-flex justify-content-center align-items-center w-100"
                     },
                     [
-                      _c("img", {
-                        staticClass: "img-thumbnail my-3 ",
-                        attrs: {
-                          src:
-                            "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
-                        }
-                      })
+                      _vm.profile.mother_image
+                        ? _c("img", {
+                            staticClass: "img-responsive border my-3 ",
+                            attrs: { src: _vm.profile.mother_image }
+                          })
+                        : _c("img", {
+                            staticClass: "img-responsive border my-3 ",
+                            attrs: {
+                              src:
+                                "http://viholdings.com.au/edu/public/assets/images/avatars/profile-pic.jpg"
+                            }
+                          })
                     ]
                   )
                 ],
@@ -2605,262 +2997,6 @@ var staticRenderFns = [
         _c("h4", [_vm._v("Registration Details")])
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "data-table" }, [
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("faculty:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("BTECH")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("semester:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("1")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("batch:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("ACT")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Reg no:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("123")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("reg date")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v(" 06/01/2020 ")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("univ.reg:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("1235")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Dob:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v(" 06/01/2020 ")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("gender: ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("male")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("blood group:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v(" a+ ")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Religion: ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("islam")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Caste: ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v(" G ")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Nationality:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("indian")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Mother Tongue: ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v(" hindi ")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("E-mail: ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content text-lowercase" }, [
-          _vm._v("admin@gmail.com")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Mobile No : ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [
-          _vm._v("  65345345634,45634563456345")
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "data-table" }, [
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("address:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("DEHRADUN")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("state:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("uk")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("country")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("ind")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "data-table" }, [
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("address:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("DEHRADUN")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("state:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("uk")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("country")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("ind")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "data-table" }, [
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("grand father:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("loli makai")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("father name:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("dsfdsf")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Eligibility ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("dsfdsf")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Occupation  ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("dsfdsf")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("office:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("sadsad")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Office Num :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("020121")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Residence :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("sadsad")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("mobile:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("34324324")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("mobile 2 :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("020121")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("email :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("admin@gmail.com")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "data-table" }, [
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Guardian Name :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("loli makai sdf")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Eligibility :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("dsfdsf")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Occupation  ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("dsfdsf")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Office:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("34324324")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("office number 2 :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("020121")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Residence  :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("sasdsdd")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("mobile:")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("34324324")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("mobile 2 :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("020121")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("email :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("admin@gmail.com")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "rows" }, [
-        _c("div", { staticClass: "header" }, [_vm._v("Relation :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("father")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }, [_vm._v("Address :")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" }, [_vm._v("020121 sad  asdsad")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "header" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "content" })
-      ])
-    ])
   }
 ]
 render._withStripped = true

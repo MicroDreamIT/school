@@ -190,7 +190,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.item = res.data;
+                    this.item = res.data.guardian;
                     this.doSerialize()
                 });
 
@@ -220,7 +220,12 @@
                 alert('doing Delete')
             },
             doSerialize() {
-
+                this.mainItem = this.item.map(st=>{
+                    return {
+                        id: st.id,
+                        first_name: st.guardian_first_name
+                    }
+                })
             },
 
 

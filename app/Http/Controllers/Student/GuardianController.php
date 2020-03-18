@@ -42,7 +42,7 @@ class GuardianController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
-
+        return response()->json($data);
         return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
     }
 

@@ -52,53 +52,49 @@
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td>
-
+                                {{props.data.guardian_first_name }}
                             </vs-td>
-
                             <vs-td >
                                 <a @click.stop="viewItems(props.data.id)"
                                    class="pointer-all text-primary"
                                    title="View"
                                 >
-                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                    {{props.data.guardian_address}}
                                 </a>
 
                             </vs-td>
                             <vs-td>
-                                <div class="d-flex">
-                                    {{props.data.academic_status}}
-                                    <vs-switch color="success"
-                                               :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
-                                               class="pointer-all ml-2"
-                                    >
-                                        <span slot="on">Active</span>
-                                        <span slot="off">In-Active</span>
-                                    </vs-switch>
-                                </div>
-
+                                {{props.data.guardian_mobile_1}}
+                            </vs-td>
+                           
+                            <vs-td>
+                                {{props.data.status}}
                             </vs-td>
                             <vs-td>
-                                <div class="action-own">
-                                    <a class="btn btn-primary btn-sm pointer-all"
-                                       title="View"
-                                       @click.stop="viewItems(props.data.id)"
-
-                                    >
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    <a class="btn btn-success btn-sm pointer-all"
-                                       title="Edit"
-                                       @click.stop="editItems(props.data.id)">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a class="btn btn-danger btn-sm pointer-all"
-                                       title="Delete"
-                                       @click.stop="deleteItems(props.data.id)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                </div>
+                                sdf
                             </vs-td>
+                            <vs-td>
+                            <div class="action-own">
+                            <a class="btn btn-primary btn-sm pointer-all"
+                            title="View"
+                            @click.stop="viewItems(props.data.id)"
+    
+                            >
+                            <i class="fa fa-eye"></i>
+                            </a>
+                            <a class="btn btn-success btn-sm pointer-all"
+                            title="Edit"
+                            @click.stop="editItems(props.data.id)">
+                            <i class="fa fa-pencil"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm pointer-all"
+                            title="Delete"
+                            @click.stop="deleteItems(props.data.id)">
+                            <i class="fa fa-trash-o"></i>
+                            </a>
+                            </div>
+                            </vs-td>
+                          
 
                         </template>
                     </guardian-table>

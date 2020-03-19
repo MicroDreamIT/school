@@ -303,7 +303,7 @@
                 td{
                   padding:10px;
                  }
-                 border-bottom: 1px solid #d3d3d34d ;
+                 border-bottom: 1px solid #d3d3d34d;
             }
       }
     }

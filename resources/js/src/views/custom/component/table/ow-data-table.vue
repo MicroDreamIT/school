@@ -56,7 +56,6 @@
                 description
                 stripe
         >
-
             <template slot="thead">
                 <vs-th :sort-key="'id'">SN.No.</vs-th>
                 <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in headers" :key="indx">
@@ -72,13 +71,10 @@
                     </slot>
                 </vs-tr>
             </template>
-
         </vs-table>
-        <div class="d-none" ref="owTable">
+        <div class="" ref="owTable">
             <div id="owTableMain">
-                <div class="">
-                    <h4 class="text-info">{{tableHeader}} | Edu MIS</h4>
-                </div>
+               <h4 style="text-align: center">{{tableHeader}} | Edu MIS</h4>
                 <table id="ow-table" ref="owTableMain">
                     <slot name="printSection" :data="mainItem"></slot>
                 </table>
@@ -285,3 +281,30 @@
         }
     }
 </script>
+
+
+<style lang="scss">
+    #ow-table{
+        width: 100%;
+        margin: 16px 0;
+        thead{
+            tr{
+                th{
+                    background:#e8e8e8;
+                    padding:10px;
+                }
+            }
+        }
+        tbody{
+            tr{
+                &:nth-child(even){
+                    background:#f8f8f8;
+                }
+                td{
+                  padding:10px;
+                 }
+                 border-bottom: 1px solid #d3d3d34d ;
+            }
+      }
+    }
+</style>

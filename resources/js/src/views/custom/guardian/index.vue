@@ -139,7 +139,7 @@
         },
         methods: {
             viewItems(id) {
-                if(id) this.$router.push({name: 'studentView', params: {id: id}})
+                if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
             },
             editItems() {
                 alert("hey hasib im edit ")

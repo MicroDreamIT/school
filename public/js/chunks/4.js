@@ -143,7 +143,8 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.$http.get('/json/student/4/view').then(function (res) {
+    var url = '/json/student/' + this.$route.params.id + '/view';
+    this.$http.get(url).then(function (res) {
       _this.datas = res.data;
     });
   }

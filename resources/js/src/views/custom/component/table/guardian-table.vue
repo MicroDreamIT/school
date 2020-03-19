@@ -220,12 +220,13 @@
                 alert('doing Delete')
             },
             doSerialize() {
-                this.mainItem = this.item.map(st=>{
-                    return {
-                        id: st.id,
-                        first_name: st.guardian_first_name
-                    }
-                })
+                this.mainItem =  this.item
+                // this.mainItem = this.item.map(st=>{
+                //     return {
+                //         id: st.id,
+                //         first_name: st.guardian_first_name
+                //     }
+                // })
             },
 
 

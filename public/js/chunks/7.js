@@ -226,7 +226,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.$http.get(this.url).then(function (res) {
-        _this.item = res.data;
+        _this.item = res.data.guardian;
 
         _this.doSerialize();
       });
@@ -255,7 +255,14 @@ __webpack_require__.r(__webpack_exports__);
     doDelete: function doDelete() {
       alert('doing Delete');
     },
-    doSerialize: function doSerialize() {}
+    doSerialize: function doSerialize() {
+      this.mainItem = this.item.map(function (st) {
+        return {
+          id: st.id,
+          first_name: st.guardian_first_name
+        };
+      });
+    }
   }
 });
 
@@ -381,14 +388,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -404,7 +403,7 @@ __webpack_require__.r(__webpack_exports__);
         sort_key: ''
       }, {
         name: 'Contact',
-        sort_key: 'reg_no'
+        sort_key: 'guardian_mobile_1'
       }, {
         name: 'Students',
         sort_key: ''
@@ -942,10 +941,6 @@ var render = function() {
                       key: "items",
                       fn: function(props) {
                         return [
-                          _c("vs-td"),
-                          _vm._v(" "),
-                          _c("vs-td"),
-                          _vm._v(" "),
                           _c("vs-td"),
                           _vm._v(" "),
                           _c("vs-td", [

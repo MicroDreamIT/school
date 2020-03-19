@@ -56,14 +56,6 @@
                             </vs-td>
 
                             <vs-td >
-
-                            </vs-td>
-
-                            <vs-td >
-
-                            </vs-td>
-
-                            <vs-td >
                                 <a @click.stop="viewItems(props.data.id)"
                                    class="pointer-all text-primary"
                                    title="View"
@@ -125,7 +117,7 @@
                 guardianHeader: [
                     {name: 'Name', sort_key: 'faculty'},
                     {name: 'Address', sort_key: ''},
-                    {name: 'Contact', sort_key: 'reg_no'},
+                    {name: 'Contact', sort_key: 'guardian_mobile_1'},
                     {name: 'Students', sort_key: ''},
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},

@@ -1371,25 +1371,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -7938,9 +7919,7 @@ var render = function() {
                         "flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white",
                       on: {
                         click: function($event) {
-                          _vm.$router
-                            .push("/pages/profile")
-                            .catch(function() {})
+                          _vm.$router.push("/user/profile").catch(function() {})
                         }
                       }
                     },

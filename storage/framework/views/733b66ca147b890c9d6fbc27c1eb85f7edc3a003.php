@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="<?php echo e(asset(mix('css/material-icons/material-icons.css')), false); ?>">
     <link rel="stylesheet" href="<?php echo e(asset(mix('css/vuesax.css')), false); ?>">
     <link rel="stylesheet" href="<?php echo e(asset(mix('css/prism-tomorrow.css')), false); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset(mix('css/app.css')), false); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset(mix('css/app.css')), false); ?>" media="screen">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<?php echo e(asset('images/logo/favicon.png'), false); ?>">

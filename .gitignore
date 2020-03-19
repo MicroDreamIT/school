@@ -97,8 +97,8 @@ fabric.properties
 /.idea/viholding.iml
 /.idea/misc.xml
 /.idea/modules.xml
-/public/js/chunks/
+public/js/chunks/
 /public/js/
 /public/fonts/vendor/font-awesome/
 /storage/framework/views/
-/public/js/app.js
+public/js/app.js

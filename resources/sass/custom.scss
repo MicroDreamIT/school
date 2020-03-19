@@ -5,6 +5,11 @@ $primary: #7367f0;
 .overflow{
   overflow-x: scroll;
 }
+
+.img-responsive{
+  width: 100%;
+  height: auto;
+}
 .own-modify-tr{
    @media(max-width: 768px){
      input[readonly="readonly"]{

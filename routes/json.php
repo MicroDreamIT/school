@@ -205,3 +205,24 @@ Route::group(['prefix' => '/', 'as' => '', 'namespace' => 'Academic\\'], functio
     Route::post('day/bulk-action', ['as' => 'day.bulk-action', 'middleware' => ['ability:super-admin,day-bulk-action'], 'uses' => 'DayController@bulkAction']);
 
 });
+
+
+/*Students Guardian Grouping*/
+Route::group(['prefix' => 'guardian/', 'as' => 'guardian', 'namespace' => 'Student\\'], function () {
+
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,guardian-index'], 'uses' => 'GuardianController@index']);
+    Route::get('registration', ['as' => '.registration', 'middleware' => ['ability:super-admin,guardian-registration'], 'uses' => 'GuardianController@registration']);
+    Route::post('register', ['as' => '.register', 'middleware' => ['ability:super-admin,guardian-register'], 'uses' => 'GuardianController@register']);
+    Route::get('{id}/view', ['as' => '.view', 'middleware' => ['ability:super-admin,guardian-view'], 'uses' => 'GuardianController@view']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,guardian-edit'], 'uses' => 'GuardianController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,guardian-edit'], 'uses' => 'GuardianController@update']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,guardian-delete'], 'uses' => 'GuardianController@delete']);
+
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,guardian-active'], 'uses' => 'GuardianController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,guardian-in-active'], 'uses' => 'GuardianController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,student-bulk-action'], 'uses' => 'GuardianController@bulkAction']);
+
+    Route::post('/link', ['as' => '.link', 'middleware' => ['ability:super-admin,guardian-link'], 'uses' => 'GuardianController@link']);
+    Route::get('{student}/{guardian}/unlink', ['as' => '.unlink', 'middleware' => ['ability:super-admin,guardian-unlink'], 'uses' => 'GuardianController@unlink']);
+
+});

@@ -1252,6 +1252,14 @@ const router = new Router({
                         rule: 'admin'
                     }
                 },
+                {
+                    path: '/user/profile',
+                    name: 'userProfile',
+                    component: () => import('./views/custom/user/profile'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
                 /* url for more section end */
 
 

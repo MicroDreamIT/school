@@ -257,7 +257,7 @@
                 doc.save(this.tableHeader + '.pdf');
             },
             doJson() {
-                alert('doing json')
+                this.$root.saveAsJson(this.$refs.owTableMain)
             },
             doDelete() {
                 if (this.selected.length > 0) {

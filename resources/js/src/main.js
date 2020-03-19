@@ -193,6 +193,36 @@ new Vue({
         formatPicker(event) {
             return moment(event).format('YYYY-MM-DD');
         },
+        saveAsJson(table){
+            var data = {
+                    "header": [],
+                    "body": [],
+                    "footer": []
+                };
+                // var table = this.$refs.owTableMain;
+                var headers = [];
+                Array.from(table.rows[0].cells).forEach(d=>{
+                        headers.push(d.textContent.replace(/\s+/g, " "));
+                });
+                data.header = headers;
+
+                // go through cells
+                Array.from(table.rows).forEach(row=> {
+                    var rowData = [];
+                    Array.from(row.cells).forEach(cell=> {
+                        rowData.push(cell.textContent.replace(/\s+/g, " "));
+
+                    })
+                    data.body.push(rowData)
+                })
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+                var downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download",  "export.json");
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+        }
 
 
     },

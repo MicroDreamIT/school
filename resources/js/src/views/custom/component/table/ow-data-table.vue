@@ -258,12 +258,7 @@
             },
             doJson() {
                 alert('doing json')
-            }
-            ,
-            doPrint() {
-                alert('doing print')
-            }
-            ,
+            },
             doDelete() {
                 if (this.selected.length > 0) {
                     this.$http.post('/json/faculty/bulk-action', {

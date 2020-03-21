@@ -42,9 +42,8 @@ class SemesterController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-       $request->request->add(['created_by' => auth()->user()->id]);
-       $request->request->add(['slug' => $request->get('semester')]);
-
+       $request->merge(['created_by' => auth()->user()->id]);
+       $request->merge(['slug' => $request->get('semester')]);
        $sem = Semester::create($request->all());
 
         $subjects = [];

@@ -1,15 +1,18 @@
-$primary: #7367f0;
-.smBtn {
-  margin: 2.5px 1.5px !important;
-}
-.overflow{
-  overflow-x: scroll;
-}
-
-.img-responsive{
-  width: 100%;
-  height: auto;
-}
+  $primary: #7367f0;
+  .smBtn {
+    margin: 2.5px 1.5px !important;
+  }
+  .overflow{
+    overflow-x: scroll;
+  }
+  #ow-table{
+    width: 100% ;
+    margin: 16px 0;
+  }
+  .img-responsive{
+    width: 100%;
+    height: auto;
+  }
 .own-modify-tr{
    @media(max-width: 768px){
      input[readonly="readonly"]{

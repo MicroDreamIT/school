@@ -109,7 +109,8 @@
             }
         },
         created() {
-            this.$http.get('/json/student/4/view').then(res=>{
+            let url ='/json/student/' + this.$route.params.id + '/view'
+            this.$http.get(url).then(res=>{
                 this.datas = res.data
             })
         }

@@ -199,10 +199,49 @@
                 alert(this.searchData.semester.id)
             },
             doActive() {
-                alert('doing active')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/guardian/bulk-action', {
+                        bulk_action: 'active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status = 'success'
+                            this.$root.notification.message = 'Active successfully'
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
+                }
+
             },
             doInActive() {
-                alert('doing Inactive')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/guardian/bulk-action', {
+                        bulk_action: 'in-active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$root.notification.status = 'success'
+                            this.$root.notification.message = 'in-active successfully'
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
+                }
             },
             doCopy() {
                 alert('doing copy')
@@ -220,12 +259,13 @@
                 alert('doing Delete')
             },
             doSerialize() {
-                this.mainItem = this.item.map(st=>{
-                    return {
-                        id: st.id,
-                        first_name: st.guardian_first_name
-                    }
-                })
+                this.mainItem =  this.item
+                // this.mainItem = this.item.map(st=>{
+                //     return {
+                //         id: st.id,
+                //         first_name: st.guardian_first_name
+                //     }
+                // })
             },
 
 

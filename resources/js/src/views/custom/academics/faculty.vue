@@ -156,14 +156,13 @@
                                                 {{'['+tr.id+']-'+tr.faculty+'-[CODE-'+tr.faculty_code+']'}}
                                             </td>
                                             <td>
-                                                <div class="d-flex flex-column">
-                                                            <span v-for="(sem,idx) in tr.semester"
-                                                                  :class="{'p-2':true ,'border-t':idx>0}">
-                                                                {{sem.id+'-['+sem.semester+']'}}
-                                                            </span>
+                                                <div>
+                                                    <span v-for="(sem,idx) in tr.semester"
+                                                          :class="{'p-2':true ,'border-t':idx>0}">
+                                                        {{sem.id+'-['+sem.semester+']'}}
+                                                    </span>
                                                 </div>
                                             </td>
-
                                             <td>
                                                 <div>
                                                     <span v-if="tr.status=='active'" class="p-2 ">Active</span>
@@ -173,7 +172,6 @@
                                         </tr>
                                         </tbody>
                                     </template>
-
                             </ow-data-table>
                         </div>
                     </div>

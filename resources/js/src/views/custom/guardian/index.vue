@@ -20,20 +20,20 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="notification">
+            <div class="col-md-12" v-if="$root.notification.status">
                 <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
+                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
                 >
                     <button type="button"
                             data-dismiss="alert"
                             aria-label="Close"
                             class="close"
-                            @click="notification=''"
+                            @click="$root.emptyNotification()"
                     >
                         <span aria-hidden="true">×</span>
                     </button>
                     <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
+                    {{$root.notification.message}}
                 </div>
             </div>
             <vs-divider class="mx-3"/>
@@ -49,56 +49,65 @@
                                    :has-multiple="true"
                                    :has-pagination="true"
                                    :filterSection="true"
+                                    ref="guardianTable"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td>
-
+                                {{props.data.guardian_first_name }} &nbsp; {{props.data.guardian_middle_name }}&nbsp; {{props.data.guardian_last_name }}
                             </vs-td>
-
                             <vs-td >
                                 <a @click.stop="viewItems(props.data.id)"
                                    class="pointer-all text-primary"
                                    title="View"
                                 >
-                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                    {{props.data.guardian_address}}
                                 </a>
-
                             </vs-td>
                             <vs-td>
-                                <div class="d-flex">
-                                    {{props.data.academic_status}}
+                                {{props.data.guardian_mobile_1}}
+                            </vs-td>
+                           
+                            <vs-td>
+                                <a class="pointer-all text-primary"
+                                   @click="viewItems(props.data.students[0]?props.data.students[0].id:'')">
+                                    {{props.data.students[0]?props.data.students[0].first_name:''}}
+                                </a>
+                            </vs-td>
+                            <vs-td>
+                                <div class="d-flex flex-wrap">
+                                    {{props.data.status}}
                                     <vs-switch color="success"
                                                :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
+                                               @click.stop="changeStatus(props.data.id,props.data.status)"
                                                class="pointer-all ml-2"
                                     >
                                         <span slot="on">Active</span>
                                         <span slot="off">In-Active</span>
                                     </vs-switch>
                                 </div>
-
                             </vs-td>
                             <vs-td>
-                                <div class="action-own">
-                                    <a class="btn btn-primary btn-sm pointer-all"
-                                       title="View"
-                                       @click.stop="viewItems(props.data.id)"
-
-                                    >
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    <a class="btn btn-success btn-sm pointer-all"
-                                       title="Edit"
-                                       @click.stop="editItems(props.data.id)">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a class="btn btn-danger btn-sm pointer-all"
-                                       title="Delete"
-                                       @click.stop="deleteItems(props.data.id)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                </div>
+                            <div class="action-own">
+                            <a class="btn btn-primary btn-sm pointer-all"
+                            title="View"
+                            @click.stop="viewItems(props.data.id)"
+    
+                            >
+                            <i class="fa fa-eye"></i>
+                            </a>
+                            <a class="btn btn-success btn-sm pointer-all"
+                            title="Edit"
+                            @click.stop="editItems(props.data.id)">
+                            <i class="fa fa-pencil"></i>
+                            </a>
+                            <a class="btn btn-danger btn-sm pointer-all"
+                            title="Delete"
+                            @click.stop="deleteItems(props.data.id)">
+                            <i class="fa fa-trash-o"></i>
+                            </a>
+                            </div>
                             </vs-td>
+                          
 
                         </template>
                     </guardian-table>
@@ -115,9 +124,9 @@
         data() {
             return {
                 guardianHeader: [
-                    {name: 'Name', sort_key: 'faculty'},
+                    {name: 'Name', sort_key: ''},
                     {name: 'Address', sort_key: ''},
-                    {name: 'Contact', sort_key: 'guardian_mobile_1'},
+                    {name: 'Contact', sort_key: ''},
                     {name: 'Students', sort_key: ''},
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},
@@ -126,16 +135,11 @@
 
             }
         },
-
         created() {
-
         },
-
         methods: {
-
-
             viewItems(id) {
-                this.$router.push({name: 'studentView', params: {id: id}})
+                if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
             },
             editItems() {
                 alert("hey hasib im edit ")
@@ -143,10 +147,19 @@
             deleteItems() {
                 alert("hey hasib im delete ")
             },
-            changeStatus() {
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active'
+                let url = '/json/guardian/' + id + '/' + stat
+                this.$http.get(url).then(res => {
+                    this.$refs.guardianTable.getData()
+                    this.$root.notification.status = res.data[0]
+                    this.$root.notification.message = res.data[1]
+                })
 
             },
-
+            quickMember(user) {
+                //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
+            }
         }
 
     }

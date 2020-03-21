@@ -216,7 +216,7 @@ class GuardianController extends CollegeBaseController
             $request->request->add(['status' => 'active']);
             $login_detail->update($request->all());
         }
-
+	    return response()->json(['success', $row->reg_no.' '.$this->panel.' Active Successfully.']);
         $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
         return redirect()->route($this->base_route);
     }
@@ -234,7 +234,7 @@ class GuardianController extends CollegeBaseController
             $request->request->add(['status' => 'in-active']);
             $login_detail->update($request->all());
         }
-
+      return response()->json(['success',$row->reg_no.' '.$this->panel.' In-Active Successfully.']);
         $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
         return redirect()->route($this->base_route);
     }

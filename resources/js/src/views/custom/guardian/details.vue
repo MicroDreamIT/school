@@ -72,6 +72,13 @@
                 currentView: 'profile',
                 notification:''
             }
+        },
+        created(){
+            let url ='/json/guardian/' + this.$route.params.id + '/view'
+
+            this.https.get(url).then(res=>{
+                console.log(res.data)
+            })
         }
     }
 </script>

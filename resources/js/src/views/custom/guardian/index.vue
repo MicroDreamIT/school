@@ -53,17 +53,13 @@
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td>
-                                <a href="">
+                                <a class="pointer-all text-primary"
+                                   @click="viewItems(props.data.id?props.data.id:'')">
                                     {{props.data.fullname }}
                                 </a>
                             </vs-td>
                             <vs-td >
-                                <a @click.stop="viewItems(props.data.id)"
-                                   class="pointer-all text-primary"
-                                   title="View"
-                                >
-                                    {{props.data.guardian_address}}
-                                </a>
+                                {{props.data.guardian_address}}
                             </vs-td>
                             <vs-td>
                                 {{props.data.guardian_mobile_1}}
@@ -71,7 +67,7 @@
                            
                             <vs-td>
                                 <a class="pointer-all text-primary"
-                                   @click="viewItems(props.data.students[0]?props.data.students[0].id:'')">
+                                   @click="studentViewItems(props.data.students[0]?props.data.students[0].id:'')">
                                     {{props.data.students[0]?props.data.students[0].first_name:''}}
                                 </a>
                             </vs-td>
@@ -140,8 +136,12 @@
         created() {
         },
         methods: {
+
             viewItems(id) {
                 if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
+            },
+            studentViewItems(id) {
+                if(id) this.$router.push({name: 'studentView', params: {id: id}})
             },
             editItems() {
                 alert("hey hasib im edit ")

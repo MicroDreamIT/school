@@ -53,7 +53,9 @@
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td>
-                                {{props.data.guardian_first_name }} &nbsp; {{props.data.guardian_middle_name }}&nbsp; {{props.data.guardian_last_name }}
+                                <a href="">
+                                    {{props.data.fullname }}
+                                </a>
                             </vs-td>
                             <vs-td >
                                 <a @click.stop="viewItems(props.data.id)"

@@ -341,18 +341,20 @@
             },
 
             submit() {
+                console.log(this.selectedSubjects.map(d=>{return d.id}))
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        // this.$http.post(this.url + '/store', {
-                        //     semester: this.faculty.semester,
-                        //     faculty: this.faculty.faculty,
-                        //     faculty_code: this.faculty.faculty_code
-                        // }).then(res => {
-                        //     this.$root.notification.status = res.data[0];
-                        //     this.$root.notification.message = res.data[1];
-                        //     this.faculty = {faculty: '', faculty_code: '', semester: []};
-                        //     this.getData()
-                        // })
+                        this.$http.post(this.url + '/store', {
+                            semester: this.semester.semester,
+                            gradingType_id: this.semester.gradingType_id,
+                            staff_id: this.semester.staff_id,
+                            sem_subject_id: this.selectedSubjects.map(d=>{return d.id}),
+                        }).then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.semester = {semester: '', staff_id: null, gradingType_id: null};
+                            this.getData()
+                        })
                     }
                 })
             },

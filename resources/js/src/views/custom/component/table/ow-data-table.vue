@@ -244,10 +244,10 @@
             },
             doPdf() {
                 var doc = this.$root.doc;
-                doc.setFontSize(18)
-                doc.text(this.tableHeader, 14, 22)
-                doc.setFontSize(11)
-                doc.setTextColor(100)
+                doc.setFontSize(18);
+                doc.text(this.tableHeader, 14, 22);
+                doc.setFontSize(11);
+                doc.setTextColor(100);
 
                 doc.autoTable({
                     html: '#ow-table',

@@ -248,9 +248,9 @@
                             faculty: this.faculty.faculty,
                             faculty_code: this.faculty.faculty_code
                         }).then(res => {
-                            this.$root.notification.status = res.data[0]
-                            this.$root.notification.message = res.data[1]
-                            this.faculty = {faculty: '', faculty_code: '', semester: []}
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.faculty = {faculty: '', faculty_code: '', semester: []};
                             this.getData()
                         })
                     }

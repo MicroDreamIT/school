@@ -553,3 +553,15 @@ button:focus {
 }
 @media print{
 }
+
+.error-text{
+  font-size:12px;
+  color: #ea5455;
+
+}
+.error-box{
+  .vs__dropdown-toggle{
+    border: 1px solid #ea5455!important;
+  }
+
+}

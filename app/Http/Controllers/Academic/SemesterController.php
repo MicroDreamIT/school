@@ -31,19 +31,10 @@ class SemesterController extends CollegeBaseController
             ->orderBy('semester')
             ->get();
 
-        $data['gradingScales'] = [];
-        $data['gradingScales'][] = '';
-        foreach (GradingType::select('id','title')->Active()->get() as $grading) {
-            $data['gradingScales'][$grading->id] = $grading->title;
-        }
-
-        $data['staffs'] = [];
-        $data['staffs'][] = '';
-        foreach (Staff::select('id','first_name','middle_name','last_name')->Active()->get() as $staff) {
-            $data['staffs'][$staff->id] = $staff->first_name.' '.$staff->middle_name.' '.$staff->last_name ;
-        }
-
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        $data['gradingScales'] =GradingType::select('id','title')->Active()->get();
+        $data['staff']=Staff::select('id','first_name','middle_name','last_name')->Active()->get();
+        $data['subject']=$request->get('id')?Subject::where( 'title', 'LIKE', '%' .$request->get('id') . '%' )->selectRaw('id,CONCAT(code, "-", title) as name')->get()->pluck('name', 'id')->toArray():[];
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)

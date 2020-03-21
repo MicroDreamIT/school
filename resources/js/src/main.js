@@ -19,6 +19,7 @@ import Print from 'vue-print-nb'
 import moment from 'moment'
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable'
+
 Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
@@ -143,7 +144,7 @@ new Vue({
                 status: '',
                 message: ''
             },
-            doc:new jsPDF()
+            doc: new jsPDF()
         }
     },
     watch: {
@@ -181,10 +182,12 @@ new Vue({
             let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
         },
         objectToArray(obj) {
-            let array = []
-            Object.keys(obj).forEach(key => {
-                array.push({id: key, value: obj[key]})
-            });
+            let array = [];
+            if (obj) {
+                Object.keys(obj).forEach(key => {
+                    array.push({id: key, value: obj[key]})
+                });
+            }
             return array;
         },
         parseDate(date) {
@@ -193,35 +196,38 @@ new Vue({
         formatPicker(event) {
             return moment(event).format('YYYY-MM-DD');
         },
-        saveAsJson(table){
+        saveAsJson(table) {
             var data = {
-                    "header": [],
-                    "body": [],
-                    "footer": []
-                };
-                // var table = this.$refs.owTableMain;
-                var headers = [];
-                Array.from(table.rows[0].cells).forEach(d=>{
-                        headers.push(d.textContent.replace(/\s+/g, " "));
-                });
-                data.header = headers;
+                "header": [],
+                "body": [],
+                "footer": []
+            };
+            // var table = this.$refs.owTableMain;
+            var headers = [];
+            Array.from(table.rows[0].cells).forEach(d => {
+                headers.push(d.textContent.replace(/\s+/g, " "));
+            });
+            data.header = headers;
 
-                // go through cells
-                Array.from(table.rows).forEach(row=> {
-                    var rowData = [];
-                    Array.from(row.cells).forEach(cell=> {
+            // go through cells
+            Array.from(table.rows).forEach((row, idx) => {
+                var rowData = [];
+                if (idx > 0) {
+                    Array.from(row.cells).forEach(cell => {
                         rowData.push(cell.textContent.replace(/\s+/g, " "));
 
-                    })
+                    });
                     data.body.push(rowData)
-                })
-                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-                var downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download",  "export.json");
-                document.body.appendChild(downloadAnchorNode); // required for firefox
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
+                }
+
+            })
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            var downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "export.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         }
 
 

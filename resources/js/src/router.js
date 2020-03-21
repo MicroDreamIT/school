@@ -1031,6 +1031,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/semester/:id/edit',
+                    name: 'semesterEdit',
+                    component: () => import('./views/custom/academics/semesterEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/student-batch',
                     name: 'academics.batch',
                     component: () => import('./views/custom/academics/batch'),

@@ -181,10 +181,12 @@ new Vue({
             let fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
         },
         objectToArray(obj) {
-            let array = []
-            Object.keys(obj).forEach(key => {
-                array.push({id: key, value: obj[key]})
-            });
+            let array = [];
+            if(obj){
+                Object.keys(obj).forEach(key => {
+                    array.push({id: key, value: obj[key]})
+                });
+            }
             return array;
         },
         parseDate(date) {

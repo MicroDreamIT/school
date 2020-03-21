@@ -92,6 +92,7 @@ Route::group(['prefix' => '/', 'as' => '', 'namespace' => 'Academic\\'], functio
 
     /*semester Routes*/
     Route::get('semester', ['as' => 'semester', 'middleware' => ['ability:super-admin,semester-index'], 'uses' => 'SemesterController@index']);
+    Route::get('semester/get-subject', ['as' => 'semester.get-subject', 'middleware' => ['ability:super-admin,semester-index'], 'uses' => 'SemesterController@getSubject']);
     Route::post('semester/store', ['as' => 'semester.store', 'middleware' => ['ability:super-admin,semester-add'], 'uses' => 'SemesterController@store']);
     Route::get('semester/{id}/edit', ['as' => 'semester.edit', 'middleware' => ['ability:super-admin,semester-edit'], 'uses' => 'SemesterController@edit']);
     Route::post('semester/{id}/update', ['as' => 'semester.update', 'middleware' => ['ability:super-admin,semester-edit'], 'uses' => 'SemesterController@update']);

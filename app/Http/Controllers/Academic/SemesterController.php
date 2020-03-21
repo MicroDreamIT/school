@@ -11,6 +11,7 @@ use App\Models\Semester;
 use App\Models\Staff;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Exception;
 
 class SemesterController extends CollegeBaseController
 {
@@ -29,11 +30,13 @@ class SemesterController extends CollegeBaseController
         $data = [];
         $data['semester'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
             ->orderBy('semester')
+            ->with('staff')
+            ->with('gradingType')
+            ->with('subjects')
             ->get();
 
         $data['gradingScales'] =GradingType::select('id','title')->Active()->get();
-        $data['staff']=Staff::select('id','first_name','middle_name','last_name')->Active()->get();
-        $data['subject']=$request->get('id')?Subject::where( 'title', 'LIKE', '%' .$request->get('id') . '%' )->selectRaw('id,CONCAT(code, "-", title) as name')->get()->pluck('name', 'id')->toArray():[];
+        $data['staff']=Staff::Active()->get()->pluck('full_name','id');
         return response()->json($data);
     }
 
@@ -56,8 +59,7 @@ class SemesterController extends CollegeBaseController
         }
         $sem->subjects()->sync($subjects);
 
-       $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-       return redirect()->route($this->base_route);
+       return response()->json(['success', 'Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -119,12 +121,19 @@ class SemesterController extends CollegeBaseController
 
     public function delete(Request $request, $id)
     {
-        if (!$row = Semester::find($id)) return parent::invalidRequest();
+
+
+        try{
+        if (!$row = Semester::find($id))
+        return response()->json(['success', $row->id.' '.$this->panel.' No Semester.']);
         $row->subjects()->sync([]);
         $row->delete();
+        return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
+        catch(\Illuminate\Database\QueryException $e){
+        if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this semester as foreignKey']);
+        }
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+
     }
 
     public function bulkAction(Request $request)
@@ -143,23 +152,29 @@ class SemesterController extends CollegeBaseController
                             }
                             break;
                         case 'delete':
-                            $row = Semester::find($row_id);
-                            $row->subjects()->sync([]);
-                            $row->delete();
-                            break;
+                            try{
+                                if (!$row = Semester::find($row_id))
+                                return response()->json(['success', $row->id.' '.$this->panel.' No Semester.']);
+                                $row->subjects()->sync([]);
+                                $row->delete();
+                                return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
+                                catch(\Illuminate\Database\QueryException $e){
+                                if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this semester as foreignKey']);
+                                }
+                                break;
+
                     }
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', 'Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                     return response()->json(['success', 'Deleted Successfully.']);
 
                 return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['danger', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -174,8 +189,7 @@ class SemesterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -186,10 +200,9 @@ class SemesterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
-    }
 
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
+    }
     public function subjectHtmlRow(Request $request)
     {
         $response = [];
@@ -210,5 +223,12 @@ class SemesterController extends CollegeBaseController
         }
 
         return response()->json(json_encode($response));
+    }
+
+    public function getSubject(Request $request)
+    {
+        $data = [];
+        $data['subject']=$request->get('id')?Subject::where( 'title', 'LIKE', '%' .$request->get('id') . '%' )->selectRaw('id,CONCAT(code, "-", title) as name')->get()->pluck('name', 'id')->toArray():[];
+        return response()->json($data);
     }
 }

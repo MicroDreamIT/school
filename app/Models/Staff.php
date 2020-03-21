@@ -54,5 +54,9 @@ class Staff extends BaseModel
     {
         return $this->hasMany(Attendance::class,'link_id','id')->where('attendees_type','=',2);
     }
+    public function getFullNameAttribute($value)
+    {
+       return ucfirst($this->first_name) . ' ' .ucfirst($this->middle_name).' '.ucfirst($this->last_name);
+    }
 
 }

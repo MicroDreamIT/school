@@ -177,7 +177,7 @@
 
             doActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/faculty/bulk-action', {
+                    this.$http.post(this.url+'/bulk-action', {
                         bulk_action: 'active',
                         chkIds: this.selected.map(val => {
                             return val.id
@@ -200,7 +200,7 @@
             },
             doInActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/faculty/bulk-action', {
+                    this.$http.post(this.url+'/bulk-action', {
                         bulk_action: 'in-active',
                         chkIds: this.selected.map(val => {
                             return val.id
@@ -257,7 +257,7 @@
             },
             doDelete() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/faculty/bulk-action', {
+                    this.$http.post(this.url+'/bulk-action', {
                         bulk_action: 'delete',
                         chkIds: this.selected.map(val => {
                             return val.id

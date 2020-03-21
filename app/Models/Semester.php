@@ -18,10 +18,14 @@ class Semester extends BaseModel
     {
         return $this->belongsToMany(Subject::class);
     }
+    public function staff()
+    {
+        return $this->hasOne(Staff::class,'id','staff_id')->select('id','first_name','middle_name','last_name');
+    }
 
     public function gradingType()
     {
-        return $this->hasOne(GradingType::class, 'id','gradingType_id');
+        return $this->hasOne(GradingType::class, 'id','gradingType_id')->select('id','title');
     }
 
     public function downloads()

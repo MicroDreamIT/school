@@ -208,44 +208,59 @@
 
 
                                 <template slot="printSection" slot-scope="printData">
-                                    <!--                                        <thead>-->
-                                    <!--                                        <tr>-->
-                                    <!--                                            <th>SN.No.</th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Code-Faculty/Level/Class-->
-                                    <!--                                            </th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Sem./Sec.-->
-                                    <!--                                            </th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Status-->
-                                    <!--                                            </th>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </thead>-->
-                                    <!--                                        <tbody>-->
-                                    <!--                                        <tr v-for="(tr, idx) in printData.data">-->
-                                    <!--                                            <td>-->
-                                    <!--                                                {{printData.data.indexOf(tr)+1}}-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                {{'['+tr.id+']-'+tr.faculty+'-[CODE-'+tr.faculty_code+']'}}-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                <div>-->
-                                    <!--                                                    <span v-for="(sem,idx) in tr.semester"-->
-                                    <!--                                                          :class="{'p-2':true ,'border-t':idx>0}">-->
-                                    <!--                                                        {{sem.id+'-['+sem.semester+']'}}-->
-                                    <!--                                                    </span>-->
-                                    <!--                                                </div>-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                <div>-->
-                                    <!--                                                    <span v-if="tr.status=='active'" class="p-2 ">Active</span>-->
-                                    <!--                                                    <span v-else class="p-2">In-Active</span>-->
-                                    <!--                                                </div>-->
-                                    <!--                                            </td>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </tbody>-->
+                                    <thead>
+                                    <tr>
+                                        <th>SN.No.</th>
+                                        <th>
+                                            Semester
+                                        </th>
+                                        <th>
+                                            Subjects
+                                        </th>
+                                        <th>
+                                            Status
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(tr, idx) in printData.data">
+                                        <td>
+                                            {{printData.data.indexOf(tr)+1}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <div class="px-2 d-flex">
+                                                    <span class="flex-1 border-r p-2">Semester</span>
+                                                    <span class="flex-1 p-2">{{tr.semester}}</span>
+                                                </div>
+                                                <div class="px-2 d-flex border-t bg-grey-light">
+                                                    <span class="flex-1 border-r p-2">Grading Type</span>
+                                                    <span class="flex-1 p-2">{{tr.grading_type.title}}</span>
+                                                </div>
+                                                <div class="px-2 d-flex border-t">
+                                                    <span class="flex-1 border-r p-2">Teacher/Staff</span>
+                                                    <span class="flex-1 p-2">{{tr.staff.first_name?tr.staff.first_name:' '}}
+                                                {{tr.staff.middle_name?' '+tr.staff.middle_name:' '+' '}}
+                                                {{tr.staff.last_name?' '+tr.staff.last_name:' '}}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                            <span v-for="(sub,idx) in tr.subjects"
+                                                  :class="{'p-2':true ,'border-t':idx>0}">
+                                                {{sub.title}}
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span v-if="tr.status=='active'" class="p-2 ">Active</span>
+                                                <span v-else class="p-2">In-Active</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
                                 </template>
                             </ow-data-table>
                         </div>
@@ -288,7 +303,7 @@
             return {
                 searchData: {},
                 tableHeader: [
-                    {name: 'Sem', sort_key: 'email'},
+                    {name: 'Semester', sort_key: 'email'},
                     {name: 'Subjects', sort_key: 'name'},
                     {name: 'Status'},
                     {name: 'Action'},

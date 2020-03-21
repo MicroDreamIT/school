@@ -72,7 +72,7 @@
                 </vs-tr>
             </template>
         </vs-table>
-        <div class="" ref="owTable">
+        <div class="d-none" ref="owTable">
             <div id="owTableMain">
                <h4 style="text-align: center">{{tableHeader}} | Edu MIS</h4>
                 <table id="ow-table" ref="owTableMain">

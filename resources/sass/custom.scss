@@ -537,13 +537,14 @@ button:focus {
     }
   }
 }
+.con-text-validation{
+    font-size:12px;
+  }
 .vs-input{
   .vs-input--icon-validate{
     display: none;
   }
-  .con-text-validation{
-    font-size:12px;
-  }
+
 }
 .delete-pop-text{
   background: rgba(0, 207, 232, 0.2);
@@ -562,12 +563,7 @@ button:focus {
   color: #ea5455;
 
 }
-.error-box{
-  .vs__dropdown-toggle{
-    border: 1px solid #ea5455!important;
-  }
 
-}
 .vs-sidebar-group{
   .group-header {
     padding: 5px 15px!important;

@@ -217,7 +217,7 @@ class SemesterController extends CollegeBaseController
     public function getSubject(Request $request)
     {
         $data = [];
-        $data['subject']=$request->get('id')?Subject::where( 'title', 'LIKE', '%' .$request->get('id') . '%' )->selectRaw('id,CONCAT(code, "-", title) as name')->get()->pluck('name', 'id')->toArray():[];
+        $data['subject']=$request->get('id')?Subject::where( 'title', 'LIKE', '%' .$request->get('id') . '%' )->select('id','code', 'title')->get():[];
         return response()->json($data);
     }
 }

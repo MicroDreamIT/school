@@ -45,56 +45,52 @@
                             <div class="form-group row">
                                 <label class="col-md-4">Grading Type</label>
                                 <div class="col-md-8">
-                                    <v-select v-model="semester.gradingType_id"
-                                              :options="gradingScales"
-                                              label="title"
-                                              :reduce="a => a.id"
-                                              v-validate="'required'"
-                                              name="gradingType_id"
-                                              :class="{ 'error-box': errors.has('gradingType_id') }"
-
+                                    <vs-select
+                                            autocomplete
+                                            class="selectExample w-100"
+                                            v-model="semester.gradingType_id"
+                                            v-validate="'required'"
+                                            data-vv-name="grading"
+                                            :danger="errors.first('grading')?true:false"
+                                            :danger-text="errors.first('grading')"
                                     >
-                                    </v-select>
-                                    <span v-show="errors.has('gradingType_id')" class="error-text">
-                                        {{ errors.first('gradingType_id') }}
-                                    </span>
+                                        <vs-select-item :key="index" :value="item.id" :text="item.title"
+                                                        v-for="(item,index) in gradingScales"/>
+                                    </vs-select>
+
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-4">Teacher/Staff</label>
                                 <div class="col-md-8">
-                                    <v-select v-model="semester.staff_id"
-                                              :options="staff"
-                                              label="value"
-                                              :reduce="a => a.id"
-                                              v-validate="'required'"
-                                              name="staff_id"
-                                              :class="{ 'error-box': errors.has('staff_id') }"
-
+                                    <vs-select
+                                            autocomplete
+                                            class="selectExample w-100"
+                                            v-model="semester.staff_id"
+                                            v-validate="'required'"
+                                            data-vv-name="staff"
+                                            :danger="errors.first('staff')?true:false"
+                                            :danger-text="errors.first('staff')"
                                     >
-                                    </v-select>
-                                    <span v-show="errors.has('staff_id')" class="error-text">
-                                        {{ errors.first('staff_id') }}
-                                    </span>
+                                        <vs-select-item :key="index" :value="item.id" :text="item.value"
+                                                        v-for="(item,index) in staff"/>
+                                    </vs-select>
                                 </div>
 
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-12">Course Find and Add Type</label>
                                 <div class="col-md-12">
-                                    <v-select placeholder="Search Course..."
-                                              ref="searchCourse"
-                                              class="w-100"
-                                              @search="getSubject"
-                                              label="value"
-                                              :options="subjects"
-                                              v-model="subject"
+                                   <vs-select
+                                            autocomplete
+                                            class="selectExample w-100"
+                                            v-model="subject"
+                                            @input-change="getSubject($event.target.value)"
+                                            ref="searchCourse"
                                     >
-
-                                    </v-select>
-                                    <span v-show="errors.has('gradingType_id')" class="error-text">
-                                        {{ errors.first('gradingType_id') }}
-                                    </span>
+                                        <vs-select-item :key="index" :value="item" :text="item.code+'-'+item.title"
+                                                        v-for="(item,index) in subjects"/>
+                                    </vs-select>
                                 </div>
                             </div>
 
@@ -118,8 +114,8 @@
                                     </thead>
                                     <tbody>
                                     <tr v-for="(sub,idx) in selectedSubjects" v-if="selectedSubjects.length">
-                                        <td>{{sub.value.split('-')[0]}}</td>
-                                        <td>{{sub.value.split('-')[1]}}</td>
+                                        <td>{{sub.code}}</td>
+                                        <td>{{sub.title}}</td>
                                         <td>
                                             <vs-button @click="removeSubject(idx)">
                                                 <i class="fa fa-trash"></i>
@@ -334,9 +330,9 @@
                     this.gradingScales = res.data.gradingScales;
                 })
             },
-            getSubject() {
-                this.$http.get('/json/semester/get-subject', {params: {id: this.$refs.searchCourse ? this.$refs.searchCourse.search : ''}}).then(res => {
-                    this.subjects = this.$root.objectToArray(res.data.subject);
+            getSubject(val) {
+                this.$http.get('/json/semester/get-subject', {params: {id: val ? val : ''}}).then(res => {
+                    this.subjects = res.data.subject;
                 })
             },
 
@@ -347,12 +343,16 @@
                             semester: this.semester.semester,
                             gradingType_id: this.semester.gradingType_id,
                             staff_id: this.semester.staff_id,
-                            sem_subject_id: this.selectedSubjects.map(d=>{return d.id}),
+                            sem_subject_id: this.selectedSubjects.map(d => {
+                                return d.id
+                            }),
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.semester = {semester: '', staff_id: null, gradingType_id: null};
-                            this.getData()
+                            this.subjects=[];
+                            this.selectedSubjects=[]
+                            this.getData();
                             this.$validator.reset()
                         })
                     }
@@ -361,7 +361,7 @@
             addSubject(sub) {
 
                 {
-                    this.selectedSubjects.push({id: sub.id, value: sub.value})
+                    this.selectedSubjects.push(sub);
                     this.selectedSubjects = this.selectedSubjects.reduce((x, y) => x.findIndex(e => e.id === y.id) < 0 ? [...x, y] : x, [])
                 }
 

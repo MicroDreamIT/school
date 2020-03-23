@@ -27,25 +27,21 @@ class SubjectController extends CollegeBaseController
        $data['subject'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
            'full_mark_practical', 'pass_mark_practical', 'credit_hour', 'sub_type', 'class_type', 'staff_id',
            'description','status')
+            ->with('staff')
             ->orderBy('title')
             ->get();
 
-        $data['staffs'] = [];
-        $data['staffs'][] = 'Select Teacher';
-        foreach (Staff::select('id','first_name','middle_name','last_name')->Active()->get() as $staff) {
-            $data['staffs'][$staff->id] = $staff->first_name.' '.$staff->middle_name.' '.$staff->last_name ;
-        }
+        $data['staff']=Staff::Active()->get()->pluck('full_name','id');
 
-       return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by' => auth()->user()->id]);
         $subject = Subject::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. 'Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', 'Created Successfully.']);
     }
 
     public function edit($id)
@@ -58,18 +54,13 @@ class SubjectController extends CollegeBaseController
         $data['subject'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
             'full_mark_practical', 'pass_mark_practical', 'credit_hour', 'sub_type', 'class_type', 'staff_id',
             'description','status')
+            ->with('staff')
             ->orderBy('title')
             ->get();
 
-        $data['staffs'] = [];
-        $data['staffs'][] = 'Select Teacher';
-        foreach (Staff::select('id','first_name','middle_name','last_name')->Active()->get() as $staff) {
-            $data['staffs'][$staff->id] = $staff->first_name.' '.$staff->middle_name.' '.$staff->last_name ;
-        }
+        $data['staff']=Staff::Active()->get()->pluck('full_name','id');
 
-
-        $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -77,19 +68,19 @@ class SubjectController extends CollegeBaseController
         if (!$row = Subject::find($id)) return parent::invalidRequest();
         $request->request->add(['last_updated_by' => auth()->user()->id]);
         $subject = $row->update($request->all());
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
     {
-        if (!$row = Subject::find($id)) return parent::invalidRequest();
-
-        $row->delete();
+    try{
+        if (!$row = Subject::find($id)) return response()->json(['success', $row->id.' '.$this->panel.' No Subject.']);
         $row->semester()->detach();
-
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        $row->delete();
+        return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
+        catch(\Illuminate\Database\QueryException $e){
+        if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this semester as foreignKey']);
+        }
     }
 
     public function bulkAction(Request $request)
@@ -108,22 +99,29 @@ class SubjectController extends CollegeBaseController
                             }
                             break;
                         case 'delete':
-                            $row = Subject::find($row_id);
-                            $row->delete();
-                            break;
+                            try{
+                                if (!$row = Subject::find($row_id))
+                                return response()->json(['success', $row->id.' '.$this->panel.' No Subject.']);
+                                $row->subjects()->sync([]);
+                                $row->delete();
+                                return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
+                                catch(\Illuminate\Database\QueryException $e){
+                                if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this semester as foreignKey']);
+                                }
+                                break;
+
                     }
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', 'Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                     return response()->json(['success', 'Deleted Successfully.']);
 
                 return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['danger', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -138,8 +136,7 @@ class SubjectController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -150,8 +147,8 @@ class SubjectController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function subjectNameAutocomplete(Request $request)

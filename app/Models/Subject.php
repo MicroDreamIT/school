@@ -15,4 +15,8 @@ class Subject extends BaseModel
     {
         return $this->belongsToMany(Semester::class);
     }
+    public function staff()
+    {
+        return $this->hasOne(Staff::class,'id','staff_id')->select('id','first_name','middle_name','last_name');
+    }
 }

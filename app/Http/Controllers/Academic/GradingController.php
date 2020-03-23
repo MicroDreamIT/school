@@ -25,16 +25,17 @@ class GradingController extends CollegeBaseController
     {
        $data = [];
        $data['grading'] = GradingType::select('id', 'title', 'status')
+            ->with('gradingScale')
             ->orderBy('title')
             ->get();
 
-       return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+       return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['slug' => $request->get('title')]);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['slug' => $request->get('title')]);
 
         $gradingType = GradingType::create($request->all());
 
@@ -53,8 +54,7 @@ class GradingController extends CollegeBaseController
             }
         }
 
-        $request->session()->flash($this->message_success, $this->panel. 'Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',' Create Successfully.']);
     }
 
     public function edit($id)
@@ -71,7 +71,7 @@ class GradingController extends CollegeBaseController
         $data['grade_scale'] = $data['row']->gradingScale('id','name', 'percentage_from','percentage_to','grade_point','description')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -113,8 +113,7 @@ class GradingController extends CollegeBaseController
 
         //update grading type
         $row->update($request->all());
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Update Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -125,8 +124,7 @@ class GradingController extends CollegeBaseController
         $row->gradingScale()->delete();
         //delete grading
         $row->delete();
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Delete Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -155,9 +153,9 @@ class GradingController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success',' Delete Successfully.']);
 
                 return redirect()->route($this->base_route);
 
@@ -178,8 +176,7 @@ class GradingController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -190,8 +187,7 @@ class GradingController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function gradeHtmlRow()

@@ -190,7 +190,10 @@
                                             <div class="d-flex flex-column">
                                             <span v-for="(sub,idx) in tr.grading_scale"
                                                   :class="{'p-2':true ,'border-t':idx>0}">
-                                                {{sub.name+'-['+sub.percentage_from+'% To '+sub.percentage_to+']-'+sub.grade_point}}
+                                                {{sub.name}}
+                                                {{sub.percentage_from}} To
+                                                {{sub.percentage_to}}
+                                                {{sub.grade_point}}
                                             </span>
                                             </div>
                                         </td>
@@ -271,19 +274,17 @@
 
             submit() {
                 this.$validator.validateAll().then(value => {
+                    var keyList=Object.keys(this.gradeList).forEach(d=>{
+                        return {key:this.gradeList[key]}
+                    })
                     if (value) {
                         this.$http.post(this.url + '/store', {
                             title: this.title,
-                            name: this.gradeList.map(d=>{return d.name}),
-                            percentage_from: this.gradeList.map(d=>{return d.percentage_from}),
-                            percentage_to: this.gradeList.map(d=>{return d.percentage_to}),
-                            grade_point: this.gradeList.map(d=>{return d.grade_point}),
-                            description: this.gradeList.map(d=>{return d.description})
+                            keyList,
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.title = '';
-                            this.gradeList=[];
                             this.getData();
                             this.$validator.reset()
                         })
@@ -315,13 +316,7 @@
                 })
             },
             addRow() {
-                this.gradeList.push({
-                    name: '',
-                    percentage_from: '',
-                    percentage_to: '',
-                    grade_point: '',
-                    description: ''
-                });
+                this.gradeList.push({name: '', percentage_from: '', percentage_to: '', grade_point: '', description: ''});
                 console.log(this.gradeList)
             },
             removeList(idx) {

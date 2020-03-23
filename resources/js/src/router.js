@@ -1063,6 +1063,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/grading/:id/edit',
+                    name: 'gradingEdit',
+                    component: () => import('./views/custom/academics/gradingEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/subject',
                     name: 'academics.subject',
                     component: () => import('./views/custom/academics/subject'),

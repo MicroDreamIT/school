@@ -1,8 +1,7 @@
 <template>
-    <div>
+    <div class="row">
 
         <div class="col-xs-12 col-sm-3 col-print-3" v-if="profile">
-            <div>
             <span class="profile-picture" v-if="profile.guardian_image !== null">
                     <img class="editable img-responsive"
                          :src=`${'/images/parents/'+profile.guardian_image}`
@@ -12,20 +11,74 @@
                 <img class="editable img-responsive"
                      src="/assets/images/avatars/profile-pic.jpg"/>
             </span>
+        </div>
+        <div class="col-xs-12 col-sm-9 col-print-9">
+            <div class="space-3"></div>
+            <div class="space-6"></div>
+            <div class="label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-warning btn-sm mb-1"> {{profile.fullname}}</div>
+            <div class="space-6"></div>
+            <div class="profile-user-info profile-user-info-striped">
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> Guardian :  </div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="temporary_place">{{ profile.fullname }}</span>
+                    </div>
+                    <div class="profile-info-name"> Eligibility :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_eligibility">{{ profile.guardian_eligibility }}</span>
+                    </div>
 
-<!--            @if($data['guardian']->guardian_signature != '')-->
-<!--            <span class="profile-picture align-center">-->
-<!--                    <img class="editable img-responsive" alt="{{ $data['guardian']->title }}"-->
-<!--                         src="{{ asset('images'.DIRECTORY_SEPARATOR.$folder_name.DIRECTORY_SEPARATOR.$data['guardian']->guardian_signature) }}"-->
-<!--                         width="150px"/>-->
-<!--            </span>-->
-<!--            @else-->
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> Occupation :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_occupation">{{ profile.guardian_occupation }}</span>
+                    </div>
+                    <div class="profile-info-name"> Office :  </div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_office">{{ profile.guardian_office }}</span>
+                    </div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> Office Num. :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_office_number">{{ profile.guardian_office_number }}</span>
+                    </div>
+                    <div class="profile-info-name"> Residence :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_residence_number">{{ profile.guardian_residence_number }}</span>
+                    </div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> Mobile 1 :  </div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_mobile_1">{{ profile.guardian_mobile_1 }}</span>
+                    </div>
+                    <div class="profile-info-name"> Mobile 2 :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_mobile_2">{{ profile.guardian_mobile_2 }}</span>
+                    </div>
 
-<!--            @endif-->
-
-                <div class="space-4"></div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> E-mail :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_email">{{ profile.guardian_email }}</span>
+                    </div>
+                    <div class="profile-info-name"> Relation :  </div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_relation">{{ profile.guardian_relation }}</span>
+                    </div>
+                </div>
+                <div class="profile-info-row">
+                    <div class="profile-info-name"> Address :</div>
+                    <div class="profile-info-value">
+                        <span class="editable" id="guardian_mobile_2">{{ profile.guardian_address }}</span>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 </template>
 

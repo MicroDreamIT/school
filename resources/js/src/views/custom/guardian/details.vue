@@ -48,7 +48,7 @@
                         </vs-button>
                     </div>
                     <div class="col-md-12">
-                        <profile v-if="currentView=='profile'"/>
+                        <profile v-if="currentView=='profile'" :profile="datas.guardian"/>
                         <login-access v-if="currentView=='login_access'"/>
                     </div>
                 </div>
@@ -69,6 +69,7 @@
         },
         data() {
             return {
+                datas:{},
                 currentView: 'profile',
                 notification:''
             }
@@ -76,8 +77,8 @@
         created(){
             let url ='/json/guardian/' + this.$route.params.id + '/view'
 
-            this.https.get(url).then(res=>{
-                console.log(res.data)
+            this.$http.get(url).then(res=>{
+                this.datas = res.data
             })
         }
     }

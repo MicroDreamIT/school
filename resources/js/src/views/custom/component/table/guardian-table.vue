@@ -189,7 +189,7 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
+                this.$http.get(this.url,{params:this.searchData}).then(res => {
                     this.item = res.data.guardian;
                     this.doSerialize()
                 });

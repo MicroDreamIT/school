@@ -29,7 +29,7 @@ mix.js('resources/js/app.js', 'public/js')
     .copyDirectory('resources/assets/images', 'public/images')
     .browserSync({proxy: 'localhost:8000'})
     .options({
-        processCssUrls: false
+        // processCssUrls: false
     }); // Copy all images from resources to public folder
 
 

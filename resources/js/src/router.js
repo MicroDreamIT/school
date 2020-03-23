@@ -1079,6 +1079,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/subject/:id/edit',
+                    name: 'subjectEdit',
+                    component: () => import('./views/custom/academics/subjectEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/student-status',
                     name: 'academics.student-status',
                     component: () => import('./views/custom/academics/student-status'),

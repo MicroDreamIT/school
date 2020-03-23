@@ -103,7 +103,7 @@
                                     <tr>
                                         <th>SN.No.</th>
                                         <th>
-                                            Student Batch
+                                            Payment Method
                                         </th>
                                         <th>
                                             Status

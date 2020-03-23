@@ -103,7 +103,7 @@
                                     <tr>
                                         <th>SN.No.</th>
                                         <th>
-                                            Books Status
+                                            Student Batch
                                         </th>
                                         <th>
                                             Status

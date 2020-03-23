@@ -184,10 +184,10 @@
                                     <tr>
                                         <th>SN.No.</th>
                                         <th>
-                                            Semester
+                                            Group
                                         </th>
                                         <th>
-                                            Subjects
+                                            Grade-From-To-Score
                                         </th>
                                         <th>
                                             Status

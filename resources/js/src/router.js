@@ -1087,6 +1087,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/student-status/:id/edit',
+                    name: 'studentStatusEdit',
+                    component: () => import('./views/custom/academics/studentStatusEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/attendance-status',
                     name: 'academics.attendance-status',
                     component: () => import('./views/custom/academics/attendance-status'),
@@ -1095,9 +1103,25 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/attendance-status/:id/edit',
+                    name: 'attendanceStatusEdit',
+                    component: () => import('./views/custom/academics/attendanceStatusEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/books-status',
                     name: 'academics.books-status',
                     component: () => import('./views/custom/academics/books-status'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/books-status/:id/edit',
+                    name: 'bookStatusEdit',
+                    component: () => import('./views/custom/academics/bookStatusEdit'),
                     meta: {
                         rule: 'admin'
                     }

@@ -103,7 +103,7 @@
                                     <tr>
                                         <th>SN.No.</th>
                                         <th>
-                                            Student Batch
+                                            Months
                                         </th>
                                         <th>
                                             Status

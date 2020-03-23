@@ -2,7 +2,7 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <h2 class="pageTitle">Books Status Manager</h2>
+                <h2 class="pageTitle">Attendance Status Manager</h2>
             </div>
             <div class="col-md-12" v-if="$root.notification.status">
                 <div role="alert"
@@ -27,10 +27,10 @@
                         <div class="col-md-4">
                             <h4>
                                 <i class="fa fa-search"></i>
-                                Create Book Status</h4>
+                                Create Attendance Status</h4>
                             <br>
                             <div class="form-group row">
-                                <label class="col-md-4">Status</label>
+                                <label class="col-md-4">Attendance Status</label>
                                 <vs-input class="col-md-8"
                                           v-model="title"
                                           placeholder=""
@@ -38,6 +38,15 @@
                                           data-vv-name="title"
                                           :danger="errors.first('title')?true:false"
                                           :danger-text="errors.first('title')"
+                                >
+
+                                </vs-input>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4">Display Color</label>
+                                <vs-input class="col-md-8"
+                                          v-model="display_class"
+                                          placeholder=""
                                 >
 
                                 </vs-input>
@@ -53,10 +62,10 @@
                         </div>
                         <div class="col-md-8">
                             <ow-data-table :headers="tableHeader"
-                                           :tableHeader="'Books Status List'"
-                                           :suggestText="'Books Status Record list on table. Filter Books Status using the filter.\n'"
+                                           :tableHeader="'Attendance Status List'"
+                                           :suggestText="'Attendance Status Record list on table. Filter Attendance Status using the filter.\n'"
                                            :url="url"
-                                           :noDataMessage="'No Book Status data found. Please Books Status filter to show.'"
+                                           :noDataMessage="'No Attendance Status data found. Please Attendance Status filter to show.'"
                                            :hasSearch="true"
                                            :has-multiple="true"
                                            :has-pagination="true"
@@ -66,6 +75,9 @@
                                 <template slot="items" slot-scope="props">
                                     <vs-td :data="props.data.title">
                                         {{props.data.title}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.title">
+                                        {{props.data.display_color}}
                                     </vs-td>
 
                                     <vs-td>
@@ -103,7 +115,7 @@
                                     <tr>
                                         <th>SN.No.</th>
                                         <th>
-                                            Books Status
+                                            Student Batch
                                         </th>
                                         <th>
                                             Status
@@ -162,20 +174,24 @@
 <script>
 
     export default {
+        components: {},
+        name: "payment-method",
         data() {
             return {
                 searchData: {},
                 tableHeader: [
-                    {name: 'Books Status', sort_key: 'title'},
+                    {name: 'Attendance Status', sort_key: 'title'},
+                    {name: 'Color', sort_key: 'display_color'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
                 title: '',
+                display_class:'',
                 items: [],
                 mainItem: [],
                 deletePop: false,
                 deleteItem: null,
-                url: '/json/book-status',
+                url: '/json/attendance-status',
             }
         },
         created() {
@@ -185,7 +201,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.data;
+                    this.items = res.data.days;
                     this.mainItem = this.items;
                 })
             },
@@ -194,10 +210,12 @@
                     if (value) {
                         this.$http.post(this.url + '/store', {
                             title: this.title,
+                            display_class:this.display_class
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.title = '';
+                            this.display_class = '';
                             this.getData();
                             this.$validator.reset()
                         })
@@ -206,7 +224,7 @@
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active';
-                let url = '/json/book-status/' + id + '/' + stat;
+                let url = '/json/attendance-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
                     this.$root.notification.status = res.data[0];
@@ -215,14 +233,14 @@
 
             },
             editItems(id) {
-                this.$router.push({name: 'dayEdit', params: {id: id}})
+                this.$router.push({name: 'attendanceStatusEdit', params: {id: id}})
             },
             deletePopModal(id) {
                 this.deleteItem = id;
                 this.deletePop = true
             },
             deleteItems() {
-                this.$http.get('/json/book-status/' + this.deleteItem + '/delete').then(res => {
+                this.$http.get('/json/attendance-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
                     this.$root.notification.status = res.data[0];
                     this.$root.notification.message = res.data[1]

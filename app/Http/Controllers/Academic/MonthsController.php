@@ -24,17 +24,16 @@ class MonthsController extends CollegeBaseController
     {
         $data = [];
         $data['months'] = Month::select('id', 'title', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-       $request->request->add(['created_by' => auth()->user()->id]);
+       $request->merge(['created_by' => auth()->user()->id]);
 
        Month::create($request->all());
 
-       $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-       return redirect()->route($this->base_route);
+       return response()->json(['success', 'Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -43,10 +42,10 @@ class MonthsController extends CollegeBaseController
         if (!$data['row'] = Month::find($id))
             return parent::invalidRequest();
 
-        $data['months'] = Month::select('id', 'title', 'status')->get();
+        $data['months'] = Month::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -54,22 +53,22 @@ class MonthsController extends CollegeBaseController
 
        if (!$row = Month::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
     {
-        if (!$row = Month::find($id)) return parent::invalidRequest();
-
+        try{
+        if (!$row = Month::find($id)) return response()->json(['success', $row->id.' '.$this->panel.' No Data.']);
         $row->delete();
-
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
+        catch(\Illuminate\Database\QueryException $e){
+        if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this batch as foreignKey']);
+        }
     }
 
     public function bulkAction(Request $request)
@@ -89,21 +88,25 @@ class MonthsController extends CollegeBaseController
                             break;
                         case 'delete':
                             $row = Month::find($row_id);
-                            $row->delete();
+                            if ($row) {
+                                try{
+                                $row->delete();
+                               }
+                                catch(\Illuminate\Database\QueryException $e){
+                                if($e->errorInfo) return response()->json(['danger','Cant Delete. Other Data contain this batch as foreignKey']);
+                                }
+                            }
                             break;
                     }
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', 'Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
-
-                return redirect()->route($this->base_route);
+                     return response()->json(['success', 'Deleted Successfully.']);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['danger', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -118,8 +121,7 @@ class MonthsController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+       return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -130,7 +132,6 @@ class MonthsController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+         return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 }

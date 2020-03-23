@@ -1119,6 +1119,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/year/:id/edit',
+                    name: 'yearEdit',
+                    component: () => import('./views/custom/academics/yearEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/month',
                     name: 'academics.month',
                     component: () => import('./views/custom/academics/month'),
@@ -1127,9 +1135,25 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/month/:id/edit',
+                    name: 'monthEdit',
+                    component: () => import('./views/custom/academics/monthEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/day',
                     name: 'academics.day',
                     component: () => import('./views/custom/academics/day'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
+                    path: '/day/:id/edit',
+                    name: 'dayEdit',
+                    component: () => import('./views/custom/academics/dayEdit'),
                     meta: {
                         rule: 'admin'
                     }

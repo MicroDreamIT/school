@@ -65,22 +65,38 @@
                                     <draggable v-model="gradeList" tag="tbody">
                                         <tr v-for="(list,i) in gradeList" class="ow-tr" :key="i">
                                             <td>
-                                                <vs-input v-model="list.name">
+                                                <vs-input v-model="list.name"
+                                                          v-validate="'required'"
+                                                          data-vv-name="name"
+                                                          :danger="errors.first('name')?true:false"
+                                                          :danger-text="errors.first('name')">
 
                                                 </vs-input>
                                             </td>
                                             <td>
-                                                <vs-input v-model="list.percentage_from">
+                                                <vs-input v-model="list.percentage_from"
+                                                          v-validate="'required'"
+                                                          data-vv-name="percentage_from"
+                                                          :danger="errors.first('percentage_from')?true:false"
+                                                          :danger-text="errors.first('percentage_from')">
 
                                                 </vs-input>
                                             </td>
                                             <td>
-                                                <vs-input v-model="list.percentage_to">
+                                                <vs-input v-model="list.percentage_to"
+                                                          v-validate="'required'"
+                                                          data-vv-name="percentage_to"
+                                                          :danger="errors.first('percentage_to')?true:false"
+                                                          :danger-text="errors.first('percentage_to')">
 
                                                 </vs-input>
                                             </td>
                                             <td>
-                                                <vs-input v-model="list.grade_point">
+                                                <vs-input v-model="list.grade_point"
+                                                          v-validate="'required'"
+                                                          data-vv-name="percentage_to"
+                                                          :danger="errors.first('percentage_to')?true:false"
+                                                          :danger-text="errors.first('percentage_to')">
 
                                                 </vs-input>
                                             </td>
@@ -274,16 +290,26 @@
                     if (value) {
                         this.$http.post(this.url + '/store', {
                             title: this.title,
-                            name: this.gradeList.map(d=>{return d.name}),
-                            percentage_from: this.gradeList.map(d=>{return d.percentage_from}),
-                            percentage_to: this.gradeList.map(d=>{return d.percentage_to}),
-                            grade_point: this.gradeList.map(d=>{return d.grade_point}),
-                            description: this.gradeList.map(d=>{return d.description})
+                            name: this.gradeList.map(d => {
+                                return d.name
+                            }),
+                            percentage_from: this.gradeList.map(d => {
+                                return d.percentage_from
+                            }),
+                            percentage_to: this.gradeList.map(d => {
+                                return d.percentage_to
+                            }),
+                            grade_point: this.gradeList.map(d => {
+                                return d.grade_point
+                            }),
+                            description: this.gradeList.map(d => {
+                                return d.description
+                            })
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.title = '';
-                            this.gradeList=[];
+                            this.gradeList = [];
                             this.getData();
                             this.$validator.reset()
                         })

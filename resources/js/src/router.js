@@ -1047,6 +1047,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/student-batch/:id/edit',
+                    name: 'batchEdit',
+                    component: () => import('./views/custom/academics/batchEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/grading',
                     name: 'academics.grading',
                     component: () => import('./views/custom/academics/grading'),

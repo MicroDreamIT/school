@@ -341,7 +341,6 @@
             },
 
             submit() {
-                console.log(this.selectedSubjects.map(d=>{return d.id}))
                 this.$validator.validateAll().then(value => {
                     if (value) {
                         this.$http.post(this.url + '/store', {
@@ -354,6 +353,7 @@
                             this.$root.notification.message = res.data[1];
                             this.semester = {semester: '', staff_id: null, gradingType_id: null};
                             this.getData()
+                            this.$validator.reset()
                         })
                     }
                 })

@@ -45,16 +45,14 @@
                             <div class="form-group row">
                                 <label class="col-md-4">Grading Type</label>
                                 <div class="col-md-8">
-                                    <v-select v-model="semester.gradingType_id"
-                                              :options="gradingScales"
-                                              label="title"
-                                              :reduce="a => a.id"
-                                              v-validate="'required'"
-                                              name="gradingType_id"
-                                              :class="{ 'error-box': errors.has('gradingType_id') }"
-
+                                    <vs-select
+                                            autocomplete
+                                            class="selectExample w-100"
+                                            v-model="semester.gradingType_id"
                                     >
-                                    </v-select>
+                                        <vs-select-item :key="index" :value="item.id" :text="item.title"
+                                                        v-for="(item,index) in gradingScales"/>
+                                    </vs-select>
                                     <span v-show="errors.has('gradingType_id')" class="error-text">
                                         {{ errors.first('gradingType_id') }}
                                     </span>
@@ -63,16 +61,14 @@
                             <div class="form-group row">
                                 <label class="col-md-4">Teacher/Staff</label>
                                 <div class="col-md-8">
-                                    <v-select v-model="semester.staff_id"
-                                              :options="staff"
-                                              label="value"
-                                              :reduce="a => a.id"
-                                              v-validate="'required'"
-                                              name="staff_id"
-                                              :class="{ 'error-box': errors.has('staff_id') }"
-
+                                    <vs-select
+                                            autocomplete
+                                            class="selectExample w-100"
+                                            v-model="semester.staff_id"
                                     >
-                                    </v-select>
+                                        <vs-select-item :key="index" :value="item.id" :text="item.value"
+                                                        v-for="(item,index) in staff"/>
+                                    </vs-select>
                                     <span v-show="errors.has('staff_id')" class="error-text">
                                         {{ errors.first('staff_id') }}
                                     </span>
@@ -208,44 +204,59 @@
 
 
                                 <template slot="printSection" slot-scope="printData">
-                                    <!--                                        <thead>-->
-                                    <!--                                        <tr>-->
-                                    <!--                                            <th>SN.No.</th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Code-Faculty/Level/Class-->
-                                    <!--                                            </th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Sem./Sec.-->
-                                    <!--                                            </th>-->
-                                    <!--                                            <th>-->
-                                    <!--                                                Status-->
-                                    <!--                                            </th>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </thead>-->
-                                    <!--                                        <tbody>-->
-                                    <!--                                        <tr v-for="(tr, idx) in printData.data">-->
-                                    <!--                                            <td>-->
-                                    <!--                                                {{printData.data.indexOf(tr)+1}}-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                {{'['+tr.id+']-'+tr.faculty+'-[CODE-'+tr.faculty_code+']'}}-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                <div>-->
-                                    <!--                                                    <span v-for="(sem,idx) in tr.semester"-->
-                                    <!--                                                          :class="{'p-2':true ,'border-t':idx>0}">-->
-                                    <!--                                                        {{sem.id+'-['+sem.semester+']'}}-->
-                                    <!--                                                    </span>-->
-                                    <!--                                                </div>-->
-                                    <!--                                            </td>-->
-                                    <!--                                            <td>-->
-                                    <!--                                                <div>-->
-                                    <!--                                                    <span v-if="tr.status=='active'" class="p-2 ">Active</span>-->
-                                    <!--                                                    <span v-else class="p-2">In-Active</span>-->
-                                    <!--                                                </div>-->
-                                    <!--                                            </td>-->
-                                    <!--                                        </tr>-->
-                                    <!--                                        </tbody>-->
+                                    <thead>
+                                    <tr>
+                                        <th>SN.No.</th>
+                                        <th>
+                                            Semester
+                                        </th>
+                                        <th>
+                                            Subjects
+                                        </th>
+                                        <th>
+                                            Status
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(tr, idx) in printData.data">
+                                        <td>
+                                            {{printData.data.indexOf(tr)+1}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <div class="px-2 d-flex">
+                                                    <span class="flex-1 border-r p-2">Semester</span>
+                                                    <span class="flex-1 p-2">{{tr.semester}}</span>
+                                                </div>
+                                                <div class="px-2 d-flex border-t bg-grey-light">
+                                                    <span class="flex-1 border-r p-2">Grading Type</span>
+                                                    <span class="flex-1 p-2">{{tr.grading_type.title}}</span>
+                                                </div>
+                                                <div class="px-2 d-flex border-t">
+                                                    <span class="flex-1 border-r p-2">Teacher/Staff</span>
+                                                    <span class="flex-1 p-2">{{tr.staff.first_name?tr.staff.first_name:' '}}
+                                                {{tr.staff.middle_name?' '+tr.staff.middle_name:' '+' '}}
+                                                {{tr.staff.last_name?' '+tr.staff.last_name:' '}}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                            <span v-for="(sub,idx) in tr.subjects"
+                                                  :class="{'p-2':true ,'border-t':idx>0}">
+                                                {{sub.title}}
+                                            </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span v-if="tr.status=='active'" class="p-2 ">Active</span>
+                                                <span v-else class="p-2">In-Active</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
                                 </template>
                             </ow-data-table>
                         </div>
@@ -288,7 +299,7 @@
             return {
                 searchData: {},
                 tableHeader: [
-                    {name: 'Sem', sort_key: 'email'},
+                    {name: 'Semester', sort_key: 'email'},
                     {name: 'Subjects', sort_key: 'name'},
                     {name: 'Status'},
                     {name: 'Action'},
@@ -312,7 +323,9 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
+                this.$http.get(this.url + '/' + this.$route.params.id + '/edit').then(res => {
+                    this.semester = res.data.row;
+                    // this.selectedSubjects=res.data.row.subjects;
                     this.items = res.data.semester;
                     this.mainItem = this.items;
                     this.staff = this.$root.objectToArray(res.data.staff);
@@ -328,16 +341,19 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        // this.$http.post(this.url + '/store', {
-                        //     semester: this.faculty.semester,
-                        //     faculty: this.faculty.faculty,
-                        //     faculty_code: this.faculty.faculty_code
-                        // }).then(res => {
-                        //     this.$root.notification.status = res.data[0];
-                        //     this.$root.notification.message = res.data[1];
-                        //     this.faculty = {faculty: '', faculty_code: '', semester: []};
-                        //     this.getData()
-                        // })
+                        this.$http.post(this.url + '/' + this.$route.params.id + '/update', {
+                            semester: this.semester.semester,
+                            gradingType_id: this.semester.gradingType_id,
+                            staff_id: this.semester.staff_id,
+                            sem_subject_id: this.selectedSubjects.map(d => {
+                                return d.id
+                            }),
+                        }).then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.semester = {semester: '', staff_id: null, gradingType_id: null};
+                            this.getData()
+                        })
                     }
                 })
             },

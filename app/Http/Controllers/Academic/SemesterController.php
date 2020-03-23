@@ -64,31 +64,21 @@ class SemesterController extends CollegeBaseController
     public function edit(Request $request, $id)
     {
         $data = [];
-        if (!$data['row'] = Semester::find($id))
-            return parent::invalidRequest();
+        if (!$row = Semester::find($id))
+            return response()->json($data);
+           else{$data['row']=Semester::with('staff','gradingType','subjects')->find($id);}
 
-        $data['semester'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id','status')
+        $data['semester'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
             ->orderBy('semester')
+            ->with('staff')
+            ->with('gradingType')
+            ->with('subjects')
             ->get();
 
-        $data['gradingScales'] = [];
-        $data['gradingScales'][] = '';
-        foreach (GradingType::select('id','title')->Active()->get() as $grading) {
-            $data['gradingScales'][$grading->id] = $grading->title;
-        }
+        $data['gradingScales'] =GradingType::select('id','title')->Active()->get();
+        $data['staff']=Staff::Active()->get()->pluck('full_name','id');
 
-        $data['staffs'] = [];
-        $data['staffs'][] = '';
-        foreach (Staff::select('id','first_name','middle_name','last_name')->Active()->get() as $staff) {
-            $data['staffs'][$staff->id] = $staff->first_name.' '.$staff->middle_name.' '.$staff->last_name ;
-        }
-
-        $data['html'] = view($this->view_path.'.includes.subject_tr_rows', [
-            'subjects' => $data['row']->subjects
-        ])->render();
-
-        $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -113,9 +103,9 @@ class SemesterController extends CollegeBaseController
             }
         }
         $row->subjects()->sync($subjects);
+        return response()->json(['success', $row->id.' '.$this->panel.' Updated Successfully.']);
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+
     }
 
     public function delete(Request $request, $id)

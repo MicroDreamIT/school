@@ -12,7 +12,7 @@
                             Detail
                         </vs-button>
                     </router-link>
-                     <router-link :to="'/staff/add'">
+                    <router-link :to="'/staff/add'">
                         <vs-button type="filled" class="smBtn">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                             Registration
@@ -84,14 +84,15 @@
 
                 <vs-card>
                     <staff-table :headers="staffHeader"
-                                   :tableHeader="'Staff List'"
-                                   :suggestText="'Staff Record list on table. Filter Staffs using the filter.'"
-                                   :url="'/json/staff/'"
-                                   :noDataMessage="'No Staff data found. Please Filter Staff to show.'"
-                                   :hasSearch="true"
-                                   :has-multiple="true"
-                                   :has-pagination="true"
-                                   :filterSection="true"
+                                 :tableHeader="'Staff List'"
+                                 :suggestText="'Staff Record list on table. Filter Staffs using the filter.'"
+                                 :url="'/json/staff/'"
+                                 :noDataMessage="'No Staff data found. Please Filter Staff to show.'"
+                                 :hasSearch="true"
+                                 :has-multiple="true"
+                                 :has-pagination="true"
+                                 :filterSection="true"
+                                 ref="staffTable"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.reg_no">
@@ -120,7 +121,7 @@
                                 <div class="d-flex">
                                     <vs-switch color="success"
                                                :checked="props.data.status=='active'?true:false"
-                                               @click.stop="changeStatus(props.data.id)"
+                                               @click.stop="changeStatus(props.data.id,props.data.status)"
                                                class="pointer-all ml-2"
                                     >
                                         <span slot="on">Active</span>
@@ -158,7 +159,7 @@
                                     <a class="icons-only pointer-all" @click.stop="openResidentModal(props.data)">
                                         <i class="fa fa-bed"></i>
                                     </a>
-                                    <a class="icons-only pointer-all"  @click.stop="openTransportModal(props.data)">
+                                    <a class="icons-only pointer-all" @click.stop="openTransportModal(props.data)">
                                         <i class="fa fa-car"></i>
                                     </a>
                                 </div>
@@ -219,10 +220,10 @@
                     {name: 'Service Activation', sort_key: ''},
                 ],
                 notification: '',
-                residentModal:false,
-                transportModal:false,
-                residentUser:{},
-                transportUser:{}
+                residentModal: false,
+                transportModal: false,
+                residentUser: {},
+                transportUser: {}
 
             }
         },
@@ -234,12 +235,12 @@
         methods: {
 
             openResidentModal(user) {
-                this.residentModal=true;
-                this.residentUser=user
+                this.residentModal = true;
+                this.residentUser = user
             },
             openTransportModal(user) {
-                this.transportModal=true;
-                this.transportUser=user
+                this.transportModal = true;
+                this.transportUser = user
             },
 
             viewItems(id) {
@@ -251,10 +252,15 @@
             deleteItems() {
                 alert("hey hasib im delete ")
             },
-            changeStatus() {
-
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active'
+                let url = '/json/staff/' + id + '/' + stat
+                this.$http.get(url).then(res => {
+                    this.$refs.staffTable.getData()
+                    this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                })
             },
-            quickMember(user){
+            quickMember(user) {
                 //  params: {reg_no: user.reg_no,user_type:1,status:user.status}
             }
         }

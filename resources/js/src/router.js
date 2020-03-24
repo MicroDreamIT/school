@@ -957,6 +957,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/info/notice/:id/edit',
+                    name: 'noticeEdit',
+                    component: () => import('./views/custom/alert/notice/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/info/notice/add', // @@ 13
                     name: 'info.noticeCreate',
                     component: () => import('./views/custom/alert/notice/create'),

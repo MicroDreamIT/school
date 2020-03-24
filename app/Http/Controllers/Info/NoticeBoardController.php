@@ -28,6 +28,7 @@ class NoticeBoardController extends CollegeBaseController
         $data['rows'] = Notice::select('id', 'title', 'message', 'publish_date', 'end_date', 'display_group', 'status')
             ->latest()
             ->get();
+        $data['roles'] = Role::where('id', '<>', '1')->get();
         return response()->json($data);
 
     }
@@ -45,7 +46,7 @@ class NoticeBoardController extends CollegeBaseController
         if ($request->has('role')) {
             $display_group = implode(',', $request->get('role'));
         }
-        $request->request->add(['display_group' => isset($display_group) ? $display_group : '']);
+        $request->merge(['display_group' => isset($display_group) ? $display_group : '']);
 
         $request->merge(['created_by' => auth()->user()->id]);
         Notice::create($request->all());
@@ -76,7 +77,7 @@ class NoticeBoardController extends CollegeBaseController
         if ($request->has('role')) {
             $display_group = implode(',', $request->get('role'));
         }
-        $request->request->add(['display_group' => isset($display_group) ? $display_group : '']);
+        $request->merge(['display_group' => isset($display_group) ? $display_group : '']);
 
 
         $row->update($request->all());

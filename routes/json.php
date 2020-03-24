@@ -272,3 +272,59 @@ Route::group(['prefix' => 'guardian/', 'as' => 'guardian', 'namespace' => 'Stude
     Route::get('{student}/{guardian}/unlink', ['as' => '.unlink', 'middleware' => ['ability:super-admin,guardian-unlink'], 'uses' => 'GuardianController@unlink']);
 
 });
+
+
+Route::group(['prefix' => 'staff/', 'as' => 'staff', 'namespace' => 'Staff\\'], function () {
+    /*Staff Routes*/
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,staff-index'], 'uses' => 'StaffController@index']);
+    Route::get('add', ['as' => '.add', 'middleware' => ['ability:super-admin,staff-add'], 'uses' => 'StaffController@add']);
+    Route::post('store', ['as' => '.store', 'middleware' => ['ability:super-admin,staff-add'], 'uses' => 'StaffController@store']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,staff-edit'], 'uses' => 'StaffController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,staff-edit'], 'uses' => 'StaffController@update']);
+    Route::get('{id}/view', ['as' => '.view', 'middleware' => ['ability:super-admin,staff-view'], 'uses' => 'StaffController@view']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,staff-delete'], 'uses' => 'StaffController@delete']);
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,staff-active'], 'uses' => 'StaffController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,staff-in-active'], 'uses' => 'StaffController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,staff-bulk-action'], 'uses' => 'StaffController@bulkAction']);
+
+    Route::get('import', ['as' => '.import', 'middleware' => ['ability:super-admin,staff-add'], 'uses' => 'StaffController@importStaff']);
+    Route::post('import', ['as' => '.bulk.import', 'middleware' => ['ability:super-admin,staff-add'], 'uses' => 'StaffController@handleImportStaff']);
+
+
+    /*Staff login access*/
+    Route::post('user/create', ['as' => '.user.create', 'middleware' => ['ability:super-admin,user-add'], 'uses' => 'StaffController@createUser']);
+    Route::post('{id}/user/update', ['as' => '.user.update', 'middleware' => ['ability:super-admin,user-edit'], 'uses' => 'StaffController@updateUser']);
+    Route::get('{id}/user/active', ['as' => '.user.active', 'middleware' => ['ability:super-admin,user-active'], 'uses' => 'StaffController@activeUser']);
+    Route::get('{id}/user/in-active', ['as' => '.user.in-active', 'middleware' => ['ability:super-admin,user-in-active'], 'uses' => 'StaffController@inActiveUser']);
+    Route::get('{id}/user/delete', ['as' => '.user.delete', 'middleware' => ['ability:super-admin,user-delete'], 'uses' => 'StaffController@deleteUser']);
+
+    /*Staff Document Upload*/
+    Route::get('document', ['as' => '.document', 'middleware' => ['ability:super-admin,staff-document-index'], 'uses' => 'DocumentController@index']);
+    Route::post('document/store', ['as' => '.document.store', 'middleware' => ['ability:super-admin,staff-document-add'], 'uses' => 'DocumentController@store']);
+    Route::get('document/{id}/edit', ['as' => '.document.edit', 'middleware' => ['ability:super-admin,staff-document-edit'], 'uses' => 'DocumentController@edit']);
+    Route::post('document/{id}/update', ['as' => '.document.update', 'middleware' => ['ability:super-admin,staff-document-edit'], 'uses' => 'DocumentController@update']);
+    Route::get('document/{id}/delete', ['as' => '.document.delete', 'middleware' => ['ability:super-admin,staff-document-delete'], 'uses' => 'DocumentController@delete']);
+    Route::get('document/{id}/active', ['as' => '.document.active', 'middleware' => ['ability:super-admin,staff-document-active'], 'uses' => 'DocumentController@Active']);
+    Route::get('document/{id}/in-active', ['as' => '.document.in-active', 'middleware' => ['ability:super-admin,staff-document-in-active'], 'uses' => 'DocumentController@inActive']);
+    Route::post('document/bulk-action', ['as' => '.document.bulk-action', 'middleware' => ['ability:super-admin,staff-document-bulk-action'], 'uses' => 'DocumentController@bulkAction']);
+
+    /*Staff Notes Creating*/
+    Route::get('note', ['as' => '.note', 'middleware' => ['ability:super-admin,staff-note-index'], 'uses' => 'NoteController@index']);
+    Route::post('note/store', ['as' => '.note.store', 'middleware' => ['ability:super-admin,staff-note-add'], 'uses' => 'NoteController@store']);
+    Route::get('note/{id}/edit', ['as' => '.note.edit', 'middleware' => ['ability:super-admin,staff-note-edit'], 'uses' => 'NoteController@edit']);
+    Route::post('note/{id}/update', ['as' => '.note.update', 'middleware' => ['ability:super-admin,staff-note-edit'], 'uses' => 'NoteController@update']);
+    Route::get('note/{id}/delete', ['as' => '.note.delete', 'middleware' => ['ability:super-admin,staff-note-delete'], 'uses' => 'NoteController@delete']);
+    Route::get('note/{id}/active', ['as' => '.note.active', 'middleware' => ['ability:super-admin,staff-note-acctive'], 'uses' => 'NoteController@Active']);
+    Route::get('note/{id}/in-active', ['as' => '.note.in-active', 'middleware' => ['ability:super-admin,staff-note-in-active'], 'uses' => 'NoteController@inActive']);
+    Route::post('note/bulk-action', ['as' => '.note.bulk-action', 'middleware' => ['ability:super-admin,staff-note-bulk-action'], 'uses' => 'NoteController@bulkAction']);
+
+    /*Staff Designation*/
+    Route::get('designation', ['as' => '.designation', 'middleware' => ['ability:super-admin,staff-designation-index'], 'uses' => 'DesignationController@index']);
+    Route::post('designation/store', ['as' => '.designation.store', 'middleware' => ['ability:super-admin,staff-designation-add'], 'uses' => 'DesignationController@store']);
+    Route::get('designation/{id}/edit', ['as' => '.designation.edit', 'middleware' => ['ability:super-admin,staff-designation-edit'], 'uses' => 'DesignationController@edit']);
+    Route::post('designation/{id}/update', ['as' => '.designation.update', 'middleware' => ['ability:super-admin,staff-designation-edit'], 'uses' => 'DesignationController@update']);
+    Route::get('designation/{id}/delete', ['as' => '.designation.delete', 'middleware' => ['ability:super-admin,staff-designation-delete'], 'uses' => 'DesignationController@delete']);
+    Route::get('designation/{id}/active', ['as' => '.designation.active', 'middleware' => ['ability:super-admin,staff-designation-active'], 'uses' => 'DesignationController@Active']);
+    Route::get('designation/{id}/in-active', ['as' => '.designation.in-active', 'middleware' => ['ability:super-admin,staff-designation-in-active'], 'uses' => 'DesignationController@inActive']);
+    Route::post('designation/bulk-action', ['as' => '.designation.bulk-action', 'middleware' => ['ability:super-admin,staff-designation-bulk-action'], 'uses' => 'DesignationController@bulkAction']);
+});

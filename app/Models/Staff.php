@@ -11,6 +11,21 @@ class Staff extends BaseModel
         'temp_address', 'temp_state', 'temp_country', 'home_phone', 'mobile_1', 'mobile_2', 'email', 'qualification',
         'experience', 'experience_info', 'other_info','staff_image', 'status'];
 
+    protected $appends = ['fullname'];
+    protected $with=['designation'];
+
+    public function getFullnameAttribute($value)
+    {
+        $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
+        return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
+
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo(StaffDesignation::class, 'id');
+    }
+
     public function staffNotes()
     {
         return $this->hasMany(Note::class,'member_id','id')->where('member_type','=','staff');
@@ -54,9 +69,6 @@ class Staff extends BaseModel
     {
         return $this->hasMany(Attendance::class,'link_id','id')->where('attendees_type','=',2);
     }
-    public function getFullNameAttribute($value)
-    {
-       return ucfirst($this->first_name) . ' ' .ucfirst($this->middle_name).' '.ucfirst($this->last_name);
-    }
+
 
 }

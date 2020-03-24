@@ -86,7 +86,7 @@
                     <staff-table :headers="staffHeader"
                                    :tableHeader="'Staff List'"
                                    :suggestText="'Staff Record list on table. Filter Staffs using the filter.'"
-                                   :url="'/json/student/'"
+                                   :url="'/json/staff/'"
                                    :noDataMessage="'No Staff data found. Please Filter Staff to show.'"
                                    :hasSearch="true"
                                    :has-multiple="true"
@@ -98,18 +98,24 @@
                                 {{props.data.reg_no}}
                             </vs-td>
 
-                            <vs-td :data="props.data.first_name">
+                            <vs-td :data="props.data.fullname">
                                 <a @click.stop="viewItems(props.data.id)"
                                    class="pointer-all text-primary"
                                    title="View"
                                 >
-                                    {{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
+                                    {{props.data.fullname}}
                                 </a>
 
                             </vs-td>
-                            <vs-td></vs-td>
-                            <vs-td></vs-td>
-                            <vs-td></vs-td>
+                            <vs-td :data="props.data.mobile_1">
+                                {{props.data.mobile_1}}
+                            </vs-td>
+                            <vs-td :data="props.data.designation.title">
+                                {{props.data.designation.title}}
+                            </vs-td>
+                            <vs-td :data="props.data.qualification">
+                                {{props.data.qualification}}
+                            </vs-td>
                             <vs-td>
                                 <div class="d-flex">
                                     <vs-switch color="success"

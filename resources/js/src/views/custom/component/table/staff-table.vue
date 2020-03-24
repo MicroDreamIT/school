@@ -247,7 +247,7 @@
                 alert('doing Delete')
             },
             doSerialize() {
-
+                this.mainItem=this.item.staff
             },
 
 

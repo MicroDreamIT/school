@@ -67,6 +67,51 @@ Route::group(['prefix' => 'student/', 'as' => 'student', 'namespace' => 'Student
 
 });
 
+
+/*Info Center Grouping*/
+Route::group(['prefix' => 'info/', 'as' => 'info.', 'namespace' => 'Info\\'], function () {
+
+    /*Notice Board Routes*/
+    Route::get('notice', ['as' => 'notice', 'middleware' => ['ability:super-admin,notice-index'], 'uses' => 'NoticeBoardController@index']);
+    Route::get('notice/add', ['as' => 'notice.add', 'middleware' => ['ability:super-admin,notice-add'], 'uses' => 'NoticeBoardController@add']);
+    Route::post('notice/store', ['as' => 'notice.store', 'middleware' => ['ability:super-admin,notice-add'], 'uses' => 'NoticeBoardController@store']);
+    Route::get('notice/{id}/edit', ['as' => 'notice.edit', 'middleware' => ['ability:super-admin,notice-edit'], 'uses' => 'NoticeBoardController@edit']);
+    Route::post('notice/{id}/update', ['as' => 'notice.update', 'middleware' => ['ability:super-admin,notice-edit'], 'uses' => 'NoticeBoardController@update']);
+    Route::get('notice/{id}/delete', ['as' => 'notice.delete', 'middleware' => ['ability:super-admin,notice-delete'], 'uses' => 'NoticeBoardController@delete']);
+
+    /*SMS Email Routes*/
+    Route::get('smsemail/birthday-wish', ['as' => 'smsemail.send',                           /*'middleware' => ['ability:super-admin,sms-email-send'], */ 'uses' => 'SmsEmailController@birthdayWish']);
+
+    Route::get('smsemail', ['as' => 'smsemail', 'middleware' => ['ability:super-admin,sms-email-index'], 'uses' => 'SmsEmailController@index']);
+    Route::get('smsemail/{id}/delete', ['as' => 'smsemail.delete', 'middleware' => ['ability:super-admin,sms-email-delete'], 'uses' => 'SmsEmailController@delete']);
+    Route::post('smsemail/bulk-action', ['as' => 'smsemail.bulk-action', 'middleware' => ['ability:super-admin,sms-email-bulk-action'], 'uses' => 'SmsEmailController@bulkAction']);
+
+    /*Group*/
+    Route::get('smsemail/create', ['as' => 'smsemail.create', 'middleware' => ['ability:super-admin,sms-email-create'], 'uses' => 'SmsEmailController@create']);
+    Route::post('smsemail/send', ['as' => 'smsemail.send', 'middleware' => ['ability:super-admin,sms-email-send'], 'uses' => 'SmsEmailController@send']);
+
+    /*StudentGuardian*/
+    Route::get('smsemail/student-guardian', ['as' => 'smsemail.student-guardian', 'middleware' => ['ability:super-admin,sms-email-create'], 'uses' => 'SmsEmailController@studentGuardian']);
+    Route::post('smsemail/student-guardian/send', ['as' => 'smsemail.student-guardian.send', 'middleware' => ['ability:super-admin,sms-email-student-guardian-send'], 'uses' => 'SmsEmailController@studentGuardianSend']);
+
+    /*StudentGuardian*/
+    Route::get('smsemail/staff', ['as' => 'smsemail.staff', 'middleware' => ['ability:super-admin,sms-email-create'], 'uses' => 'SmsEmailController@staff']);
+    Route::post('smsemail/staff/send', ['as' => 'smsemail.staff.send', 'middleware' => ['ability:super-admin,sms-email-staff-send'], 'uses' => 'SmsEmailController@staffSend']);
+
+    /*Individual*/
+    Route::get('smsemail/individual', ['as' => 'smsemail.individual', 'middleware' => ['ability:super-admin,sms-email-create'], 'uses' => 'SmsEmailController@individual']);
+    Route::post('smsemail/individual/send', ['as' => 'smsemail.individual.send', 'middleware' => ['ability:super-admin,sms-email-individual-send'], 'uses' => 'SmsEmailController@individualSend']);
+
+    /*Reminder Alert*/
+    Route::get('smsemail/{id}/fees-receipt', ['as' => 'smsemail.fees-receipt', 'middleware' => ['ability:super-admin,sms-email-fee-receipt'], 'uses' => 'SmsEmailController@feeReceipt']);
+    Route::post('smsemail/dueReminder', ['as' => 'smsemail.dueReminder', 'middleware' => ['ability:super-admin,sms-email-due-reminder'], 'uses' => 'SmsEmailController@dueReminder']);
+    Route::post('smsemail/bookReturnReminder', ['as' => 'smsemail.bookReturnReminder', 'middleware' => ['ability:super-admin,sms-email-book-return-reminder'], 'uses' => 'SmsEmailController@bookReturnReminder']);
+
+});
+
+
+
+
 /*Academic Grouping */
 Route::group(['prefix' => '/', 'as' => '', 'namespace' => 'Academic\\'], function () {
 

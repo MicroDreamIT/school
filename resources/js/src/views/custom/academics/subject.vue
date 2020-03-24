@@ -224,21 +224,21 @@
                                         <div class="d-flex flex-column">
                                             <div class="p-2 d-flex">
                                                 <span class="flex-1">Credit Hour- </span>
-                                                <span class="flex-1">{{props.data.credit_hour}}</span>
+                                                <span class="flex-1 pl-3">{{props.data.credit_hour}}</span>
 
                                             </div>
                                             <div class="p-2 border-t d-flex">
                                                 <span class="flex-1">Subject Type -</span>
-                                                <span class="flex-1">{{props.data.sub_type}}</span>
+                                                <span class="flex-1 pl-3">{{props.data.sub_type}}</span>
                                             </div>
                                             <div class="p-2 border-t d-flex">
                                                 <span class="flex-1">Class Type -</span>
-                                                <span class="flex-1">{{props.data.class_type}}</span>
+                                                <span class="flex-1 pl-3">{{props.data.class_type}}</span>
                                             </div>
 
                                             <div class="p-2 border-t d-flex">
                                                 <span class="flex-1">Teacher/Staff -</span>
-                                                <span class="flex-1"> {{props.data.staff.first_name?props.data.staff.first_name:' '}}
+                                                <span class="flex-1 pl-3"> {{props.data.staff.first_name?props.data.staff.first_name:' '}}
                                                 {{props.data.staff.middle_name?' '+props.data.staff.middle_name:' '+' '}}
                                                 {{props.data.staff.last_name?' '+props.data.staff.last_name:' '}}</span>
                                             </div>
@@ -332,21 +332,21 @@
                                             <div class="d-flex flex-column">
                                                 <div class="p-2 d-flex">
                                                     <span class="flex-1">Credit Hour- </span>
-                                                    <span class="flex-1">{{tr.credit_hour}}</span>
+                                                    <span class="flex-1 pl-3">{{tr.credit_hour}}</span>
 
                                                 </div>
                                                 <div class="p-2 border-t d-flex">
                                                     <span class="flex-1">Subject Type -</span>
-                                                    <span class="flex-1">{{tr.sub_type}}</span>
+                                                    <span class="flex-1 pl-3">{{tr.sub_type}}</span>
                                                 </div>
                                                 <div class="p-2 border-t d-flex">
                                                     <span class="flex-1">Class Type -</span>
-                                                    <span class="flex-1">{{tr.class_type}}</span>
+                                                    <span class="flex-1 pl-3">{{tr.class_type}}</span>
                                                 </div>
 
                                                 <div class="p-2 border-t d-flex">
                                                     <span class="flex-1">Teacher/Staff -</span>
-                                                    <span class="flex-1"> {{tr.staff.first_name?tr.staff.first_name:' '}}
+                                                    <span class="flex-1 pl-3"> {{tr.staff.first_name?tr.staff.first_name:' '}}
                                                 {{tr.staff.middle_name?' '+tr.staff.middle_name:' '+' '}}
                                                 {{tr.staff.last_name?' '+tr.staff.last_name:' '}}</span>
                                                 </div>

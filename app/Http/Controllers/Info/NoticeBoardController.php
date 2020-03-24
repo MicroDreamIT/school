@@ -25,37 +25,32 @@ class NoticeBoardController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['rows'] = Notice::select('id', 'title', 'message', 'publish_date', 'end_date', 'display_group','status')
+        $data['rows'] = Notice::select('id', 'title', 'message', 'publish_date', 'end_date', 'display_group', 'status')
             ->latest()
             ->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
 
     }
 
     public function add()
     {
         $data = [];
-        $data['roles'] = Role::where('id','<>','1')->get();
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        $data['roles'] = Role::where('id', '<>', '1')->get();
+        return response()->json($data);
 
     }
 
     public function store(AddValidation $request)
     {
-        if($request->has('role')) {
+        if ($request->has('role')) {
             $display_group = implode(',', $request->get('role'));
         }
-        $request->request->add(['display_group' => isset($display_group)?$display_group:'']);
+        $request->request->add(['display_group' => isset($display_group) ? $display_group : '']);
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-       Notice::create($request->all());
-       $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
+        $request->merge(['created_by' => auth()->user()->id]);
+        Notice::create($request->all());
+        return response()->json(['success', 'Created Successfully.']);
 
-       if($request->add_notice_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
     }
 
     public function edit(Request $request, $id)
@@ -64,40 +59,40 @@ class NoticeBoardController extends CollegeBaseController
         if (!$data['row'] = Notice::find($id))
             return parent::invalidRequest();
 
-        $data['roles'] = Role::where('id','<>','1')->get();
-        $roleactive = explode(',',$data['row']->display_group);
+        $data['roles'] = Role::where('id', '<>', '1')->get();
+        $roleactive = explode(',', $data['row']->display_group);
         $data['access_role'] = $roleactive;
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
     {
-       if (!$row = Notice::find($id)) return parent::invalidRequest();
+        if (!$row = Notice::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
 
-        if($request->has('role')) {
-            $display_group = implode(',',$request->get('role'));
+        if ($request->has('role')) {
+            $display_group = implode(',', $request->get('role'));
         }
-        $request->request->add(['display_group' => isset($display_group)?$display_group:'']);
+        $request->request->add(['display_group' => isset($display_group) ? $display_group : '']);
 
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
     {
-        if (!$row = Notice::find($id)) return parent::invalidRequest();
-
-        $row->delete();
-
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        try {
+            if (!$row = Notice::find($id)) return response()->json(['success', $row->id . ' ' . $this->panel . ' No Data.']);
+            $row->delete();
+            return response()->json(['success', $row->id . ' ' . $this->panel . ' Deleted Successfully.']);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->errorInfo) return response()->json(['danger', 'Cant Delete. Other Data contain this batch as foreignKey']);
+        }
     }
 
 }

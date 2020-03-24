@@ -12,6 +12,22 @@
                     </router-link>
                 </div>
             </div>
+            <div class="col-md-12" v-if="$root.notification.status">
+                <div role="alert"
+                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="$root.emptyNotification()"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{$root.notification.message}}
+                </div>
+            </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
@@ -34,30 +50,86 @@
                         <div class="col-md-12 row">
                             <div class="col-md-8">
                                 <p>Title</p>
-                                <vs-input></vs-input>
+                                <vs-input
+                                        v-model="notice.title"
+                                        v-validate="'required'"
+                                        data-vv-name="title"
+                                        :danger="errors.first('title')?true:false"
+                                        :danger-text="errors.first('title')"
+                                        class="w-100"
+                                >
+
+                                </vs-input>
                                 <p>Message</p>
-                               <quill-editor v-model="content"></quill-editor>
+                                <quill-editor
+                                        v-model="notice.message"
+                                        v-validate="'required'"
+                                        data-vv-name="message"
+                                >
+
+                                </quill-editor>
+                                <span class="error-text" v-if="errors.first('message')">
+                                    {{ errors.first('message') }}
+                                </span>
                             </div>
                             <div class="col-md-4">
                                 <p>Publish Date</p>
-                                <datepicker></datepicker>
+                                <datepicker v-model="notice.publish_date"
+                                            :format="'yyyy-MM-dd'"
+                                            @input="notice.publish_date=$root.formatPicker($event)"
+                                            v-validate="'required'"
+                                            data-vv-name="publish_date"
+
+                                >
+
+                                </datepicker>
+                                <span class="error-text" v-if="errors.first('publish_date')">
+                                    {{ errors.first('publish_date') }}
+                                </span>
                                 <p>End Date</p>
-                                <datepicker></datepicker>
+                                <datepicker
+                                        v-model="notice.end_date"
+                                        :format="'yyyy-MM-dd'"
+                                        @input="notice.end_date=$root.formatPicker($event)"
+                                        v-validate="'required'"
+                                        data-vv-name="end_date"
+                                >
+
+                                </datepicker>
+                                <span class="error-text" v-if="errors.first('end_date')">
+                                    {{ errors.first('end_date') }}
+                                </span>
                                 <p>Message Display Groups</p>
-                                <vs-checkbox v-model="display_group" class="my-2">Administrator</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2">Accountant</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2"> Librarian</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2">Staff</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2">Student</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2">Guardian</vs-checkbox>
-                                <vs-checkbox v-model="display_group" class="my-2">Teacher</vs-checkbox>
+                                <vs-checkbox v-model="notice.role"
+                                             class="my-2"
+                                             v-for="role in roles"
+                                             :vs-value="role.id"
+                                             :key="role.id"
+                                >
+                                    {{role.display_name}}
+                                </vs-checkbox>
+
                             </div>
                         </div>
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Create</vs-button>
-                            <vs-button class="my-round mx-2" color="#28c76f">Create And Add Another</vs-button>
+                            <vs-button class="my-round mx-2"
+                                       color="warning"
+                                       @click.prevent="reset"
+
+                            >
+                                Reset
+                            </vs-button>
+                            <vs-button class="my-round mx-2"
+                                       @click.prevent="create">
+                                Create
+                            </vs-button>
+                            <vs-button class="my-round mx-2"
+                                       color="#28c76f"
+                                       @click.prevent="save"
+                            >
+                                Create And Add Another
+                            </vs-button>
                         </div>
                     </div>
                 </vs-card>
@@ -72,9 +144,53 @@
     export default {
         data() {
             return {
-                display_group:null
+                notice: {role: []},
+                roles: []
             }
         },
+        created() {
+            this.getData()
+        },
+
+        methods: {
+            getData() {
+                this.$http.get('/json/info/notice/add').then(res => {
+                    this.roles = res.data.roles;
+                })
+            },
+            reset() {
+
+            },
+            create() {
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        this.$http.post('/json/info/notice/store', this.notice).then(res => {
+                            this.$vs.notify({
+                                title: 'Create Status ',
+                                text: res.data[1],
+                                color: res.data[0],
+                                position: 'top-right'
+                            });
+                            this.$validator.reset();
+                            this.$router.push('/info/notice')
+                        })
+                    }
+                })
+            },
+            save() {
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        this.$http.post('/json/info/notice/store', this.notice).then(res => {
+                            this.notice = {role: []};
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.getData();
+                            this.$validator.reset()
+                        })
+                    }
+                })
+            }
+        }
 
     }
 

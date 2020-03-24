@@ -249,7 +249,7 @@
                     html: '#ow-table',
                     startY: 30,
                     showHead: 'firstPage',
-                })
+                });
                 doc.save(this.tableHeader + '.pdf');
             },
             doJson() {

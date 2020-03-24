@@ -19,21 +19,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group ">
                                             <label>Search Using Name | Mobile No. | Email-Id</label>
-                                            <vs-input v-model="searchData" class="w-100">
+                                            <vs-input v-model="searchData" class="w-100" @keyup="doFilter">
                                             </vs-input>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-2 pl-0">
-                                <vs-button type="filled"
-                                           color="#00b8cf"
-                                           icon="double_arrow"
-                                           @click.prevent="doFilter"
-                                >
-                                    Filter
-                                </vs-button>
-                            </div>
+
                         </div>
                     </vs-collapse-item>
                 </vs-collapse>
@@ -189,14 +181,16 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url,{params:this.searchData}).then(res => {
+                this.$http.get(this.url,{params:{
+                        q:this.searchData
+                    }}).then(res => {
                     this.item = res.data.guardian;
                     this.doSerialize()
                 });
 
             },
             doFilter() {
-                alert(this.searchData.semester.id)
+                this.getData()
             },
             doActive() {
                 if (this.selected.length > 0) {

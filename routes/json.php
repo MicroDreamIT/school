@@ -328,3 +328,107 @@ Route::group(['prefix' => 'staff/', 'as' => 'staff', 'namespace' => 'Staff\\'], 
     Route::get('designation/{id}/in-active', ['as' => '.designation.in-active', 'middleware' => ['ability:super-admin,staff-designation-in-active'], 'uses' => 'DesignationController@inActive']);
     Route::post('designation/bulk-action', ['as' => '.designation.bulk-action', 'middleware' => ['ability:super-admin,staff-designation-bulk-action'], 'uses' => 'DesignationController@bulkAction']);
 });
+
+Route::group(['prefix' => 'hostel/', 'as' => 'hostel', 'namespace' => 'Hostel\\'], function () {
+
+    /*Hostel Routes*/
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,hostel-index'], 'uses' => 'HostelController@index']);
+    Route::get('add', ['as' => '.add', 'middleware' => ['ability:super-admin,hostel-add'], 'uses' => 'HostelController@add']);
+    Route::post('store', ['as' => '.store', 'middleware' => ['ability:super-admin,hostel-add'], 'uses' => 'HostelController@store']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,hostel-edit'], 'uses' => 'HostelController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,hostel-edit'], 'uses' => 'HostelController@update']);
+    Route::get('{id}/view', ['as' => '.view', 'middleware' => ['ability:super-admin,hostel-view'], 'uses' => 'HostelController@view']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,hostel-delete'], 'uses' => 'HostelController@delete']);
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,hostel-active'], 'uses' => 'HostelController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,hostel-in-active'], 'uses' => 'HostelController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,hostel-bulk-action'], 'uses' => 'HostelController@bulkAction']);
+    Route::post('find-rooms', ['as' => '.find-rooms', 'uses' => 'HostelController@findRooms']);
+    Route::post('find-beds', ['as' => '.find-beds', 'uses' => 'HostelController@findBeds']);
+
+    /*Rooms Level*/
+    Route::post('room/add', ['as' => '.room.add', 'middleware' => ['ability:super-admin,room-add'], 'uses' => 'RoomController@add']);
+    Route::get('room/{id}/view', ['as' => '.room.view', 'middleware' => ['ability:super-admin,room-view'], 'uses' => 'RoomController@view']);
+    Route::post('room/{id}/update', ['as' => '.room.update', 'middleware' => ['ability:super-admin,room-edit'], 'uses' => 'RoomController@update']);
+    Route::get('room/{id}/delete', ['as' => '.room.delete', 'middleware' => ['ability:super-admin,room-delete'], 'uses' => 'RoomController@delete']);
+    Route::get('room/{id}/active', ['as' => '.room.active', 'middleware' => ['ability:super-admin,room-active'], 'uses' => 'RoomController@Active']);
+    Route::get('room/{id}/in-active', ['as' => '.room.in-active', 'middleware' => ['ability:super-admin,room-in-active'], 'uses' => 'RoomController@InActive']);
+    Route::post('room/bulk-rooms', ['as' => '.room.bulk-rooms', 'middleware' => ['ability:super-admin,room-bulk-action'], 'uses' => 'RoomController@bulkAction']);
+
+    /*Bed*/
+    Route::post('bed/add', ['as' => '.bed.add', 'middleware' => ['ability:super-admin,bed-add'], 'uses' => 'BedController@addBeds']);
+    Route::get('bed/{id}/bed-status/{status}', ['as' => '.bed.bed-status', 'middleware' => ['ability:super-admin,bed-status'], 'uses' => 'BedController@bedStatus']);
+    Route::get('bed/{id}/delete', ['as' => '.bed.delete', 'middleware' => ['ability:super-admin,bed-delete'], 'uses' => 'BedController@delete']);
+    Route::get('bed/{id}/active', ['as' => '.bed.active', 'middleware' => ['ability:super-admin,bed-active'], 'uses' => 'BedController@Active']);
+    Route::get('bed/{id}/in-active', ['as' => '.bed.in-active', 'middleware' => ['ability:super-admin,bed-in-active'], 'uses' => 'BedController@InActive']);
+    Route::post('bed/bulk-beds', ['as' => '.bed.bulk-beds', 'middleware' => ['ability:super-admin,bed-bulk-action'], 'uses' => 'BedController@bulkAction']);
+
+    /*Room Types Routes*/
+    Route::get('room-type', ['as' => '.room-type', 'middleware' => ['ability:super-admin,room-type-index'], 'uses' => 'RoomTypeController@index']);
+    Route::post('room-type/store', ['as' => '.room-type.store', 'middleware' => ['ability:super-admin,room-type-add'], 'uses' => 'RoomTypeController@store']);
+    Route::get('room-type/{id}/edit', ['as' => '.room-type.edit', 'middleware' => ['ability:super-admin,room-type-edit'], 'uses' => 'RoomTypeController@edit']);
+    Route::post('room-type/{id}/update', ['as' => '.room-type.update', 'middleware' => ['ability:super-admin,room-type-edit'], 'uses' => 'RoomTypeController@update']);
+    Route::get('room-type/{id}/delete', ['as' => '.room-type.delete', 'middleware' => ['ability:super-admin,room-type-delete'], 'uses' => 'RoomTypeController@delete']);
+    Route::get('room-type/{id}/active', ['as' => '.room-type.active', 'middleware' => ['ability:super-admin,room-type-active'], 'uses' => 'RoomTypeController@Active']);
+    Route::get('room-type/{id}/in-active', ['as' => '.room-type.in-active', 'middleware' => ['ability:super-admin,room-type-in-active'], 'uses' => 'RoomTypeController@inActive']);
+    Route::post('room-type/bulk-action', ['as' => '.room-type.bulk-action', 'middleware' => ['ability:super-admin,room-type-bulk-action'], 'uses' => 'RoomTypeController@bulkAction']);
+
+    /*Hostel Resident Routes*/
+    Route::get('resident', ['as' => '.resident', 'middleware' => ['ability:super-admin,resident-index'], 'uses' => 'ResidentController@index']);
+    Route::get('resident/add', ['as' => '.resident.add', 'middleware' => ['ability:super-admin,resident-add'], 'uses' => 'ResidentController@add']);
+    Route::post('resident/store', ['as' => '.resident.store', 'middleware' => ['ability:super-admin,resident-add'], 'uses' => 'ResidentController@store']);
+    Route::get('resident/quick-resident', ['as' => '.resident.quick-resident', 'middleware' => ['ability:super-admin,resident-add'], 'uses' => 'ResidentController@quickResident']);
+    Route::get('resident/{id}/edit', ['as' => '.resident.edit', 'middleware' => ['ability:super-admin,resident-edit'], 'uses' => 'ResidentController@edit']);
+    Route::post('resident/{id}/update', ['as' => '.resident.update', 'middleware' => ['ability:super-admin,resident-edit'], 'uses' => 'ResidentController@update']);
+    Route::get('resident/{id}/delete', ['as' => '.resident.delete', 'middleware' => ['ability:super-admin,resident-delete'], 'uses' => 'ResidentController@delete']);
+    Route::post('resident/bulk-action', ['as' => '.resident.bulk-action', 'middleware' => ['ability:super-admin,resident-bulk-action'], 'uses' => 'ResidentController@bulkAction']);
+    Route::post('resident/renew', ['as' => '.resident.renew', 'middleware' => ['ability:super-admin,resident-renew'], 'uses' => 'ResidentController@renew']);
+    Route::get('resident/{id}/leave', ['as' => '.resident.leave', 'middleware' => ['ability:super-admin,resident-leave'], 'uses' => 'ResidentController@leave']);
+    Route::post('resident/shift', ['as' => '.resident.shift', 'middleware' => ['ability:super-admin,resident-shift'], 'uses' => 'ResidentController@shift']);
+    Route::get('resident/history', ['as' => '.resident.history', 'middleware' => ['ability:super-admin,resident-history'], 'uses' => 'ResidentController@history']);
+    /*For Search and Listing Room & Bed*/
+    Route::post('resident/find-rooms', ['as' => '.resident.find-rooms', 'middleware' => ['ability:super-admin,resident'], 'uses' => 'ResidentController@findRooms']);
+    Route::post('resident/find-beds', ['as' => '.resident.find-beds', 'middleware' => ['ability:super-admin,resident'], 'uses' => 'ResidentController@findBeds']);
+
+    /*Food & Meal*/
+    /*Food Schedule Routes*/
+    Route::get('food', ['as' => '.food', 'middleware' => ['ability:super-admin,food-index'], 'uses' => 'FoodController@index']);
+    Route::post('food/store', ['as' => '.food.store', 'middleware' => ['ability:super-admin,food-add'], 'uses' => 'FoodController@store']);
+    Route::get('food/{id}/edit', ['as' => '.food.edit', 'middleware' => ['ability:super-admin,food-edit'], 'uses' => 'FoodController@edit']);
+    Route::post('food/{id}/update', ['as' => '.food.update', 'middleware' => ['ability:super-admin,food-edit'], 'uses' => 'FoodController@update']);
+    Route::get('food/{id}/delete', ['as' => '.food.delete', 'middleware' => ['ability:super-admin,food-delete'], 'uses' => 'FoodController@delete']);
+    Route::get('food/{id}/active', ['as' => '.food.active', 'middleware' => ['ability:super-admin,food-active'], 'uses' => 'FoodController@Active']);
+    Route::get('food/{id}/in-active', ['as' => '.food.in-active', 'middleware' => ['ability:super-admin,food-in-active'], 'uses' => 'FoodController@inActive']);
+    Route::post('food/bulk-action', ['as' => '.food.bulk-action', 'middleware' => ['ability:super-admin,food-bulk-action'], 'uses' => 'FoodController@bulkAction']);
+    Route::post('food/food-html', ['as' => '.food.food-html', 'uses' => 'FoodController@foodHtmlRow']);
+    Route::get('food-name-autocomplete', ['as' => '.food-name-autocomplete', 'uses' => 'FoodController@foodNameAutocomplete']);
+
+    /*Food Category Routes*/
+    Route::get('food/category', ['as' => '.food.category', 'middleware' => ['ability:super-admin,food-category-index'], 'uses' => 'FoodCategoryController@index']);
+    Route::post('food/category/store', ['as' => '.food.category.store', 'middleware' => ['ability:super-admin,food-category-add'], 'uses' => 'FoodCategoryController@store']);
+    Route::get('food/category/{id}/edit', ['as' => '.food.category.edit', 'middleware' => ['ability:super-admin,food-category-edit'], 'uses' => 'FoodCategoryController@edit']);
+    Route::post('food/category/{id}/update', ['as' => '.food.category.update', 'middleware' => ['ability:super-admin,food-category-edit'], 'uses' => 'FoodCategoryController@update']);
+    Route::get('food/category/{id}/delete', ['as' => '.food.category.delete', 'middleware' => ['ability:super-admin,food-category-delete'], 'uses' => 'FoodCategoryController@delete']);
+    Route::get('food/category/{id}/active', ['as' => '.food.category.active', 'middleware' => ['ability:super-admin,food-category-active'], 'uses' => 'FoodCategoryController@Active']);
+    Route::get('food/category/{id}/in-active', ['as' => '.food.category.in-active', 'middleware' => ['ability:super-admin,food-category-in-active'], 'uses' => 'FoodCategoryController@inActive']);
+    Route::post('food/category/bulk-action', ['as' => '.food.category.bulk-action', 'middleware' => ['ability:super-admin,food-category-bulk-action'], 'uses' => 'FoodCategoryController@bulkAction']);
+
+    /*Food Item Routes*/
+    Route::get('food/item', ['as' => '.food.item', 'middleware' => ['ability:super-admin,food-item-index'], 'uses' => 'FoodItemController@index']);
+    Route::post('food/item/store', ['as' => '.food.item.store', 'middleware' => ['ability:super-admin,food-item-add'], 'uses' => 'FoodItemController@store']);
+    Route::get('food/item/{id}/edit', ['as' => '.food.item.edit', 'middleware' => ['ability:super-admin,food-item-edit'], 'uses' => 'FoodItemController@edit']);
+    Route::post('food/item/{id}/update', ['as' => '.food.item.update', 'middleware' => ['ability:super-admin,food-item-edit'], 'uses' => 'FoodItemController@update']);
+    Route::get('food/item/{id}/delete', ['as' => '.food.item.delete', 'middleware' => ['ability:super-admin,food-item-delete'], 'uses' => 'FoodItemController@delete']);
+    Route::get('food/item/{id}/active', ['as' => '.food.item.active', 'middleware' => ['ability:super-admin,food-item-active'], 'uses' => 'FoodItemController@Active']);
+    Route::get('food/item/{id}/in-active', ['as' => '.food.item.in-active', 'middleware' => ['ability:super-admin,food-item-in-active'], 'uses' => 'FoodItemController@inActive']);
+    Route::post('food/item/bulk-action', ['as' => '.food.item.bulk-action', 'middleware' => ['ability:super-admin,food-item-bulk-action'], 'uses' => 'FoodItemController@bulkAction']);
+
+    /*Food Eating Time Routes*/
+    Route::get('food/eating-time', ['as' => '.food.eating-time', 'middleware' => ['ability:super-admin,eating-time-index'], 'uses' => 'EatingTimeController@index']);
+    Route::post('food/eating-time/store', ['as' => '.food.eating-time.store', 'middleware' => ['ability:super-admin,eating-time-add'], 'uses' => 'EatingTimeController@store']);
+    Route::get('food/eating-time/{id}/edit', ['as' => '.food.eating-time.edit', 'middleware' => ['ability:super-admin,eating-time-edit'], 'uses' => 'EatingTimeController@edit']);
+    Route::post('food/eating-time/{id}/update', ['as' => '.food.eating-time.update', 'middleware' => ['ability:super-admin,eating-time-edit'], 'uses' => 'EatingTimeController@update']);
+    Route::get('food/eating-time/{id}/delete', ['as' => '.food.eating-time.delete', 'middleware' => ['ability:super-admin,eating-time-delete'], 'uses' => 'EatingTimeController@delete']);
+    Route::get('food/eating-time/{id}/active', ['as' => '.food.eating-time.active', 'middleware' => ['ability:super-admin,eating-time-active'], 'uses' => 'EatingTimeController@Active']);
+    Route::get('food/eating-time/{id}/in-active', ['as' => '.food.eating-time.in-active', 'middleware' => ['ability:super-admin,eating-time-in-acctive'], 'uses' => 'EatingTimeController@inActive']);
+    Route::post('food/eating-time/bulk-action', ['as' => '.food.eating-time.bulk-action', 'middleware' => ['ability:super-admin,eating-time-bulk-action'], 'uses' => 'EatingTimeController@bulkAction']);
+});

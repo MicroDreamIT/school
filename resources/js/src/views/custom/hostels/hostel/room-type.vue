@@ -42,8 +42,7 @@
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
-                                       class="my-round">
-                                Create
+                                       class="my-round">Create
                             </vs-button>
                         </div>
                         <div class="col-md-8">
@@ -64,47 +63,66 @@
                             <div class="table-header">
                                 Room Type Record list on table. Filter Room Type using the filter.
                             </div>
-                            <div class="dt-buttons btn-group action-group mt-3">
-                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Copy</span></button>
-                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>PDF</span>
-                                </button>
-                                <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                    <span>JSON</span>
-                                </button>
-                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                            <data-table :headers="tableHeader"
-                                        :url="'/json/hostel/room-type'"
-                                        :no-data-message="'No Room Type data found. Please Filter Room Type to show.'"
-                                        :searchField="searchData"
-                                        :hasSearch="true"
-                                        :has-multiple="true"
+                            <roomtype-table :headers="roomtypeHeader"
+                                            :tableHeader="'Room Type List'"
+                                            :suggestText="'Room type Record list on table. Filter room type using the filter.'"
+                                            :url="'/json/hostel/room-type'"
+                                            :noDataMessage="'No room type data found. Please Filter room type to show.'"
+                                            :hasSearch="true"
+                                            :has-multiple="true"
+                                            :has-pagination="true"
+                                            :filterSection="true"
+                                            ref="roomtypeTable"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
-                                        {{props.data.email}}
+                                    <vs-td>
+
                                     </vs-td>
-                        
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
+                                    <vs-td >
                                     </vs-td>
-                        
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
+                                    <vs-td>
                                     </vs-td>
-                        
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
+
+                                    <vs-td>
                                     </vs-td>
+                                    <vs-td>
+                                        <div class="d-flex flex-wrap">
+                                            {{props.data.status}}
+                                            <vs-switch color="success"
+                                                       :checked="props.data.status=='active'?true:false"
+                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
+                                                       class="pointer-all ml-2"
+                                            >
+                                                <span slot="on">Active</span>
+                                                <span slot="off">In-Active</span>
+                                            </vs-switch>
+                                        </div>
+                                    </vs-td>
+                                    <vs-td>
+                                        <div class="action-own">
+                                            <a class="btn btn-primary btn-sm pointer-all"
+                                               title="View"
+                                               @click.stop="viewItems(props.data.id)"
+
+                                            >
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a class="btn btn-success btn-sm pointer-all"
+                                               title="Edit"
+                                               @click.stop="editItems(props.data.id)">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm pointer-all"
+                                               title="Delete"
+                                               @click.stop="deleteItems(props.data.id)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </div>
+                                    </vs-td>
+
+
                                 </template>
-                            </data-table>
+                            </roomtype-table>
                         </div>
                     </div>
     
@@ -120,13 +138,38 @@
         data() {
             return {
                 searchData: {},
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                roomtypeHeader: [
+                    {name: 'Name', sort_key: ''},
+                    {name: 'Address', sort_key: ''},
+                    {name: 'Contact', sort_key: ''},
+                    {name: 'Students', sort_key: ''},
+                    {name: 'Status', sort_key: ''},
+                    {name: 'Action', sort_key: ''},
                 ],
             }
+        },
+        methods:{
+            viewItems(id) {
+                if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
+            },
+            studentViewItems(id) {
+                if(id) this.$router.push({name: 'studentView', params: {id: id}})
+            },
+            editItems() {
+                alert("hey hasib im edit ")
+            },
+            deleteItems() {
+                alert("hey hasib im delete ")
+            },
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active'
+                let url = '/json/hostel/room-type' + id + '/' + stat
+                this.$http.get(url).then(res => {
+                    this.$refs.guardianTable.getData()
+                    this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                })
+
+            },
         }
     }
 </script>

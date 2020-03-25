@@ -42,7 +42,8 @@
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
-                                       class="my-round">Create
+                                       class="my-round">
+                                Create
                             </vs-button>
                         </div>
                         <div class="col-md-8">
@@ -80,7 +81,7 @@
                                 </button>
                             </div>
                             <data-table :headers="tableHeader"
-                                        :url="'/student'"
+                                        :url="'/json/hostel/room-type'"
                                         :no-data-message="'No Room Type data found. Please Filter Room Type to show.'"
                                         :searchField="searchData"
                                         :hasSearch="true"

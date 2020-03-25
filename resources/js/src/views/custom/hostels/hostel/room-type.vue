@@ -139,10 +139,7 @@
             return {
                 searchData: {},
                 roomtypeHeader: [
-                    {name: 'Name', sort_key: ''},
-                    {name: 'Address', sort_key: ''},
-                    {name: 'Contact', sort_key: ''},
-                    {name: 'Students', sort_key: ''},
+                    {name: 'room type', sort_key: ''},
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},
                 ],

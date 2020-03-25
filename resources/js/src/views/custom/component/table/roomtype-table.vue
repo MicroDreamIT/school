@@ -218,23 +218,17 @@
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data;
-                    this.designation = this.$root.objectToArray(res.data.designation)
                     this.doSerialize()
                 });
 
             },
             doFilter() {
-                if (this.searchData.designation) {
-                    if (this.searchData.designation.id !== undefined) {
-                        this.searchData.designation = this.searchData.designation.id
-                    }
-                }
                 this.getData()
             },
 
             doActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/staff/bulk-action', {
+                    this.$http.post('/json/room-type/bulk-action', {
                         bulk_action: 'active',
                         chkIds: this.selected.map(val => {
                             return val.id

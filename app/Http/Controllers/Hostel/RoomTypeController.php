@@ -25,7 +25,7 @@ class RoomTypeController extends CollegeBaseController
     {
         $data = [];
         $data['room_type'] = RoomType::select('id', 'title', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)

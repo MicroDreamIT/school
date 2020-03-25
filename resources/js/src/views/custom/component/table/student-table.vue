@@ -26,7 +26,6 @@
                                             <label>Batch</label>
                                             <v-select :options="batch"
                                                       v-model="searchData.batch">
-
                                             </v-select>
                                         </div>
                                     </div>

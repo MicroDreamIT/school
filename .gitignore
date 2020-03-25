@@ -102,3 +102,4 @@ public/js/chunks/
 /public/fonts/vendor/font-awesome/
 /storage/framework/views/
 public/js/app.js
+public/js/chunks/*

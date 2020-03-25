@@ -119,14 +119,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     url: {
@@ -225,20 +217,64 @@ __webpack_require__.r(__webpack_exports__);
     getData: function getData() {
       var _this = this;
 
-      this.$http.get(this.url).then(function (res) {
+      this.$http.get(this.url, {
+        params: {
+          q: this.searchData
+        }
+      }).then(function (res) {
         _this.item = res.data.guardian;
 
         _this.doSerialize();
       });
     },
     doFilter: function doFilter() {
-      alert(this.searchData.semester.id);
+      this.getData();
     },
     doActive: function doActive() {
-      alert('doing active');
+      var _this2 = this;
+
+      if (this.selected.length > 0) {
+        this.$http.post('/json/guardian/bulk-action', {
+          bulk_action: 'active',
+          chkIds: this.selected.map(function (val) {
+            return val.id;
+          })
+        }).then(function (res) {
+          _this2.$root.notification.status = 'success';
+          _this2.$root.notification.message = 'Active successfully';
+          _this2.selected = [];
+
+          _this2.getData();
+        }).catch(function (err) {
+          alert(err.response.message);
+        });
+      } else {
+        this.$root.notification.status = 'error';
+        this.$root.notification.message = 'select at least one';
+      }
     },
     doInActive: function doInActive() {
-      alert('doing Inactive');
+      var _this3 = this;
+
+      if (this.selected.length > 0) {
+        this.$http.post('/json/guardian/bulk-action', {
+          bulk_action: 'in-active',
+          chkIds: this.selected.map(function (val) {
+            return val.id;
+          })
+        }).then(function (res) {
+          _this3.$root.notification.status = 'success';
+          _this3.$root.notification.message = 'in-active successfully';
+          _this3.selected = [];
+
+          _this3.getData();
+        }).catch(function (err) {
+          alert(err.response.message);
+        });
+      } else {
+        this.$root.notification.status = 'error';
+        this.$root.notification.message = 'select at least one';
+      }
     },
     doCopy: function doCopy() {
       alert('doing copy');
@@ -256,12 +292,12 @@ __webpack_require__.r(__webpack_exports__);
       alert('doing Delete');
     },
     doSerialize: function doSerialize() {
-      this.mainItem = this.item.map(function (st) {
-        return {
-          id: st.id,
-          first_name: st.guardian_first_name
-        };
-      });
+      this.mainItem = this.item; // this.mainItem = this.item.map(st=>{
+      //     return {
+      //         id: st.id,
+      //         first_name: st.guardian_first_name
+      //     }
+      // })
     }
   }
 });
@@ -388,6 +424,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -397,13 +440,13 @@ __webpack_require__.r(__webpack_exports__);
     return {
       guardianHeader: [{
         name: 'Name',
-        sort_key: 'faculty'
+        sort_key: ''
       }, {
         name: 'Address',
         sort_key: ''
       }, {
         name: 'Contact',
-        sort_key: 'guardian_mobile_1'
+        sort_key: ''
       }, {
         name: 'Students',
         sort_key: ''
@@ -420,7 +463,15 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {},
   methods: {
     viewItems: function viewItems(id) {
-      this.$router.push({
+      if (id) this.$router.push({
+        name: 'guardian.details',
+        params: {
+          id: id
+        }
+      });
+    },
+    studentViewItems: function studentViewItems(id) {
+      if (id) this.$router.push({
         name: 'studentView',
         params: {
           id: id
@@ -433,7 +484,24 @@ __webpack_require__.r(__webpack_exports__);
     deleteItems: function deleteItems() {
       alert("hey hasib im delete ");
     },
-    changeStatus: function changeStatus() {}
+    changeStatus: function changeStatus(id, status) {
+      var _this = this;
+
+      var stat = status === 'active' ? 'in-active' : 'active';
+      var url = '/json/guardian/' + id + '/' + stat;
+      this.$http.get(url).then(function (res) {
+        _this.$refs.guardianTable.getData();
+
+        _this.$vs.notify({
+          title: 'Success',
+          text: res.data[1],
+          color: res.data[0],
+          icon: 'verified_user'
+        });
+      });
+    },
+    quickMember: function quickMember(user) {//  params: {reg_no: user.reg_no,user_type:1,status:user.status}
+    }
   }
 });
 
@@ -506,6 +574,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("vs-input", {
                                   staticClass: "w-100",
+                                  on: { keyup: _vm.doFilter },
                                   model: {
                                     value: _vm.searchData,
                                     callback: function($$v) {
@@ -519,36 +588,7 @@ var render = function() {
                             )
                           ])
                         ])
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "col-md-12 mb-2 pl-0" },
-                        [
-                          _c(
-                            "vs-button",
-                            {
-                              attrs: {
-                                type: "filled",
-                                color: "#00b8cf",
-                                icon: "double_arrow"
-                              },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  return _vm.doFilter($event)
-                                }
-                              }
-                            },
-                            [
-                              _vm._v(
-                                "\n                                Filter\n                            "
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
+                      ])
                     ])
                   ])
                 ],
@@ -870,13 +910,15 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _vm.notification
+        _vm.$root.notification.status
           ? _c("div", { staticClass: "col-md-12" }, [
               _c(
                 "div",
                 {
-                  staticClass:
-                    "mt-2 alert alert-success alert-dismissible display-block",
+                  class:
+                    "mt-2 alert alert-" +
+                    _vm.$root.notification.status +
+                    " alert-dismissible display-block",
                   attrs: { role: "alert" }
                 },
                 [
@@ -891,7 +933,7 @@ var render = function() {
                       },
                       on: {
                         click: function($event) {
-                          _vm.notification = ""
+                          return _vm.$root.emptyNotification()
                         }
                       }
                     },
@@ -905,7 +947,7 @@ var render = function() {
                   _c("i", { staticClass: "ace-icon fa fa-hand-o-right" }),
                   _vm._v(
                     "\n                " +
-                      _vm._s(_vm.notification) +
+                      _vm._s(_vm.$root.notification.message) +
                       "\n            "
                   )
                 ]
@@ -923,6 +965,7 @@ var render = function() {
               "vs-card",
               [
                 _c("guardian-table", {
+                  ref: "guardianTable",
                   attrs: {
                     headers: _vm.guardianHeader,
                     tableHeader: "Guardian List",
@@ -941,18 +984,57 @@ var render = function() {
                       key: "items",
                       fn: function(props) {
                         return [
-                          _c("vs-td"),
+                          _c("vs-td", [
+                            _c(
+                              "a",
+                              {
+                                staticClass: "pointer-all text-primary",
+                                on: {
+                                  click: function($event) {
+                                    return _vm.viewItems(
+                                      props.data.id ? props.data.id : ""
+                                    )
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(props.data.fullname) +
+                                    "\n                            "
+                                )
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("vs-td", [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(props.data.guardian_address) +
+                                "\n                        "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("vs-td", [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(props.data.guardian_mobile_1) +
+                                "\n                        "
+                            )
+                          ]),
                           _vm._v(" "),
                           _c("vs-td", [
                             _c(
                               "a",
                               {
                                 staticClass: "pointer-all text-primary",
-                                attrs: { title: "View" },
                                 on: {
                                   click: function($event) {
-                                    $event.stopPropagation()
-                                    return _vm.viewItems(props.data.id)
+                                    return _vm.studentViewItems(
+                                      props.data.students[0]
+                                        ? props.data.students[0].id
+                                        : ""
+                                    )
                                   }
                                 }
                               },
@@ -960,11 +1042,9 @@ var render = function() {
                                 _vm._v(
                                   "\n                                " +
                                     _vm._s(
-                                      props.data.first_name +
-                                        " " +
-                                        props.data.middle_name +
-                                        " " +
-                                        props.data.last_name
+                                      props.data.students[0]
+                                        ? props.data.students[0].first_name
+                                        : ""
                                     ) +
                                     "\n                            "
                                 )
@@ -975,11 +1055,11 @@ var render = function() {
                           _c("vs-td", [
                             _c(
                               "div",
-                              { staticClass: "d-flex" },
+                              { staticClass: "d-flex flex-wrap" },
                               [
                                 _vm._v(
                                   "\n                                " +
-                                    _vm._s(props.data.academic_status) +
+                                    _vm._s(props.data.status) +
                                     "\n                                "
                                 ),
                                 _c(
@@ -996,7 +1076,10 @@ var render = function() {
                                     on: {
                                       click: function($event) {
                                         $event.stopPropagation()
-                                        return _vm.changeStatus(props.data.id)
+                                        return _vm.changeStatus(
+                                          props.data.id,
+                                          props.data.status
+                                        )
                                       }
                                     }
                                   },

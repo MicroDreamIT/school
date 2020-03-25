@@ -66,6 +66,7 @@ class StaffController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
+        return response()->json($data);
         return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
     }
 
@@ -203,7 +204,7 @@ class StaffController extends CollegeBaseController
 
         //login credential
         $data['staff_login'] = User::where([['role_id',5],['hook_id',$data['staff']->id]])->first();
-
+        return response()->json($data);
         $data['url'] = URL::current();
         return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
@@ -348,9 +349,7 @@ class StaffController extends CollegeBaseController
         $request->request->add(['status' => 'active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->reg_no.' '.$this->panel.' active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -360,9 +359,7 @@ class StaffController extends CollegeBaseController
         $request->request->add(['status' => 'in-active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['danger',$row->reg_no.' '.$this->panel.' In-Active Successfully..']);
     }
 
     public function bulkAction(Request $request)
@@ -393,15 +390,13 @@ class StaffController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['danger','Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning','Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();

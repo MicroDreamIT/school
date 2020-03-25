@@ -19,14 +19,15 @@
                                     <div class="col-md-6">
                                         <div class="form-group ">
                                             <label>Reg:</label>
-                                            <vs-input v-model="searchData.reg_no" class="w-100">
+                                            <vs-input v-model="searchData.reg_no"
+                                                      class="w-100">
                                             </vs-input>
                                         </div>
                                         <div class="form-group">
                                             <label>Designation</label>
                                             <v-select :options="designation"
+                                                      label="value"
                                                       v-model="searchData.designation">
-
                                             </v-select>
                                         </div>
                                     </div>
@@ -43,7 +44,7 @@
                                         <div class="form-group">
                                             <label>Status:</label>
                                             <v-select v-model="searchData.status"
-                                                      :options="['Active','In-Active']"
+                                                      :options="['active','in-active']"
                                                       placeholder="Select Status"
                                             >
                                             </v-select>
@@ -55,7 +56,7 @@
                                 <vs-button type="filled"
                                            color="#00b8cf"
                                            icon="double_arrow"
-                                           @click.prevent="doFilter"
+                                           @click.prevent="getData"
                                 >
                                     Filter
                                 </vs-button>
@@ -215,8 +216,12 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
+                this.$http.get(this.url,{params:this.searchData}).then(res => {
                     this.item = res.data;
+                    this.designation = this.$root.objectToArray(res.data.designation)
+                    this.designation.map(st=>{
+                        console.log(st)
+                    })
                     this.doSerialize()
                 });
 
@@ -247,7 +252,7 @@
                 alert('doing Delete')
             },
             doSerialize() {
-
+                this.mainItem=this.item.staff
             },
 
 

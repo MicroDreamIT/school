@@ -149,12 +149,14 @@ new Vue({
                 status: '',
                 message: ''
             },
+            selected:[],
             doc: new jsPDF()
         }
     },
     watch: {
         '$route'(to, from) {
             this.emptyNotification()
+            this.selected=[]
         }
     },
     methods: {

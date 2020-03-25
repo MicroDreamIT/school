@@ -47,6 +47,7 @@
                                         <vs-button type="filled"
                                                    color="primary"
                                                    icon="double_arrow"
+                                                   class="rounded"
                                         >
                                             Filter Students
                                         </vs-button>
@@ -55,63 +56,75 @@
                                         <div class="col-md-12">
                                             <div class="row">
                                                 <div class="col-md-3">
-                                                    <div class="form-group">
+                                                    <div class="form-group ">
                                                         <label>Reg:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                        <vs-input v-model="searchData.reg_no" class="w-100">
+                                                        </vs-input>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Batch</label>
-                                                        <select class="form-control" name="batch">
-                                                            <option value="0">Select Batch</option>
-                                                            <option value="1">ACT</option>
-                                                        </select>
+                                                        <v-select :options="batch"
+                                                                  v-model="searchData.batch">
+                                                        </v-select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Reg Date From</label>
-                                                        <datepicker v-model="searchData.fromRegDate"/>
+                                                        <datepicker
+                                                                :value="searchData.reg_start_date"
+                                                                :format="'yyyy-MM-dd'"
+                                                                @input="searchData.reg_start_date=$root.formatPicker($event)"
+                                                        />
                                                         <label>To</label>
-                                                        <datepicker v-model="searchData.toRegDate"/>
+                                                        <datepicker
+                                                                v-model="searchData.reg_end_date"
+                                                                :format="'yyyy-MM-dd'"
+                                                                @input="searchData.reg_end_date=$root.formatPicker($event)"
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                       <label>Academic Status:</label>
+                                                        <label>Academic Status:</label>
                                                         <v-select v-model="searchData.academic_status"
-																  :options="academic_status"
-																  placeholder="Select Academic Status"
-														>
+                                                                  :options="academic_status"
+                                                                  label="value"
+                                                                  :reduce="a => a.id"
+                                                                  placeholder="Select Academic Status"
+                                                        >
                                                         </v-select>
                                                     </div>
                                                     <div class="form-group">
-														 <label>Status:</label>
+                                                        <label>Status:</label>
                                                         <v-select v-model="searchData.status"
-																  :options="status"
-																  placeholder="Select Status"
-														>
+                                                                  :options="['Active','In-Active']"
+                                                                  placeholder="Select Status"
+                                                        >
                                                         </v-select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Faculty/Class</label>
-														<v-select v-model="searchData.class"
-																  :options="['BTECH']"
-																  placeholder="Select Faculty/Class"
-														>
+                                                        <v-select v-model="searchData.faculty"
+                                                                  :options="faculties"
+                                                                  label="value"
+                                                                  :reduce="a => a.id"
+                                                                  placeholder="Select Faculty/Class"
+                                                                  @input="findSemester(searchData.faculty)"
+                                                        >
                                                         </v-select>
 
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Sem./Sec.</label>
-														<v-select v-model="searchData.sem"
-																  :options="['BTECH']"
-																  placeholder="Select Sem./Sec."
-														>
+                                                        <v-select v-model="searchData.semester_select"
+                                                                  :options="semester"
+                                                                  label="semester"
+                                                                  :reduce="a => a.id"
+                                                                  placeholder="Select Sem./Sec."
+                                                        >
                                                         </v-select>
                                                     </div>
 
@@ -121,37 +134,28 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Religion:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                        <vs-input v-model="searchData.religion"
+                                                                  class="w-100"></vs-input>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Caste:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                        <vs-input v-model="searchData.caste" class="w-100"></vs-input>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Nationality:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                        <vs-input v-model="searchData.nationality"
+                                                                  class="w-100"></vs-input>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Mot.Tongue:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                        <vs-input v-model="searchData.mother_tongue"
+                                                                  class="w-100"></vs-input>
                                                     </div>
                                                 </div>
                                             </div>
@@ -160,7 +164,7 @@
                                             <vs-button type="filled"
                                                        color="#00b8cf"
                                                        icon="double_arrow"
-                                                       @click="alert(searchData)"
+                                                       @click.prevent="doFilter"
                                             >
                                                 Filter
                                             </vs-button>
@@ -169,71 +173,95 @@
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
+                        <div class="col-md-8">
+                            <ow-data-table :headers="studentHeader"
+                                           :tableHeader="'Students List'"
+                                           :suggestText="'Student Record list on table. Filter Student using the filter.'"
+                                           :url="'/json/student/'"
+                                           :noDataMessage="'No Student data found. Please Filter Student to show.'"
+                                           :hasSearch="true"
+                                           :action-btn="false"
+                                           :print-section="false"
+                                           :has-multiple="true"
+                                           :has-pagination="true"
+                                           :main-item="mainItem"
+                                           :getData="getData"
+                                           ref="studentGuardian"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.faculty" class="pointer-none">
+                                        {{props.data.faculty_data.faculty}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.semester">
+                                        {{props.data.semester_data.semester}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.reg_no">
+                                        {{props.data.reg_no}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.first_name">
+                                        <a @click.stop="viewItems(props.data.id)"
+                                           class="pointer-all text-primary"
+                                           title="View"
+                                        >
+                                            {{props.data.first_name?props.data.first_name:' '}}
+                                            {{props.data.middle_name?' '+props.data.middle_name:' '+' '}}
+                                            {{props.data.last_name?' '+props.data.last_name:' '}}
+                                        </a>
+
+                                    </vs-td>
+                                </template>
+
+
+                                <template slot="printSection" slot-scope="printData">
+                                </template>
+                            </ow-data-table>
+                        </div>
                         <vs-divider class="mx-3"></vs-divider>
                         <div class="col-md-12 row">
                             <div class="col-md-8">
-                                <p>Type</p>
-                                <vs-radio v-model="type"  vs-value="sms">Sms</vs-radio>
-                                <vs-radio v-model="type" vs-value="email">Email</vs-radio>
                                 <p>Message</p>
-                                <vs-textarea v-model="message" height="200px"/>
+                                <vs-textarea
+                                        v-model="sms.message"
+                                        v-validate="'required'"
+                                        data-vv-name="message"
+                                        :danger="errors.first('message')?true:false"
+                                        :danger-text="errors.first('message')"
+                                        class="w-100"
+                                        height="200px"
+                                >
+
+                                </vs-textarea>
+                                <span class="error-text" v-if="errors.first('message')">
+                                    {{ errors.first('message') }}
+                                </span>
                             </div>
                             <div class="col-md-4">
+                                <p>Type</p>
+                                <vs-radio v-model="sms.type" vs-value="sms">Sms</vs-radio>
+                                <vs-radio v-model="sms.type" vs-value="email">Email</vs-radio>
                                 <p>Message Send Groups</p>
-                                <vs-checkbox v-model="send_group" class="my-2">Student</vs-checkbox>
-                                <vs-checkbox v-model="send_group" class="my-2">Guardian</vs-checkbox>
-                                <vs-checkbox v-model="send_group" class="my-2">Father</vs-checkbox>
-                                <vs-checkbox v-model="send_group" class="my-2">Mother</vs-checkbox>
+                                <vs-checkbox v-model="sms.to" class="my-2" vs-value="student">Student</vs-checkbox>
+                                <vs-checkbox v-model="sms.to" class="my-2" vs-value="guardian">Guardian</vs-checkbox>
+                                <vs-checkbox v-model="sms.to" class="my-2" vs-value="father">Father</vs-checkbox>
+                                <vs-checkbox v-model="sms.to" class="my-2" vs-value="mother">Mother</vs-checkbox>
                             </div>
                         </div>
                         <vs-divider></vs-divider>
-                        <div class="row mx-0 mb-4">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Send</vs-button>
-                        </div>
-                        <div class="col-md-12">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; SMS / Email List
-                             </h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                SMS / Email Record list on table. Filter SMS / Email using the filter.
-                            </div>
-                            <data-table :headers="tableHeader1"
-                                        :url="'/student'"
-                                        :no-data-message="'No matching records found'"
-                                        :searchField="searchData"
-                                        :hasSearch="false"
+                        <div class="row mx-0">
+                            <vs-button class="my-round mx-2"
+                                       color="warning"
+                                       @click.prevent="reset"
+
                             >
-                                <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.email}}
-                                    </vs-td>
-
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
-                                    </vs-td>
-
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
-                                    </vs-td>
-
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
-                                    </vs-td>
-                                </template>
-                            </data-table>
+                                Reset
+                            </vs-button>
+                            <vs-button class="my-round mx-2"
+                                       @click.prevent="send">
+                                Send
+                            </vs-button>
                         </div>
                     </div>
                 </vs-card>
@@ -248,18 +276,80 @@
     export default {
         data() {
             return {
-                send_group: null,
-                type:'sms',
-                message:'',
-                searchData:{},
-                tableHeader1: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                sms: {type: ['sms'], to: []},
+                searchData: {},
+                studentHeader: [
+                    {name: 'Faculty/Class', sort_key: 'faculty'},
+                    {name: 'Sem', sort_key: ''},
+                    {name: 'Reg.Num', sort_key: 'reg_no'},
+                    {name: 'Student Name', sort_key: ''},
                 ],
+                item: [],
+                mainItem: [],
+                academic_status: [],
+                faculties: [],
+                batch: [],
+                semester: []
             }
         },
+        created() {
+            this.getData()
+        },
+        methods: {
+            getData() {
+                this.$http.get('/json/info/smsemail/student-guardian').then(res => {
+                    this.item = res.data.student;
+                    this.mainItem = this.item;
+                    this.academic_status = this.$root.objectToArray(res.data.academic_status)
+                    this.faculties = this.$root.objectToArray(res.data.faculties);
+                    this.batch = res.data.batch;
+                });
+            },
+            doFilter() {
+                this.$http.get('/json/info/smsemail/student-guardian', {params: this.searchData}).then(res => {
+                    this.item = res.data.student;
+                    this.mainItem = this.item
+                });
+            },
+            findSemester(faculty) {
+                if (faculty) {
+                    this.$http.post('/json/student/find-semester', {
+                        faculty_id: faculty
+                    }).then(res => {
+                        this.semester = res.data.semester
+                    }).catch(err => {
+                        alert(err.response.message)
+                    })
+                }
+
+            },
+            reset() {
+                this.sms = {type: ['sms'],chkIds:[]};
+                this.$validator.reset();
+            },
+            send() {
+                this.$refs.studentGuardian.getSelected();
+                this.$nextTick(()=>{
+                    this.sms.chkIds=this.$root.selected;
+                })
+
+
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        this.$http.post('/json/info/smsemail/student-guardian/send', this.sms).then(res => {
+                            this.$vs.notify({
+                                title: 'Send Status ',
+                                text: res.data[1],
+                                color: res.data[0],
+                                position: 'top-right'
+                            });
+                            this.sms = {type: ['sms'],chkIds:[]};
+                            this.$validator.reset();
+                        })
+                    }
+                })
+            },
+        }
 
     }
 

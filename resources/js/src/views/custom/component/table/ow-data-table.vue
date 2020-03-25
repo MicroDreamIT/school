@@ -277,6 +277,11 @@
                     this.$root.notification.message = 'Please, Check at least one row.'
                 }
             },
+            getSelected(){
+                this.$root.selected=this.selected.map(val => {
+                    return val.id
+                })
+            }
 
         }
     }

@@ -65,6 +65,10 @@ class StudentController extends CollegeBaseController
             ->where(function ($query) use ($request) {
                 $this->commonStudentFilterCondition($query, $request);
             })
+            ->with('faculty_data')
+            ->with('semester_data')
+            ->with('academic_status_data')
+            ->with('batch_data')
             ->get();
 
         $data['faculties'] = $this->activeFaculties();

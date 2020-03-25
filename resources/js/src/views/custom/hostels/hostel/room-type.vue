@@ -46,23 +46,6 @@
                             </vs-button>
                         </div>
                         <div class="col-md-8">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Room Type List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Room Type Record list on table. Filter Room Type using the filter.
-                            </div>
                             <roomtype-table :headers="roomtypeHeader"
                                             :tableHeader="'Room Type List'"
                                             :suggestText="'Room type Record list on table. Filter room type using the filter.'"

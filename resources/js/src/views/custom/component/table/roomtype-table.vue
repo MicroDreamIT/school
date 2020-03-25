@@ -1,70 +1,6 @@
 <template>
     <div class="custom-table">
         <div class="row p-4">
-            <div class="col-md-12 mb-2" v-if="filterSection">
-                <vs-collapse class="custom-collapse">
-                    <vs-collapse-item>
-                        <div slot="header">
-                            <vs-button type="filled"
-                                       color="primary"
-                                       icon="double_arrow"
-                                       class="rounded"
-                            >
-                                Filter Staffs
-                            </vs-button>
-                        </div>
-                        <div class="filterBox">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group ">
-                                            <label>Reg:</label>
-                                            <vs-input v-model="searchData.reg_no"
-                                                      class="w-100">
-                                            </vs-input>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Designation</label>
-                                            <v-select :options="designation"
-                                                      label="value"
-                                                      v-model="searchData.designation">
-                                            </v-select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Join Date</label>
-                                            <div class="d-flex justify-content-between">
-                                                <datepicker v-model="searchData.fromDate" class="flex-1"/>
-                                                <label>To</label>
-                                                <datepicker v-model="searchData.toDate" class="flex-1"/>
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Status:</label>
-                                            <v-select v-model="searchData.status"
-                                                      :options="['active','in-active']"
-                                                      placeholder="Select Status"
-                                            >
-                                            </v-select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mb-2 pl-0">
-                                <vs-button type="filled"
-                                           color="#00b8cf"
-                                           icon="double_arrow"
-                                           @click.prevent="doFilter"
-                                >
-                                    Filter
-                                </vs-button>
-                            </div>
-                        </div>
-                    </vs-collapse-item>
-                </vs-collapse>
-            </div>
             <div class="col-md-12 ">
                 <h4 class="header large lighter blue">
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
@@ -228,7 +164,7 @@
 
             doActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/room-type/bulk-action', {
+                    this.$http.post('/json/hostel/room-type/bulk-action', {
                         bulk_action: 'active',
                         chkIds: this.selected.map(val => {
                             return val.id
@@ -250,7 +186,7 @@
             },
             doInActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post('/json/staff/bulk-action', {
+                    this.$http.post('/json/hostel/room-type/bulk-action', {
                         bulk_action: 'in-active',
                         chkIds: this.selected.map(val => {
                             return val.id

@@ -193,7 +193,6 @@ class SmsEmailController extends CollegeBaseController
             $request->request->add(['sms' => 1]);
             $request->request->add(['message' => $message]);
             $request->merge(['created_by' => auth()->user()->id]);
-            dd($request->all());
             SmsEmail::create($request->all());
 
             return response()->json(['success', 'SMS Send Successfully']);

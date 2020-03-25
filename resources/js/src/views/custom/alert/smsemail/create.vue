@@ -52,7 +52,7 @@
                         <vs-divider class="mx-3"></vs-divider>
                         <div class="col-md-12 row">
                             <div class="col-md-8">
-                                <p>Title</p>
+                                <p>Subject</p>
                                 <vs-input
                                         v-model="sms.subject"
                                         v-validate="'required'"
@@ -95,7 +95,7 @@
                                 <vs-checkbox v-model="sms.role"
                                              class="my-2"
                                              v-for="role in roles"
-                                             :vs-value="role.id"
+                                             :vs-value="role.name"
                                              :key="role.id"
                                 >
                                     {{role.display_name}}

@@ -131,6 +131,11 @@ require('@assets/css/iconfont.css')
 
 Vue.config.productionTip = false
 
+String.prototype.trunc = String.prototype.trunc ||
+    function (n,message) {
+        return (message.length > n) ? this.substr(0, n-1) + '...' : message;
+    };
+
 new Vue({
     router,
     store,

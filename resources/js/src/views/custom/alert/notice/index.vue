@@ -90,6 +90,7 @@
                                     <thead>
                                     <tr>
                                         <th>SN.No.</th>
+                                        <th>Title</th>
                                         <th>
                                             Publish Date
                                         </th>
@@ -98,9 +99,6 @@
                                         </th>
                                         <th>
                                             Display Group
-                                        </th>
-                                        <th>
-                                            Status
                                         </th>
                                     </tr>
                                     </thead>

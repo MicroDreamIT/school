@@ -17,12 +17,6 @@
                 <vs-card>
                     <div class="row mx-0">
                         <div class="col-md-12">
-                            <br>
-                            <h4 class="header large lighter blue">
-                                SMS / Email
-                            </h4><br>
-                        </div>
-                        <div class="col-md-12">
                             <router-link :to="'/info/sms-email'">
                                 <vs-button type="filled" class="smBtn">Detail</vs-button>
                             </router-link>

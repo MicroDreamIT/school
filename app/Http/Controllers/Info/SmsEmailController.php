@@ -414,7 +414,7 @@ class SmsEmailController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path . '.staff.index'), compact('data'));
+        return response()->json($data);
 
     }
 
@@ -441,8 +441,7 @@ class SmsEmailController extends CollegeBaseController
                 $group[] = 5;
             }
         }else{
-            $request->session()->flash($this->message_warning, 'Please, Select At Least One Target Record.');
-            return redirect()->route($this->base_route);
+            return response()->json(['warning', 'Please, Select At Least One Target Record.']);
         }
 
         if($request->type){
@@ -459,7 +458,7 @@ class SmsEmailController extends CollegeBaseController
                 $request->request->add(['created_by' => auth()->user()->id]);
                 SmsEmail::create($request->all());
 
-                return back()->with($this->message_success, "SMS Send Successfully");
+                return response()->json(['success', 'Sms Send Successfully']);
             }
 
             /*Now Send Email With Subject*/
@@ -477,11 +476,10 @@ class SmsEmailController extends CollegeBaseController
                 $request->request->add(['created_by' => auth()->user()->id]);
                 SmsEmail::create($request->all());
 
-                return back()->with($this->message_success, "Email Send Successfully");
+                return response()->json(['success', 'Email Send Successfully']);
             }
         }else{
-            $request->session()->flash($this->message_warning, 'Please, Select Message Type');
-            return redirect()->route($this->base_route);
+            return response()->json(['warning', 'Please, Select Message Type']);
         }
     }
 
@@ -517,7 +515,7 @@ class SmsEmailController extends CollegeBaseController
                 $request->request->add(['created_by' => auth()->user()->id]);
                 SmsEmail::create($request->all());*/
 
-                return back()->with($this->message_success, "SMS Send Successfully");
+                return response()->json(['success', 'Sms Send Successfully']);
             }
 
             /*Now Send Email With Subject*/
@@ -537,12 +535,11 @@ class SmsEmailController extends CollegeBaseController
                 $request->request->add(['created_by' => auth()->user()->id]);
                 SmsEmail::create($request->all());
 
-                return back()->with($this->message_success, "Email Send Successfully");
+                return response()->json(['success', 'Email Send Successfully']);
             }
 
         }else{
-            $request->session()->flash($this->message_warning, 'Please, Select Message Type');
-            return redirect()->route($this->base_route);
+            return response()->json(['warning', 'Please select message type']);
         }
 
     }

@@ -48,8 +48,9 @@ class SmsEmailController extends CollegeBaseController
         $data['rows'] = SmsEmail::select('id', 'subject', 'message', 'sms', 'email', 'group','status')
             ->latest()
             ->get();
+        $data['roles'] = Role::where('name', '<>', 'super-admin')->get();
         //dd($data['rows']->toarray());
-        return view(parent::loadDataToView($this->view_path . '.index'), compact('data'));
+        return response()->json($data);
 
     }
 
@@ -58,7 +59,7 @@ class SmsEmailController extends CollegeBaseController
     {
         $data = [];
         $data['roles'] = Role::where('name', '<>', 'super-admin')->get();
-        return view(parent::loadDataToView($this->view_path . '.create'), compact('data'));
+        return response()->json($data);
 
     }
 
@@ -191,10 +192,11 @@ class SmsEmailController extends CollegeBaseController
             $request->request->add(['group' => $group]);
             $request->request->add(['sms' => 1]);
             $request->request->add(['message' => $message]);
-            $request->request->add(['created_by' => auth()->user()->id]);
+            $request->merge(['created_by' => auth()->user()->id]);
+            dd($request->all());
             SmsEmail::create($request->all());
 
-            return back()->with($this->message_success, "SMS Send Successfully");
+            return response()->json(['success', 'SMS Send Successfully']);
         }
 
         /*Now Send Email With Subject*/
@@ -212,7 +214,7 @@ class SmsEmailController extends CollegeBaseController
             $request->request->add(['created_by' => auth()->user()->id]);
             SmsEmail::create($request->all());
 
-            return back()->with($this->message_success, "Email Send Successfully");
+            return response()->json(['success', 'Email Send Successfully']);
         }
     }
 

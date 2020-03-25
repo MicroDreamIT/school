@@ -22,7 +22,7 @@
         <div class="table-header" v-if="headerSuggestion">
             {{suggestText}}
         </div>
-        <div class="dt-buttons btn-group action-group mt-3" v-if="printSection">
+        <div class="dt-buttons btn-group action-group mt-3" v-if="printSection && mainItem.length>0">
             <button class="btn btn-secondary buttons-copy buttons-html5"
                     @click.prevent="doCopy"
             >

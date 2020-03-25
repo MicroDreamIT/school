@@ -68,7 +68,7 @@
                                         {{props.data.subject}}
                                     </vs-td>
                                     <vs-td :data="props.data.message">
-                                        {{props.data.message}}
+                                        {{props.data.message.trunc(25,props.data.message)}}
                                     </vs-td>
                                     <vs-td >
                                         {{'Type : '+(props.data.sms==1?'sms':'email')}}
@@ -91,43 +91,41 @@
 
 
                                 <template slot="printSection" slot-scope="printData">
-                                    <!--<thead>-->
-                                    <!--<tr>-->
-                                        <!--<th>SN.No.</th>-->
-                                        <!--<th>-->
-                                            <!--Publish Date-->
-                                        <!--</th>-->
-                                        <!--<th>-->
-                                            <!--End Date-->
-                                        <!--</th>-->
-                                        <!--<th>-->
-                                            <!--Display Group-->
-                                        <!--</th>-->
-                                        <!--<th>-->
-                                            <!--Status-->
-                                        <!--</th>-->
-                                    <!--</tr>-->
-                                    <!--</thead>-->
-                                    <!--<tbody>-->
-                                    <!--<tr v-for="(tr, idx) in printData.data">-->
-                                        <!--<td>-->
-                                            <!--{{printData.data.indexOf(tr)+1}}-->
-                                        <!--</td>-->
-                                        <!--<td>-->
-                                            <!--{{tr.title}}-->
-                                        <!--</td>-->
-                                        <!--<td>-->
-                                            <!--{{$root.parseDate(tr.publish_date)}}-->
-                                        <!--</td>-->
-                                        <!--<td>-->
-                                            <!--{{$root.parseDate(tr.end_date)}}-->
-                                        <!--</td>-->
-                                        <!--<td>-->
-                                            <!--<span v-for="role in tr.display_group?tr.display_group.split(','):[]">-->
-                                            <!--{{roles.filter(d=>d.id==role)[0].display_name+' - '}}</span>-->
-                                        <!--</td>-->
-                                    <!--</tr>-->
-                                    <!--</tbody>-->
+                                    <thead>
+                                    <tr>
+                                        <th>SN.No.</th>
+                                        <th>Subject</th>
+                                        <th>
+                                           Message
+                                        </th>
+                                        <th>
+                                            Type
+                                        </th>
+                                        <th>
+                                            Send To
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(tr, idx) in printData.data">
+                                        <td>
+                                            {{printData.data.indexOf(tr)+1}}
+                                        </td>
+                                        <td>
+                                            {{tr.subject}}
+                                        </td>
+                                        <td>
+                                            {{tr.message.trunc(25,tr.message)}}
+                                        </td>
+                                        <td>
+                                            {{'Type : '+(tr.sms==1?'sms':'email')}}
+                                        </td>
+                                        <td>
+                                            <span v-for="role in tr.group?tr.group.split(','):[]">
+                                            {{roles.filter(d=>d.id==role)[0].display_name+' - '}}</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
                                 </template>
                             </ow-data-table>
                         </div>

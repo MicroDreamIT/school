@@ -12,7 +12,7 @@ class Staff extends BaseModel
         'experience', 'experience_info', 'other_info','staff_image', 'status'];
 
     protected $appends = ['fullname'];
-    protected $with=['designation'];
+    protected $with=['designations'];
 
     public function getFullnameAttribute($value)
     {
@@ -21,9 +21,9 @@ class Staff extends BaseModel
 
     }
 
-    public function designation()
+    public function designations()
     {
-        return $this->belongsTo(StaffDesignation::class, 'id');
+        return $this->belongsTo(StaffDesignation::class, 'designation');
     }
 
     public function staffNotes()

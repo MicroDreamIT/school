@@ -56,7 +56,7 @@
                                 <vs-button type="filled"
                                            color="#00b8cf"
                                            icon="double_arrow"
-                                           @click.prevent="getData"
+                                           @click.prevent="doFilter"
                                 >
                                     Filter
                                 </vs-button>
@@ -216,18 +216,20 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url,{params:this.searchData}).then(res => {
+                this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data;
                     this.designation = this.$root.objectToArray(res.data.designation)
-                    this.designation.map(st=>{
-                        console.log(st)
-                    })
                     this.doSerialize()
                 });
 
             },
             doFilter() {
-                alert(this.searchData.semester.id)
+                if (this.searchData.designation) {
+                    if (this.searchData.designation.id !== undefined) {
+                        this.searchData.designation = this.searchData.designation.id
+                    }
+                }
+                this.getData()
             },
 
             doActive() {
@@ -252,7 +254,17 @@
                 alert('doing Delete')
             },
             doSerialize() {
-                this.mainItem=this.item.staff
+                this.mainItem = this.item.staff.map(st => {
+                    return {
+                        id: st.id,
+                        reg_no: st.reg_no,
+                        mobile_1: st.mobile_1,
+                        designation: this.designation[st.designation].value,
+                        qualification: st.qualification,
+                        status: st.status,
+                        fullname: st.fullName
+                    }
+                })
             },
 
 

@@ -111,8 +111,8 @@
                             <vs-td :data="props.data.mobile_1">
                                 {{props.data.mobile_1}}
                             </vs-td>
-                            <vs-td :data="props.data.designation.title">
-                                {{props.data.designation.title}}
+                            <vs-td :data="props.data.designation">
+                                {{props.data.designation}}
                             </vs-td>
                             <vs-td :data="props.data.qualification">
                                 {{props.data.qualification}}

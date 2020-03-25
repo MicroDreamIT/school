@@ -233,10 +233,48 @@
             },
 
             doActive() {
-                alert('doing active')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/staff/bulk-action', {
+                        bulk_action: 'active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
+                }
+
             },
             doInActive() {
-                alert('doing Inactive')
+                if (this.selected.length > 0) {
+                    this.$http.post('/json/staff/bulk-action', {
+                        bulk_action: 'in-active',
+                        chkIds: this.selected.map(val => {
+                            return val.id
+                        })
+                    })
+                        .then(res => {
+                            this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
+
+                            this.selected = [];
+                            this.getData()
+                        })
+                        .catch(err => {
+                            alert(err.response.message)
+                        })
+                } else {
+                    this.$root.notification.status = 'error'
+                    this.$root.notification.message = 'select at least one'
+                }
             },
             doCopy() {
                 alert('doing copy')

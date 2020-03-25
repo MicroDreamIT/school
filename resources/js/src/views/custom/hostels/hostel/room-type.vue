@@ -75,15 +75,8 @@
                                             ref="roomtypeTable"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td>
-
-                                    </vs-td>
-                                    <vs-td >
-                                    </vs-td>
-                                    <vs-td>
-                                    </vs-td>
-
-                                    <vs-td>
+                                    <vs-td :data="props.data.title">
+                                        {{props.data.title}}
                                     </vs-td>
                                     <vs-td>
                                         <div class="d-flex flex-wrap">
@@ -139,7 +132,7 @@
             return {
                 searchData: {},
                 roomtypeHeader: [
-                    {name: 'room type', sort_key: ''},
+                    {name: 'title', sort_key: 'title'},
                     {name: 'Status', sort_key: ''},
                     {name: 'Action', sort_key: ''},
                 ],
@@ -160,9 +153,9 @@
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'
-                let url = '/json/hostel/room-type' + id + '/' + stat
+                let url = '/json/hostel/room-type/' + id + '/' + stat
                 this.$http.get(url).then(res => {
-                    this.$refs.guardianTable.getData()
+                    this.$refs.roomtypeTable.getData()
                     this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
                 })
 

@@ -217,7 +217,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
-                    this.item = res.data;
+                    this.item = res.data.room_type;
                     this.doSerialize()
                 });
 
@@ -286,15 +286,11 @@
                 alert('doing Delete')
             },
             doSerialize() {
-                this.mainItem = this.item.staff.map(st => {
+                this.mainItem = this.item.map(st => {
                     return {
                         id: st.id,
-                        reg_no: st.reg_no,
-                        mobile_1: st.mobile_1,
-                        designation: this.designation[st.designation].value,
-                        qualification: st.qualification,
+                        title:st.title,
                         status: st.status,
-                        fullname: st.fullName
                     }
                 })
             },

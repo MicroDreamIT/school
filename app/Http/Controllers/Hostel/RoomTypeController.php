@@ -118,9 +118,7 @@ class RoomTypeController extends CollegeBaseController
         $request->request->add(['status' => 'active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -130,8 +128,6 @@ class RoomTypeController extends CollegeBaseController
         $request->request->add(['status' => 'in-active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' In-Active Successfully.']);
     }
 }

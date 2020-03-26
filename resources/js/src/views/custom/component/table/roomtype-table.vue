@@ -4,18 +4,21 @@
             <div class="col-md-4">
                 <h4>Create Room Type</h4>
                 <div class="form-group row mt-3">
-                    <label  class="col-sm-3">Room Type</label>
-                    <vs-input v-model="forms.id" style="display: none"></vs-input>
-                    <vs-input class="col-sm-9" v-model="forms.title">
-                    </vs-input>
+                    <form>
+                        <label class="col-sm-3">Room Type</label>
+                        <vs-input v-model="forms.id" style="display: none" @keyup.enter="posting()"></vs-input>
+                        <vs-input v-model="forms.title">
+                        </vs-input>
+                        <vs-divider></vs-divider>
+                        <vs-button color="#00b8cf"
+                                   type="filled"
+                                   class="my-round"
+                                   @click="posting"
+                        >
+                            {{formType}}
+                        </vs-button>
+                    </form>
                 </div>
-                <vs-divider></vs-divider>
-                <vs-button color="#00b8cf"
-                           type="filled"
-                           class="my-round"
-                >
-                    {{formType}}
-                </vs-button>
             </div>
             <div class="col-md-8 ">
                 <h4 class="header large lighter blue">
@@ -154,8 +157,8 @@
 
         data() {
             return {
-                forms:{id:null, title:null},
-                formType:'create',
+                forms: {id: null, title: null},
+                formType: 'create',
                 selected: [],
                 maxItem: 10,
                 searchData: {},
@@ -169,6 +172,13 @@
         },
 
         methods: {
+            posting() {
+                this.$http.post('/json/hostel/room-type', this.forms)
+                    .then(res => {
+                    })
+                    .catch(err => {
+                    })
+            },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data.room_type;
@@ -189,7 +199,12 @@
                         })
                     })
                         .then(res => {
-                            this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$vs.notify({
+                                title: 'success',
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.selected = [];
                             this.getData()
                         })
@@ -211,7 +226,12 @@
                         })
                     })
                         .then(res => {
-                            this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$vs.notify({
+                                title: 'error',
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
 
                             this.selected = [];
                             this.getData()
@@ -243,7 +263,7 @@
                 this.mainItem = this.item.map(st => {
                     return {
                         id: st.id,
-                        title:st.title,
+                        title: st.title,
                         status: st.status,
                     }
                 })

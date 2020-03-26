@@ -81,6 +81,7 @@
                                                         <v-select v-model="searchData.status"
                                                                   :options="['active','in-active']"
                                                                   placeholder="Select Status"
+                                                                  class="status-select"
                                                         >
                                                         </v-select>
                                                     </div>

@@ -67,6 +67,12 @@ Route::group(['prefix' => 'student/', 'as' => 'student', 'namespace' => 'Student
 
 });
 
+/*Report Grouping*/
+Route::group(['prefix' => 'report/', 'as' => 'report', 'namespace' => 'Report\\'], function () {
+
+    Route::get('student', ['as' => '.student', 'middleware' => ['ability:super-admin,student-report'], 'uses' => 'StudentReportController@index']);
+    Route::get('staff', ['as' => '.staff', 'middleware' => ['ability:super-admin,staff-report'], 'uses' => 'StaffReportController@index']);
+});
 
 /*Info Center Grouping*/
 Route::group(['prefix' => 'info/', 'as' => 'info.', 'namespace' => 'Info\\'], function () {

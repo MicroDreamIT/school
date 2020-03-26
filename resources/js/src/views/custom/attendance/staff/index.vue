@@ -85,8 +85,9 @@
                                                     <div class="form-group">
                                                         <label>Status:</label>
                                                         <v-select v-model="searchData.status"
-                                                                  :options="['Active','In-Active']"
+                                                                  :options="['active','in-active']"
                                                                   placeholder="Select Status"
+                                                                  class="status-select"
                                                         >
                                                         </v-select>
                                                     </div>

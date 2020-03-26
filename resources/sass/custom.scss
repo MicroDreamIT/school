@@ -1,49 +1,55 @@
-  $primary: #7367f0;
-  .smBtn {
-    margin: 2.5px 1.5px !important;
-  }
-  .overflow{
-    overflow-x: scroll;
-  }
-  #ow-table{
-    width: 100% ;
-    margin: 16px 0;
-  }
-  .img-responsive{
-    width: 100%;
-    height: auto;
-  }
-.own-modify-tr{
-   @media(max-width: 768px){
-     input[readonly="readonly"]{
-       width:120px;
-     }
-     input[type="time"]{
-       width: 90px;
-     }
-     .w-120{
-       width: unset;
-     }
-     .vs-con-input-label{
-       width: 80px;
-     }
-   }
-    @media(min-width:1024px ){
-        .w-120{
-          width: 120px;
-        }
-        .w-90{
-          width: 90px;
-        }
-        .vs-con-input-label{
-          width: auto;
-        }
-    }
+$primary: #7367f0;
+.smBtn {
+  margin: 2.5px 1.5px !important;
 }
-.gateway{
+
+.overflow {
+  overflow-x: scroll;
+}
+
+#ow-table {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.img-responsive {
+  width: 100%;
+  height: auto;
+}
+
+.own-modify-tr {
+  @media(max-width: 768px) {
+    input[readonly="readonly"] {
+      width: 120px;
+    }
+    input[type="time"] {
+      width: 90px;
+    }
+    .w-120 {
+      width: unset;
+    }
+    .vs-con-input-label {
+      width: 80px;
+    }
+  }
+  @media(min-width: 1024px) {
+    .w-120 {
+      width: 120px;
+    }
+    .w-90 {
+      width: 90px;
+    }
+    .vs-con-input-label {
+      width: auto;
+    }
+  }
+}
+
+.gateway {
   width: auto;
   height: 80px;
 }
+
 .text-primary {
   color: $primary !important;
 }
@@ -309,7 +315,6 @@ a.router-link-active {
   text-decoration: none !important;
 }
 
-
 .vs-pagination--ul {
   margin-bottom: 0 !important;
 }
@@ -537,35 +542,49 @@ button:focus {
     }
   }
 }
-.con-text-validation{
-    font-size:12px;
-  }
-.vs-input{
-  .vs-input--icon-validate{
+
+.con-text-validation {
+  font-size: 12px;
+}
+
+.vs-input {
+  .vs-input--icon-validate {
     display: none;
   }
 
 }
-.delete-pop-text{
+
+.delete-pop-text {
   background: rgba(0, 207, 232, 0.2);
   color: #00cfe8;
   font-weight: bold;
   font-size: 14px;
 }
-.vs-popup{
-  width: 400px!important;
-}
-@media print{
+
+.vs-popup {
+  width: 400px !important;
 }
 
-.error-text{
-  font-size:12px;
+@media print {
+}
+
+.error-text {
+  font-size: 12px;
   color: #ea5455;
 
 }
 
-.vs-sidebar-group{
+.vs-sidebar-group {
   .group-header {
-    padding: 5px 15px!important;
+    padding: 5px 15px !important;
+  }
+}
+
+.status-select {
+  .vs__selected {
+    text-transform: capitalize !important;
+  }
+  .vs__dropdown-option {
+    text-transform: capitalize !important;
   }
 }

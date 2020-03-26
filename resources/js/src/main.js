@@ -198,7 +198,7 @@ new Vue({
             return array;
         },
         parseDate(date) {
-            return date.toString().substr(0, 10)
+            if(date) return date.toString().substr(0, 10)
         },
         formatPicker(event) {
             return moment(event).format('YYYY-MM-DD');

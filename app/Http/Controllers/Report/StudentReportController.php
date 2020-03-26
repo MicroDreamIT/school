@@ -58,6 +58,6 @@ class StudentReportController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 }

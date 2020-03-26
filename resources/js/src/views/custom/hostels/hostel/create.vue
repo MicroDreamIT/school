@@ -40,7 +40,8 @@
                                 <label>Hostel</label>
                             </div>
                             <div class="col-md-8">
-                                <input v-model="forms.hostel" class="form-control">
+                                <input v-model="forms.name" class="form-control" v-validator="'required'" >
+                                <p>{{ errors.first('name') }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -64,7 +65,11 @@
                                 <label>type</label>
                             </div>
                             <div class="col-md-8">
-                                <v-select class="flex-2 "></v-select>
+                                <select v-model="forms.type">
+                                    <option value="Boys">Boys</option>
+                                    <option value="Girls">Girls</option>
+                                    <option value="Both">Both</option>
+                                </select>
                                 <p></p>
                             </div>
 
@@ -74,7 +79,7 @@
                                 <label>Total Room</label>
                             </div>
                             <div class="col-md-8">
-                                <input class="form-control">
+                                <input class="form-control" v-model="forms.rooms">
                                 <p></p>
                             </div>
                         </div>
@@ -105,10 +110,10 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <label>Warden</label>
+                                <label>Warden Contact</label>
                             </div>
                             <div class="col-md-8">
-                                <input class="form-control" v-model="forms.warden">
+                                <input class="form-control" v-model="forms.warden_contact">
                                 <p></p>
                             </div>
                         </div>
@@ -132,9 +137,9 @@
                     </div>
                     <vs-divider class="mx-3"></vs-divider>
                     <div class="row mx-0">
-                        <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                        <vs-button class="my-round mx-2">Save</vs-button>
-                        <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                        <vs-button class="my-round mx-2" color="warning" @click="resetting()">Reset</vs-button>
+                        <vs-button class="my-round mx-2" @click="posting()">Save</vs-button>
+                        <vs-button class="my-round mx-2" color="#28c76f" @click="posting('reset')">Save Add Another</vs-button>
                     </div>
                 </div>
 
@@ -168,7 +173,21 @@
 
                 })
         },
-        methods: {}
+        methods: {
+            posting(arg=null){
+                this.$http.post('/json/hostel/store',this.forms)
+                    .then(res => {
+                        console.log(res.data)
+
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            },
+            resetting(){
+                this.forms={}
+            }
+        }
     }
 </script>
 

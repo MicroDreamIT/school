@@ -139,7 +139,7 @@
                             this.$refs.roomtypeTable.getData()
                         })
                         .catch(err=>{
-                            this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$vs.notify({title:'error',text:err.response.data.message,color:res.data[0],icon:'verified_user'})
                         })
                 }else{
                     this.$http.post('/json/hostel/room-type/store', this.forms)

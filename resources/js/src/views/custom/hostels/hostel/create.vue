@@ -105,6 +105,18 @@
                     {name: 'PID'},
                 ],
             }
+        },
+        created(){
+          this.$http.get('/json/hostel/add')
+              .then(res=>{
+                  console.log(res.data)
+              })
+              .catch(err=>{
+
+              })
+        },
+        methods:{
+
         }
     }
 </script>

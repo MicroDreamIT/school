@@ -32,7 +32,7 @@ class HostelController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
@@ -41,8 +41,7 @@ class HostelController extends CollegeBaseController
         $data = [];
         $roomTypes = RoomType::select('id','title')->get();
         $data['room_type'] = array_pluck($roomTypes,'title','id');
-
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -64,7 +63,7 @@ class HostelController extends CollegeBaseController
             }
         }
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
+        return response()->json(['success',$this->panel. ' Created Successfully.']);
 
         if($request->add_hostel_another) {
             return back();
@@ -81,8 +80,7 @@ class HostelController extends CollegeBaseController
 
         $roomTypes = RoomType::select('id','title')->get();
         $data['room_type'] = array_pluck($roomTypes,'title','id');
-
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -94,8 +92,8 @@ class HostelController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$$this->panel.' Updated Successfully.']);
+
     }
 
     public function delete(Request $request, $id)
@@ -104,8 +102,7 @@ class HostelController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -131,15 +128,15 @@ class HostelController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
-                else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
 
-                return redirect()->route($this->base_route);
+            else
+                return response()->json(['success','Deleted successfully.']);
+
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning',$this->message_warning, 'Please, Check at least one row.']);
+
             }
 
         } else return parent::invalidRequest();
@@ -154,8 +151,8 @@ class HostelController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' Active Successfully.']);
+
     }
 
     public function inActive(request $request, $id)
@@ -166,8 +163,8 @@ class HostelController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' In-Active Successfully.']);
+
     }
 
     public function view(Request $request, $id)
@@ -184,8 +181,8 @@ class HostelController extends CollegeBaseController
 
         $roomTypes = RoomType::select('id','title')->get();
         $data['room_type'] = array_pluck($roomTypes,'title','id');
+        return response()->json($data);
 
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 
     public function findRooms(Request $request)

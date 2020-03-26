@@ -25,7 +25,7 @@ class RoomTypeController extends CollegeBaseController
     {
         $data = [];
         $data['room_type'] = RoomType::select('id', 'title', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -33,9 +33,7 @@ class RoomTypeController extends CollegeBaseController
         $request->request->add(['created_by' => auth()->user()->id]);
 
         RoomType::create($request->all());
-
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->message_success, $this->panel. ' Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -47,7 +45,7 @@ class RoomTypeController extends CollegeBaseController
         $data['room_type'] = RoomType::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -59,8 +57,8 @@ class RoomTypeController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->message_success, $this->panel.' Updated Successfully.']);
+
     }
 
     public function delete(Request $request, $id)
@@ -69,8 +67,8 @@ class RoomTypeController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->message_success, $this->panel.' Deleted Successfully.']);
+
     }
 
     public function bulkAction(Request $request)
@@ -96,15 +94,14 @@ class RoomTypeController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success',$this->message_success, 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning',$this->message_warning, 'Please, Check at least one row.']);
+
             }
 
         } else return parent::invalidRequest();
@@ -118,9 +115,7 @@ class RoomTypeController extends CollegeBaseController
         $request->request->add(['status' => 'active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -130,8 +125,6 @@ class RoomTypeController extends CollegeBaseController
         $request->request->add(['status' => 'in-active']);
 
         $row->update($request->all());
-
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' In-Active Successfully.']);
     }
 }

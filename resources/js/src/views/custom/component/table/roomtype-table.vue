@@ -1,7 +1,23 @@
 <template>
     <div class="custom-table">
         <div class="row p-4">
-            <div class="col-md-12 ">
+            <div class="col-md-4">
+                <h4>Create Room Type</h4>
+                <div class="form-group row mt-3">
+                    <label  class="col-sm-3">Room Type</label>
+                    <vs-input v-model="forms.id" style="display: none"></vs-input>
+                    <vs-input class="col-sm-9" v-model="forms.title">
+                    </vs-input>
+                </div>
+                <vs-divider></vs-divider>
+                <vs-button color="#00b8cf"
+                           type="filled"
+                           class="my-round"
+                >
+                    {{formType}}
+                </vs-button>
+            </div>
+            <div class="col-md-8 ">
                 <h4 class="header large lighter blue">
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                     {{tableHeader}}
@@ -138,6 +154,8 @@
 
         data() {
             return {
+                forms:{id:null, title:null},
+                formType:'create',
                 selected: [],
                 maxItem: 10,
                 searchData: {},

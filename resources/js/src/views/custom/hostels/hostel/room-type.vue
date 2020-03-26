@@ -33,76 +33,64 @@
                                 <vs-button type="filled" class="smBtn">Bed status</vs-button>
                             </router-link>
                         </div>
-                        <div class="col-md-4"><br>
-                            <h4>Create Room Type</h4>
-                            <div class="form-group row mt-3">
-                                <label  class="col-sm-3">Room Type</label>
-                                <vs-input class="col-sm-9"></vs-input>
-                            </div>
-                            <vs-divider></vs-divider>
-                            <vs-button color="#00b8cf"
-                                       type="filled"
-                                       class="my-round">Create
-                            </vs-button>
-                        </div>
-                        <div class="col-md-8">
-                            <roomtype-table :headers="roomtypeHeader"
-                                            :tableHeader="'Room Type List'"
-                                            :suggestText="'Room type Record list on table. Filter room type using the filter.'"
-                                            :url="'/json/hostel/room-type'"
-                                            :noDataMessage="'No room type data found. Please Filter room type to show.'"
-                                            :hasSearch="true"
-                                            :has-multiple="true"
-                                            :has-pagination="true"
-                                            :filterSection="true"
-                                            ref="roomtypeTable"
-                            >
-                                <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.title">
-                                        {{props.data.title}}
-                                    </vs-td>
-                                    <vs-td>
-                                        <div class="d-flex flex-wrap">
-                                            {{props.data.status}}
-                                            <vs-switch color="success"
-                                                       :checked="props.data.status=='active'?true:false"
-                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
-                                                       class="pointer-all ml-2"
-                                            >
-                                                <span slot="on">Active</span>
-                                                <span slot="off">In-Active</span>
-                                            </vs-switch>
-                                        </div>
-                                    </vs-td>
-                                    <vs-td>
-                                        <div class="action-own">
-                                            <a class="btn btn-primary btn-sm pointer-all"
-                                               title="View"
-                                               @click.stop="viewItems(props.data.id)"
-
-                                            >
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
-
-
-                                </template>
-                            </roomtype-table>
-                        </div>
                     </div>
     
                 </vs-card>
+            </div>
+            <div class="col-md-12">
+                <roomtype-table :headers="roomtypeHeader"
+                                :tableHeader="'Room Type List'"
+                                :suggestText="'Room type Record list on table. Filter room type using the filter.'"
+                                :url="'/json/hostel/room-type'"
+                                :noDataMessage="'No room type data found. Please Filter room type to show.'"
+                                :hasSearch="true"
+                                :has-multiple="true"
+                                :has-pagination="true"
+                                :filterSection="true"
+                                ref="roomtypeTable"
+                >
+                    <template slot="items" slot-scope="props">
+                        <vs-td :data="props.data.title">
+                            {{props.data.title}}
+                        </vs-td>
+                        <vs-td>
+                            <div class="d-flex flex-wrap">
+                                {{props.data.status}}
+                                <vs-switch color="success"
+                                           :checked="props.data.status=='active'?true:false"
+                                           @click.stop="changeStatus(props.data.id,props.data.status)"
+                                           class="pointer-all ml-2"
+                                >
+                                    <span slot="on">Active</span>
+                                    <span slot="off">In-Active</span>
+                                </vs-switch>
+                            </div>
+                        </vs-td>
+                        <vs-td>
+                            <div class="action-own">
+                                <a class="btn btn-primary btn-sm pointer-all"
+                                   title="View"
+                                   @click.stop="viewItems(props.data.id)"
+
+                                >
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a class="btn btn-success btn-sm pointer-all"
+                                   title="Edit"
+                                   @click.stop="editItems(props.data.id)">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a class="btn btn-danger btn-sm pointer-all"
+                                   title="Delete"
+                                   @click.stop="deleteItems(props.data.id)">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            </div>
+                        </vs-td>
+
+
+                    </template>
+                </roomtype-table>
             </div>
         </div>
     </div>
@@ -114,6 +102,7 @@
         data() {
             return {
                 searchData: {},
+
                 roomtypeHeader: [
                     {name: 'title', sort_key: 'title'},
                     {name: 'Status', sort_key: ''},

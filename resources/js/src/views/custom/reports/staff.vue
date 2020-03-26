@@ -12,6 +12,22 @@
                     </router-link>
                 </div>
             </div>
+            <div class="col-md-12" v-if="$root.notification.status">
+                <div role="alert"
+                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
+                >
+                    <button type="button"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            class="close"
+                            @click="$root.emptyNotification()"
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <i class="ace-icon fa fa-hand-o-right"></i>
+                    {{$root.notification.message}}
+                </div>
+            </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
@@ -23,35 +39,38 @@
                                         <vs-button type="filled"
                                                    color="primary"
                                                    icon="double_arrow"
+                                                   class="rounded"
                                         >
-                                            Filter Staff
+                                            Filter Staff Report
                                         </vs-button>
                                     </div>
                                     <div class="filterBox">
                                         <div class="col-md-12">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Reg. NO.:</label>
-                                                        <input placeholder=""
-                                                               class="form-control border-form input-mask-registration"
-                                                               autofocus="" name="" type="text"
-                                                        >
+                                                    <div class="form-group ">
+                                                        <label>Reg:</label>
+                                                        <vs-input v-model="searchData.reg_no"
+                                                                  class="w-100">
+                                                        </vs-input>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Designation</label>
-                                                        <v-select :options="['lecturer','professor']"
-                                                                  placeholder="Select Designation"
-                                                        ></v-select>
+                                                        <v-select :options="designation"
+                                                                  label="value"
+                                                                  v-model="searchData.designation"
+                                                                  :reduce="a => a.id"
+                                                        >
+                                                        </v-select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Join Date</label>
-                                                        <div class="d-flex justify-content-between flex-wrap">
-                                                            <datepicker v-model="searchData.start_date"/>
+                                                        <div class="d-flex justify-content-between">
+                                                            <datepicker v-model="searchData.fromDate" class="flex-1"/>
                                                             <label>To</label>
-                                                            <datepicker v-model="searchData.end_date"/>
+                                                            <datepicker v-model="searchData.toDate" class="flex-1"/>
                                                         </div>
 
                                                     </div>
@@ -66,14 +85,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                         <div class="col-md-12 mb-2 pl-0">
                                             <vs-button type="filled"
                                                        color="#00b8cf"
                                                        icon="double_arrow"
-                                                       @click="alert(searchData)"
+                                                       @click.prevent="doFilter"
                                             >
                                                 Filter
                                             </vs-button>
@@ -83,55 +100,112 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Staff Report
-                                List</h4>
-                            <br>
-                            <div class="table-header">
-                                Staff Report Record list on table. Filter Student Report using the filter.
-                            </div>
-                            <div class="dt-buttons btn-group action-group mt-3">
-                                <button class="btn btn-secondary buttons-copy buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Copy</span></button>
-                                <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>PDF</span>
-                                </button>
-                                <button class="btn btn-secondary" tabindex="0" aria-controls="DataTables_Table_0">
-                                    <span>JSON</span>
-                                </button>
-                                <button class="btn btn-secondary buttons-print" tabindex="0"
-                                        aria-controls="DataTables_Table_0">
-                                    <span>Print</span>
-                                </button>
-                            </div>
-                            <student-table :headers="tableHeader"
-                                           :url="url"
-                                           :no-data-message="'No matching records found'"
-                                           :searchField="searchData"
-                                           :has-search="true"
-                                           :has-multiple="true"
+                            <ow-data-table :headers="studentHeader"
+                                           :tableHeader="'Student Report List'"
+                                           :suggestText="'Student Report Record list on table. Filter Student Report using the filter.'"
+                                           :url="'/json/student/'"
+                                           :noDataMessage="'No Student Report data found. Please Filter Student Report to show.'"
+                                           :hasSearch="true"
+                                           :action-btn="false"
+                                           :print-section="false"
+                                           :has-multiple="false"
                                            :has-pagination="true"
+                                           :main-item="mainItem"
+                                           :getData="getData"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
+
+                                    <vs-td :data="props.data.reg_no">
+                                        {{props.data.reg_no}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.full_name">
+                                        <a @click.stop="viewItems(props.data.id)"
+                                           class="pointer-all text-primary"
+                                           title="View"
+                                        >
+                                            {{props.data.full_name}}
+                                        </a>
+
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.join_date?$root.parseDate(props.data.join_date):''}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.designations.title}}
+                                    </vs-td>
+
+                                    <vs-td>
+                                        {{props.data.date_of_birth?$root.parseDate(props.data.date_of_birth):''}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.gender}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.blood_group}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.nationality}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.mother_tongue}}
+                                    </vs-td>
+                                    <vs-td>
                                         {{props.data.email}}
                                     </vs-td>
-
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
+                                    <vs-td>
+                                        {{props.data.address}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.state}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.country}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.temp_address}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.temp_state}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.temp_country}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.home_phone}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.mobile_1 + ' '}}{{props.data.mobile_2}}
                                     </vs-td>
 
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
+                                    <vs-td>
+                                        {{props.data.father_name}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.mother_name}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.qualification}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.experience}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.experience_info}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.other_info}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.status}}
                                     </vs-td>
 
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
-                                    </vs-td>
+
                                 </template>
-                            </student-table>
+
+
+                                <template slot="printSection" slot-scope="printData">
+                                </template>
+                            </ow-data-table>
                         </div>
                     </div>
                 </vs-card>
@@ -142,40 +216,61 @@
 </template>
 
 <script>
-    import StudentTable from '../component/table/student-table'
     export default {
-        components: {
-            StudentTable
-        },
         data() {
             return {
-                searchData: {
-                    academic_status: null,
-                    status: null
-                },
-                url: '/ajax/student/',
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                searchData: {},
+                studentHeader: [
+                    {name: 'Reg. Num', sort_key: 'reg_no'},
+                    {name: 'Staff Name', sort_key: ''},
+                    {name: 'Join. Date', sort_key: ''},
+                    {name: 'Designation', sort_key: ''},
+                    {name: 'Date Of Birth', sort_key: ''},
+                    {name: 'Gender', sort_key: ''},
+                    {name: 'Blood Group', sort_key: ''},
+                    {name: 'Nationality', sort_key: ''},
+                    {name: 'Mother Tongue', sort_key: ''},
+                    {name: 'Email', sort_key: ''},
+                    {name: 'Address', sort_key: ''},
+                    {name: 'State', sort_key: ''},
+                    {name: 'Country', sort_key: ''},
+                    {name: 'Temp. Address', sort_key: ''},
+                    {name: 'Temp. State', sort_key: ''},
+                    {name: 'Temp. Country', sort_key: ''},
+                    {name: 'Home Phone', sort_key: ''},
+                    {name: 'Mobile No', sort_key: ''},
+                    {name: 'Father Name', sort_key: ''},
+                    {name: 'Mother Name', sort_key: ''},
+                    {name: 'Qualification', sort_key: ''},
+                    {name: 'Experience', sort_key: ''},
+                    {name: 'Experience Info', sort_key: ''},
+                    {name: 'Other Info', sort_key: ''},
+                    {name: 'Status', sort_key: ''},
+
                 ],
-                academic_status: ['Back Continue',
-                    'Continue',
-                    'Drop Out',
-                    'New Admission',
-                    'Online Registration',
-                    'Pass Out</option',
-                    'Transfer in',
-                    'Transfer Out'],
-                status: ['Active', 'In-Active'],
-                filterBox: false,
+                item: [],
+                mainItem: [],
+                designation: [],
             }
         },
+        created() {
+            this.getData()
+        },
+        methods: {
+            getData() {
+                this.$http.get('/json/report/staff').then(res => {
+                    this.item = res.data.staff;
+                    this.mainItem = this.item;
+                    this.designation = this.$root.objectToArray(res.data.designation)
+                });
+            },
+            doFilter() {
+                this.$http.get('/json/report/staff', {params: this.searchData}).then(res => {
+                    this.item = res.data.staff;
+                    this.mainItem = this.item
+                });
+            },
+        }
 
     }
 </script>
-
-<style scoped>
-
-</style>

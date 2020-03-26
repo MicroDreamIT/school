@@ -336,7 +336,7 @@
                                         {{props.data.guardian_residence_number}}
                                     </vs-td>
                                     <vs-td>
-                                        {{props.data.guardian_mobile_1+' '+props.data.guardian_mobile_2}}
+                                        {{props.data.guardian_mobile_1+' '}}{{props.data.guardian_mobile_2}}
                                     </vs-td>
                                     <vs-td>
                                         {{props.data.guardian_email}}

@@ -35,48 +35,99 @@
                     <vs-divider class="mx-3"></vs-divider>
                     <div class="col-md-12"><h4>Create Hostel</h4></div>
                     <div class="col-md-6">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Hostel</p>
-                            <vs-input class="flex-2 "></vs-input>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Hostel</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input v-model="forms.hostel" class="form-control">
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Contact Detail</p>
-                            <vs-textarea class="flex-2 " height="100px"></vs-textarea>
+                        <div class="row">
+                            <div class="col-md-4"><label>Contact Detail</label></div>
+                            <div class="col-md-8">
+                                <textarea v-model="forms.contact_detail"
+                                          class="form-control"></textarea>
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Warden</p>
-                            <vs-input class="flex-2 "></vs-input>
+                        <div class="row">
+                            <div class="col-md-4"><label>warden</label></div>
+                            <div class="col-md-8">
+                                <input v-model="forms.warden" class="form-control">
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Type</p>
-                            <v-select class="flex-2 "></v-select>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>type</label>
+                            </div>
+                            <div class="col-md-8">
+                                <v-select class="flex-2 "></v-select>
+                                <p></p>
+                            </div>
+
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Total Room</p>
-                            <vs-input class="flex-2 "></vs-input>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Total Room</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input class="form-control">
+                                <p></p>
+                            </div>
                         </div>
 
                     </div>
                     <div class="col-md-6">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Address</p>
-                            <vs-input class="flex-2 "></vs-input>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>
+                                    Address
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                <input class="form-control" v-model="forms.address">
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Description</p>
-                            <vs-textarea class="flex-2 " height="100px"></vs-textarea>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>
+                                    Description
+                                </label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea class="form-control" v-model="forms.description"></textarea>
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Warden Contact</p>
-                            <vs-input class="flex-2 "></vs-input>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Warden</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input class="form-control" v-model="forms.warden">
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Status</p>
-                            <v-select class="flex-2 "></v-select>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>status</label>
+                            </div>
+                            <div class="col-md-8">
+                                <v-select class="flex-2 " :options="['active','in-active']"></v-select>
+                                <p></p>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <p class="flex-1">Room Type</p>
-                            <v-select class="flex-2 "></v-select>
+                        <div class="row">
+                            <span class="col-md-4">Room Type</span>
+                            <div class="col-md-8">
+                                <select v-model="forms.room_type" class="form-control">
+                                    <option :value="room.id" v-for="room in room_types">{{room.value}}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <vs-divider class="mx-3"></vs-divider>
@@ -98,6 +149,8 @@
         data() {
             return {
                 searchData: {},
+                forms: {},
+                room_types: {},
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
@@ -106,18 +159,16 @@
                 ],
             }
         },
-        created(){
-          this.$http.get('/json/hostel/add')
-              .then(res=>{
-                  console.log(res.data)
-              })
-              .catch(err=>{
+        created() {
+            this.$http.get('/json/hostel/add')
+                .then(res => {
+                    this.room_types = this.$root.objectToArray(res.data.room_type)
+                })
+                .catch(err => {
 
-              })
+                })
         },
-        methods:{
-
-        }
+        methods: {}
     }
 </script>
 

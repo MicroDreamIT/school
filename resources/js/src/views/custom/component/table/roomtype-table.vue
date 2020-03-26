@@ -1,7 +1,7 @@
 <template>
     <div class="custom-table">
         <div class="row p-4">
-            <div class="col-md-8 ">
+            <div class="col-md-12 ">
                 <h4 class="header large lighter blue">
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                     {{tableHeader}}

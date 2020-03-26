@@ -44,8 +44,8 @@
                         <div class="form-group row mt-3">
                             <form>
                                 <label class="col-sm-3">Room Type</label>
-                                <vs-input v-model="forms.id" style="display: none" @keyup.enter="posting()"></vs-input>
-                                <vs-input v-model="forms.title">
+                                <vs-input v-model="forms.id" style="display: none" ></vs-input>
+                                <vs-input v-model="forms.title" @keyup.enter="posting()">
                                 </vs-input>
                                 <vs-divider></vs-divider>
                                 <vs-button color="#00b8cf"
@@ -89,13 +89,6 @@
                                 </vs-td>
                                 <vs-td>
                                     <div class="action-own">
-                                        <a class="btn btn-primary btn-sm pointer-all"
-                                           title="View"
-                                           @click.stop="viewItems(props.data.id)"
-
-                                        >
-                                            <i class="fa fa-eye"></i>
-                                        </a>
                                         <a class="btn btn-success btn-sm pointer-all"
                                            title="Edit"
                                            @click.stop="editItems(props.data.id, props.data.title)">
@@ -137,21 +130,35 @@
         },
         methods:{
             posting() {
-                this.$http.post('/json/hostel/room-type/store', this.forms)
-                    .then(res => {
-                        if(res.status===200){
-                            this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                if(this.forms.id){
+                    this.$http.post('/json/hostel/room-type/'+this.forms.id+'/update', this.forms)
+                        .then(res=>{
+                            this.formType='create'
                             this.forms.id=null
                             this.forms.title=null
                             this.$refs.roomtypeTable.getData()
-                        }else{
+                        })
+                        .catch(err=>{
                             this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
-                        }
+                        })
+                }else{
+                    this.$http.post('/json/hostel/room-type/store', this.forms)
+                        .then(res => {
+                            if(res.status===200){
+                                this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                                this.forms.id=null
+                                this.forms.title=null
+                                this.$refs.roomtypeTable.getData()
+                            }else{
+                                this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            }
 
-                    })
-                    .catch(err => {
-                        this.$vs.notify({title:'error',text:err.response.data.message,color:'danger',icon:'verified_user'})
-                    })
+                        })
+                        .catch(err => {
+                            this.$vs.notify({title:'error',text:err.response.data.message,color:'danger',icon:'verified_user'})
+                        })
+                }
+
             },
             viewItems(id) {
                 if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
@@ -160,10 +167,22 @@
                 if(id) this.$router.push({name: 'studentView', params: {id: id}})
             },
             editItems(id, title) {
-                alert("hey hasib im edit ")
+                this.forms.id = id
+                this.forms.title = title
+                this.formType = 'update'
             },
-            deleteItems() {
-                alert("hey hasib im delete ")
+            deleteItems(id) {
+                var confirms = confirm('are you sure?')
+                if(!confirms) return null
+
+                this.$http.get('/json/hostel/room-type/'+id+'/delete')
+                    .then(res=>{
+                        this.$refs.roomtypeTable.getData()
+                        this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    })
+                    .catch(err=>{
+
+                    })
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'

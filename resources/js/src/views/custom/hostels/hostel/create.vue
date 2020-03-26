@@ -175,6 +175,7 @@
         },
         methods: {
             posting(arg=null){
+
                 this.$http.post('/json/hostel/store',this.forms)
                     .then(res => {
                         console.log(res.data)

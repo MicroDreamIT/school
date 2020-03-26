@@ -30,8 +30,7 @@ class RoomTypeController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
-
+        $request->merge(['created_by'=>auth()->id()]);
         RoomType::create($request->all());
         return response()->json(['success',$this->message_success, $this->panel. ' Created Successfully.']);
     }

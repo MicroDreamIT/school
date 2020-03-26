@@ -1,25 +1,6 @@
 <template>
     <div class="custom-table">
         <div class="row p-4">
-            <div class="col-md-4">
-                <h4>Create Room Type</h4>
-                <div class="form-group row mt-3">
-                    <form>
-                        <label class="col-sm-3">Room Type</label>
-                        <vs-input v-model="forms.id" style="display: none" @keyup.enter="posting()"></vs-input>
-                        <vs-input v-model="forms.title">
-                        </vs-input>
-                        <vs-divider></vs-divider>
-                        <vs-button color="#00b8cf"
-                                   type="filled"
-                                   class="my-round"
-                                   @click="posting"
-                        >
-                            {{formType}}
-                        </vs-button>
-                    </form>
-                </div>
-            </div>
             <div class="col-md-8 ">
                 <h4 class="header large lighter blue">
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
@@ -157,8 +138,7 @@
 
         data() {
             return {
-                forms: {id: null, title: null},
-                formType: 'create',
+
                 selected: [],
                 maxItem: 10,
                 searchData: {},
@@ -172,13 +152,6 @@
         },
 
         methods: {
-            posting() {
-                this.$http.post('/json/hostel/room-type', this.forms)
-                    .then(res => {
-                    })
-                    .catch(err => {
-                    })
-            },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data.room_type;

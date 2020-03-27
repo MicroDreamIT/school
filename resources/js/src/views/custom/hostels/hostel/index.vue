@@ -98,6 +98,10 @@
                     {name: 'PID'},
                 ],
             }
+        },
+
+        methods:{
+
         }
     }
 </script>

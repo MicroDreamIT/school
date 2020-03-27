@@ -52,7 +52,7 @@
                                 Hostel Record list on table. Filter Hostel using the filter.
                             </div>
                             <data-table :headers="tableHeader"
-                                        :url="'/student'"
+                                        :url="'/json/'"
                                         :no-data-message="'No Hostel data found. Please Filter Hostel to show.'"
                                         :searchField="searchData"
                                         :hasSearch="true"

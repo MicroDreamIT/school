@@ -40,8 +40,8 @@
                                 <label>Hostel</label>
                             </div>
                             <div class="col-md-8">
-                                <input v-model="forms.name" class="form-control" v-validator="'required'" >
-                                <p>{{ errors.first('name') }}</p>
+                                <input v-model="forms.name" class="form-control"  required>
+                                <p v-if="error.name!==undefined" class="text-danger">{{ error.name[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -49,14 +49,16 @@
                             <div class="col-md-4"><label>Contact Detail</label></div>
                             <div class="col-md-8">
                                 <textarea v-model="forms.contact_detail"
-                                          class="form-control"></textarea>
+                                          class="form-control" required></textarea>
+                                <p v-if="error.contact_detail!==undefined" class="text-danger">{{ error.contact_detail[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4"><label>warden</label></div>
                             <div class="col-md-8">
-                                <input v-model="forms.warden" class="form-control">
+                                <input v-model="forms.warden" class="form-control" required>
+                                <p v-if="error.warden!==undefined" class="text-danger">{{ error.warden[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -65,11 +67,12 @@
                                 <label>type</label>
                             </div>
                             <div class="col-md-8">
-                                <select v-model="forms.type">
+                                <select v-model="forms.type" class="form-control" required>
                                     <option value="Boys">Boys</option>
                                     <option value="Girls">Girls</option>
                                     <option value="Both">Both</option>
                                 </select>
+                                <p v-if="error.type!==undefined" class="text-danger">{{ error.type[0] }}</p>
                                 <p></p>
                             </div>
 
@@ -79,7 +82,8 @@
                                 <label>Total Room</label>
                             </div>
                             <div class="col-md-8">
-                                <input class="form-control" v-model="forms.rooms">
+                                <input class="form-control" v-model="forms.rooms" type="number" min="0" required>
+                                <p v-if="error.rooms!==undefined" class="text-danger">{{ error.rooms[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -94,6 +98,7 @@
                             </div>
                             <div class="col-md-8">
                                 <input class="form-control" v-model="forms.address">
+                                <p v-if="error.address!==undefined" class="text-danger">{{ error.address[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -105,6 +110,7 @@
                             </div>
                             <div class="col-md-8">
                                 <textarea class="form-control" v-model="forms.description"></textarea>
+                                <p v-if="error.description!==undefined" class="text-danger">{{ error.description[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
@@ -122,16 +128,18 @@
                                 <label>status</label>
                             </div>
                             <div class="col-md-8">
-                                <v-select class="flex-2 " :options="['active','in-active']"></v-select>
+                                <v-select class="flex-2 " :options="['active','in-active']" v-model="forms.status"></v-select>
+                                <p v-if="error.status!==undefined" class="text-danger">{{ error.status[0] }}</p>
                                 <p></p>
                             </div>
                         </div>
                         <div class="row">
                             <span class="col-md-4">Room Type</span>
                             <div class="col-md-8">
-                                <select v-model="forms.room_type" class="form-control">
+                                <select v-model="forms.room_type" class="form-control" required>
                                     <option :value="room.id" v-for="room in room_types">{{room.value}}</option>
                                 </select>
+                                <p v-if="error.room_type!==undefined" class="text-danger">{{ error.room_type[0] }}</p>
                             </div>
                         </div>
                     </div>
@@ -155,6 +163,7 @@
             return {
                 searchData: {},
                 forms: {},
+                error:[],
                 room_types: {},
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
@@ -182,7 +191,9 @@
 
                     })
                     .catch(err => {
-                        console.log(err)
+                        if(err.response){
+                            this.error = err.response.data.errors
+                        }
                     })
             },
             resetting(){

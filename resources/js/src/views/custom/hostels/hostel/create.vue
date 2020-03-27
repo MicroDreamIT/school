@@ -187,7 +187,11 @@
 
                 this.$http.post('/json/hostel/store',this.forms)
                     .then(res => {
-                        console.log(res.data)
+                        console.log(res.status)
+                        if(res.status===200){
+                            this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.forms={}
+                        }
 
                     })
                     .catch(err => {

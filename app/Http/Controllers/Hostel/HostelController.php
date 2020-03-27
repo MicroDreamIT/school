@@ -46,7 +46,7 @@ class HostelController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by' => auth()->id()]);
 
         $row = Hostel::create($request->all());
 

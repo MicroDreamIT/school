@@ -150,7 +150,7 @@ class AssignmentController extends CollegeBaseController
         $data['faculties'] = $this->activeFaculties();
 
         $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -170,14 +170,8 @@ class AssignmentController extends CollegeBaseController
         $request->request->add(['file' => $file_name]);
 
         Assignment::create($request->all());
+        return response()->json(['success','Add Successfully.']);
 
-        $request->session()->flash($this->message_success, $this->panel. ' Add Successfully.');
-
-        if($request->add_assignment_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
     }
 
     public function edit(Request $request, $id)
@@ -192,7 +186,7 @@ class AssignmentController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -219,8 +213,7 @@ class AssignmentController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Updated Successfully.']);
     }
 
     public function view(Request $request, $id)
@@ -264,8 +257,7 @@ class AssignmentController extends CollegeBaseController
         }
 
         $row->delete();
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -295,15 +287,12 @@ class AssignmentController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', 'Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, ' Deleted successfully.');
-
-                return redirect()->route($this->base_route);
+                    return response()->json(['success', 'Deleted Successfully.']);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['danger', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -319,8 +308,7 @@ class AssignmentController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -332,8 +320,7 @@ class AssignmentController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function findSemester(Request $request)

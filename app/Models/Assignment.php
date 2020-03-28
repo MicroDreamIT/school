@@ -14,6 +14,15 @@ class Assignment extends BaseModel
         return $this->belongsToMany(Subject::class);
     }
 
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semesters_id')->select('id','semester');
+    }
+    public function subject_data()
+    {
+        return $this->belongsTo(Subject::class, 'subjects_id')->select('id','title');
+    }
+
     public function answers()
     {
         return $this->hasMany(AssignmentAnswer::class,'assignments_id','id');

@@ -167,7 +167,7 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12">
-                            <ow-data-table :headers="studentHeader"
+                            <ow-data-table :headers="tableHeader"
                                            :tableHeader="'Student Report List'"
                                            :suggestText="'Student Report Record list on table. Filter Student Report using the filter.'"
                                            :url="'/json/student/'"
@@ -372,7 +372,7 @@
         data() {
             return {
                 searchData: {},
-                studentHeader: [
+                tableHeader: [
                     {name: 'Faculty/Class', sort_key: 'faculty'},
                     {name: 'Sem', sort_key: ''},
                     {name: 'Reg. Num', sort_key: 'reg_no'},

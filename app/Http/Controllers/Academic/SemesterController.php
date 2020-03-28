@@ -114,7 +114,7 @@ class SemesterController extends CollegeBaseController
 
         try{
         if (!$row = Semester::find($id))
-        return response()->json(['success', $row->id.' '.$this->panel.' No Semester.']);
+        return response()->json(['danger', $row->id.' '.$this->panel.' No data.']);
         $row->subjects()->sync([]);
         $row->delete();
         return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
@@ -143,7 +143,7 @@ class SemesterController extends CollegeBaseController
                         case 'delete':
                             try{
                                 if (!$row = Semester::find($row_id))
-                                return response()->json(['success', $row->id.' '.$this->panel.' No Semester.']);
+                                return response()->json(['danger', $row->id.' '.$this->panel.' No Data.']);
                                 $row->subjects()->sync([]);
                                 $row->delete();
                                 return response()->json(['success', $row->id.' '.$this->panel.' Deleted Successfully.']);}
@@ -160,8 +160,6 @@ class SemesterController extends CollegeBaseController
                 else
                      return response()->json(['success', 'Deleted Successfully.']);
 
-                return redirect()->route($this->base_route);
-
             } else {
                 return response()->json(['danger', 'Please, Check at least one row.']);
             }
@@ -172,7 +170,7 @@ class SemesterController extends CollegeBaseController
 
     public function active(request $request, $id)
     {
-        if (!$row = Semester::find($id)) return parent::invalidRequest();
+        if (!$row = Semester::find($id)) return response()->json(['danger',' No Data.']);
 
         $request->request->add(['status' => 'active']);
 
@@ -183,7 +181,7 @@ class SemesterController extends CollegeBaseController
 
     public function inActive(request $request, $id)
     {
-        if (!$row = Semester::find($id)) return parent::invalidRequest();
+        if (!$row = Semester::find($id)) return response()->json(['danger',' No Data.']);
 
         $request->request->add(['status' => 'in-active']);
 

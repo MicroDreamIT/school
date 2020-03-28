@@ -68,9 +68,18 @@
                                                     <div class="form-group">
                                                         <label>Join Date</label>
                                                         <div class="d-flex justify-content-between">
-                                                            <datepicker v-model="searchData.fromDate" class="flex-1"/>
+                                                            <datepicker
+                                                                    v-model="searchData.fromDate"
+                                                                    :format="'yyyy-MM-dd'"
+                                                                    @input="searchData.fromDate=$root.formatPicker($event)"
+                                                                    class="flex-1"
+                                                            />
                                                             <label>To</label>
-                                                            <datepicker v-model="searchData.toDate" class="flex-1"/>
+                                                            <datepicker
+                                                                    v-model="searchData.toDate"
+                                                                    :format="'yyyy-MM-dd'"
+                                                                    @input="searchData.toDate=$root.formatPicker($event)"
+                                                                    class="flex-1"/>
                                                         </div>
 
                                                     </div>
@@ -100,7 +109,7 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12">
-                            <ow-data-table :headers="studentHeader"
+                            <ow-data-table :headers="tableHeader"
                                            :tableHeader="'Student Report List'"
                                            :suggestText="'Student Report Record list on table. Filter Student Report using the filter.'"
                                            :url="'/json/student/'"
@@ -220,7 +229,7 @@
         data() {
             return {
                 searchData: {},
-                studentHeader: [
+                tableHeader: [
                     {name: 'Reg. Num', sort_key: 'reg_no'},
                     {name: 'Staff Name', sort_key: ''},
                     {name: 'Join. Date', sort_key: ''},

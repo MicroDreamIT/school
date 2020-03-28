@@ -67,6 +67,47 @@ Route::group(['prefix' => 'student/', 'as' => 'student', 'namespace' => 'Student
 
 });
 
+/*Extra Features Grouping */
+/*Assignment Grouping */
+Route::group(['prefix' => 'assignment/', 'as' => 'assignment', 'namespace' => 'Assignment\\'], function () {
+
+    /*Assignment Routes*/
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,assignment-index'], 'uses' => 'AssignmentController@index']);
+    Route::get('add', ['as' => '.add', 'middleware' => ['ability:super-admin,assignment-add'], 'uses' => 'AssignmentController@add']);
+    Route::post('store', ['as' => '.store', 'middleware' => ['ability:super-admin,assignment-add'], 'uses' => 'AssignmentController@store']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,assignment-edit'], 'uses' => 'AssignmentController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,assignment-edit'], 'uses' => 'AssignmentController@update']);
+    Route::get('{id}/view', ['as' => '.view', 'middleware' => ['ability:super-admin,assignment-view'], 'uses' => 'AssignmentController@view']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,assignment-delete'], 'uses' => 'AssignmentController@delete']);
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,assignment-active'], 'uses' => 'AssignmentController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,assignment-in-active'], 'uses' => 'AssignmentController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,assignment-bulk-action'], 'uses' => 'AssignmentController@bulkAction']);
+
+    Route::post('find-semester', ['as' => '.find-semester', 'uses' => 'AssignmentController@findSemester']);
+    Route::post('mark-ledger/find-subject', ['as' => '.find-subject', 'uses' => 'AssignmentController@findSubject']);
+
+    /*Answer Routes*/
+    Route::get('answer/{id}/{answer}/view', ['as' => '.answer.view', 'middleware' => ['ability:super-admin,assignment-answer-view'], 'uses' => 'AssignmentController@viewAnswer']);
+    Route::get('answer/{id}/approve', ['as' => '.answer.approve', 'middleware' => ['ability:super-admin,assignment-answer-approve'], 'uses' => 'AssignmentController@approveAnswer']);
+    Route::get('answer/{id}/reject', ['as' => '.answer.reject', 'middleware' => ['ability:super-admin,assignment-answer-reject'], 'uses' => 'AssignmentController@rejectAnswer']);
+    Route::get('answer/{id}/delete', ['as' => '.answer.delete', 'middleware' => ['ability:super-admin,assignment-answer-delete'], 'uses' => 'AssignmentController@deleteAnswer']);
+
+    Route::post('answer/bulk-action', ['as' => '.answer.bulk-action', 'middleware' => ['ability:super-admin,assignment-answer-bulk-action'], 'uses' => 'AssignmentController@bulkActionAnswer']);
+});
+
+/*Download Grouping */
+Route::group(['prefix' => 'download/', 'as' => 'download', 'namespace' => 'Download\\'], function () {
+    /*Download Routes*/
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,download-index'], 'uses' => 'DownloadController@index']);
+    Route::post('store', ['as' => '.store', 'middleware' => ['ability:super-admin,download-add'], 'uses' => 'DownloadController@store']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,download-edit'], 'uses' => 'DownloadController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,download-edit'], 'uses' => 'DownloadController@update']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,download-delete'], 'uses' => 'DownloadController@delete']);
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,download-active'], 'uses' => 'DownloadController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,download-in-active'], 'uses' => 'DownloadController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,download-bulk-action'], 'uses' => 'DownloadController@bulkAction']);
+});
+
 /*Report Grouping*/
 Route::group(['prefix' => 'report/', 'as' => 'report', 'namespace' => 'Report\\'], function () {
 

@@ -43,6 +43,8 @@ class AssignmentController extends CollegeBaseController
                 $id = auth()->user()->id;
                 $data['assignment'] = Assignment::select('id', 'created_by', 'last_updated_by', 'years_id', 'semesters_id', 'subjects_id', 'publish_date',
                     'end_date', 'title', 'description', 'file', 'status')
+                    ->with('semester')
+                    ->with('subject_data')
                     ->where('created_by',$id)
                     ->where(function ($query) use ($request) {
                         if ($request->year && $request->year > 0) {
@@ -74,6 +76,8 @@ class AssignmentController extends CollegeBaseController
             }else{
                 $data['assignment'] = Assignment::select('id', 'created_by', 'last_updated_by', 'years_id', 'semesters_id', 'subjects_id', 'publish_date',
                     'end_date', 'title', 'description', 'file', 'status')
+                    ->with('semester')
+                    ->with('subject_data')
                     ->where(function ($query) use ($request) {
                         if ($request->year && $request->year > 0) {
                             $query->where('years_id', '=', $request->year);
@@ -107,6 +111,8 @@ class AssignmentController extends CollegeBaseController
                 $id = auth()->user()->id;
                 $data['assignment'] = Assignment::select('id', 'created_by', 'last_updated_by', 'years_id', 'semesters_id', 'subjects_id', 'publish_date',
                     'end_date', 'title', 'description', 'file', 'status')
+                    ->with('semester')
+                    ->with('subject_data')
                     ->where('created_by',$id)
                     ->latest()
                     ->limit(50)
@@ -114,6 +120,8 @@ class AssignmentController extends CollegeBaseController
             }else {
                 $data['assignment'] = Assignment::select('id', 'created_by', 'last_updated_by', 'years_id', 'semesters_id', 'subjects_id', 'publish_date',
                     'end_date', 'title', 'description', 'file', 'status')
+                    ->with('semester')
+                    ->with('subject_data')
                     ->latest()
                     ->limit(50)
                     ->get();
@@ -133,7 +141,7 @@ class AssignmentController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
@@ -334,26 +342,18 @@ class AssignmentController extends CollegeBaseController
         $response['error'] = true;
 
         if ($request->has('faculty_id')) {
-            $faculty = Faculty::select('faculties.id','faculties.faculty', 'faculties.slug', 'faculties.status','fs.semester_id','fs.faculty_id')
-                ->where('faculties.id','=',$request->faculty_id)
-                ->join('faculty_semester as fs', 'faculties.id', '=', 'fs.faculty_id')
-                ->join('semesters as s', 'fs.semester_id', '=', 's.id')
-                ->first();
-
+            $faculty = Faculty::find($request->get('faculty_id'));
             if ($faculty) {
-
                 $response['semester'] = $faculty->semester()->select('semesters.id', 'semesters.semester')->get();
-
                 $response['error'] = false;
                 $response['success'] = 'Semester/Sec. Available For This Faculty/Class.';
             } else {
                 $response['error'] = 'No Any Semester Assign on This Faculty/Class.';
             }
-
         } else {
             $response['message'] = 'Invalid request!!';
         }
-        return response()->json(json_encode($response));
+        return response()->json($response);
     }
 
     public function findSubject(Request $request)
@@ -382,7 +382,7 @@ class AssignmentController extends CollegeBaseController
             $response['error'] = 'No Any Subject Found. Please Contact Your Administrator.';
         }
 
-        return response()->json(json_encode($response));
+        return response()->json($response);
     }
 
 

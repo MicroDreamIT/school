@@ -90,6 +90,10 @@
                 type: Boolean,
                 default: () => false
             },
+            jsonVariableSet:{
+                type:Array,
+                default:()=>[]
+            },
             tableHeader: {
                 type: String,
                 default: () => 'Data List'
@@ -133,9 +137,12 @@
             transferSection: {
                 type: Boolean,
                 default: () => false
+            },
+            returnedValue:{
+                type:Array,
+                default:()=>[]
             }
         },
-
         data() {
             return {
 
@@ -154,8 +161,9 @@
         methods: {
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
-                    this.item = res.data.room_type;
-                    this.doSerialize()
+                    this.item = res.data[this.jsonVariableSet[0]];
+                    this.$emit('get-return-value',this.item)
+                    this.mainItem=this.returnedValue
                 });
 
             },

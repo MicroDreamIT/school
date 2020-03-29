@@ -106,6 +106,7 @@ import dataTable from './views/custom/component/table/data-table'
 import owDataTable from './views/custom/component/table/ow-data-table'
 
 Vue.component('data-table', dataTable);
+Vue.component('data-table-final', require('./views/custom/component/table/data-table-final').default);
 Vue.component('draggable', draggable);
 Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);

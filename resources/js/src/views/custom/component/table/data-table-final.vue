@@ -85,14 +85,20 @@
                             </vs-td>
                             <vs-td v-if="showAction">
                                 <div class="action-own">
+                                    <a class="btn btn-primary btn-sm pointer-all"
+                                       title="View"
+                                       @click.stop="viewItems(tr.id)"
+                                    >
+                                        <i class="fa fa-eye"></i>
+                                    </a>
                                     <a class="btn btn-success btn-sm pointer-all"
                                        title="Edit"
-                                       @click.stop="editItems(item.id, item.status)">
+                                       @click.stop="editItems(tr.id)">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a class="btn btn-danger btn-sm pointer-all"
                                        title="Delete"
-                                       @click.stop="deleteItems(item.id)">
+                                       @click.stop="deleteItems(tr.id)">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                                 </div>
@@ -179,6 +185,10 @@
             showAction:{
                 type:Boolean,
                 default:()=>true
+            },
+            model:{
+                type:String,
+                default:()=>''
             }
         },
         data() {
@@ -197,15 +207,20 @@
 
         methods: {
             changeStatus(id, status){
-                console.log(id, status)
                 let stat = status === 'active' ? 'in-active' : 'active'
                 this.$http.get(this.url + '/' + id + '/' + stat).then(res => {
                     this.getData()
                     this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
                 })
             },
-            viewItems(id){},
-            editItems(id, status){},
+            viewItems(id){
+                this.$router.push('/' + this.model + '/' + id + '/' + 'view')
+            },
+            editItems(id){
+                console.log(id)
+                // this.$router.push({name: 'studentView', params: {id: id}})
+                this.$router.push({path:'/' + this.model + '/' + id + '/' + 'edit'})
+            },
             deleteItems(id){},
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {

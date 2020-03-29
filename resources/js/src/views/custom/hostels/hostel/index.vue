@@ -55,6 +55,7 @@
                                               :tableHeader="'Room Type List'"
                                               :suggestText="'Room type Record list on table. Filter room type using the filter.'"
                                               :url="'/json/hostel'"
+                                              :model="'hostel'"
                                               :noDataMessage="'No room type data found. Please Filter room type to show.'"
                                               :hasSearch="true"
                                               :has-multiple="true"

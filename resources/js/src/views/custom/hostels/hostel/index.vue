@@ -34,26 +34,9 @@
                             </router-link>
                         </div>
                         <div class="col-md-12">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Hostel List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Hostel Record list on table. Filter Hostel using the filter.
-                            </div>
                             <data-table-final :headers="headers"
-                                              :tableHeader="'Room Type List'"
-                                              :suggestText="'Room type Record list on table. Filter room type using the filter.'"
+                                              :tableHeader="'Hostel List'"
+                                              :suggestText="'Hostel Record list on table. Filter room type using the filter.'"
                                               :url="'/json/hostel'"
                                               :model="'hostel'"
                                               :noDataMessage="'No room type data found. Please Filter room type to show.'"
@@ -102,10 +85,10 @@
                 returnedValue: [],
                 headers: [
                     {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Rooms', field:'rooms', sort_key:'rooms'},
-                    {name:'Beds', field:'beds', sort_key:'beds'},
-                    {name:'Available Bed', field:'available_bed', sort_key:'available_bed'},
-                    {name:'Occupied Bed', field:'occupied_bed', sort_key:'occupied_bed'},
+                    {name: 'Rooms', field:'rooms', sort_key:''},
+                    {name:'Beds', field:'beds', sort_key:''},
+                    {name:'Available Bed', field:'available_bed', sort_key:''},
+                    {name:'Occupied Bed', field:'occupied_bed', sort_key:''},
                     {name: 'status', field: 'status'},
                     {name: 'Action', sort_key: ''},
                 ],

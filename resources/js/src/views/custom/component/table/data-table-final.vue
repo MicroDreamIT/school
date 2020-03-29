@@ -221,7 +221,19 @@
                 // this.$router.push({name: 'studentView', params: {id: id}})
                 this.$router.push({path:'/' + this.model + '/' + id + '/' + 'edit'})
             },
-            deleteItems(id){},
+            deleteItems(id){
+                var confirms = confirm('are you sure?')
+                if(!confirms) return null
+
+                this.$http.get(this.url + '/' + id + '/delete')
+                    .then(res=>{
+                        this.getData()
+                        this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'danger'})
+                    })
+                    .catch(err=>{
+
+                    })
+            },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.ajaxVariableSet[0]];

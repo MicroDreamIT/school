@@ -4,22 +4,7 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Days Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
@@ -27,7 +12,7 @@
                         <div class="col-md-4">
                             <h4>
                                 <i class="fa fa-search"></i>
-                                Create Day</h4>
+                                Update Day</h4>
                             <br>
                             <div class="form-group row">
                                 <label class="col-md-4">Title</label>
@@ -47,7 +32,7 @@
                                            type="filled"
                                            class="my-round"
                                            @click.prevent="submit"
-                                >Create
+                                >Update
                                 </vs-button>
                             </div>
                         </div>
@@ -186,20 +171,23 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data.days;
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.title=res.data.row.title;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                 })
             },
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
+                        this.$http.post(this.url +'/'+this.$route.params.id+'/update', {
                             title: this.title,
+                            display_class:this.display_class
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.title = '';
+                            this.display_class = '';
                             this.getData();
                             this.$validator.reset()
                         })

@@ -24,7 +24,7 @@ class StudentBatchController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['batches'] = StudentBatch::select('id', 'title', 'status')->get();
+        $data['data'] = StudentBatch::select('id', 'title', 'status')->get();
         return response()->json($data);
     }
 
@@ -43,7 +43,7 @@ class StudentBatchController extends CollegeBaseController
         if (!$data['row'] = StudentBatch::find($id))
             return parent::invalidRequest();
 
-        $data['student-batch'] = StudentBatch::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['data'] = StudentBatch::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);

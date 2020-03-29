@@ -24,7 +24,7 @@ class DayController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['days'] = Day::select('id', 'title', 'status')->get();
+        $data['data'] = Day::select('id', 'title', 'status')->get();
         return response()->json($data);
     }
 
@@ -43,7 +43,7 @@ class DayController extends CollegeBaseController
         if (!$data['row'] = Day::find($id))
             return parent::invalidRequest();
 
-        $data['days'] = Day::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['data'] = Day::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);

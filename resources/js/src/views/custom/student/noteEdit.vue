@@ -88,7 +88,7 @@
                                 <br>
                                 <h4 class="header large lighter blue">
                                     <i class="fa fa-search" aria-hidden="true"></i>
-                                    Create Student Notes
+                                    Update Student Notes
                                 </h4><br>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Reg No</label>
@@ -112,7 +112,7 @@
                                 <hr>
                                 <button class="btn btn-info waves-effect waves-light">
                                     <i class="fa fa-save bigger-110"></i>
-                                    Create
+                                    Update
                                 </button>
                             </div>
                             <div class="col-md-8"><br>

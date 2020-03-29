@@ -37,7 +37,7 @@ class ExamController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by' => auth()->user()->id]);
 
         Exam::create($request->all());
 
@@ -59,9 +59,9 @@ class ExamController extends CollegeBaseController
     public function update(EditValidation $request, $id)
     {
 
-        if (!$row = Exam::find($id)) return parent::invalidRequest();
+        if (!$row = Exam::find($id)) return response()->json(['danger',' No Data.']);
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
 
         $row->update($request->all());
 
@@ -142,7 +142,7 @@ class ExamController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id.' '.$this->panel.'In-Active Successfully.']);
+        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function admitCard(Request $request)

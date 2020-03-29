@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12 mb-2">
+        <div class="row ">
+            <div class="col-md-12">
                 <h2 class="pageTitle">Exams Manager</h2>
             </div>
             <div class="col-md-12">
@@ -26,87 +26,70 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
-                </div>
-            </div>
-            <vs-divider class="mx-3"/>
+            <notify-bar/>
+            <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
-                    <div class="row p-2">
-                        <div class="col-md-12 row">
-                            <div class="col-md-4">
-                                <br>
-                                <h4 class="header large lighter blue">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                    Create Exams
-                                </h4><br>
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Exam</label>
-                                    <div class="col-sm-9">
-                                        <vs-input v-model="title" class="w-100"/>
-                                    </div>
-                                </div>
-
-                                <vs-divider/>
-                                <button class="btn btn-info waves-effect waves-light">
-                                    <i class="fa fa-save bigger-110"></i>
-                                    Create
-                                </button>
-                            </div>
-                            <div class="col-md-8"><br>
-
-                                <ow-data-table :headers="tableHeader"
-                                               :tableHeader="'Exams List'"
-                                               :url="'/json/student/'"
-                                               :noDataMessage="'No Exams data found. Please Filter Exams to show.'"
-                                               :has-search="true"
-                                               :has-multiple="true"
-                                               :has-pagination="true"
-                                               :suggestText="'Exams Record list on table. Filter Exams using the filter.'"
+                    <div class="row p-4">
+                        <div class="col-md-4">
+                            <h4>
+                                <i class="fa fa-search"></i>
+                                Update Exams</h4>
+                            <br>
+                            <div class="form-group row">
+                                <label class="col-md-4">Title</label>
+                                <vs-input class="col-md-8"
+                                          v-model="title"
+                                          placeholder=""
+                                          v-validate="'required'"
+                                          data-vv-name="title"
+                                          :danger="errors.first('title')?true:false"
+                                          :danger-text="errors.first('title')"
                                 >
-                                    <template slot="items" slot-scope="props">
-                                        <vs-td :data="props.data.reg_no">
-                                            <a @click.stop="viewItems(props.data.id)"
-                                               class="pointer-all text-primary"
-                                               title="View"
+
+                                </vs-input>
+                            </div>
+                            <div>
+                                <vs-button color="#00b8cf"
+                                           type="filled"
+                                           class="my-round"
+                                           @click.prevent="submit"
+                                >Update
+                                </vs-button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <ow-data-table :headers="tableHeader"
+                                           :tableHeader="'Exams List'"
+                                           :suggestText="'Exams Record list on table. Filter Exams using the filter.\n'"
+                                           :url="url"
+                                           :noDataMessage="'No Exams data found. Please filter Exams to show.'"
+                                           :hasSearch="true"
+                                           :has-multiple="true"
+                                           :has-pagination="true"
+                                           :main-item="mainItem"
+                                           :getData="getData"
+                            >
+                                <template slot="items" slot-scope="props">
+                                    <vs-td :data="props.data.title">
+                                        {{props.data.title}}
+                                    </vs-td>
+
+                                    <vs-td>
+                                        <div class="d-flex flex-wrap">
+                                            <vs-switch color="success"
+                                                       :checked="props.data.status=='active'?true:false"
+                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
+                                                       class="pointer-all ml-2"
                                             >
-                                                {{props.data.reg_no}}
-                                            </a>
+                                                <span slot="on">Active</span>
+                                                <span slot="off">In-Active</span>
+                                            </vs-switch>
+                                        </div>
+                                    </vs-td>
 
-                                        </vs-td>
-
-                                        <vs-td>
-                                            {{props.data.note}}
-                                        </vs-td>
-
-                                        <vs-td>
-                                            <div class="d-flex">
-                                                {{props.data.academic_status}}
-                                                <vs-switch color="success"
-                                                           :checked="props.data.status=='active'?true:false"
-                                                           @click.stop="changeStatus(props.data.id)"
-                                                           class="pointer-all ml-2"
-                                                >
-                                                    <span slot="on">Active</span>
-                                                    <span slot="off">In-Active</span>
-                                                </vs-switch>
-                                            </div>
-                                        </vs-td>
-
-                                        <vs-td>
+                                    <vs-td>
+                                        <div class="action-own">
                                             <a class="btn btn-success btn-sm pointer-all"
                                                title="Edit"
                                                @click.stop="editItems(props.data.id)">
@@ -114,57 +97,147 @@
                                             </a>
                                             <a class="btn btn-danger btn-sm pointer-all"
                                                title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
+                                               @click.stop="deletePopModal(props.data.id)">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
-                                        </vs-td>
-                                    </template>
-                                </ow-data-table>
-                            </div>
+                                        </div>
+                                    </vs-td>
+                                </template>
+
+
+                                <template slot="printSection" slot-scope="printData">
+                                    <thead>
+                                    <tr>
+                                        <th>SN.No.</th>
+                                        <th>
+                                            Exams
+                                        </th>
+                                        <th>
+                                            Status
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(tr, idx) in printData.data">
+                                        <td>
+                                            {{printData.data.indexOf(tr)+1}}
+                                        </td>
+                                        <td>
+                                            {{tr.title}}
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span v-if="tr.status=='active'" class="p-2 ">Active</span>
+                                                <span v-else class="p-2">In-Active</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </template>
+                            </ow-data-table>
                         </div>
                     </div>
+
                 </vs-card>
             </div>
         </div>
+        <vs-popup class="holamundo"
+                  :title="'Delete Confirmation'"
+                  :active.sync="deletePop">
+            <div class="mt-3">
+                <p class="p-2 my-round delete-pop-text">These items will be permanently deleted and cannot be
+                    recovered.</p>
 
+                <p><i class="p-2 ace-icon fa fa-hand-o-right"></i>Are you sure?</p>
+            </div>
+
+            <div class="footer-modal">
+                <vs-button class="smBtn"
+                           @click="deletePop=false, deleteItem= null">
+                    <i class="fa fa-close"></i>
+                    Cancel
+                </vs-button>
+                <vs-button class="smBtn" color="danger" @click="deletePop=false, deleteItems()">
+                    <i class="fa fa-trash"></i>
+                    Yes,Delete Now!
+                </vs-button>
+            </div>
+        </vs-popup>
     </div>
 </template>
 
 <script>
 
     export default {
-
         data() {
             return {
-
+                searchData: {},
                 tableHeader: [
-                    {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Student Notes'},
+                    {name: 'Exams', sort_key: 'title'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
-				notification:'',
-				note:{}
+                title: '',
+                items: [],
+                mainItem: [],
+                deletePop: false,
+                deleteItem: null,
+                url: '/json/exam',
             }
         },
+        created() {
+            this.getData()
+        },
+
         methods: {
-            viewItems(id) {
-                this.$router.push({name: 'studentView', params: {id: id}})
+            getData() {
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.title=res.data.row.title;
+                    this.items = res.data.exams;
+                    this.mainItem = this.items;
+                })
             },
-            editItems() {
-                alert("hey hasib im edit ")
+            submit() {
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        this.$http.post(this.url +'/'+this.$route.params.id+ '/update', {
+                            title: this.title,
+                        }).then(res => {
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.title = '';
+                            this.getData();
+                            this.$validator.reset()
+                        })
+                    }
+                })
+            },
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active';
+                let url = '/json/exam/' + id + '/' + stat;
+                this.$http.get(url).then(res => {
+                    this.getData();
+                    this.$root.notification.status = res.data[0];
+                    this.$root.notification.message = res.data[1]
+                })
+
+            },
+            editItems(id) {
+                this.$router.push({name: 'examEdit', params: {id: id}})
+            },
+            deletePopModal(id) {
+                this.deleteItem = id;
+                this.deletePop = true
             },
             deleteItems() {
-                alert("hey hasib im delete ")
-            },
-            changeStatus() {
-
+                this.$http.get('/json/exam/' + this.deleteItem + '/delete').then(res => {
+                    this.getData();
+                    this.$root.notification.status = res.data[0];
+                    this.$root.notification.message = res.data[1]
+                })
             },
         }
-
     }
-
-
 </script>
 
 <style scoped>

@@ -4,29 +4,14 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Grading Scale Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-5">
                             <br>
-                            <h4><i class="fa fa-search"></i>Create Grading Scale</h4><br>
+                            <h4><i class="fa fa-search"></i>Update Grading Scale</h4><br>
                             <div class="form-group  row">
                                 <label class="col-md-2">Title</label>
                                 <vs-input class="col-md-10"
@@ -120,7 +105,7 @@
                                        class="my-round"
                                        @click="submit"
                             >
-                                <i class="fa fa-save bigger-110"></i> Create
+                                <i class="fa fa-save bigger-110"></i> Update
                             </vs-button>
                         </div>
                         <div class="col-md-7">
@@ -279,8 +264,8 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data.grading;
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                 })
             },
@@ -288,7 +273,7 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
+                        this.$http.post(this.url+'/'+this.$route.params.id+'/update', {
                             title: this.title,
                             name: this.gradeList.map(d => {
                                 return d.name

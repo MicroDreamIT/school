@@ -52,7 +52,7 @@
                         <div class="col-md-4">
                             <h4 class="header large lighter blue">
                                 <i class="fa fa-search" aria-hidden="true"></i>
-                                Create Circulation
+                                Update Circulation
                             </h4><br>
                             <div class="form-group">
                                 <label>User Type</label>
@@ -87,7 +87,7 @@
                             <vs-divider></vs-divider>
                             <button class="btn btn-info waves-effect waves-light">
                                 <i class="fa fa-save bigger-110"></i>
-                                Create
+                                Update
                             </button>
 
                         </div>

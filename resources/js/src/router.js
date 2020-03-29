@@ -670,6 +670,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/exam/:id/edit',
+                    name: 'examEdit',
+                    component: () => import('./views/custom/examination/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/exam/schedule',
                     name: 'exam.schedule',
                     component: () => import('./views/custom/examination/schedule'),

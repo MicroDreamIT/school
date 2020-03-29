@@ -28,7 +28,7 @@ class SemesterController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['semester'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
+        $data['data'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
             ->orderBy('semester')
             ->with('staff')
             ->with('gradingType')
@@ -68,7 +68,7 @@ class SemesterController extends CollegeBaseController
             return response()->json($data);
            else{$data['row']=Semester::with('staff','gradingType','subjects')->find($id);}
 
-        $data['semester'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
+        $data['data'] = Semester::select('id', 'semester', 'staff_id', 'gradingType_id', 'status')
             ->orderBy('semester')
             ->with('staff')
             ->with('gradingType')

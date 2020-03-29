@@ -4,22 +4,7 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Grading Scale Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
@@ -280,7 +265,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.grading;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                 })
             },

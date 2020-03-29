@@ -24,7 +24,7 @@ class SubjectController extends CollegeBaseController
     public function index()
     {
        $data = [];
-       $data['subject'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
+       $data['data'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
            'full_mark_practical', 'pass_mark_practical', 'credit_hour', 'sub_type', 'class_type', 'staff_id',
            'description','status')
             ->with('staff')
@@ -51,7 +51,7 @@ class SubjectController extends CollegeBaseController
         if (!$data['row'] = Subject::find($id))
             return parent::invalidRequest();
 
-        $data['subject'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
+        $data['data'] = Subject::select('id', 'title', 'code', 'full_mark_theory', 'pass_mark_theory',
             'full_mark_practical', 'pass_mark_practical', 'credit_hour', 'sub_type', 'class_type', 'staff_id',
             'description','status')
             ->with('staff')

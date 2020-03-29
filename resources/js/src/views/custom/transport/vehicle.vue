@@ -19,7 +19,7 @@
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-4">
-                            <h4>Create Vehicle</h4><br>
+                            <h4>Update Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
                                 <vs-input class="col-sm-9"></vs-input>

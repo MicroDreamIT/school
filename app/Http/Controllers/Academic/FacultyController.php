@@ -26,7 +26,7 @@ class FacultyController extends CollegeBaseController
     {
         //semester,id,gradingType_id
        $data = [];
-       $data['faculty'] = Faculty::select('id', 'faculty','faculty_code', 'status')
+       $data['data'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')
             ->with('semester')
             ->get();
@@ -64,7 +64,7 @@ class FacultyController extends CollegeBaseController
         if (!$data['row'] = Faculty::find($id))
             return parent::invalidRequest();
 
-        $data['faculty'] = Faculty::select('id', 'faculty','faculty_code', 'status')
+        $data['data'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')
             ->get();
 

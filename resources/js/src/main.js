@@ -111,6 +111,7 @@ Vue.component('ow-data-table', owDataTable);
 Vue.component('student-table', require('./views/custom/component/table/student-table').default);
 Vue.component('roomtype-table', require('./views/custom/component/table/roomtype-table').default);
 Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
+Vue.component('notify-bar', require('./views/custom/component/notification/notification').default);
 import Datepicker from 'vuejs-datepicker';
 
 Vue.component('datepicker', Datepicker);

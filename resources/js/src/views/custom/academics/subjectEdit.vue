@@ -4,27 +4,12 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Course Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-5">
-                            <h4><i class="fa fa-search"></i> Create Course</h4><br>
+                            <h4><i class="fa fa-search"></i> Update Course</h4><br>
                             <div class="form-group  row">
                                 <label class="col-md-2">Subject</label>
                                 <vs-input class="col-md-10"
@@ -174,7 +159,7 @@
                                        type="filled"
                                        class="my-round"
                                        @click.prevent="submit"
-                            >Create
+                            >Update
                             </vs-button>
                         </div>
                         <div class="col-md-7">

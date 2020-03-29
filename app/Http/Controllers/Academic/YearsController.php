@@ -24,7 +24,7 @@ class YearsController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['years'] = Year::select('id', 'title', 'status')->get();
+        $data['data'] = Year::select('id', 'title', 'status')->get();
         return response()->json($data);
     }
 
@@ -43,7 +43,7 @@ class YearsController extends CollegeBaseController
         if (!$data['row'] = Year::find($id))
             return parent::invalidRequest();
 
-        $data['years'] = Year::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['data'] = Year::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);

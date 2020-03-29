@@ -23,7 +23,7 @@ class MonthsController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['months'] = Month::select('id', 'title', 'status')->get();
+        $data['data'] = Month::select('id', 'title', 'status')->get();
         return response()->json($data);
     }
 
@@ -42,7 +42,7 @@ class MonthsController extends CollegeBaseController
         if (!$data['row'] = Month::find($id))
             return parent::invalidRequest();
 
-        $data['months'] = Month::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['data'] = Month::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);

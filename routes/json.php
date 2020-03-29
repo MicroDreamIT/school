@@ -66,6 +66,53 @@ Route::group(['prefix' => 'student/', 'as' => 'student', 'namespace' => 'Student
     Route::post('public-registration.register', ['as' => '.public-registration.register', 'uses' => 'StudentPublicController@register']);
 
 });
+/*Exam group */
+Route::group(['prefix' => 'exam/', 'as' => 'exam', 'namespace' => 'Examination\\'], function () {
+
+    /*Exam Types Routes*/
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,exam-index'], 'uses' => 'ExamController@index']);
+    Route::post('store', ['as' => '.store', 'middleware' => ['ability:super-admin,exam-add'], 'uses' => 'ExamController@store']);
+    Route::get('{id}/edit', ['as' => '.edit', 'middleware' => ['ability:super-admin,exam-edit'], 'uses' => 'ExamController@edit']);
+    Route::post('{id}/update', ['as' => '.update', 'middleware' => ['ability:super-admin,exam-edit'], 'uses' => 'ExamController@update']);
+    Route::get('{id}/delete', ['as' => '.delete', 'middleware' => ['ability:super-admin,exam-delete'], 'uses' => 'ExamController@delete']);
+    Route::get('{id}/active', ['as' => '.active', 'middleware' => ['ability:super-admin,exam-active'], 'uses' => 'ExamController@Active']);
+    Route::get('{id}/in-active', ['as' => '.in-active', 'middleware' => ['ability:super-admin,exam-in-active'], 'uses' => 'ExamController@inActive']);
+    Route::post('bulk-action', ['as' => '.bulk-action', 'middleware' => ['ability:super-admin,exam-bulk-action'], 'uses' => 'ExamController@bulkAction']);
+
+    /*Exam Print Routes*/
+    Route::get('admit-card', ['as' => '.admit-card', 'middleware' => ['ability:super-admin,exam-admit-card'], 'uses' => 'ExamController@admitCard']);
+    Route::get('routine', ['as' => '.routine', 'middleware' => ['ability:super-admin,exam-exam-routine'], 'uses' => 'ExamController@examRoutine']);
+    Route::get('mark-sheet', ['as' => '.mark-sheet', 'middleware' => ['ability:super-admin,exam-mark-ledger'], 'uses' => 'ExamController@markSheet']);
+
+
+    //result publish status
+    Route::get('schedule/{year}/{month}/{exam}/{faculty}/{semester}/result-publish', ['as' => '.schedule.result-publish', 'middleware' => ['ability:super-admin,exam-result-publish'], 'uses' => 'ExamScheduleController@publish']);
+    Route::get('schedule/{year}/{month}/{exam}/{faculty}/{semester}/result-un-publish', ['as' => '.schedule.result-un-publish', 'middleware' => ['ability:super-admin,exam-result-un-publish'], 'uses' => 'ExamScheduleController@unPublish']);
+
+    /*Exam Schedule Routes*/
+    Route::get('schedule', ['as' => '.schedule', 'middleware' => ['ability:super-admin,exam-schedule-index'], 'uses' => 'ExamScheduleController@index']);
+    Route::get('schedule/add', ['as' => '.schedule.add', 'middleware' => ['ability:super-admin,exam-schedule-add'], 'uses' => 'ExamScheduleController@add']);
+    Route::post('schedule/store', ['as' => '.schedule.store', 'middleware' => ['ability:super-admin,exam-schedule-add'], 'uses' => 'ExamScheduleController@store']);
+    Route::get('schedule/{id}/edit', ['as' => '.schedule.edit', 'middleware' => ['ability:super-admin,exam-schedule-edit'], 'uses' => 'ExamScheduleController@edit']);
+    Route::post('schedule/{id}/update', ['as' => '.schedule.update', 'middleware' => ['ability:super-admin,exam-schedule-edit'], 'uses' => 'ExamScheduleController@update']);
+    Route::get('schedule/{year}/{month}/{exam}/{faculty}/{semester}/delete', ['as' => '.schedule.delete', 'middleware' => ['ability:super-admin,exam-schedule-delete'], 'uses' => 'ExamScheduleController@delete']);
+    Route::get('schedule/{year}/{month}/{exam}/{faculty}/{semester}/active', ['as' => '.schedule.active', 'middleware' => ['ability:super-admin,exam-schedule-active'], 'uses' => 'ExamScheduleController@active']);
+    Route::get('schedule/{year}/{month}/{exam}/{faculty}/{semester}/in-active', ['as' => '.schedule.in-active', 'middleware' => ['ability:super-admin,exam-schedule-in-active'], 'uses' => 'ExamScheduleController@inActive']);
+    Route::post('schedule/subject-html', ['as' => '.schedule.subject-html', 'uses' => 'ExamScheduleController@subjectHtmlRow']);
+
+    /*Exam Schedule Routes*/
+    Route::get('mark-ledger', ['as' => '.mark-ledger', 'middleware' => ['ability:super-admin,exam-mark-ledger-index'], 'uses' => 'ExamMarkLedgerController@index']);
+    Route::get('mark-ledger/add', ['as' => '.mark-ledger.add', 'middleware' => ['ability:super-admin,exam-mark-ledger-add'], 'uses' => 'ExamMarkLedgerController@add']);
+    Route::post('mark-ledger/store', ['as' => '.mark-ledger.store', 'middleware' => ['ability:super-admin,exam-mark-ledger-add'], 'uses' => 'ExamMarkLedgerController@store']);
+    Route::get('mark-ledger/{id}/edit', ['as' => '.mark-ledger.edit', 'middleware' => ['ability:super-admin,exam-mark-ledger-edit'], 'uses' => 'ExamMarkLedgerController@edit']);
+    Route::post('mark-ledger/{id}/update', ['as' => '.mark-ledger.update', 'middleware' => ['ability:super-admin,exam-mark-ledger-edit'], 'uses' => 'ExamMarkLedgerController@update']);
+    Route::get('mark-ledger/{exam}/{student}/delete', ['as' => '.mark-ledger.delete', 'middleware' => ['ability:super-admin,exam-mark-ledger-delete'], 'uses' => 'ExamMarkLedgerController@delete']);
+    Route::get('mark-ledger/{exam}/{student}/active', ['as' => '.mark-ledger.active', 'middleware' => ['ability:super-admin,exam-mark-ledger-active'], 'uses' => 'ExamMarkLedgerController@active']);
+    Route::get('mark-ledger/{exam}/{student}/in-active', ['as' => '.mark-ledger.in-active', 'middleware' => ['ability:super-admin,exam-mark-ledger-in-acctive'], 'uses' => 'ExamMarkLedgerController@inActive']);
+    Route::post('mark-ledger/find-subject', ['as' => '.mark-ledger.find-subject', 'uses' => 'ExamMarkLedgerController@findSubject']);
+    Route::post('mark-ledger/student-html', ['as' => '.mark-ledger.student-html', 'uses' => 'ExamMarkLedgerController@studentHtmlRow']);
+
+});
 
 /*Extra Features Grouping */
 /*Assignment Grouping */

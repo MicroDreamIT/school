@@ -4,22 +4,7 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Months Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
@@ -27,7 +12,7 @@
                         <div class="col-md-4">
                             <h4>
                                 <i class="fa fa-search"></i>
-                                Create Month</h4>
+                                Update Month</h4>
                             <br>
                             <div class="form-group row">
                                 <label class="col-md-4">Title</label>
@@ -47,7 +32,7 @@
                                            type="filled"
                                            class="my-round"
                                            @click.prevent="submit"
-                                >Create
+                                >Update
                                 </vs-button>
                             </div>
                         </div>

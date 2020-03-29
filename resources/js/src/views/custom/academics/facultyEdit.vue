@@ -4,28 +4,13 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Faculty/Level/Class Manager</h2>
             </div>
-            <div class="col-md-12" v-if="$root.notification.status">
-                <div role="alert"
-                     :class="`mt-2 alert alert-${$root.notification.status} alert-dismissible display-block`"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.emptyNotification()"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification.message}}
-                </div>
-            </div>
+            <notify-bar/>
             <vs-divider class="mx-3"></vs-divider>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-4"><br>
-                            <h4><i class="fa fa-search"></i> Create Faculty/Level/Class</h4><br>
+                            <h4><i class="fa fa-search"></i> Update Faculty/Level/Class</h4><br>
                             <div class="form-group">
                                 <label>Faculty/Class</label>
                                 <vs-input
@@ -73,7 +58,7 @@
                                        class="my-round"
                                        @click="submit"
                             >
-                                Create
+                                Update
                             </vs-button>
                         </div>
                         <div class="col-md-8"><br>
@@ -165,17 +150,16 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data.faculty;
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                     this.semester = res.data.semester;
-                    console.log(this.mainItem)
                 })
             },
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
+                        this.$http.post(this.url+'/'+this.$route.params.id+'/update', {
                             semester: this.faculty.semester,
                             faculty: this.faculty.faculty,
                             faculty_code: this.faculty.faculty_code

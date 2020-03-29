@@ -24,7 +24,7 @@ class GradingController extends CollegeBaseController
     public function index()
     {
        $data = [];
-       $data['grading'] = GradingType::select('id', 'title', 'status')
+       $data['data'] = GradingType::select('id', 'title', 'status')
             ->with('gradingScale')
             ->orderBy('title')
             ->get();
@@ -64,7 +64,7 @@ class GradingController extends CollegeBaseController
         if (!$data['row'] = GradingType::find($id))
             return parent::invalidRequest();
 
-        $data['grading'] = GradingType::select('id', 'title', 'status')
+        $data['data'] = GradingType::select('id', 'title', 'status')
             ->orderBy('title')
             ->get();
 

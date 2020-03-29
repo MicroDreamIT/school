@@ -24,7 +24,7 @@ class PaymentMethodController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['payment_method'] = PaymentMethod::select('id', 'title', 'status')->get();
+        $data['data'] = PaymentMethod::select('id', 'title', 'status')->get();
         return response()->json($data);
     }
 
@@ -43,7 +43,7 @@ class PaymentMethodController extends CollegeBaseController
         if (!$data['row'] = PaymentMethod::find($id))
             return parent::invalidRequest();
 
-        $data['payment_method'] = PaymentMethod::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['data'] = PaymentMethod::select('id', 'title', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);

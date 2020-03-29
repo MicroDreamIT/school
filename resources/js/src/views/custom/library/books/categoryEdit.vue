@@ -80,7 +80,7 @@
                             <br>
                             <h4 class="header large lighter blue">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
-                                Create Book Category
+                                Update Book Category
                             </h4><br>
                             <div class="form-group  ">
                                 <label class="col-sm-3 ">Title</label>
@@ -92,7 +92,7 @@
                             <hr>
                             <button class="btn btn-primary " type="submit">
                                 <i class="fa fa-save "></i>
-                                Create
+                                Update
                             </button>
                         </div>
                         <div class="col-md-8"><br>

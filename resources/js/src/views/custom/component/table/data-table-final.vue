@@ -53,7 +53,7 @@
                         :multiple="hasMultiple"
                         :max-items="maxItem"
                         :search="hasSearch"
-                        :data="mainItem"
+                        :data="this.$store.state.tableData"
                         :noDataText="noDataMessage"
                         description
                         description-title="Showing"
@@ -90,7 +90,7 @@
                 type: Boolean,
                 default: () => false
             },
-            jsonVariableSet: {
+            ajaxVariableSet: {
                 type: Array,
                 default: () => []
             },
@@ -161,7 +161,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
-                    this.item = res.data[this.jsonVariableSet[0]];
+                    this.item = res.data[this.ajaxVariableSet[0]];
                     this.$emit('get-return-value', this.item)
                 });
 

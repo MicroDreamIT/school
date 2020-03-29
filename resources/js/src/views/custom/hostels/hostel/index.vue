@@ -61,10 +61,8 @@
                                               :has-pagination="true"
                                               :filterSection="true"
                                               ref="dataTable"
-                                              :jsonVariableSet="['hostel']"
+                                              :ajaxVariableSet="['hostel']"
                                               @get-return-value="GetReturnValue"
-                                              :returnedValue="returnedValue"
-                                              v-if="totalReturnedValue"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td :data="props.data.name">
@@ -130,10 +128,12 @@
                     return{
                         id:st.id,
                         name: st.name,
-                        status:st.status
+                        status:st.status,
+                        sst:'sdf'
                     }
                 });
-                return val
+
+                this.$store.dispatch('updateTableData',val)
             },
 
         }

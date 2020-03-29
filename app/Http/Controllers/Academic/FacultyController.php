@@ -66,6 +66,7 @@ class FacultyController extends CollegeBaseController
 
         $data['data'] = Faculty::select('id', 'faculty','faculty_code', 'status')
             ->orderBy('faculty')
+            ->with('semester')
             ->get();
 
         $data['semester'] = Semester::select('id', 'semester')
@@ -75,7 +76,7 @@ class FacultyController extends CollegeBaseController
         $data['active_semester'] = $data['row']->semester()->pluck('semesters.semester', 'semesters.id')->toArray();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -86,10 +87,10 @@ class FacultyController extends CollegeBaseController
 
         $faculty = $row->update($request->all());
 
-        if($faculty){
+        if ($faculty) {
             $semesters = [];
-            if($request->get('semester')){
-                foreach ($request->get('semester') as $semester){
+            if ($request->get('semester')) {
+                foreach ($request->get('semester') as $semester) {
                     $semesters[$semester] = [
                         'faculty_id' => $row->id,
                         'semester_id' => $semester
@@ -101,8 +102,7 @@ class FacultyController extends CollegeBaseController
         }
 
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)

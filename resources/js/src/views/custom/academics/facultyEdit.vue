@@ -43,7 +43,7 @@
                                 <div class="d-flex">
                                     <vs-checkbox
                                             class="flex-1"
-                                            v-model="faculty.semester"
+                                            v-model="active_semester"
                                             :vs-value="sem.id"
                                             v-for="sem in semester"
                                             :key="sem.id"
@@ -153,6 +153,8 @@
                 this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
                     this.items = res.data.data;
                     this.mainItem = this.items;
+                    this.active_semester = Object.keys(res.data.active_semester).map(Number);
+                    this.faculty = res.data.row;
                     this.semester = res.data.semester;
                 })
             },
@@ -160,13 +162,13 @@
                 this.$validator.validateAll().then(value => {
                     if (value) {
                         this.$http.post(this.url+'/'+this.$route.params.id+'/update', {
-                            semester: this.faculty.semester,
+                            semester: this.faculty.active_semester,
                             faculty: this.faculty.faculty,
                             faculty_code: this.faculty.faculty_code
                         }).then(res => {
-                            this.$root.notification.status = res.data[0]
-                            this.$root.notification.message = res.data[1]
-                            this.faculty= {faculty:'',faculty_code:'',semester: []}
+                            this.$root.notification.status = res.data[0];
+                            this.$root.notification.message = res.data[1];
+                            this.faculty= {faculty:'',faculty_code:'',semester: []};
                             this.getData()
                         })
                     }

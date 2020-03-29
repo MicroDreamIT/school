@@ -90,9 +90,9 @@
                 type: Boolean,
                 default: () => false
             },
-            jsonVariableSet:{
-                type:Array,
-                default:()=>[]
+            jsonVariableSet: {
+                type: Array,
+                default: () => []
             },
             tableHeader: {
                 type: String,
@@ -138,9 +138,9 @@
                 type: Boolean,
                 default: () => false
             },
-            returnedValue:{
-                type:Array,
-                default:()=>[]
+            returnedValue: {
+                type: Array,
+                default: () => []
             }
         },
         data() {
@@ -162,8 +162,7 @@
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.jsonVariableSet[0]];
-                    this.$emit('get-return-value',this.item)
-                    this.mainItem=this.returnedValue
+                    this.$emit('get-return-value', this.item)
                 });
 
             },
@@ -173,7 +172,7 @@
 
             doActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post(this.url+ '/bulk-action', {
+                    this.$http.post(this.url + '/bulk-action', {
                         bulk_action: 'active',
                         chkIds: this.selected.map(val => {
                             return val.id
@@ -200,7 +199,7 @@
             },
             doInActive() {
                 if (this.selected.length > 0) {
-                    this.$http.post(this.url+'/bulk-action', {
+                    this.$http.post(this.url + '/bulk-action', {
                         bulk_action: 'in-active',
                         chkIds: this.selected.map(val => {
                             return val.id

@@ -52,22 +52,23 @@
                                 Hostel Record list on table. Filter Hostel using the filter.
                             </div>
                             <data-table-final :headers="headers"
-                                            :tableHeader="'Room Type List'"
-                                            :suggestText="'Room type Record list on table. Filter room type using the filter.'"
-                                            :url="'/json/hostel'"
-                                            :noDataMessage="'No room type data found. Please Filter room type to show.'"
-                                            :hasSearch="true"
-                                            :has-multiple="true"
-                                            :has-pagination="true"
-                                            :filterSection="true"
-                                            ref="dataTable"
-                                            :jsonVariableSet="['hostel']"
+                                              :tableHeader="'Room Type List'"
+                                              :suggestText="'Room type Record list on table. Filter room type using the filter.'"
+                                              :url="'/json/hostel'"
+                                              :noDataMessage="'No room type data found. Please Filter room type to show.'"
+                                              :hasSearch="true"
+                                              :has-multiple="true"
+                                              :has-pagination="true"
+                                              :filterSection="true"
+                                              ref="dataTable"
+                                              :jsonVariableSet="['hostel']"
                                               @get-return-value="GetReturnValue"
                                               :returnedValue="returnedValue"
+                                              v-if="totalReturnedValue"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.title">
-                                        {{props.data.title}}
+                                    <vs-td :data="props.data.name">
+                                        {{props.data.name}}
                                     </vs-td>
                                     <vs-td>
                                         <div class="d-flex flex-wrap">
@@ -102,7 +103,7 @@
                             </data-table-final>
                         </div>
                     </div>
-    
+
                 </vs-card>
             </div>
         </div>
@@ -115,20 +116,24 @@
         data() {
             return {
                 searchData: {},
-                returnedValue:[],
+                returnedValue: [],
                 headers: [
                     {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                    {name: 'status', field: 'status'},
                 ],
             }
         },
 
-        methods:{
-            GetReturnValue(arg=null){
-                return arg.map(st=>{
-                    console.log(st)
+        methods: {
+            GetReturnValue(arg = null) {
+                let val =  arg.map(st => {
+                    return{
+                        id:st.id,
+                        name: st.name,
+                        status:st.status
+                    }
                 });
+                return val
             },
 
         }

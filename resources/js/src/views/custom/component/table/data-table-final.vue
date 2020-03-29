@@ -66,12 +66,42 @@
                         </vs-th>
                     </template>
                     <template slot-scope="{data}">
-                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                            <vs-td>{{$store.state.tableData.indexOf(tr)+1}}</vs-td>
+                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in $store.state.tableData">
+                            <vs-td>{{idx+1}}</vs-td>
                             <slot name="items" v-bind:data="tr">
                             </slot>
+                            <vs-td v-if="showStatus">
+                                <div class="d-flex flex-wrap">
+                                    {{tr.status}}
+                                    <vs-switch color="success"
+                                               :checked="tr.status==='active'"
+                                               @click.stop="changeStatus(tr.id,tr.status)"
+                                               class="pointer-all ml-2"
+                                    >
+                                        <span slot="on">Active</span>
+                                        <span slot="off">In-Active</span>
+                                    </vs-switch>
+                                </div>
+                            </vs-td>
+                            <vs-td v-if="showAction">
+                                <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(item.id, item.status)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(item.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
                         </vs-tr>
+
                     </template>
+
+
 
                 </vs-table>
             </div>
@@ -141,6 +171,14 @@
             returnedValue: {
                 type: Array,
                 default: () => []
+            },
+            showStatus:{
+                type:Boolean,
+                default:()=>true
+            },
+            showAction:{
+                type:Boolean,
+                default:()=>true
             }
         },
         data() {
@@ -158,6 +196,17 @@
         },
 
         methods: {
+            changeStatus(id, status){
+                console.log(id, status)
+                let stat = status === 'active' ? 'in-active' : 'active'
+                this.$http.get(this.url + '/' + id + '/' + stat).then(res => {
+                    this.getData()
+                    this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                })
+            },
+            viewItems(id){},
+            editItems(id, status){},
+            deleteItems(id){},
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.ajaxVariableSet[0]];

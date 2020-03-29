@@ -77,35 +77,9 @@
                                     <vs-td :data="props.data.available_bed">
                                         {{props.data.available_bed}}
                                     </vs-td>
-
-                                    <vs-td :data="props.data.status">
-                                        <div class="d-flex flex-wrap">
-                                            {{props.data.status}}
-                                            <vs-switch color="success"
-                                                       :checked="props.data.status=='active'?true:false"
-                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
-                                                       class="pointer-all ml-2"
-                                            >
-                                                <span slot="on">Active</span>
-                                                <span slot="off">In-Active</span>
-                                            </vs-switch>
-                                        </div>
+                                    <vs-td :data="props.data.occupied_bed">
+                                        {{props.data.occupied_bed}}
                                     </vs-td>
-                                    <vs-td>
-                                        <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id, props.data.title)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
-
 
                                 </template>
                             </data-table-final>
@@ -133,7 +107,6 @@
                     {name:'Occupied Bed', field:'occupied_bed', sort_key:'occupied_bed'},
                     {name: 'status', field: 'status'},
                     {name: 'Action', sort_key: ''},
-
                 ],
             }
         },

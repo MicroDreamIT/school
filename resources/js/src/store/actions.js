@@ -23,6 +23,10 @@ const actions = {
       commit('UPDATE_STARRED_PAGE', payload)
     },
 
+    updateTableData({commit}, payload){
+        commit('UPDATE_TABLE_DATA', payload)
+    },
+
     // The Navbar
     arrangeStarredPagesLimited({ commit }, list) {
       commit('ARRANGE_STARRED_PAGES_LIMITED', list)

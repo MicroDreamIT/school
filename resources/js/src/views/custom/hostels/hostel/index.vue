@@ -51,34 +51,67 @@
                             <div class="table-header">
                                 Hostel Record list on table. Filter Hostel using the filter.
                             </div>
-                            <data-table :headers="tableHeader"
-                                        :url="'/student'"
-                                        :no-data-message="'No Hostel data found. Please Filter Hostel to show.'"
-                                        :searchField="searchData"
-                                        :hasSearch="true"
-                                        :has-multiple="true"
+                            <data-table-final :headers="headers"
+                                              :tableHeader="'Room Type List'"
+                                              :suggestText="'Room type Record list on table. Filter room type using the filter.'"
+                                              :url="'/json/hostel'"
+                                              :noDataMessage="'No room type data found. Please Filter room type to show.'"
+                                              :hasSearch="true"
+                                              :has-multiple="true"
+                                              :has-pagination="true"
+                                              :filterSection="true"
+                                              ref="dataTable"
+                                              :ajaxVariableSet="['hostel']"
+                                              @get-return-value="GetReturnValue"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
-                                        {{props.data.email}}
+                                    <vs-td :data="props.data.name">
+                                        {{props.data.name}}
                                     </vs-td>
-                        
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
+                                    <vs-td :data="props.data.rooms">
+                                        {{props.data.rooms}}
                                     </vs-td>
-                        
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
+                                    <vs-td :data="props.data.beds">
+                                        {{props.data.beds}}
                                     </vs-td>
-                        
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
+                                    <vs-td :data="props.data.available_bed">
+                                        {{props.data.available_bed}}
                                     </vs-td>
+
+                                    <vs-td :data="props.data.status">
+                                        <div class="d-flex flex-wrap">
+                                            {{props.data.status}}
+                                            <vs-switch color="success"
+                                                       :checked="props.data.status=='active'?true:false"
+                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
+                                                       class="pointer-all ml-2"
+                                            >
+                                                <span slot="on">Active</span>
+                                                <span slot="off">In-Active</span>
+                                            </vs-switch>
+                                        </div>
+                                    </vs-td>
+                                    <vs-td>
+                                        <div class="action-own">
+                                            <a class="btn btn-success btn-sm pointer-all"
+                                               title="Edit"
+                                               @click.stop="editItems(props.data.id, props.data.title)">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm pointer-all"
+                                               title="Delete"
+                                               @click.stop="deleteItems(props.data.id)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </div>
+                                    </vs-td>
+
+
                                 </template>
-                            </data-table>
+                            </data-table-final>
                         </div>
                     </div>
-    
+
                 </vs-card>
             </div>
         </div>
@@ -91,16 +124,36 @@
         data() {
             return {
                 searchData: {},
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
+                returnedValue: [],
+                headers: [
                     {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                    {name: 'Rooms', field:'rooms', sort_key:'rooms'},
+                    {name:'Beds', field:'beds', sort_key:'beds'},
+                    {name:'Available Bed', field:'available_bed', sort_key:'available_bed'},
+                    {name:'Occupied Bed', field:'occupied_bed', sort_key:'occupied_bed'},
+                    {name: 'status', field: 'status'},
+                    {name: 'Action', sort_key: ''},
+
                 ],
             }
         },
 
-        methods:{
+        methods: {
+            GetReturnValue(arg = null) {
+                let val =  arg.map(st => {
+                    return{
+                        id:st.id,
+                        name: st.name,
+                        rooms:st.rooms.length,
+                        beds:st.beds.length,
+                        available_bed:_.pullAllBy(st.beds,['bed_status',1]).length,
+                        occupied_bed:_.pullAllBy(st.beds,['bed_status',2]).length,
+                        status:st.status
+                    }
+                });
+
+                this.$store.dispatch('updateTableData',val)
+            },
 
         }
     }

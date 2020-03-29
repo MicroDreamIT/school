@@ -8,6 +8,7 @@ class Hostel extends BaseModel
 {
     protected $fillable = ['created_by', 'last_updated_by', 'name', 'type', 'address', 'contact_detail', 'warden',
                             'warden_contact','description', 'status'];
+    protected $with = ['rooms', 'beds'];
 
     public function rooms()
     {
@@ -18,4 +19,5 @@ class Hostel extends BaseModel
     {
         return $this->hasMany(Bed::class, 'hostels_id');
     }
+
 }

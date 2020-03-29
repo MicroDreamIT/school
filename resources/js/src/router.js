@@ -824,6 +824,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/hostel/:id/edit', // @@ 11
+                    name: 'hostel.edit',
+                    component: () => import('./views/custom/hostels/hostel/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/hostel/room-type',
                     name: 'hostel.roomType',
                     component: () => import('./views/custom/hostels/hostel/room-type'),

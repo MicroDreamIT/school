@@ -28,7 +28,7 @@ class HostelController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['hostel'] = Hostel::with(['rooms', 'beds'])->select('id', 'name', 'status')->get();
+        $data['hostel'] = Hostel::select('id', 'name', 'status')->get();
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;

@@ -416,21 +416,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -910,50 +895,7 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _vm.$root.notification.status
-          ? _c("div", { staticClass: "col-md-12" }, [
-              _c(
-                "div",
-                {
-                  class:
-                    "mt-2 alert alert-" +
-                    _vm.$root.notification.status +
-                    " alert-dismissible display-block",
-                  attrs: { role: "alert" }
-                },
-                [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "close",
-                      attrs: {
-                        type: "button",
-                        "data-dismiss": "alert",
-                        "aria-label": "Close"
-                      },
-                      on: {
-                        click: function($event) {
-                          return _vm.$root.emptyNotification()
-                        }
-                      }
-                    },
-                    [
-                      _c("span", { attrs: { "aria-hidden": "true" } }, [
-                        _vm._v("×")
-                      ])
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c("i", { staticClass: "ace-icon fa fa-hand-o-right" }),
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(_vm.$root.notification.message) +
-                      "\n            "
-                  )
-                ]
-              )
-            ])
-          : _vm._e(),
+        _c("notify-bar"),
         _vm._v(" "),
         _c("vs-divider", { staticClass: "mx-3" }),
         _vm._v(" "),

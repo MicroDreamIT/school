@@ -407,7 +407,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.subject;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                     this.staff = this.$root.objectToArray(res.data.staff);
                 })

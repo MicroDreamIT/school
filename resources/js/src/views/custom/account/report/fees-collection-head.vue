@@ -72,7 +72,7 @@
         components: {
 
         },
-        name: "payment-method",
+
         data() {
             return {
                 searchData: {},

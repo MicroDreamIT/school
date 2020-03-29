@@ -229,7 +229,7 @@
 
 <script>
     export default {
-        components: {},
+
         data() {
             return {
                 selectedStudent: null,

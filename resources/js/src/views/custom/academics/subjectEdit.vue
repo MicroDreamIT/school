@@ -406,8 +406,8 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data.subject;
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                     this.staff = this.$root.objectToArray(res.data.staff);
                 })
@@ -416,7 +416,7 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', this.subject).then(res => {
+                        this.$http.post(this.url +'/'+this.$route.params.id+'/update', this.subject).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.subject = {};

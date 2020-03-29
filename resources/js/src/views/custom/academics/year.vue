@@ -147,8 +147,8 @@
 <script>
 
     export default {
-        components: {},
-        name: "payment-method",
+
+
         data() {
             return {
                 searchData: {},
@@ -172,7 +172,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.years;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                 })
             },

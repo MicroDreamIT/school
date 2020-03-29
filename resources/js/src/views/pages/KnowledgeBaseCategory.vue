@@ -224,7 +224,7 @@ export default{
     computed: {
     },
     methods: {},
-    components: {},
+
     mounted() {
         this.$emit('changeRouteTitle', 'Category');
     }

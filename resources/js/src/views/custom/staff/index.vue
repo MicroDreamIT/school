@@ -206,7 +206,7 @@
 
 <script>
     export default {
-        components: {},
+
         data() {
             return {
                 staffHeader: [

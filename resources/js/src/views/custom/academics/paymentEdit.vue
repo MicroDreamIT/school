@@ -147,8 +147,8 @@
 <script>
 
     export default {
-        components: {},
-        name: "payment-method",
+
+
         data() {
             return {
                 searchData: {},
@@ -171,20 +171,23 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
-                    this.items = res.data.payment_method;
+                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.title=res.data.row.title;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                 })
             },
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
+                        this.$http.post(this.url +'/'+this.$route.params.id+'/update', {
                             title: this.title,
+                            display_class:this.display_class
                         }).then(res => {
                             this.$root.notification.status = res.data[0];
                             this.$root.notification.message = res.data[1];
                             this.title = '';
+                            this.display_class = '';
                             this.getData();
                             this.$validator.reset()
                         })

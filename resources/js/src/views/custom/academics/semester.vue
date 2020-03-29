@@ -278,8 +278,8 @@
 <script>
 
     export default {
-        components: {},
-        name: "payment-method",
+
+
         data() {
             return {
                 searchData: {},
@@ -309,7 +309,7 @@
         methods: {
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.semester;
+                    this.items = res.data.data;
                     this.mainItem = this.items;
                     this.staff = this.$root.objectToArray(res.data.staff);
                     this.gradingScales = res.data.gradingScales;

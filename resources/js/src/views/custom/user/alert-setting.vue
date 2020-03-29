@@ -95,8 +95,8 @@
 <script>
 
     export default {
-        components: {},
-        name: "payment-method",
+
+
         data() {
             return {
                 tableHeader: [

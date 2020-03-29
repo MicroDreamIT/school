@@ -194,7 +194,7 @@ export default{
         window.print()
       }
     },
-    components: {},
+
     mounted() {
       this.$emit("setAppClasses", "invoice-page")
     }

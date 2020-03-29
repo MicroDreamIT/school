@@ -68,7 +68,17 @@
                                     <vs-td :data="props.data.name">
                                         {{props.data.name}}
                                     </vs-td>
-                                    <vs-td>
+                                    <vs-td :data="props.data.rooms">
+                                        {{props.data.rooms}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.beds">
+                                        {{props.data.beds}}
+                                    </vs-td>
+                                    <vs-td :data="props.data.available_bed">
+                                        {{props.data.available_bed}}
+                                    </vs-td>
+
+                                    <vs-td :data="props.data.status">
                                         <div class="d-flex flex-wrap">
                                             {{props.data.status}}
                                             <vs-switch color="success"
@@ -117,7 +127,13 @@
                 returnedValue: [],
                 headers: [
                     {name: 'Name', field: 'name', sort_key: 'name'},
+                    {name: 'Rooms', field:'rooms', sort_key:'rooms'},
+                    {name:'Beds', field:'beds', sort_key:'beds'},
+                    {name:'Available Bed', field:'available_bed', sort_key:'available_bed'},
+                    {name:'Occupied Bed', field:'occupied_bed', sort_key:'occupied_bed'},
                     {name: 'status', field: 'status'},
+                    {name: 'Action', sort_key: ''},
+
                 ],
             }
         },
@@ -128,8 +144,11 @@
                     return{
                         id:st.id,
                         name: st.name,
-                        status:st.status,
-                        sst:'sdf'
+                        rooms:st.rooms.length,
+                        beds:st.beds.length,
+                        available_bed:_.pullAllBy(st.beds,['bed_status',1]).length,
+                        occupied_bed:_.pullAllBy(st.beds,['bed_status',2]).length,
+                        status:st.status
                     }
                 });
 

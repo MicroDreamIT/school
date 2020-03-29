@@ -53,7 +53,7 @@
                         :multiple="hasMultiple"
                         :max-items="maxItem"
                         :search="hasSearch"
-                        :data="this.$store.state.tableData"
+                        :data="$store.state.tableData"
                         :noDataText="noDataMessage"
                         description
                         description-title="Showing"
@@ -67,7 +67,7 @@
                     </template>
                     <template slot-scope="{data}">
                         <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                            <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
+                            <vs-td>{{$store.state.tableData.indexOf(tr)+1}}</vs-td>
                             <slot name="items" v-bind:data="tr">
                             </slot>
                         </vs-tr>
@@ -151,7 +151,6 @@
                 searchData: {},
                 item: [],
                 designation: [],
-                mainItem: [],
             }
         },
         created() {
@@ -220,8 +219,12 @@
                             alert(err.response.message)
                         })
                 } else {
-                    this.$root.notification.status = 'error'
-                    this.$root.notification.message = 'select at least one'
+                    this.$vs.notify({
+                        title: 'error',
+                        text: 'select at least one',
+                        color: 'error',
+                        icon: 'verified_user'
+                    })
                 }
             },
             doCopy() {
@@ -239,15 +242,7 @@
             doDelete() {
                 alert('doing Delete')
             },
-            doSerialize() {
-                this.mainItem = this.item.map(st => {
-                    return {
-                        id: st.id,
-                        title: st.title,
-                        status: st.status,
-                    }
-                })
-            },
+
 
 
         }

@@ -19,7 +19,7 @@ import Print from 'vue-print-nb'
 import moment from 'moment'
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable'
-
+window._ = require('lodash')
 Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework

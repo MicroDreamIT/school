@@ -77,16 +77,6 @@
                             </div>
 
                         </div>
-<!--                        <div class="row">-->
-<!--                            <div class="col-md-4">-->
-<!--                                <label>Total Room</label>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-8">-->
-<!--                                <input class="form-control" v-model="forms.rooms" type="number" min="0" required>-->
-<!--                                <p v-if="error.rooms!==undefined" class="text-danger">{{ error.rooms[0] }}</p>-->
-<!--                                <p></p>-->
-<!--                            </div>-->
-<!--                        </div>-->
 
                     </div>
                     <div class="col-md-6">
@@ -133,15 +123,6 @@
                                 <p></p>
                             </div>
                         </div>
-<!--                        <div class="row">-->
-<!--                            <span class="col-md-4">Room Type</span>-->
-<!--                            <div class="col-md-8">-->
-<!--                                <select v-model="forms.room_type" class="form-control" required>-->
-<!--                                    <option :value="room.id" v-for="room in room_types">{{room.value}}</option>-->
-<!--                                </select>-->
-<!--                                <p v-if="error.room_type!==undefined" class="text-danger">{{ error.room_type[0] }}</p>-->
-<!--                            </div>-->
-<!--                        </div>-->
                     </div>
                     <vs-divider class="mx-3"></vs-divider>
                     <div class="row mx-0">

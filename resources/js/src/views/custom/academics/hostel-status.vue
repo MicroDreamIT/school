@@ -42,6 +42,7 @@
                             </h4>
                             <br>
                             <div class="form-group row">
+                                <input type="hidden" v-model="id">
                                 <label class="col-md-4">Title</label>
                                 <vs-input class="col-md-8"
                                           v-model="title"
@@ -50,6 +51,7 @@
                                           data-vv-name="title"
                                           :danger="errors.first('title')?true:false"
                                           :danger-text="errors.first('title')"
+                                          ref="title"
                                 >
 
                                 </vs-input>
@@ -59,7 +61,7 @@
                                            type="filled"
                                            class="my-round"
                                            @click.prevent="submit"
-                                >Create
+                                >{{submitText}}
                                 </vs-button>
                             </div>
                         </div>
@@ -183,12 +185,14 @@
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
-                title: '',
+                title:'',
+                id:null,
                 items: [],
                 mainItem: [],
                 deletePop: false,
                 deleteItem: null,
                 url: '/json/bed-status',
+                submitText:'Create'
             }
         },
         created() {
@@ -205,15 +209,26 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
-                            title: this.title,
-                        }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
-                            this.title = '';
-                            this.getData();
-                            this.$validator.reset()
-                        })
+                        if(this.id) {
+                            this.$http.post(this.url + '/' +this.id + '/update', {title:this.title, id:this.id})
+                                .then(res=>{
+                                    this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                                    this.title=''
+                                    this.id = null
+                                    this.getData()
+                                })
+                        }else{
+                            this.$http.post(this.url + '/store', {
+                                title: this.title,
+                            }).then(res => {
+                                this.$root.notification.status = res.data[0];
+                                this.$root.notification.message = res.data[1];
+                                this.title = '';
+                                this.getData();
+                                this.$validator.reset()
+                            })
+                        }
+
                     }
                 })
             },
@@ -228,7 +243,13 @@
 
             },
             editItems(id) {
-                this.$router.push({name: 'hostelStatusEdit', params: {id: id}})
+                let item = this.mainItem.filter(it=>{
+                    return it.id===id
+                })[0]
+
+                this.title = item.title
+                this.id = item.id
+                this.submitText = 'update'
             },
             deletePopModal(id) {
                 this.deleteItem = id;

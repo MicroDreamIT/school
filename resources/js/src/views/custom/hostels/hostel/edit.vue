@@ -40,7 +40,6 @@
                                 <label>Hostel</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="hidden" v-model="forms.id">
                                 <input v-model="forms.name" class="form-control"  required>
                                 <p v-if="error.name!==undefined" class="text-danger">{{ error.name[0] }}</p>
                                 <p></p>
@@ -189,10 +188,10 @@
 
                 this.$http.post('/json/hostel/' + this.$route.params.id + '/update',this.forms)
                     .then(res => {
-                        console.log(res.status)
                         if(res.status===200){
-                            this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
                             this.forms={}
+                            if(arg!=='reset') this.$router.push({path:'/hostel'})
+                            this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
                         }
 
                     })

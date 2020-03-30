@@ -87,12 +87,14 @@ class HostelController extends CollegeBaseController
     {
 
         if (!$row = Hostel::find($id)) return parent::invalidRequest();
+//        return $row;
+        $request->merge(['last_updated_by' => auth()->id()]);
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+//        dd($request->except(['rooms', 'beds']));
 
         $row->update($request->all());
 
-        return response()->json(['success',$$this->panel.' Updated Successfully.']);
+        return response()->json( ['success', $this->panel.'Hostel has been updated Successfully.'] );
 
     }
 

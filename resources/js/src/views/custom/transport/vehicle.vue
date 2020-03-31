@@ -42,13 +42,13 @@
                                           :options="stuffs"
                                           :filterable="false"
                                           @search="searchStuff"
-                                          label="text"
+                                          label="fullname"
                                           multiple
+                                          v-model="selected"
                                 >
                                 </v-select>
                             </div>
                             <vs-divider></vs-divider>
-                            <vs-button class="vs-component vs-button smBtn vs-button-primary vs-button-filled">Add Staff</vs-button>
                             <br>
                             <table class="table mt-4">
                                 <thead>
@@ -58,17 +58,14 @@
                                     </tr>
                                 </thead>
                                <tbody>
-                                   <tr>
-                                       <td></td>
-                                       <td></td>
+                                   <tr v-for="(item, index) in selected" :key="index">
+                                       <td>{{item.fullname}}</td>
+                                       <td>{{item.designations.title}}</td>
                                    </tr>
                                </tbody>
                             </table>
                             <vs-divider></vs-divider>
-                            <vs-button color="#00b8cf"
-                                       type="filled"
-                                       class="my-round">{{buttonText}}
-                            </vs-button>
+                            <vs-button @click="posting()">submit</vs-button>
                         </div>
                         <div class="col-md-8">
                             <h4 class="header large lighter blue">
@@ -130,6 +127,7 @@
                 searchData: {},
                 forms:{},
                 stuffs:[],
+                selected:[],
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
@@ -150,7 +148,10 @@
                     })
             },
             posting(){
-
+                this.forms.stuffs_id = []
+                this.selected.map(st=>{
+                    this.forms.stuffs_id.push(st.id)
+                })
             }
         }
     }

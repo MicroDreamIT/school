@@ -33,6 +33,7 @@ class VehicleController extends CollegeBaseController
     {
         $request->request->add(['created_by' => auth()->user()->id]);
         $vehicle =  Vehicle::create($request->all());
+        $staffIds = [];
         if ($request->has('staffs_id')) {
             foreach ($request->get('staffs_id') as $staff) {
                 $staffIds = $staff;
@@ -184,21 +185,15 @@ class VehicleController extends CollegeBaseController
         if ($request->has('q')) {
             $param = $request->get('q');
 
-            $staffs = Staff::select('id', 'first_name',  'middle_name', 'last_name')
-                    ->where(function ($query) use($param){
+            $staffs = Staff::where(function ($query) use($param){
                         $query->where('first_name', 'like', '%'.$param.'%')
                             ->orwhere('middle_name', 'like', '%'.$param.'%')
                             ->orwhere('last_name', 'like', '%'.$param.'%');
                     })
-                    ->get();
+                    ->take(10)->get();
 
-            $response = [];
-            foreach ($staffs as $staff) {
-                $response[] = ['id' => $staff->id, 'text' => $staff->first_name.' '.$staff->middle_name.' '.
-                                $staff->last_name];
-            }
 
-            return $response;
+            return response()->json($staffs);
         }
 
         abort(501);

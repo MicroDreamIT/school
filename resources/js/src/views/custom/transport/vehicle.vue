@@ -42,6 +42,8 @@
                                           :options="stuffs"
                                           :filterable="false"
                                           @search="searchStuff"
+                                          label="text"
+                                          multiple
                                 >
                                 </v-select>
                             </div>
@@ -140,7 +142,12 @@
 
         methods:{
             searchStuff(search, loading){
-                this.$http.get('/')
+                loading(true)
+                this.$http.get('/json/transport/staff-autocomplete?q='+search)
+                    .then(res=>{
+                        this.stuffs = res.data
+                        if(this.stuffs.length>0) loading(false)
+                    })
             },
             posting(){
 

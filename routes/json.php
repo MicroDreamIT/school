@@ -526,3 +526,46 @@ Route::group(['prefix' => 'hostel/', 'as' => 'hostel', 'namespace' => 'Hostel\\'
     Route::get('food/eating-time/{id}/in-active', ['as' => '.food.eating-time.in-active', 'middleware' => ['ability:super-admin,eating-time-in-acctive'], 'uses' => 'EatingTimeController@inActive']);
     Route::post('food/eating-time/bulk-action', ['as' => '.food.eating-time.bulk-action', 'middleware' => ['ability:super-admin,eating-time-bulk-action'], 'uses' => 'EatingTimeController@bulkAction']);
 });
+
+Route::group(['prefix' => 'transport/', 'as' => 'transport', 'namespace' => 'Transport\\'], function () {
+
+    /*Room Types Routes*/
+    Route::get('route', ['as' => '.route', 'middleware' => ['ability:super-admin,transport-route-index'], 'uses' => 'RouteController@index']);
+    Route::post('route/store', ['as' => '.route.store', 'middleware' => ['ability:super-admin,transport-route-add'], 'uses' => 'RouteController@store']);
+    Route::get('route/{id}/edit', ['as' => '.route.edit', 'middleware' => ['ability:super-admin,transport-route-edit'], 'uses' => 'RouteController@edit']);
+    Route::post('route/{id}/update', ['as' => '.route.update', 'middleware' => ['ability:super-admin,transport-route-edit'], 'uses' => 'RouteController@update']);
+    Route::get('route/{id}/delete', ['as' => '.route.delete', 'middleware' => ['ability:super-admin,transport-route-delete'], 'uses' => 'RouteController@delete']);
+    Route::get('route/{id}/active', ['as' => '.route.active', 'middleware' => ['ability:super-admin,transport-route-active'], 'uses' => 'RouteController@Active']);
+    Route::get('route/{id}/in-active', ['as' => '.route.in-active', 'middleware' => ['ability:super-admin,transport-route-in-active'], 'uses' => 'RouteController@inActive']);
+    Route::post('route/bulk-action', ['as' => '.route.bulk-action', 'middleware' => ['ability:super-admin,transport-route-bulk-action'], 'uses' => 'RouteController@bulkAction']);
+    Route::post('route/vehicle-html', ['as' => '.route.vehicle-html', 'uses' => 'RouteController@vehicleHtmlRow']);
+    Route::get('vehicle-autocomplete', ['as' => '.vehicle-autocomplete', 'uses' => 'RouteController@vehicleAutocomplete']);
+
+    /*Room Types Routes*/
+    Route::get('vehicle', ['as' => '.vehicle', 'middleware' => ['ability:super-admin,vehicle-index'], 'uses' => 'VehicleController@index']);
+    Route::post('vehicle/store', ['as' => '.vehicle.store', 'middleware' => ['ability:super-admin,vehicle-add'], 'uses' => 'VehicleController@store']);
+    Route::get('vehicle/{id}/edit', ['as' => '.vehicle.edit', 'middleware' => ['ability:super-admin,vehicle-edit'], 'uses' => 'VehicleController@edit']);
+    Route::post('vehicle/{id}/update', ['as' => '.vehicle.update', 'middleware' => ['ability:super-admin,vehicle-edit'], 'uses' => 'VehicleController@update']);
+    Route::get('vehicle/{id}/delete', ['as' => '.vehicle.delete', 'middleware' => ['ability:super-admin,vehicle-delete'], 'uses' => 'VehicleController@delete']);
+    Route::get('vehicle/{id}/active', ['as' => '.vehicle.active', 'middleware' => ['ability:super-admin,vehicle-active'], 'uses' => 'VehicleController@Active']);
+    Route::get('vehicle/{id}/in-active', ['as' => '.vehicle.in-active', 'middleware' => ['ability:super-admin,vehicle-in-active'], 'uses' => 'VehicleController@inActive']);
+    Route::post('vehicle/bulk-action', ['as' => '.vehicle.bulk-action', 'middleware' => ['ability:super-admin,vehicle-bulk-action'], 'uses' => 'VehicleController@bulkAction']);
+    Route::post('vehicle/staff-html', ['as' => '.vehicle.staff-html', 'uses' => 'VehicleController@staffHtmlRow']);
+    Route::get('staff-autocomplete', ['as' => '.staff-autocomplete', 'uses' => 'VehicleController@staffAutocomplete']);
+
+    /*Travellers Routes*/
+    Route::get('user', ['as' => '.user', 'middleware' => ['ability:super-admin,transport-user-index'], 'uses' => 'TransportUserController@index']);
+    Route::get('user/add', ['as' => '.user.add', 'middleware' => ['ability:super-admin,transport-user-add'], 'uses' => 'TransportUserController@add']);
+    Route::post('user/store', ['as' => '.user.store', 'middleware' => ['ability:super-admin,transport-user-add'], 'uses' => 'TransportUserController@store']);
+    Route::get('user/quick-register', ['as' => '.user.quick-register', 'middleware' => ['ability:super-admin,transport-user-add'], 'uses' => 'TransportUserController@quickRegister']);
+    Route::get('user/{id}/edit', ['as' => '.user.edit', 'middleware' => ['ability:super-admin,transport-user-edit'], 'uses' => 'TransportUserController@edit']);
+    Route::post('user/{id}/update', ['as' => '.user.update', 'middleware' => ['ability:super-admin,transport-user-edit'], 'uses' => 'TransportUserController@update']);
+    Route::get('user/{id}/delete', ['as' => '.user.delete', 'middleware' => ['ability:super-admin,transport-user-delete'], 'uses' => 'TransportUserController@delete']);
+    Route::post('user/bulk-action', ['as' => '.user.bulk-action', 'middleware' => ['ability:super-admin,transport-user-bulk-action'], 'uses' => 'TransportUserController@bulkAction']);
+    Route::post('user/renew', ['as' => '.user.renew', 'middleware' => ['ability:super-admin,transport-user-renew'], 'uses' => 'TransportUserController@renew']);
+    Route::get('user/{id}/leave', ['as' => '.user.leave', 'middleware' => ['ability:super-admin,transport-user-leave'], 'uses' => 'TransportUserController@leave']);
+    Route::post('user/shift', ['as' => '.user.shift', 'middleware' => ['ability:super-admin,transport-user-shift'], 'uses' => 'TransportUserController@shift']);
+    Route::get('user/history', ['as' => '.user.history', 'middleware' => ['ability:super-admin,transport-user-history'], 'uses' => 'TransportUserController@history']);
+    Route::post('find-vehicles', ['as' => '.find-vehicles', 'uses' => 'TransportUserController@findVehicles']);
+
+});

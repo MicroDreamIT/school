@@ -184,7 +184,7 @@ class VehicleController extends CollegeBaseController
         if ($request->has('q')) {
             $param = $request->get('q');
 
-            $staffs = Staff::select('id', 'first_name',  'middle_name', 'last_name')
+            $staffs = Staff::select('id', 'first_name',  'middle_name', 'last_name', 'fullname')
                     ->where(function ($query) use($param){
                         $query->where('first_name', 'like', '%'.$param.'%')
                             ->orwhere('middle_name', 'like', '%'.$param.'%')
@@ -194,11 +194,11 @@ class VehicleController extends CollegeBaseController
 
             $response = [];
             foreach ($staffs as $staff) {
-                $response[] = ['id' => $staff->id, 'text' => $staff->first_name.' '.$staff->middle_name.' '.
+                $response[] = ['id' => $staff->id,'fullname'=>$staff->fullname, 'text' => $staff->first_name.' '.$staff->middle_name.' '.
                                 $staff->last_name];
             }
 
-            return json_encode($response);
+            return $response;
         }
 
         abort(501);

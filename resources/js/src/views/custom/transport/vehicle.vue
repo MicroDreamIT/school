@@ -22,7 +22,7 @@
                             <h4>{{buttonText}} Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9" v-model="forms.number" @input="upper"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.number" ></vs-input>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Type</label>
@@ -38,7 +38,12 @@
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Find Stuff & Add</label>
-                                <v-select class="col-sm-9"></v-select>
+                                <v-select class="col-sm-9"
+                                          :options="stuffs"
+                                          :filterable="false"
+                                          @search="searchStuff"
+                                >
+                                </v-select>
                             </div>
                             <vs-divider></vs-divider>
                             <vs-button class="vs-component vs-button smBtn vs-button-primary vs-button-filled">Add Staff</vs-button>
@@ -122,6 +127,7 @@
             return {
                 searchData: {},
                 forms:{},
+                stuffs:[],
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
@@ -131,17 +137,10 @@
                 buttonText:'create'
             }
         },
-        watch:{
-            'forms.number':{
-                handler: function (val) {
-                    return val.toUpperCase()
-                },
-                deep: true
-            }
-        },
+
         methods:{
-            upper(){
-                this.forms.number = this.forms.number.toUpperCase()
+            searchStuff(search, loading){
+                this.$http.get('/')
             },
             posting(){
 

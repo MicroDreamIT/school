@@ -19,29 +19,29 @@
                 <vs-card>
                     <div class="row p-4">
                         <div class="col-md-4">
-                            <h4>Update Vehicle</h4><br>
+                            <h4>{{buttonText}} Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.number"></vs-input>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Type</label>
-                                <vs-input class="col-sm-9"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.type"></vs-input>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Model</label>
-                                <vs-input class="col-sm-9"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.model"></vs-input>
                             </div>
                             <div class="form-group   mb-3">
                                 <label >Desc</label>
-                                <vs-textarea type="file" height="100px"></vs-textarea>
+                                <vs-textarea type="file" height="100px" v-model="forms.description"></vs-textarea>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Find Stuff & Add</label>
                                 <v-select class="col-sm-9"></v-select>
                             </div>
                             <vs-divider></vs-divider>
-                            <vs-buttun class="vs-component vs-button smBtn vs-button-primary vs-button-filled">Add Staff</vs-buttun>
+                            <vs-button class="vs-component vs-button smBtn vs-button-primary vs-button-filled">Add Staff</vs-button>
                             <br>
                             <table class="table mt-4">
                                 <thead>
@@ -60,7 +60,7 @@
                             <vs-divider></vs-divider>
                             <vs-button color="#00b8cf"
                                        type="filled"
-                                       class="my-round">Create
+                                       class="my-round">{{buttonText}}
                             </vs-button>
                         </div>
                         <div class="col-md-8">
@@ -121,17 +121,34 @@
         data() {
             return {
                 searchData: {},
+                forms:{},
                 tableHeader: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
                     {name: 'Mobile', field: 'mobile'},
                     {name: 'PID'},
                 ],
+                buttonText:'create'
+            }
+        },
+        watch:{
+            forms:{
+                deep:true,
+                handler: function (val) {
+                     return val.number.toUpperCase()
+                },
+            },
+        },
+        methods:{
+            posting(){
+
             }
         }
     }
 </script>
 
 <style scoped>
-
+    input#number{
+        text-transform: uppercase;
+    }
 </style>

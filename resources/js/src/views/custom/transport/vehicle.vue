@@ -22,7 +22,7 @@
                             <h4>{{buttonText}} Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9" v-model="forms.number"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.number" @input="upper"></vs-input>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Type</label>
@@ -132,14 +132,17 @@
             }
         },
         watch:{
-            forms:{
-                deep:true,
+            'forms.number':{
                 handler: function (val) {
-                     return val.number.toUpperCase()
+                    return val.toUpperCase()
                 },
-            },
+                deep: true
+            }
         },
         methods:{
+            upper(){
+                this.forms.number = this.forms.number.toUpperCase()
+            },
             posting(){
 
             }

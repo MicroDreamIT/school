@@ -31,7 +31,7 @@ class VehicleController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by'=>auth()->id()]);
         $vehicle =  Vehicle::create($request->all());
         $staffIds = [];
         if ($request->has('staffs_id')) {
@@ -40,8 +40,8 @@ class VehicleController extends CollegeBaseController
                 $vehicle->staff()->attach($staffIds);
             }
         }
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-        return redirect()->route($this->base_route);
+
+        return response()->json( ['success', $this->panel. ' Created Successfully.'] );
     }
 
     public function edit(Request $request, $id)
@@ -57,7 +57,7 @@ class VehicleController extends CollegeBaseController
         $data['vehicle'] = Vehicle::select('id', 'number', 'type', 'model', 'description', 'status')->orderBy('number')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -77,8 +77,8 @@ class VehicleController extends CollegeBaseController
             $row->staff()->sync($staffIds);
         }
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json( ['success', $this->panel. ' Created Successfully.'] );
+
     }
 
     public function delete(Request $request, $id)
@@ -89,8 +89,8 @@ class VehicleController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json( ['success', $this->panel. ' Deleted Successfully.'] );
+
     }
 
     public function bulkAction(Request $request)
@@ -117,15 +117,13 @@ class VehicleController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json( ['success', $request->get('bulk_action'). ' Action Successfully.'] );
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
-
-                return redirect()->route($this->base_route);
+                    return response()->json( ['success', 'Deleted successfully.'] );
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json( ['warning', 'Please, Check at least one row.'] );
+
             }
 
         } else return parent::invalidRequest();
@@ -140,8 +138,8 @@ class VehicleController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json( ['success', $row->semester.' '.$this->panel.' Active Successfully.'] );
+
     }
 
     public function inActive(request $request, $id)
@@ -152,8 +150,8 @@ class VehicleController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json( ['success', $row->semester.' '.$this->panel.' In-Active Successfully.'] );
+
     }
 
     public function staffHtmlRow(Request $request)

@@ -152,6 +152,13 @@
                 this.selected.map(st=>{
                     this.forms.stuffs_id.push(st.id)
                 })
+                this.$http.post('/json/transport/vehicle/store', this.forms)
+                    .then(res=>{
+                        console.log(res.data)
+                    })
+                    .catch(err=>{
+
+                    })
             }
         }
     }

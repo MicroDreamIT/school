@@ -189,7 +189,10 @@
             model:{
                 type:String,
                 default:()=>''
-            }
+            },
+            editLink:{},
+            viewLink:{},
+            deleteLink:{}
         },
         data() {
             return {
@@ -210,7 +213,7 @@
                 let stat = status === 'active' ? 'in-active' : 'active'
                 this.$http.get(this.url + '/' + id + '/' + stat).then(res => {
                     this.getData()
-                    this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
                 })
             },
             viewItems(id){
@@ -228,7 +231,7 @@
                 this.$http.get(this.url + '/' + id + '/delete')
                     .then(res=>{
                         this.getData()
-                        this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'danger'})
+                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
                     })
                     .catch(err=>{
 
@@ -238,6 +241,9 @@
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.ajaxVariableSet[0]];
                     this.$emit('get-return-value', this.item)
+                    if(!this.$store.state.tableData.length>0){
+                        this.$store.dispatch('updateTableData',this.item)
+                    }
                 });
 
             },
@@ -267,8 +273,7 @@
                             alert(err.response.message)
                         })
                 } else {
-                    this.$root.notification.status = 'error'
-                    this.$root.notification.message = 'select at least one'
+                    this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
                 }
 
             },

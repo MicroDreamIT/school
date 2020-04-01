@@ -22,15 +22,21 @@
                             <h4>{{buttonText}} Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9" v-model="forms.number" ></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.number" :danger="error.number!==undefined"></vs-input>
+                                <p v-if="error.number!==undefined" class="text-danger">{{ error.number[0] }}</p>
+                                <p></p>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Type</label>
-                                <vs-input class="col-sm-9" v-model="forms.type"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.type" :danger="error.number!==undefined"></vs-input>
+                                <p v-if="error.type!==undefined" class="text-danger">{{ error.type[0] }}</p>
+                                <p></p>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Model</label>
-                                <vs-input class="col-sm-9" v-model="forms.model"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.model" :danger="error.number!==undefined"></vs-input>
+                                <p v-if="error.model!==undefined" class="text-danger">{{ error.model[0] }}</p>
+                                <p></p>
                             </div>
                             <div class="form-group   mb-3">
                                 <label >Desc</label>
@@ -72,7 +78,7 @@
                                               :tableHeader="'Vehicle List'"
                                               :suggestText="'Vehicle Record list on table. Filter room type using the filter.'"
                                               :url="'/json/transport/vehicle'"
-                                              :model="'hostel'"
+                                              :model="'vehicle'"
                                               :noDataMessage="'No Vehicle data found. Please Filter room type to show.'"
                                               :hasSearch="true"
                                               :has-multiple="true"
@@ -83,8 +89,21 @@
                                               @get-return-value="GetReturnValue"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.detail">
-                                        <table></table>
+                                    <vs-td>
+                                        <table>
+                                            <tr>
+                                                <th>Number:</th>
+                                                <td>{{props.data.number}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Type:</th>
+                                                <td>{{props.data.type}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>model:</th>
+                                                <td>{{props.data.model}}</td>
+                                            </tr>
+                                        </table>
                                     </vs-td>
                                 </template>
                             </data-table-final>
@@ -107,6 +126,7 @@
                 forms:{},
                 stuffs:[],
                 selected:[],
+                error:[],
                 headers: [
                     {name:'detail', field:'detail'},
                     {name: 'status', field: 'status'},
@@ -121,6 +141,9 @@
                 let val =  arg.map(st => {
                     return{
                         id:st.id,
+                        number:st.number,
+                        type:st.type,
+                        model:st.model,
                         status:st.status
                     }
                 });
@@ -141,10 +164,17 @@
                 })
                 this.$http.post('/json/transport/vehicle/store', this.forms)
                     .then(res=>{
-                        console.log(res.data)
+                        if(res.status===200){
+                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$refs.dataTableVehicle.getData()
+                            this.forms={}
+                            this.selected=[]
+                        }
                     })
                     .catch(err=>{
-
+                        if(err.response){
+                            this.error = err.response.data.errors
+                        }
                     })
             }
         }

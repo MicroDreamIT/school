@@ -26,7 +26,7 @@ class VehicleController extends CollegeBaseController
     {
         $data = [];
         $data['vehicle'] = Vehicle::select('id', 'number', 'type', 'model', 'description', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)

@@ -75,7 +75,7 @@
                                     {{tr.status}}
                                     <vs-switch color="success"
                                                :checked="tr.status==='active'"
-                                               @click.stop="changeStatus(tr.id,tr.status)"
+                                               @click.stop="changeStatus(tr.id, tr.status)"
                                                class="pointer-all ml-2"
                                     >
                                         <span slot="on">Active</span>

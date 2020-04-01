@@ -68,48 +68,27 @@
                             <vs-button @click="posting()">submit</vs-button>
                         </div>
                         <div class="col-md-8">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Vehicle List</h4>
-                            <div class="clearfix mt-3">
-                                <div class="easy-link-menu">
-                                    <a class="btn-success btn-sm bulk-action-btn">
-                                        <i class="fa fa-check" aria-hidden="true"></i> Active</a>
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-remove" aria-hidden="true"></i>
-                                        In-Active</a>
-                                    <a class="btn-danger btn-sm bulk-action-btn">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Vehicle Record list on table. Filter Vehicle using the filter.
-                            </div>
-                            <data-table :headers="tableHeader"
-                                        :url="'/student'"
-                                        :no-data-message="'No Download data found. Please Filter Download to show.'"
-                                        :searchField="searchData"
-                                        :hasSearch="true"
-                                        :has-multiple="true"
+                            <data-table-final :headers="headers"
+                                              :tableHeader="'Vehicle List'"
+                                              :suggestText="'Vehicle Record list on table. Filter room type using the filter.'"
+                                              :url="'/json/transport/vehicle'"
+                                              :model="'hostel'"
+                                              :noDataMessage="'No Vehicle data found. Please Filter room type to show.'"
+                                              :hasSearch="true"
+                                              :has-multiple="true"
+                                              :has-pagination="true"
+                                              :filterSection="true"
+                                              ref="dataTableVehicle"
+                                              :ajaxVariableSet="['vehicle']"
+                                              @get-return-value="GetReturnValue"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.username" class="pointer-none">
-                                        {{props.data.email}}
-                                    </vs-td>
-                        
-                                    <vs-td :data="props.data.username">
-                                        {{props.data.username}}
-                                    </vs-td>
-                        
-                                    <vs-td :data="props.data.id">
-                                        {{props.data.website}}
-                                    </vs-td>
-                        
-                                    <vs-td :data="props.id">
-                                        {{props.data.id}}
+                                    <vs-td :data="props.data.detail">
+                                        <table></table>
                                     </vs-td>
                                 </template>
-                            </data-table>
+                            </data-table-final>
+
                         </div>
                     </div>
     
@@ -128,17 +107,25 @@
                 forms:{},
                 stuffs:[],
                 selected:[],
-                tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                headers: [
+                    {name:'detail', field:'detail'},
+                    {name: 'status', field: 'status'},
+                    {name: 'Action', sort_key: ''},
                 ],
                 buttonText:'create'
             }
         },
 
         methods:{
+            GetReturnValue(arg = null){
+                let val =  arg.map(st => {
+                    return{
+                        id:st.id,
+                        status:st.status
+                    }
+                });
+                this.$store.dispatch('updateTableData',val)
+            },
             searchStuff(search, loading){
                 loading(true)
                 this.$http.get('/json/transport/staff-autocomplete?q='+search)

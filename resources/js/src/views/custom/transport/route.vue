@@ -22,18 +22,20 @@
                             <h4>{{buttonText}} Route</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Route</label>
-                                <vs-input class="col-sm-9" v-model="forms.title" :danger="error.title!==undefined" ref="title"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.title" :danger="error.title!==undefined"
+                                          ref="title"></vs-input>
                                 <p v-if="error.title!==undefined" class="text-danger">{{ error.title[0] }}</p>
                                 <p></p>
                             </div>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Rent</label>
-                                <vs-input class="col-sm-9" v-model="forms.rent" :danger="error.rent!==undefined" type="number" min="0"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.rent" :danger="error.rent!==undefined"
+                                          type="number" min="0"></vs-input>
                                 <p v-if="error.rent!==undefined" class="text-danger">{{ error.rent[0] }}</p>
                                 <p></p>
                             </div>
                             <div class="form-group   mb-3">
-                                <label >Desc</label>
+                                <label>Desc</label>
                                 <vs-textarea type="file" height="100px" v-model="forms.description"></vs-textarea>
                             </div>
                             <div class="form-group row mb-3">
@@ -150,100 +152,110 @@
         data() {
             return {
                 searchData: {},
-                forms:{},
-                vehicles:[],
-                selected:[],
-                error:[],
+                forms: {},
+                vehicles: [],
+                selected: [],
+                error: [],
                 headers: [
-                    {name:'detail', field:'detail'},
-                    {name:'vehicles', field:'vehicles'},
+                    {name: 'detail', field: 'detail'},
+                    {name: 'vehicles', field: 'vehicles'},
                     {name: 'Action', sort_key: ''},
                     {name: 'status', field: 'status'},
                 ],
-                buttonText:'create'
+                buttonText: 'create'
             }
         },
 
-        methods:{
-            editItems(id){
+        methods: {
+            editItems(id) {
                 this.$refs['title'].$el.querySelector('input').focus()
 
                 this.$http.get('/json/transport/route' + '/' + id + '/edit')
-                    .then(res=>{
+                    .then(res => {
                         this.forms = res.data.row
                         this.vehicles = res.data.row.vehicle
                         this.selected = res.data.row.vehicle
                         this.buttonText = 'Update'
                     })
-                    .catch(err=>{
+                    .catch(err => {
 
                     })
             },
-            deleteItems(id){
+            deleteItems(id) {
                 let confirms = confirm('are you sure?')
-                if(!confirms) return null
+                if (!confirms) return null
                 this.$http.get('/json/transport/route' + '/' + id + '/delete')
-                    .then(res=>{
+                    .then(res => {
                         this.$refs.dataTableRoute.getData()
-                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
                     })
-                    .catch(err=>{
+                    .catch(err => {
 
                     })
             },
-            GetReturnValue(arg = null){
-                let val =  arg.map(st => {
-                    return{
-                        id:st.id,
-                        title:st.title,
-                        rent:st.rent,
-                        description:st.description,
-                        vehicles:st.vehicle,
-                        status:st.status
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        title: st.title,
+                        rent: st.rent,
+                        description: st.description,
+                        vehicles: st.vehicle,
+                        status: st.status
                     }
                 });
-                this.$store.dispatch('updateTableData',val)
+                this.$store.dispatch('updateTableData', val)
             },
-            searchVehicle(search, loading){
+            searchVehicle(search, loading) {
                 loading(true)
-                this.$http.get('/json/transport/vehicle-autocomplete?q='+search)
-                    .then(res=>{
+                this.$http.get('/json/transport/vehicle-autocomplete?q=' + search)
+                    .then(res => {
                         this.vehicles = res.data
-                        if(this.vehicles.length>0) loading(false)
+                        if (this.vehicles.length > 0) loading(false)
                     })
             },
-            posting(){
+            posting() {
                 this.forms.vehicles_id = []
-                this.selected.map(st=>{
+                this.selected.map(st => {
                     this.forms.vehicles_id.push(st.id)
                 })
-                if(this.forms.id){
-                    this.$http.post('/json/transport/route/'+this.forms.id +'/update', this.forms)
-                        .then(res=>{
-                            if(res.status===200){
-                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                if (this.forms.id) {
+                    this.$http.post('/json/transport/route/' + this.forms.id + '/update', this.forms)
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
                                 this.$refs.dataTableRoute.getData()
-                                this.forms={}
-                                this.selected=[]
+                                this.forms = {}
+                                this.selected = []
                             }
                         })
-                        .catch(err=>{
-                            if(err.response){
+                        .catch(err => {
+                            if (err.response) {
                                 this.error = err.response.data.errors
                             }
                         })
-                }else{
+                } else {
                     this.$http.post('/json/transport/route/store', this.forms)
-                        .then(res=>{
-                            if(res.status===200){
-                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
                                 this.$refs.dataTableRoute.getData()
-                                this.forms={}
-                                this.selected=[]
+                                this.forms = {}
+                                this.selected = []
                             }
                         })
-                        .catch(err=>{
-                            if(err.response){
+                        .catch(err => {
+                            if (err.response) {
                                 this.error = err.response.data.errors
                             }
                         })

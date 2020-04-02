@@ -21,21 +21,15 @@
                         <div class="col-md-4">
                             <h4>{{buttonText}} Route</h4><br>
                             <div class="form-group row mb-3">
-                                <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9" v-model="forms.number" :danger="error.number!==undefined" ref="number"></vs-input>
-                                <p v-if="error.number!==undefined" class="text-danger">{{ error.number[0] }}</p>
+                                <label class="col-sm-3">Route</label>
+                                <vs-input class="col-sm-9" v-model="forms.title" :danger="error.title!==undefined" ref="number"></vs-input>
+                                <p v-if="error.title!==undefined" class="text-danger">{{ error.title[0] }}</p>
                                 <p></p>
                             </div>
                             <div class="form-group row mb-3">
-                                <label class="col-sm-3">Type</label>
-                                <vs-input class="col-sm-9" v-model="forms.type" :danger="error.number!==undefined"></vs-input>
-                                <p v-if="error.type!==undefined" class="text-danger">{{ error.type[0] }}</p>
-                                <p></p>
-                            </div>
-                            <div class="form-group row mb-3">
-                                <label class="col-sm-3">Model</label>
-                                <vs-input class="col-sm-9" v-model="forms.model" :danger="error.number!==undefined"></vs-input>
-                                <p v-if="error.model!==undefined" class="text-danger">{{ error.model[0] }}</p>
+                                <label class="col-sm-3">Rent</label>
+                                <vs-input class="col-sm-9" v-model="forms.rent" :danger="error.rent!==undefined" type="number" min="0"></vs-input>
+                                <p v-if="error.rent!==undefined" class="text-danger">{{ error.rent[0] }}</p>
                                 <p></p>
                             </div>
                             <div class="form-group   mb-3">
@@ -43,11 +37,11 @@
                                 <vs-textarea type="file" height="100px" v-model="forms.description"></vs-textarea>
                             </div>
                             <div class="form-group row mb-3">
-                                <label class="col-sm-3">Find Staff & Add</label>
+                                <label class="col-sm-3">Find Vehicle & Add</label>
                                 <v-select class="col-sm-9"
-                                          :options="staffs"
+                                          :options="vehicles"
                                           :filterable="false"
-                                          @search="searchStaff"
+                                          @search="searchVehicle"
                                           label="fullname"
                                           multiple
                                           v-model="selected"
@@ -59,13 +53,13 @@
                                 <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Designation</th>
+                                    <th>Type</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="(item, index) in selected" :key="index">
                                     <td>{{item.fullname}}</td>
-                                    <td>{{item.designations.title}}</td>
+                                    <td>{{item.type}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -92,35 +86,32 @@
                                     <vs-td>
                                         <table>
                                             <tr>
-                                                <th>Number:</th>
-                                                <td>{{props.data.number}}</td>
+                                                <th>title:</th>
+                                                <td>{{props.data.title}}</td>
                                             </tr>
                                             <tr>
-                                                <th>Type:</th>
-                                                <td>{{props.data.type}}</td>
+                                                <th>rent:</th>
+                                                <td>{{props.data.rent}}</td>
                                             </tr>
                                             <tr>
-                                                <th>model:</th>
-                                                <td>{{props.data.model}}</td>
+                                                <th>description:</th>
+                                                <td>{{props.data.description}}</td>
                                             </tr>
                                         </table>
                                     </vs-td>
                                     <vs-td>
-                                        <table v-for="staff in props.data.staffs">
+                                        <table v-for="vehicle in props.data.vehicles">
                                             <tr>
-                                                {{staff.fullname}}
+                                                <th>number</th>
+                                                <td>{{vehicle.number}}</td>
                                             </tr>
                                             <tr>
-                                                <th>Home Phone:</th>
-                                                <td>{{staff.home_phone}}</td>
+                                                <th>model</th>
+                                                <td>{{vehicle.model}}</td>
                                             </tr>
                                             <tr>
-                                                <th>Mobile Phone:</th>
-                                                <td>{{staff.mobile_1}}'</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Address:</th>
-                                                <td>{{staff.address}}</td>
+                                                <th>type:</th>
+                                                <td>{{vehicle.type}}'</td>
                                             </tr>
                                         </table>
                                     </vs-td>
@@ -157,12 +148,12 @@
             return {
                 searchData: {},
                 forms:{},
-                staffs:[],
+                vehicles:[],
                 selected:[],
                 error:[],
                 headers: [
                     {name:'detail', field:'detail'},
-                    {name:'staffs', field:'staffs'},
+                    {name:'vehicles', field:'vehicles'},
                     {name: 'Action', sort_key: ''},
                     {name: 'status', field: 'status'},
                 ],
@@ -177,7 +168,7 @@
                 this.$http.get('/json/transport/route' + '/' + id + '/edit')
                     .then(res=>{
                         this.forms = res.data.row
-                        this.staffs = res.data.row.staff
+                        this.vehicles = res.data.row.staff
                         this.selected = res.data.row.staff
                         this.buttonText = 'Update'
                     })
@@ -201,27 +192,26 @@
                 let val =  arg.map(st => {
                     return{
                         id:st.id,
-                        number:st.number,
-                        type:st.type,
-                        model:st.model,
-                        staffs:st.staff,
+                        title:st.title,
+                        rent:st.rent,
+                        vehicles:st.vehicle,
                         status:st.status
                     }
                 });
                 this.$store.dispatch('updateTableData',val)
             },
-            searchStaff(search, loading){
+            searchVehicle(search, loading){
                 loading(true)
-                this.$http.get('/json/transport/staff-autocomplete?q='+search)
+                this.$http.get('/json/transport/vehicle-autocomplete?q='+search)
                     .then(res=>{
-                        this.staffs = res.data
-                        if(this.staffs.length>0) loading(false)
+                        this.vehicles = res.data
+                        if(this.vehicles.length>0) loading(false)
                     })
             },
             posting(){
-                this.forms.staffs_id = []
+                this.forms.vehicles_id = []
                 this.selected.map(st=>{
-                    this.forms.staffs_id.push(st.id)
+                    this.forms.vehicles_id.push(st.id)
                 })
                 if(this.forms.id){
                     this.$http.post('/json/transport/route/'+this.forms.id +'/update', this.forms)
@@ -261,7 +251,5 @@
 </script>
 
 <style scoped>
-    input#number{
-        text-transform: uppercase;
-    }
+
 </style>

@@ -25,13 +25,13 @@ class RouteController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['route'] = Route::select('id', 'title', 'rent', 'description', 'status')->get();
+        $data['route'] = Route::with('vehicle')->select('id', 'title', 'rent', 'description', 'status')->get();
         return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by'=>auth()->id()]);
         $route = Route::create($request->all());
 
         if ($request->has('vehicles_id')) {
@@ -177,20 +177,15 @@ class RouteController extends CollegeBaseController
         if ($request->has('q')) {
             $param = $request->get('q');
 
-            $vehicles = Vehicle::select('id', 'number', 'type', 'model')
-                ->where(function ($query) use ($param) {
+            $vehicles = Vehicle::where(function ($query) use ($param) {
                     $query->where('number', 'like', '%' . $param . '%')
                         ->orwhere('type', 'like', '%' . $param . '%')
                         ->orwhere('model', 'like', '%' . $param . '%');
                 })
                 ->get();
 
-            $response = [];
-            foreach ($vehicles as $vehicle) {
-                $response[] = ['id' => $vehicle->id, 'text' => $vehicle->number . ' | ' . $vehicle->model . ' | ' . $vehicle->type];
-            }
 
-            return json_encode($response);
+            return response()->json($vehicles);
         }
 
         abort(501);

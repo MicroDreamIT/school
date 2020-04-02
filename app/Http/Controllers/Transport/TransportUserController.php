@@ -45,13 +45,13 @@ class TransportUserController extends CollegeBaseController
                 }
 
                 if ($request->reg_no != null) {
-                    if($request->get('user_type') !== '' & $request->get('user_type') > 0){
-                        if($request->has('user_type') == 1){
+                    if ($request->get('user_type') !== '' & $request->get('user_type') > 0) {
+                        if ($request->has('user_type') == 1) {
                             $studentId = $this->getStudentIdByReg($request->reg_no);
                             $query->where('member_id', '=', $studentId);
                             $this->filter_query['member_id'] = $studentId;
                         }
-                        if($request->has('user_type') == 2){
+                        if ($request->has('user_type') == 2) {
                             $staffId = $this->getStaffByReg($request->reg_no);
                             $query->where('member_id', '=', $studentId);
                             $this->filter_query['member_id'] = $staffId;
@@ -79,62 +79,62 @@ class TransportUserController extends CollegeBaseController
             ->get();
 
         /*Route List*/
-        $routes = Route::select('id','title')->get();
-        $map_routes = array_pluck($routes,'title','id');
-        $data['routes'] = array_prepend($map_routes,'Select Route...','0');
+        $routes = Route::select('id', 'title')->get();
+        $map_routes = array_pluck($routes, 'title', 'id');
+        $data['routes'] = array_prepend($map_routes, 'Select Route...', '0');
 
         /*Active Route For Shift List*/
         /*Route List*/
-        $routes = Route::select('id','title')->Active()->get();
-        $map_routes = array_pluck($routes,'title','id');
-        $data['active_routes'] = array_prepend($map_routes,'Select Route...','0');
+        $routes = Route::select('id', 'title')->Active()->get();
+        $map_routes = array_pluck($routes, 'title', 'id');
+        $data['active_routes'] = array_prepend($map_routes, 'Select Route...', '0');
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
-
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
     {
         $data = [];
         $data['routes'] = $this->activeTransportRoutes();
-        $data['reg_no'] ='';
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        $data['reg_no'] = '';
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
+        $message_type = '';
+        $message = '';
         $userType = $request->get('user_type');
         $regNo = $request->get('reg_no');
         $status = $request->get('status');
         $route = $request->get('route');
         $vehicle = $request->get('vehicle_select');
 
-        $year = Year::where('active_status','=',1)->first();
-        if(!$year){
-            $request->session()->flash($this->message_warning,' Active Year Not Found.Please, Set Year For History Record.');
+        $year = Year::where('active_status', '=', 1)->first();
+        if (!$year) {
+            $request->session()->flash($this->message_warning, ' Active Year Not Found.Please, Set Year For History Record.');
             return back();
         }
 
         /*User Type and User Verification. only valid student or staff will get membership*/
-        if($userType && $regNo){
-            switch ($userType){
+        if ($userType && $regNo) {
+            switch ($userType) {
                 case 1:
-                    $data = Student::where('reg_no','=',$regNo)->first();
+                    $data = Student::where('reg_no', '=', $regNo)->first();
                     break;
                 case 2:
-                    $data = Staff::where('reg_no','=',$regNo)->first();
+                    $data = Staff::where('reg_no', '=', $regNo)->first();
                     break;
                 default:
                     return parent::invalidRequest();
             }
-        }else{
-            $request->session()->flash($this->message_warning,' Registration Number or User Type is not Valid.');
-            return back();
+        } else {
+            return response()->json( ['warning', ' Registration Number or User Type is not Valid.'] );
         }
 
-        if(isset($data)){
+        if (isset($data)) {
             $request->request->add(['routes_id' => $route]);
             $request->request->add(['vehicles_id' => $vehicle]);
             $request->request->add(['user_type' => $userType]);
@@ -143,14 +143,15 @@ class TransportUserController extends CollegeBaseController
             $request->request->add(['created_by' => auth()->user()->id]);
 
             /*Check Member Alreday Register or not*/
-            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id','desc')->first();
+            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
 
-            if($UserStatus){
-                $request->session()->flash($this->message_success, $this->panel. ' Already Registered. Please Edit This TransportUser');
-            }else{
+            if ($UserStatus) {
+                $message_type = 'success';
+                $message = $this->panel . ' Already Registered. Please Edit This TransportUser';
+            } else {
                 $TransportUserRegister = TransportUser::create($request->all());
                 /*check TransportUser Register and add on history table*/
-                if($TransportUserRegister){
+                if ($TransportUserRegister) {
                     $CreateHistory = TransportHistory::create([
                         'years_id' => $year->id,
                         'routes_id' => $route,
@@ -163,23 +164,20 @@ class TransportUserController extends CollegeBaseController
                 }
 
                 //send alert
-                $memberId = $TransportUserRegister->member_id ;
+                $memberId = $TransportUserRegister->member_id;
                 $userType = $TransportUserRegister->user_type;
-                $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-                $this->transportRegisterNotify($memberId,$userType, $newTransport);
+                $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+                $this->transportRegisterNotify($memberId, $userType, $newTransport);
                 //alert end
-
-                $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
+                $message_type = 'warning';
+                $message = $this->panel . ' Created Successfully.';
             }
-        }else{
-            $request->session()->flash($this->message_warning,' Registration Number or User Type is not Valid.');
+        } else {
+            $message_type = 'warning';
+            $message = 'Registration Number or User Type is not Valid.';
         }
 
-        if($request->add_user_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+        return response()->json([$message_type, $message]);
     }
 
     public function quickRegister(Request $request)
@@ -197,15 +195,15 @@ class TransportUserController extends CollegeBaseController
         $route = $request->get('route_assign');
         $vehicle = $request->get('vehicle_assign');
 
-        $year = Year::where('active_status','=',1)->first();
-        if(!$year){
-            $request->session()->flash($this->message_warning,' Active Year Not Found.Please, Set Year For History Record.');
+        $year = Year::where('active_status', '=', 1)->first();
+        if (!$year) {
+            $request->session()->flash($this->message_warning, ' Active Year Not Found.Please, Set Year For History Record.');
             return back();
         }
 
         /*User Type and User Verification. only valid student or staff will get membership*/
-        if($userType && $id){
-            switch ($userType){
+        if ($userType && $id) {
+            switch ($userType) {
                 case 1:
                     $data = Student::find($id);
                     break;
@@ -215,12 +213,12 @@ class TransportUserController extends CollegeBaseController
                 default:
                     return parent::invalidRequest();
             }
-        }else{
-            $request->session()->flash($this->message_warning,'Registration Number or User Type is not Valid.');
+        } else {
+            $request->session()->flash($this->message_warning, 'Registration Number or User Type is not Valid.');
             return back();
         }
 
-        if(isset($data)){
+        if (isset($data)) {
             $request->request->add(['routes_id' => $route]);
             $request->request->add(['vehicles_id' => $vehicle]);
             $request->request->add(['user_type' => $userType]);
@@ -229,14 +227,14 @@ class TransportUserController extends CollegeBaseController
             $request->request->add(['created_by' => auth()->user()->id]);
 
             /*Check Member Alreday Register or not*/
-            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id','desc')->first();
+            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
 
-            if($UserStatus){
-                $request->session()->flash($this->message_warning, $this->panel. ' Already Registered. Please Edit This TransportUser');
-            }else{
+            if ($UserStatus) {
+                $request->session()->flash($this->message_warning, $this->panel . ' Already Registered. Please Edit This TransportUser');
+            } else {
                 $TransportUserRegister = TransportUser::create($request->all());
                 /*check TransportUser Register and add on history table*/
-                if($TransportUserRegister){
+                if ($TransportUserRegister) {
                     $CreateHistory = TransportHistory::create([
                         'years_id' => $year->id,
                         'routes_id' => $route,
@@ -249,17 +247,17 @@ class TransportUserController extends CollegeBaseController
                 }
 
                 //send alert
-                $memberId = $TransportUserRegister->member_id ;
+                $memberId = $TransportUserRegister->member_id;
                 $userType = $TransportUserRegister->user_type;
-                $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-                $this->transportRegisterNotify($memberId,$userType, $newTransport);
+                $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+                $this->transportRegisterNotify($memberId, $userType, $newTransport);
                 //alert end
 
-                $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
+                $request->session()->flash($this->message_success, $this->panel . ' Created Successfully.');
 
             }
-        }else{
-            $request->session()->flash($this->message_warning,' Registration Number or User Type is not Valid.');
+        } else {
+            $request->session()->flash($this->message_warning, ' Registration Number or User Type is not Valid.');
         }
 
         return back();
@@ -273,16 +271,16 @@ class TransportUserController extends CollegeBaseController
             return parent::invalidRequest();
 
 
-        if($data['row']->user_type == 1){
+        if ($data['row']->user_type == 1) {
             $data['reg_no'] = Student::find($data['row']->member_id)->reg_no;
         }
 
-        if($data['row']->user_type == 2){
+        if ($data['row']->user_type == 2) {
             $data['reg_no'] = Staff::find($data['row']->member_id)->reg_no;
         }
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return view(parent::loadDataToView($this->view_path . '.edit'), compact('data'));
     }
 
     public function update(EditValidation $request, $id)
@@ -291,41 +289,41 @@ class TransportUserController extends CollegeBaseController
         if (!$row = TransportUser::find($id)) return parent::invalidRequest();
 
         /*User Type and User Verification. only valid student or staff will get membership*/
-        $userType =$request->get('user_type');
-        $regNo =$request->get('reg_no');
+        $userType = $request->get('user_type');
+        $regNo = $request->get('reg_no');
 
-        if($userType && $regNo){
-            switch ($userType){
+        if ($userType && $regNo) {
+            switch ($userType) {
                 case 1:
-                    $data = Student::where('reg_no','=',$regNo)->first();
+                    $data = Student::where('reg_no', '=', $regNo)->first();
                     break;
                 case 2:
-                    $data = Staff::where('reg_no','=',$regNo)->first();
+                    $data = Staff::where('reg_no', '=', $regNo)->first();
                     break;
                 default:
                     return parent::invalidRequest();
             }
-        }else{
-            $request->session()->flash($this->message_warning,' Registration Number or User Type is not Valid.');
+        } else {
+            $request->session()->flash($this->message_warning, ' Registration Number or User Type is not Valid.');
             return back();
         }
 
-        if($data){
+        if ($data) {
             $request->request->add(['user_type' => $request->get('user_type')]);
             $request->request->add(['member_id' => $data->id]);
             $request->request->add(['status' => $request->get('status')]);
             $request->request->add(['last_updated_by' => auth()->user()->id]);
             /*Check Member Alreday Register or not*/
-            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id','desc')->first();
+            $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
 
-            if($UserStatus->count() > 0){
+            if ($UserStatus->count() > 0) {
                 $row->update($request->all());
-                $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-            }else{
-                $request->session()->flash($this->message_warning, $this->panel. ' Already Registered or Duplicate Registration. Please, Find on TransportUser List and Edit');
+                $request->session()->flash($this->message_success, $this->panel . ' Updated Successfully.');
+            } else {
+                $request->session()->flash($this->message_warning, $this->panel . ' Already Registered or Duplicate Registration. Please, Find on TransportUser List and Edit');
             }
-        }else{
-            $request->session()->flash($this->message_warning,' Registration Number or User Type is not Valid.');
+        } else {
+            $request->session()->flash($this->message_warning, ' Registration Number or User Type is not Valid.');
         }
 
         return redirect()->route($this->base_route);
@@ -336,11 +334,11 @@ class TransportUserController extends CollegeBaseController
         if (!$row = TransportUser::find($id)) return parent::invalidRequest();
 
         /*Delete History*/
-        TransportHistory::where('travellers_id','=',$row->id)->delete();
+        TransportHistory::where('travellers_id', '=', $row->id)->delete();
         /*Delete TransportUser*/
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
+        $request->session()->flash($this->message_success, $this->panel . ' Deleted Successfully.');
         return redirect()->route($this->base_route);
     }
 
@@ -350,15 +348,15 @@ class TransportUserController extends CollegeBaseController
             /*Assign request values*/
             $route = $request->get('route_bulk');
             $vehicle = $request->get('vehicle_bulk');
-            $year = Year::where('active_status','=',1)->first();
+            $year = Year::where('active_status', '=', 1)->first();
 
             if ($request->has('chkIds')) {
                 foreach ($request->get('chkIds') as $row_id) {
                     $row = TransportUser::find($row_id);
-                    if($row) {
+                    if ($row) {
                         switch ($request->get('bulk_action')) {
                             case 'Active':
-                                if($route && $vehicle) {
+                                if ($route && $vehicle) {
                                     /*TransportUser New Hostel, Vehicle & Bed Assign*/
                                     $active = $row->update([
                                         'routes_id' => $route,
@@ -378,21 +376,21 @@ class TransportUserController extends CollegeBaseController
                                         ]);
 
                                         //send alert
-                                        $memberId = $row->member_id ;
+                                        $memberId = $row->member_id;
                                         $userType = $row->user_type;
-                                        $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-                                        $this->transportActiveNotify($memberId,$userType, $newTransport);
+                                        $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+                                        $this->transportActiveNotify($memberId, $userType, $newTransport);
                                         //alert end
                                     }
 
                                     $request->session()->flash($this->message_success, $this->panel . ' Re-Active Successfully.');
-                                }else{
+                                } else {
                                     $request->session()->flash($this->message_warning, 'Please Select Route & Vehicle for Active.');
                                 }
 
                                 break;
                             case 'Shift':
-                                if($route && $vehicle) {
+                                if ($route && $vehicle) {
                                     /*TransportUser New Hostel, Vehicle & Bed Assign*/
                                     $shift = $row->update([
                                         'routes_id' => $route,
@@ -412,42 +410,42 @@ class TransportUserController extends CollegeBaseController
                                         ]);
 
                                         //send alert
-                                        $memberId = $row->member_id ;
+                                        $memberId = $row->member_id;
                                         $userType = $row->user_type;
-                                        $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-                                        $this->transportShiftNotify($memberId,$userType, $newTransport);
+                                        $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+                                        $this->transportShiftNotify($memberId, $userType, $newTransport);
                                         //alert end
                                     }
 
                                     $request->session()->flash($this->message_success, $this->panel . ' Shifted Successfully.');
-                                }else{
+                                } else {
                                     $request->session()->flash($this->message_warning, 'Please Select Route & Vehicle for Shifting.');
                                 }
                                 break;
                             case 'Leave':
 
-                                    /*Create History for Leave TransportUser Future Record*/
-                                    $CreateHistory = TransportHistory::create([
-                                        'years_id' => $year->id,
-                                        'routes_id' => $row->routes_id,
-                                        'vehicles_id' => $row->vehicles_id,
-                                        'travellers_id' => $row->id,
-                                        'history_type' => "Leave",
-                                        'created_by' => auth()->user()->id
-                                    ]);
+                                /*Create History for Leave TransportUser Future Record*/
+                                $CreateHistory = TransportHistory::create([
+                                    'years_id' => $year->id,
+                                    'routes_id' => $row->routes_id,
+                                    'vehicles_id' => $row->vehicles_id,
+                                    'travellers_id' => $row->id,
+                                    'history_type' => "Leave",
+                                    'created_by' => auth()->user()->id
+                                ]);
 
-                                    /*update TransportUser*/
-                                    $request->request->add(['routes_id' => null]);
-                                    $request->request->add(['vehicles_id' => null]);
-                                    $request->request->add(['status' => 'in-active']);
-                                    $request->request->add(['last_updated_by' => auth()->user()->id]);
-                                    $row->update($request->all());
-                                    //send alert
-                                    $memberId = $row->member_id ;
-                                    $userType = $row->user_type;
-                                    $this->transportLeaveNotify($memberId,$userType);
-                                    //alert end
-                                    $request->session()->flash($this->message_success, $this->panel . ' TransportUsers Leave Successfully.');
+                                /*update TransportUser*/
+                                $request->request->add(['routes_id' => null]);
+                                $request->request->add(['vehicles_id' => null]);
+                                $request->request->add(['status' => 'in-active']);
+                                $request->request->add(['last_updated_by' => auth()->user()->id]);
+                                $row->update($request->all());
+                                //send alert
+                                $memberId = $row->member_id;
+                                $userType = $row->user_type;
+                                $this->transportLeaveNotify($memberId, $userType);
+                                //alert end
+                                $request->session()->flash($this->message_success, $this->panel . ' TransportUsers Leave Successfully.');
 
                                 break;
                             case 'Delete':
@@ -473,17 +471,17 @@ class TransportUserController extends CollegeBaseController
         $id = $request->get('userId');
         $route = $request->get('route_assign');
         $vehicle = $request->get('vehicle_assign');
-        $year = Year::where('active_status','=',1)->first();
+        $year = Year::where('active_status', '=', 1)->first();
 
         if (!$row = TransportUser::find($id)) return parent::invalidRequest();
 
         $renewTransportUser = $row->update([
-                            'routes_id' => $route,
-                            'vehicles_id' => $vehicle,
-                            'status' => 'active'
-                        ]);
+            'routes_id' => $route,
+            'vehicles_id' => $vehicle,
+            'status' => 'active'
+        ]);
 
-        if($renewTransportUser){
+        if ($renewTransportUser) {
             /*Create Renew History*/
             $CreateHistory = TransportHistory::create([
                 'years_id' => $year->id,
@@ -495,14 +493,14 @@ class TransportUserController extends CollegeBaseController
             ]);
 
             //send alert
-            $memberId = $row->member_id ;
+            $memberId = $row->member_id;
             $userType = $row->user_type;
-            $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-            $this->transportActiveNotify($memberId,$userType, $newTransport);
+            $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+            $this->transportActiveNotify($memberId, $userType, $newTransport);
             //alert end
 
-            $request->session()->flash($this->message_success, $this->panel.' Re-Active Successfully.');
-        }else{
+            $request->session()->flash($this->message_success, $this->panel . ' Re-Active Successfully.');
+        } else {
             $request->session()->flash($this->message_warning, 'Not A Valid TransportUsetu.');
         }
 
@@ -511,7 +509,7 @@ class TransportUserController extends CollegeBaseController
 
     public function leave(request $request, $id)
     {
-        if (!$row = TransportUser::where('id',$id)->Active()->first()) return parent::invalidRequest();
+        if (!$row = TransportUser::where('id', $id)->Active()->first()) return parent::invalidRequest();
 
         $route = $row->routes_id;
         $vehicle = $row->vehicles_id;
@@ -523,9 +521,9 @@ class TransportUserController extends CollegeBaseController
         $request->request->add(['last_updated_by' => auth()->user()->id]);
         $user = $row->update($request->all());
 
-        $year = Year::where('active_status','=',1)->first();
+        $year = Year::where('active_status', '=', 1)->first();
 
-        if($user) {
+        if ($user) {
             /*Create History for Leave TransportUser Future Record*/
             $CreateHistory = TransportHistory::create([
                 'years_id' => $year->id,
@@ -536,11 +534,11 @@ class TransportUserController extends CollegeBaseController
                 'created_by' => auth()->user()->id
             ]);
             //send alert
-            $memberId = $row->member_id ;
+            $memberId = $row->member_id;
             $userType = $row->user_type;
-            $this->transportLeaveNotify($memberId,$userType);
+            $this->transportLeaveNotify($memberId, $userType);
             //alert end
-            $request->session()->flash($this->message_success, $this->panel. ' Leave Successfully.');
+            $request->session()->flash($this->message_success, $this->panel . ' Leave Successfully.');
         }
 
         return redirect()->route($this->base_route);
@@ -552,9 +550,9 @@ class TransportUserController extends CollegeBaseController
         $id = $request->get('userId');
         $route = $request->get('route_shift');
         $vehicle = $request->get('vehicle_shift');
-        $year = Year::where('active_status','=',1)->first();
+        $year = Year::where('active_status', '=', 1)->first();
 
-        if($route > 0 && $vehicle > 0 ) {
+        if ($route > 0 && $vehicle > 0) {
             $user = TransportUser::where('id', $id)->Active()->first();
 
             if ($user) {
@@ -578,18 +576,18 @@ class TransportUserController extends CollegeBaseController
                     ]);
 
                     //send alert
-                    $memberId = $user->member_id ;
+                    $memberId = $user->member_id;
                     $userType = $user->user_type;
-                    $newTransport = 'Route-'.$this->getRouteNameById($route) .', Vehicle-'. $this->getVehicleById($vehicle);
-                    $this->transportShiftNotify($memberId,$userType, $newTransport);
+                    $newTransport = 'Route-' . $this->getRouteNameById($route) . ', Vehicle-' . $this->getVehicleById($vehicle);
+                    $this->transportShiftNotify($memberId, $userType, $newTransport);
                     //alert end
                 }
 
-                $request->session()->flash($this->message_success, $this->panel.' Shifted Successfully.');
+                $request->session()->flash($this->message_success, $this->panel . ' Shifted Successfully.');
             } else {
                 $request->session()->flash($this->message_warning, 'TransportUser Not Select or Not Active, Please Active First.');
             }
-        }else{
+        } else {
             $request->session()->flash($this->message_warning, 'Please, Select Route, Vehicle and Bed First.');
         }
         return redirect()->route($this->base_route);
@@ -598,10 +596,10 @@ class TransportUserController extends CollegeBaseController
     public function history(Request $request)
     {
         $data = [];
-        if($request->all()) {
+        if ($request->all()) {
             $data['history'] = TransportHistory::select('transport_histories.id', 'transport_histories.years_id',
-                'transport_histories.routes_id', 'transport_histories.vehicles_id',  'transport_histories.history_type',
-                'transport_histories.created_at','tu.member_id','tu.user_type')
+                'transport_histories.routes_id', 'transport_histories.vehicles_id', 'transport_histories.history_type',
+                'transport_histories.created_at', 'tu.member_id', 'tu.user_type')
                 ->where(function ($query) use ($request) {
 
                     if ($request->get('year') !== '' & $request->get('year') > 0) {
@@ -619,7 +617,7 @@ class TransportUserController extends CollegeBaseController
                         $this->filter_query['transport_histories.vehicles_id'] = $request->get('vehicle_select');
                     }
 
-                    if ($request->history_type <> '0'){
+                    if ($request->history_type <> '0') {
                         $query->where('transport_histories.history_type', '=', $request->get('history_type'));
                         $this->filter_query['transport_histories.history_type'] = $request->get('history_type');
                     }
@@ -631,13 +629,13 @@ class TransportUserController extends CollegeBaseController
                     }
 
                     if ($request->reg_no != null) {
-                        if($request->get('user_type') !== '' & $request->get('user_type') > 0){
-                            if($request->has('user_type') == 1){
+                        if ($request->get('user_type') !== '' & $request->get('user_type') > 0) {
+                            if ($request->has('user_type') == 1) {
                                 $studentId = $this->getStudentIdByReg($request->reg_no);
                                 $query->where('member_id', '=', $studentId);
                                 $this->filter_query['member_id'] = $studentId;
                             }
-                            if($request->has('user_type') == 2){
+                            if ($request->has('user_type') == 2) {
                                 $staffId = $this->getStaffByReg($request->reg_no);
                                 $query->where('member_id', '=', $studentId);
                                 $this->filter_query['member_id'] = $staffId;
@@ -648,7 +646,7 @@ class TransportUserController extends CollegeBaseController
 
 
                 })
-                ->join('transport_users as tu','tu.id','=','transport_histories.travellers_id')
+                ->join('transport_users as tu', 'tu.id', '=', 'transport_histories.travellers_id')
                 ->orderBy('transport_histories.created_at')
                 ->get();
         }
@@ -656,7 +654,7 @@ class TransportUserController extends CollegeBaseController
         $data['years'] = $this->activeYears();
         $data['routes'] = $this->activeTransportRoutes();
         $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.history.index'), compact('data'));
+        return view(parent::loadDataToView($this->view_path . '.history.index'), compact('data'));
     }
 
     public function findVehicles(Request $request)
@@ -665,9 +663,9 @@ class TransportUserController extends CollegeBaseController
         $response['error'] = true;
 
         if ($request->has('route_id')) {
-            $routes = RouteVehicle::select('route_vehicles.id','route_vehicles.vehicles_id', 'v.number','v.type')
-                ->where('route_vehicles.routes_id','=', $request->get('route_id'))
-                ->join('vehicles as v','v.id','=','route_vehicles.vehicles_id')
+            $routes = RouteVehicle::select('route_vehicles.id', 'route_vehicles.vehicles_id', 'v.number', 'v.type')
+                ->where('route_vehicles.routes_id', '=', $request->get('route_id'))
+                ->join('vehicles as v', 'v.id', '=', 'route_vehicles.vehicles_id')
                 ->get();
 
             //$routes = array_pluck($routes,'number','vehicles_id');
@@ -683,65 +681,65 @@ class TransportUserController extends CollegeBaseController
         } else {
             $response['message'] = 'Invalid request!!';
         }
-        return response()->json(json_encode($response));
+        return response()->json($response);
     }
 
     //manage alert
-    public function transportRegisterNotify($memberId,$userType, $newTransport)
+    public function transportRegisterNotify($memberId, $userType, $newTransport)
     {
         $emailIds = [];
         $contactNumbers = [];
-        $alert = AlertSetting::select('sms','email','subject','template')->where('event','=','TransportRegistration')->first();
-        if(!$alert) {
+        $alert = AlertSetting::select('sms', 'email', 'subject', 'template')->where('event', '=', 'TransportRegistration')->first();
+        if (!$alert) {
 
-        }else{
-            if($userType == 1){
-                $student = Student::select('students.id', 'students.first_name','students.email', 'ai.mobile_1')
+        } else {
+            if ($userType == 1) {
+                $student = Student::select('students.id', 'students.first_name', 'students.email', 'ai.mobile_1')
                     ->join('addressinfos as ai', 'ai.students_id', '=', 'students.id')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully re-Activated for our hostel service in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $student->first_name, $message );
-                $message = str_replace('{{transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $student->first_name, $message);
+                $message = str_replace('{{transport}}', $newTransport, $message);
                 $emailIds[] = $student->email;
                 $contactNumbers[] = $student->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
                 }
             }
 
-            if($userType == 2){
-                $staff = Staff::select('first_name','email', 'mobile_1')
+            if ($userType == 2) {
+                $staff = Staff::select('first_name', 'email', 'mobile_1')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully re-Activated for our hostel service in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $staff->first_name, $message );
-                $message = str_replace('{{transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $staff->first_name, $message);
+                $message = str_replace('{{transport}}', $newTransport, $message);
                 $emailIds[] = $staff->email;
                 $contactNumbers[] = $staff->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
@@ -750,61 +748,61 @@ class TransportUserController extends CollegeBaseController
         }
     }
 
-    public function transportActiveNotify($memberId,$userType, $newTransport)
+    public function transportActiveNotify($memberId, $userType, $newTransport)
     {
         $emailIds = [];
         $contactNumbers = [];
-        $alert = AlertSetting::select('sms','email','subject','template')->where('event','=','TransportActive')->first();
-        if(!$alert) {
+        $alert = AlertSetting::select('sms', 'email', 'subject', 'template')->where('event', '=', 'TransportActive')->first();
+        if (!$alert) {
 
-        }else{
-            if($userType == 1){
-                $student = Student::select('students.id', 'students.first_name','students.email', 'ai.mobile_1')
+        } else {
+            if ($userType == 1) {
+                $student = Student::select('students.id', 'students.first_name', 'students.email', 'ai.mobile_1')
                     ->join('addressinfos as ai', 'ai.students_id', '=', 'students.id')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully re-Activated for our transport service in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $student->first_name, $message );
-                $message = str_replace('{{new_transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $student->first_name, $message);
+                $message = str_replace('{{new_transport}}', $newTransport, $message);
                 $emailIds[] = $student->email;
                 $contactNumbers[] = $student->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
                 }
             }
 
-            if($userType == 2){
-                $staff = Staff::select('first_name','email', 'mobile_1')
+            if ($userType == 2) {
+                $staff = Staff::select('first_name', 'email', 'mobile_1')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully re-Activated for our transport service in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $staff->first_name, $message );
-                $message = str_replace('{{new_transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $staff->first_name, $message);
+                $message = str_replace('{{new_transport}}', $newTransport, $message);
                 $emailIds[] = $staff->email;
                 $contactNumbers[] = $staff->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
@@ -813,60 +811,60 @@ class TransportUserController extends CollegeBaseController
         }
     }
 
-    public function transportShiftNotify($memberId,$userType, $newTransport)
+    public function transportShiftNotify($memberId, $userType, $newTransport)
     {
         $emailIds = [];
         $contactNumbers = [];
-        $alert = AlertSetting::select('sms','email','subject','template')->where('event','=','TransportShift')->first();
-        if(!$alert) {
+        $alert = AlertSetting::select('sms', 'email', 'subject', 'template')->where('event', '=', 'TransportShift')->first();
+        if (!$alert) {
 
-        }else{
-            if($userType == 1){
-                $student = Student::select('students.id', 'students.first_name','students.email', 'ai.mobile_1')
+        } else {
+            if ($userType == 1) {
+                $student = Student::select('students.id', 'students.first_name', 'students.email', 'ai.mobile_1')
                     ->join('addressinfos as ai', 'ai.students_id', '=', 'students.id')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, Congratulation! You are successfully shifted in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $student->first_name, $message );
-                $message = str_replace('{{new_transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $student->first_name, $message);
+                $message = str_replace('{{new_transport}}', $newTransport, $message);
                 $emailIds[] = $student->email;
                 $contactNumbers[] = $student->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
                 }
             }
 
-            if($userType == 2){
-                $staff = Staff::select('first_name','email', 'mobile_1')
+            if ($userType == 2) {
+                $staff = Staff::select('first_name', 'email', 'mobile_1')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, Congratulation! You are successfully shifted in {{transport}}.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $staff->first_name, $message );
-                $message = str_replace('{{new_transport}}', $newTransport, $message );
+                $message = str_replace('{{first_name}}', $staff->first_name, $message);
+                $message = str_replace('{{new_transport}}', $newTransport, $message);
                 $emailIds[] = $staff->email;
                 $contactNumbers[] = $staff->mobile_1;
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
@@ -875,59 +873,59 @@ class TransportUserController extends CollegeBaseController
         }
     }
 
-    public function transportLeaveNotify($memberId,$userType)
+    public function transportLeaveNotify($memberId, $userType)
     {
         $emailIds = [];
         $contactNumbers = [];
-        $alert = AlertSetting::select('sms','email','subject','template')->where('event','=','TransportLeave')->first();
-        if(!$alert) {
+        $alert = AlertSetting::select('sms', 'email', 'subject', 'template')->where('event', '=', 'TransportLeave')->first();
+        if (!$alert) {
 
-        }else{
-            if($userType == 1){
-                $student = Student::select('students.id', 'students.first_name','students.email', 'ai.mobile_1')
+        } else {
+            if ($userType == 1) {
+                $student = Student::select('students.id', 'students.first_name', 'students.email', 'ai.mobile_1')
                     ->join('addressinfos as ai', 'ai.students_id', '=', 'students.id')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully deactivated for transport service. Thank you.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $student->first_name, $message );
+                $message = str_replace('{{first_name}}', $student->first_name, $message);
                 $emailIds[] = $student->email;
                 $contactNumbers[] = $student->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);
                 }
             }
 
-            if($userType == 2){
-                $staff = Staff::select('first_name','email', 'mobile_1')
+            if ($userType == 2) {
+                $staff = Staff::select('first_name', 'email', 'mobile_1')
                     ->find($memberId);
                 //send alert
                 //Dear {{first_name}}, You are successfully deactivated for transport service. Thank you.
                 $subject = $alert->subject;
                 $message = $alert->template;
-                $message = str_replace('{{first_name}}', $staff->first_name, $message );
+                $message = str_replace('{{first_name}}', $staff->first_name, $message);
                 $emailIds[] = $staff->email;
                 $contactNumbers[] = $staff->mobile_1;
 
                 /*Now Send SMS On First Mobile Number*/
-                if($alert->sms == 1){
+                if ($alert->sms == 1) {
                     $contactNumbers = $this->contactFilter($contactNumbers);
-                    $smssuccess = $this->sendSMS($contactNumbers,$message);
+                    $smssuccess = $this->sendSMS($contactNumbers, $message);
                 }
 
                 /*Now Send Email With Subject*/
-                if($alert->email == 1){
+                if ($alert->email == 1) {
                     $emailIds = $this->emailFilter($emailIds);
                     /*sending email*/
                     $emailSuccess = $this->sendEmail($emailIds, $subject, $message);

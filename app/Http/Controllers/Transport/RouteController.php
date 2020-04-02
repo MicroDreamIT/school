@@ -26,13 +26,13 @@ class RouteController extends CollegeBaseController
     {
         $data = [];
         $data['route'] = Route::select('id', 'title', 'rent', 'description', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
         $request->request->add(['created_by' => auth()->user()->id]);
-        $route =  Route::create($request->all());
+        $route = Route::create($request->all());
 
         if ($request->has('vehicles_id')) {
             foreach ($request->get('vehicles_id') as $vehicle) {
@@ -41,8 +41,7 @@ class RouteController extends CollegeBaseController
             }
         }
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -51,14 +50,13 @@ class RouteController extends CollegeBaseController
         if (!$data['row'] = Route::find($id))
             return parent::invalidRequest();
 
-        $data['html'] = view($this->view_path.'.includes.vehicle_tr_rows', [
+        $data['html'] = view($this->view_path . '.includes.vehicle_tr_rows', [
             'vehicles' => $data['row']->vehicle
         ])->render();
 
         $data['route'] = Route::select('id', 'title', 'rent', 'description', 'status')->orderBy('title')->get();
 
-        $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -78,8 +76,8 @@ class RouteController extends CollegeBaseController
         }
 
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
+
     }
 
     public function delete(Request $request, $id)
@@ -89,8 +87,7 @@ class RouteController extends CollegeBaseController
         $row->vehicle()->detach();
 
         $row->delete();
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -104,7 +101,7 @@ class RouteController extends CollegeBaseController
                         case 'in-active':
                             $row = Route::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -117,15 +114,13 @@ class RouteController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
-
-                return redirect()->route($this->base_route);
+                    return response()->json(['success', 'Deleted successfully.']);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
+
             }
 
         } else return parent::invalidRequest();
@@ -140,8 +135,8 @@ class RouteController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' Active Successfully.']);
+
     }
 
     public function inActive(request $request, $id)
@@ -152,8 +147,7 @@ class RouteController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->semester.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function vehicleHtmlRow(Request $request)
@@ -162,16 +156,16 @@ class RouteController extends CollegeBaseController
         $response['error'] = true;
 
         if ($request->has('id')) {
-            $vehicle = Vehicle::select('id','number', 'type', 'model')->find($request->get('id'));
+            $vehicle = Vehicle::select('id', 'number', 'type', 'model')->find($request->get('id'));
             if ($vehicle) {
                 $response['error'] = false;
-                $response['html'] = view($this->view_path.'.includes.vehicle_tr', [ 'vehicle' => $vehicle ])->render();
+                $response['html'] = view($this->view_path . '.includes.vehicle_tr', ['vehicle' => $vehicle])->render();
                 $response['message'] = 'Operation successful.';
 
-            } else{
+            } else {
                 $response['message'] = 'Invalid request!!';
             }
-        } else{
+        } else {
             $response['message'] = 'Invalid request!!';
         }
 
@@ -183,17 +177,17 @@ class RouteController extends CollegeBaseController
         if ($request->has('q')) {
             $param = $request->get('q');
 
-            $vehicles = Vehicle::select('id','number', 'type', 'model')
-                ->where(function ($query) use($param){
-                    $query->where('number', 'like', '%'.$param.'%')
-                        ->orwhere('type', 'like', '%'.$param.'%')
-                        ->orwhere('model', 'like', '%'.$param.'%');
+            $vehicles = Vehicle::select('id', 'number', 'type', 'model')
+                ->where(function ($query) use ($param) {
+                    $query->where('number', 'like', '%' . $param . '%')
+                        ->orwhere('type', 'like', '%' . $param . '%')
+                        ->orwhere('model', 'like', '%' . $param . '%');
                 })
                 ->get();
 
             $response = [];
             foreach ($vehicles as $vehicle) {
-                $response[] = ['id' => $vehicle->id, 'text' => $vehicle->number.' | '.$vehicle->model .' | '.$vehicle->type];
+                $response[] = ['id' => $vehicle->id, 'text' => $vehicle->number . ' | ' . $vehicle->model . ' | ' . $vehicle->type];
             }
 
             return json_encode($response);

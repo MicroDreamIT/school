@@ -21,7 +21,7 @@ class VehicleController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['vehicle'] = Vehicle::select('id', 'number', 'type', 'model', 'description', 'status')->get();
+        $data['vehicle'] = Vehicle::with('staff')->select('id', 'number', 'type', 'model', 'description', 'status')->get();
         return response()->json($data);
     }
 

@@ -105,6 +105,25 @@
                                             </tr>
                                         </table>
                                     </vs-td>
+                                    <vs-td>
+                                        <table v-for="staff in props.data.staffs">
+                                            <tr>
+                                                {{staff.fullname}}
+                                            </tr>
+                                            <tr>
+                                                <th>Home Phone:</th>
+                                                <td>{{staff.home_phone}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Mobile Phone:</th>
+                                                <td>{{staff.mobile_1}}'</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Address:</th>
+                                                <td>{{staff.address}}</td>
+                                            </tr>
+                                        </table>
+                                    </vs-td>
                                     <vs-td :data="props.data.action">
                                         <div class="action-own">
                                             <a class="btn btn-success btn-sm pointer-all"
@@ -143,6 +162,7 @@
                 error:[],
                 headers: [
                     {name:'detail', field:'detail'},
+                    {name:'staffs', field:'staffs'},
                     {name: 'Action', sort_key: ''},
                     {name: 'status', field: 'status'},
                 ],
@@ -184,6 +204,7 @@
                         number:st.number,
                         type:st.type,
                         model:st.model,
+                        staffs:st.staff,
                         status:st.status
                     }
                 });

@@ -217,17 +217,29 @@
                 })
             },
             viewItems(id){
-                this.$router.push('/' + this.model + '/' + id + '/' + 'view')
+                let url = ''
+                if(this.viewLink===undefined){
+                    url = '/' + this.model + '/' + id + '/' + 'view'
+                }else{
+                    url = this.viewLink
+                }
+
+                this.$router.push({path:url})
             },
             editItems(id){
-                console.log(id)
-                // this.$router.push({name: 'studentView', params: {id: id}})
-                this.$router.push({path:'/' + this.model + '/' + id + '/' + 'edit'})
+                let url = ''
+                if(this.editLink===undefined){
+                    url = '/' + this.model + '/' + id + '/' + 'edit'
+                }else{
+                    url = this.editLink
+                }
+
+                this.$router.push({path:url})
             },
             deleteItems(id){
-                var confirms = confirm('are you sure?')
+                let confirms = confirm('are you sure?')
                 if(!confirms) return null
-
+                if (this.deleteLink !== undefined) this.url = this.deleteLink
                 this.$http.get(this.url + '/' + id + '/delete')
                     .then(res=>{
                         this.getData()

@@ -22,7 +22,7 @@
                             <h4>{{buttonText}} Vehicle</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Number</label>
-                                <vs-input class="col-sm-9" v-model="forms.number" :danger="error.number!==undefined"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.number" :danger="error.number!==undefined" ref="number"></vs-input>
                                 <p v-if="error.number!==undefined" class="text-danger">{{ error.number[0] }}</p>
                                 <p></p>
                             </div>
@@ -43,20 +43,19 @@
                                 <vs-textarea type="file" height="100px" v-model="forms.description"></vs-textarea>
                             </div>
                             <div class="form-group row mb-3">
-                                <label class="col-sm-3">Find Stuff & Add</label>
+                                <label class="col-sm-3">Find Staff & Add</label>
                                 <v-select class="col-sm-9"
-                                          :options="stuffs"
+                                          :options="staffs"
                                           :filterable="false"
-                                          @search="searchStuff"
+                                          @search="searchStaff"
                                           label="fullname"
                                           multiple
                                           v-model="selected"
                                 >
                                 </v-select>
                             </div>
-                            <vs-divider></vs-divider>
                             <br>
-                            <table class="table mt-4">
+                            <table class="table mt-4" v-if="selected.length>0">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -71,7 +70,7 @@
                                </tbody>
                             </table>
                             <vs-divider></vs-divider>
-                            <vs-button @click="posting()">submit</vs-button>
+                            <vs-button @click="posting()">{{buttonText}}</vs-button>
                         </div>
                         <div class="col-md-8">
                             <data-table-final :headers="headers"
@@ -87,6 +86,7 @@
                                               ref="dataTableVehicle"
                                               :ajaxVariableSet="['vehicle']"
                                               @get-return-value="GetReturnValue"
+                                              :showAction="false"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td>
@@ -104,6 +104,20 @@
                                                 <td>{{props.data.model}}</td>
                                             </tr>
                                         </table>
+                                    </vs-td>
+                                    <vs-td :data="props.data.action">
+                                        <div class="action-own">
+                                            <a class="btn btn-success btn-sm pointer-all"
+                                               title="Edit"
+                                               @click.stop="editItems(props.data.id)">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm pointer-all"
+                                               title="Delete"
+                                               @click.stop="deleteItems(props.data.id)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </div>
                                     </vs-td>
                                 </template>
                             </data-table-final>
@@ -124,19 +138,45 @@
             return {
                 searchData: {},
                 forms:{},
-                stuffs:[],
+                staffs:[],
                 selected:[],
                 error:[],
                 headers: [
                     {name:'detail', field:'detail'},
-                    {name: 'status', field: 'status'},
                     {name: 'Action', sort_key: ''},
+                    {name: 'status', field: 'status'},
                 ],
                 buttonText:'create'
             }
         },
 
         methods:{
+            editItems(id){
+                this.$refs['number'].$el.querySelector('input').focus()
+
+                this.$http.get('/json/transport/vehicle' + '/' + id + '/edit')
+                    .then(res=>{
+                        this.forms = res.data.row
+                        this.staffs = res.data.row.staff
+                        this.selected = res.data.row.staff
+                        this.buttonText = 'Update'
+                    })
+                    .catch(err=>{
+
+                    })
+            },
+            deleteItems(id){
+                let confirms = confirm('are you sure?')
+                if(!confirms) return null
+                this.$http.get('/json/transport/vehicle' + '/' + id + '/delete')
+                    .then(res=>{
+                        this.$refs.dataTableVehicle.getData()
+                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
+                    })
+                    .catch(err=>{
+
+                    })
+            },
             GetReturnValue(arg = null){
                 let val =  arg.map(st => {
                     return{
@@ -149,33 +189,51 @@
                 });
                 this.$store.dispatch('updateTableData',val)
             },
-            searchStuff(search, loading){
+            searchStaff(search, loading){
                 loading(true)
                 this.$http.get('/json/transport/staff-autocomplete?q='+search)
                     .then(res=>{
-                        this.stuffs = res.data
-                        if(this.stuffs.length>0) loading(false)
+                        this.staffs = res.data
+                        if(this.staffs.length>0) loading(false)
                     })
             },
             posting(){
-                this.forms.stuffs_id = []
+                this.forms.staffs_id = []
                 this.selected.map(st=>{
-                    this.forms.stuffs_id.push(st.id)
+                    this.forms.staffs_id.push(st.id)
                 })
-                this.$http.post('/json/transport/vehicle/store', this.forms)
-                    .then(res=>{
-                        if(res.status===200){
-                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
-                            this.$refs.dataTableVehicle.getData()
-                            this.forms={}
-                            this.selected=[]
-                        }
-                    })
-                    .catch(err=>{
-                        if(err.response){
-                            this.error = err.response.data.errors
-                        }
-                    })
+                if(this.forms.id){
+                    this.$http.post('/json/transport/vehicle/'+this.forms.id +'/update', this.forms)
+                        .then(res=>{
+                            if(res.status===200){
+                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                                this.$refs.dataTableVehicle.getData()
+                                this.forms={}
+                                this.selected=[]
+                            }
+                        })
+                        .catch(err=>{
+                            if(err.response){
+                                this.error = err.response.data.errors
+                            }
+                        })
+                }else{
+                    this.$http.post('/json/transport/vehicle/store', this.forms)
+                        .then(res=>{
+                            if(res.status===200){
+                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                                this.$refs.dataTableVehicle.getData()
+                                this.forms={}
+                                this.selected=[]
+                            }
+                        })
+                        .catch(err=>{
+                            if(err.response){
+                                this.error = err.response.data.errors
+                            }
+                        })
+                }
+
             }
         }
     }

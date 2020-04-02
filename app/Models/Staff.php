@@ -70,5 +70,8 @@ class Staff extends BaseModel
         return $this->hasMany(Attendance::class,'link_id','id')->where('attendees_type','=',2);
     }
 
+    public function vehicle(){
+        return $this->belongsToMany(Vehicle::class, 'vehicle_staffs','staffs_id', 'vehicles_id');
+    }
 
 }

@@ -17,10 +17,6 @@ class VehicleController extends CollegeBaseController
     protected $panel = 'Vehicle';
     protected $filter_query = [];
 
-    public function __construct()
-    {
-
-    }
 
     public function index(Request $request)
     {
@@ -33,30 +29,19 @@ class VehicleController extends CollegeBaseController
     {
         $request->merge(['created_by'=>auth()->id()]);
         $vehicle =  Vehicle::create($request->all());
-        $staffIds = [];
         if ($request->has('staffs_id')) {
-            foreach ($request->get('staffs_id') as $staff) {
-                $staffIds = $staff;
-                $vehicle->staff()->attach($staffIds);
-            }
+                $vehicle->staff()->attach($request->input('staffs_id'));
         }
-
         return response()->json( ['success', $this->panel. ' Created Successfully.'] );
     }
 
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
         $data = [];
-        if (!$data['row'] = Vehicle::find($id))
+        if (!$data['row'] = Vehicle::with('staff')->whereId($id)->first())
             return parent::invalidRequest();
 
-        $data['html'] = view($this->view_path.'.includes.staff_tr_rows', [
-            'staffs' => $data['row']->staff
-        ])->render();
 
-        $data['vehicle'] = Vehicle::select('id', 'number', 'type', 'model', 'description', 'status')->orderBy('number')->get();
-
-        $data['base_route'] = $this->base_route;
         return response()->json($data);
     }
 
@@ -65,16 +50,12 @@ class VehicleController extends CollegeBaseController
 
         if (!$row = Vehicle::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['created_by'=>auth()->id()]);
 
         $row->update($request->all());
 
         if ($request->has('staffs_id')) {
-            $staffIds = [];
-            foreach ($request->get('staffs_id') as $staff) {
-                $staffIds[] = $staff;
-            }
-            $row->staff()->sync($staffIds);
+            $row->staff()->sync($request->input('staffs_id'));
         }
 
         return response()->json( ['success', $this->panel. ' Created Successfully.'] );

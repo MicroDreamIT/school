@@ -10,8 +10,8 @@
                     <router-link :to="'/transport/route'">
                         <vs-button type="filled" class="smBtn">Route</vs-button>
                     </router-link>
-                    <router-link :to="'/transport/route'">
-                        <vs-button type="filled" class="smBtn">Route</vs-button>
+                    <router-link :to="'/transport/vehicle'">
+                        <vs-button type="filled" class="smBtn">Vehicle</vs-button>
                     </router-link>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                             <h4>{{buttonText}} Route</h4><br>
                             <div class="form-group row mb-3">
                                 <label class="col-sm-3">Route</label>
-                                <vs-input class="col-sm-9" v-model="forms.title" :danger="error.title!==undefined" ref="number"></vs-input>
+                                <vs-input class="col-sm-9" v-model="forms.title" :danger="error.title!==undefined" ref="title"></vs-input>
                                 <p v-if="error.title!==undefined" class="text-danger">{{ error.title[0] }}</p>
                                 <p></p>
                             </div>
@@ -113,6 +113,9 @@
                                                 <th>type:</th>
                                                 <td>{{vehicle.type}}'</td>
                                             </tr>
+                                            <tr>
+                                                <hr v-if="props.data.vehicles.length>0">
+                                            </tr>
                                         </table>
                                     </vs-td>
                                     <vs-td :data="props.data.action">
@@ -163,13 +166,13 @@
 
         methods:{
             editItems(id){
-                this.$refs['number'].$el.querySelector('input').focus()
+                this.$refs['title'].$el.querySelector('input').focus()
 
                 this.$http.get('/json/transport/route' + '/' + id + '/edit')
                     .then(res=>{
                         this.forms = res.data.row
-                        this.vehicles = res.data.row.staff
-                        this.selected = res.data.row.staff
+                        this.vehicles = res.data.row.vehicle
+                        this.selected = res.data.row.vehicle
                         this.buttonText = 'Update'
                     })
                     .catch(err=>{
@@ -194,6 +197,7 @@
                         id:st.id,
                         title:st.title,
                         rent:st.rent,
+                        description:st.description,
                         vehicles:st.vehicle,
                         status:st.status
                     }

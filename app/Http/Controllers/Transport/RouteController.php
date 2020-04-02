@@ -47,14 +47,8 @@ class RouteController extends CollegeBaseController
     public function edit(Request $request, $id)
     {
         $data = [];
-        if (!$data['row'] = Route::find($id))
+        if (!$data['row'] = Route::with('vehicle')->find($id))
             return parent::invalidRequest();
-
-        $data['html'] = view($this->view_path . '.includes.vehicle_tr_rows', [
-            'vehicles' => $data['row']->vehicle
-        ])->render();
-
-        $data['route'] = Route::select('id', 'title', 'rent', 'description', 'status')->orderBy('title')->get();
 
         return response()->json($data);
     }

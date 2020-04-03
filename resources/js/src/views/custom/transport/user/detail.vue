@@ -136,6 +136,18 @@
                                     <vs-td>
                                         {{props.data.route}}
                                     </vs-td>
+                                    <vs-td>
+                                        {{props.data.vehicle}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.user_type===1?'student':'staff'}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.memberreg}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.membername}}
+                                    </vs-td>
                                     <vs-td :data="props.data.action">
                                         <div class="action-own">
                                             <a class="btn btn-success btn-sm pointer-all"
@@ -168,6 +180,10 @@
                 searchData: {},
                 headers: [
                     {name: 'route', field:'route', sort_key:'route'},
+                    {name: 'vehicle', field:'vehicle', sort_key:'vehicle'},
+                    {name: 'type', field:'vehicle', sort_key:'vehicle'},
+                    {name: 'reg', field:'memberreg', sort_key:'memberreg'},
+                    {name: 'name', field:'membername', sort_key:'membername'},
                     {name: 'Status', field:'status', sort_key:'status'},
                     {name: 'Action', field:'action'}
                 ],
@@ -179,7 +195,11 @@
                 let val = arg.map(st => {
                     return {
                         id: st.id,
-                        route:total['routes'][st.routes_id],
+                        route:st.route.title,
+                        vehicle:st.vehicle.fullname,
+                        type:st.user_type,
+                        membername:st.memberdetail[0],
+                        memberreg:st.memberdetail[1],
                         status: st.status
                     }
                 });

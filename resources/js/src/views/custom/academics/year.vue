@@ -23,6 +23,7 @@
                                           data-vv-name="title"
                                           :danger="errors.first('title')?true:false"
                                           :danger-text="errors.first('title')"
+                                          ref="yeartitle"
                                 >
 
                                 </vs-input>
@@ -53,7 +54,9 @@
                                         {{props.data.title}}
                                     </vs-td>
                                     <vs-td>
-                                        <a @click="changeActiveStatus(props.data.id)" v-if="props.data.active_status!==1" class="btn btn-danger btn-sm pointer-all">
+                                        <a @click="changeActiveStatus(props.data.id)"
+                                           v-if="props.data.active_status!==1"
+                                           class="btn btn-danger btn-sm pointer-all">
                                             click to active
                                         </a>
                                         <a v-else>
@@ -164,12 +167,13 @@
                 searchData: {},
                 tableHeader: [
                     {name: 'Years', sort_key: 'title'},
-                    {name:'Active status', sort_key:'active_status'},
+                    {name: 'Active status', sort_key: 'active_status'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
                 title: '',
                 items: [],
+                id: null,
                 mainItem: [],
                 deletePop: false,
                 deleteItem: null,
@@ -181,11 +185,16 @@
         },
 
         methods: {
-            changeActiveStatus(id, status){
-                this.$http.get(this.url+ '/' + id + '/' + '/active-status')
-                    .then(res=>{
-                        if(res.status===200){
-                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+            changeActiveStatus(id, status) {
+                this.$http.get(this.url + '/' + id + '/' + '/active-status')
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.getData()
                         }
                     })
@@ -199,14 +208,37 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
-                            title: this.title,
-                        }).then(res => {
-                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
-                            this.title = '';
-                            this.getData();
-                            this.$validator.reset()
-                        })
+                        if (this.id) {
+                            this.$http.post(this.url + '/' + this.id + '/update',{title:this.title})
+                                .then(res => {
+                                    this.$vs.notify({
+                                        title: res.data[0],
+                                        text: res.data[1],
+                                        color: res.data[0],
+                                        icon: 'verified_user'
+                                    })
+                                    this.title = ''
+                                    this.id = null
+                                    this.getData();
+                                    this.$validator.reset()
+                                })
+                        } else {
+                            this.$http.post(this.url + '/store', {
+                                title: this.title,
+                            }).then(res => {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
+                                this.title = ''
+                                this.id = null
+                                this.getData();
+                                this.$validator.reset()
+                            })
+                        }
+
                     }
                 })
             },
@@ -220,7 +252,10 @@
 
             },
             editItems(id) {
-                this.$router.push({name: 'yearEdit', params: {id: id}})
+                this.$refs.yeartitle.$el.querySelector('input').focus()
+                let item = this.items.filter(st => st.id === id)[0]
+                this.title = item.title
+                this.id = item.id
             },
             deletePopModal(id) {
                 this.deleteItem = id;

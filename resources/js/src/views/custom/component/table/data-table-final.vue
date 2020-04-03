@@ -252,7 +252,7 @@
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.ajaxVariableSet[0]];
-                    this.$emit('get-return-value', this.item)
+                    this.$emit('get-return-value', this.item, res.data)
                     if(!this.$store.state.tableData.length>0){
                         this.$store.dispatch('updateTableData',this.item)
                     }

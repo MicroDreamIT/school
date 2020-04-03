@@ -80,7 +80,7 @@
                                 <div class="form-group">
                                     <label>Vehicle:</label>
                                     <select v-model="forms.vehicle_select" :class="{'form-control':true, 'border-danger':error.vehicle_select!==undefined}">
-                                        <option :value="vehicle.id" v-for="vehicle in vehicles">
+                                        <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">
                                             {{vehicle.number}}|{{vehicle.type}}
                                         </option>
                                     </select>

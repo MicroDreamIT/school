@@ -18,6 +18,7 @@ use App\Traits\SmsEmailScope;
 use App\Traits\TransportScope;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Integer;
 use URL;
 
 class TransportUserController extends CollegeBaseController
@@ -109,8 +110,8 @@ class TransportUserController extends CollegeBaseController
         $userType = $request->get('user_type');
         $regNo = $request->get('reg_no');
         $status = $request->get('status');
-        $route = $request->get('route');
-        $vehicle = $request->get('vehicle_select');
+        $route = (integer) $request->get('route');
+        $vehicle = (integer) $request->get('vehicle_select');
 
         $year = Year::where('active_status', '=', 1)->first();
         if (!$year) {
@@ -148,7 +149,7 @@ class TransportUserController extends CollegeBaseController
                 $message_type = 'success';
                 $message = $this->panel . ' Already Registered. Please Edit This TransportUser';
             } else {
-                dd($request->all());
+//                dd($request->all());
                 $TransportUserRegister = TransportUser::create($request->all());
                 /*check TransportUser Register and add on history table*/
                 if ($TransportUserRegister) {

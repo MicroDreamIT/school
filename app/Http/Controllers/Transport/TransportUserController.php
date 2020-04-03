@@ -114,8 +114,7 @@ class TransportUserController extends CollegeBaseController
 
         $year = Year::where('active_status', '=', 1)->first();
         if (!$year) {
-            $request->session()->flash($this->message_warning, ' Active Year Not Found.Please, Set Year For History Record.');
-            return back();
+            return response()->json(['warning', ' Active Year Not Found.Please, Set Year For History Record.']);
         }
 
         /*User Type and User Verification. only valid student or staff will get membership*/

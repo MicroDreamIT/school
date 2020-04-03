@@ -139,9 +139,10 @@
         },
         methods: {
             posting(arg=null){
+                console.log(arg)
                 this.$http.post('/json/transport/user/store', this.forms)
                     .then(res=>{
-
+                        console.log(res.data)
                         if(arg){
 
                         }else{

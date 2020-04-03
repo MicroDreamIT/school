@@ -52,7 +52,14 @@
                                     <vs-td :data="props.data.title">
                                         {{props.data.title}}
                                     </vs-td>
-
+                                    <vs-td>
+                                        <a @click="changeActiveStatus(props.data.id)" v-if="props.data.active_status!==1" class="btn btn-danger btn-sm pointer-all">
+                                            click to active
+                                        </a>
+                                        <a v-else>
+                                            {{props.data.active_status===1?'active':''}}
+                                        </a>
+                                    </vs-td>
                                     <vs-td>
                                         <div class="d-flex flex-wrap">
                                             <vs-switch color="success"
@@ -89,6 +96,9 @@
                                         <th>SN.No.</th>
                                         <th>
                                             Years
+                                        </th>
+                                        <th>
+                                            Active Status
                                         </th>
                                         <th>
                                             Status
@@ -154,6 +164,7 @@
                 searchData: {},
                 tableHeader: [
                     {name: 'Years', sort_key: 'title'},
+                    {name:'Active status', sort_key:'active_status'},
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
@@ -170,9 +181,18 @@
         },
 
         methods: {
+            changeActiveStatus(id, status){
+                this.$http.get(this.url+ '/' + id + '/' + '/active-status')
+                    .then(res=>{
+                        if(res.status===200){
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                            this.getData()
+                        }
+                    })
+            },
             getData() {
                 this.$http.get(this.url).then(res => {
-                    this.items = res.data.data;
+                    this.items = res.data.years;
                     this.mainItem = this.items;
                 })
             },
@@ -182,8 +202,7 @@
                         this.$http.post(this.url + '/store', {
                             title: this.title,
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                             this.title = '';
                             this.getData();
                             this.$validator.reset()
@@ -196,8 +215,7 @@
                 let url = '/json/year/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 })
 
             },
@@ -211,8 +229,7 @@
             deleteItems() {
                 this.$http.get('/json/year/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
                 })
             },
         }

@@ -24,17 +24,19 @@ class YearsController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['data'] = Year::select('id', 'title', 'status')->get();
+        $data['years'] = Year::select('id', 'title', 'active_status', 'status')->get();
         return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->merge(['created_by' => auth()->user()->id]);
-
+        $request->merge(['created_by'=>auth()->id()]);
         Year::create($request->all());
 
-        return response()->json(['success', 'Created Successfully.']);
+        return response()->json([
+            'success',
+            $this->panel. ' Created Successfully.'
+        ]);
     }
 
     public function edit(Request $request, $id)
@@ -43,7 +45,7 @@ class YearsController extends CollegeBaseController
         if (!$data['row'] = Year::find($id))
             return parent::invalidRequest();
 
-        $data['data'] = Year::select('id', 'title', 'status')->orderBy('title')->get();
+        $data['years'] = Year::select('id', 'title', 'active_status', 'status')->orderBy('title')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);
@@ -54,22 +56,23 @@ class YearsController extends CollegeBaseController
 
         if (!$row = Year::find($id)) return parent::invalidRequest();
 
-        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['created_by'=>auth()->id()]);
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id . ' ' . $this->panel . ' Updated Successfully.']);
+        return response()->json([
+            'success',
+            $this->panel.' Updated Successfully.'
+        ]);
     }
 
     public function delete(Request $request, $id)
     {
-        try {
-            if (!$row = Year::find($id)) return response()->json(['success', $row->id . ' ' . $this->panel . ' No Data.']);
-            $row->delete();
-            return response()->json(['success', $row->id . ' ' . $this->panel . ' Deleted Successfully.']);
-        } catch (\Illuminate\Database\QueryException $e) {
-            if ($e->errorInfo) return response()->json(['danger', 'Cant Delete. Other Data contain this batch as foreignKey']);
-        }
+        if (!$row = Year::find($id)) return parent::invalidRequest();
+
+        $row->delete();
+
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -83,30 +86,27 @@ class YearsController extends CollegeBaseController
                         case 'in-active':
                             $row = Year::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
+                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
                                 $row->save();
                             }
                             break;
                         case 'delete':
                             $row = Year::find($row_id);
-                            if ($row) {
-                                try {
-                                    $row->delete();
-                                } catch (\Illuminate\Database\QueryException $e) {
-                                    if ($e->errorInfo) return response()->json(['danger', 'Cant Delete. Other Data contain this batch as foreignKey']);
-                                }
-                            }
+                            $row->delete();
                             break;
                     }
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    return response()->json(['success', 'Action Successfully.']);
+                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    return response()->json(['success', 'Deleted Successfully.']);
+                    return response()->json(['error','Deleted successfully.']);
+
 
             } else {
-                return response()->json(['danger', 'Please, Check at least one row.']);
+                return response()->json([
+                    'warning', 'Please, Check at least one row.'
+                ]);
             }
 
         } else return parent::invalidRequest();
@@ -121,7 +121,10 @@ class YearsController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id . ' ' . $this->panel . ' Active Successfully.']);
+        return response()->json([
+            'success',
+            $row->semester.' '.$this->panel.' Active Successfully.'
+        ]);
     }
 
     public function inActive(request $request, $id)
@@ -132,7 +135,19 @@ class YearsController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id . ' ' . $this->panel . ' In-Active Successfully.']);
+        return response()->json([
+            'success',
+            $row->semester.' '.$this->panel.' In-Active Successfully.'
+        ]);
     }
 
+    public function activeStatus($id)
+    {
+        Year::where('id','=',$id)->update(['active_status' => 1]);
+        Year::where('id','!=',$id)->update(['active_status' => 0]);
+        return response()->json([
+            'success',
+            $this->panel.' Active Successfully.'
+        ]);
+    }
 }

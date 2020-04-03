@@ -301,7 +301,7 @@
                         designation: this.designation[st.designation].value,
                         qualification: st.qualification,
                         status: st.status,
-                        fullname: st.fullName
+                        fullname: st.fullname
                     }
                 })
             },

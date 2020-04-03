@@ -50,13 +50,16 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Type:</label>
-                                                    <v-select></v-select>
+                                                    <select v-model="searchData.user_type" class="form-control">
+                                                        <option :value="1">student</option>
+                                                        <option :value="2">staff</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Reg No:</label>
-                                                    <vs-input></vs-input>
+                                                    <vs-input class="w-100" v-model="searchData.reg_no"></vs-input>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -79,15 +82,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 mb-2 pl-0">
-                                        <vs-button type="filled"
-                                                   color="#00b8cf"
-                                                   icon="double_arrow"
-                                                   @click="alert(searchData)"
-                                        >
-                                            Filter
-                                        </vs-button>
-                                    </div>
+<!--                                    <div class="col-md-12 mb-2 pl-0">-->
+<!--                                        <vs-button type="filled"-->
+<!--                                                   color="#00b8cf"-->
+<!--                                                   icon="double_arrow"-->
+<!--                                                   @click="filterData(searchData)"-->
+<!--                                        >-->
+<!--                                            Filter-->
+<!--                                        </vs-button>-->
+<!--                                    </div>-->
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
@@ -127,10 +130,11 @@
                                               :has-multiple="true"
                                               :has-pagination="true"
                                               :filterSection="true"
-                                              ref="dataTableRoute"
+                                              ref="dataTableTransport"
                                               :ajaxVariableSet="['user']"
                                               @get-return-value="GetReturnValue"
                                               :showAction="false"
+                                              :searchData="searchData"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td>
@@ -140,7 +144,7 @@
                                         {{props.data.vehicle}}
                                     </vs-td>
                                     <vs-td>
-                                        {{props.data.user_type===1?'student':'staff'}}
+                                        {{props.data.type===1?'student':'staff'}}
                                     </vs-td>
                                     <vs-td>
                                         {{props.data.memberreg}}
@@ -177,32 +181,49 @@
     export default {
         data() {
             return {
-                searchData: {},
+                // user_type=1&reg_no=54564&route=3&vehicle_select=2&status=2
+                searchData: {
+                    user_type: null,
+                    reg_no: null,
+                    route: null,
+                    vehicle_select: null,
+                    status: null
+                },
                 headers: [
-                    {name: 'route', field:'route', sort_key:'route'},
-                    {name: 'vehicle', field:'vehicle', sort_key:'vehicle'},
-                    {name: 'type', field:'vehicle', sort_key:'vehicle'},
-                    {name: 'reg', field:'memberreg', sort_key:'memberreg'},
-                    {name: 'name', field:'membername', sort_key:'membername'},
-                    {name: 'Status', field:'status', sort_key:'status'},
-                    {name: 'Action', field:'action'}
+                    {name: 'route', field: 'route', sort_key: 'route'},
+                    {name: 'vehicle', field: 'vehicle', sort_key: 'vehicle'},
+                    {name: 'type', field: 'type', sort_key: 'type'},
+                    {name: 'reg', field: 'memberreg', sort_key: 'memberreg'},
+                    {name: 'name', field: 'membername', sort_key: 'membername'},
+                    {name: 'Status', field: 'status', sort_key: 'status'},
+                    {name: 'Action', field: 'action'}
                 ],
             }
         },
-        methods:{
-            editItems(id){
-                this.$router.push({name:'transport.userEdit', params:{id:id}});
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    console.log(val)
+                    this.$refs.dataTableTransport.getData()
+                }
+            }
+        },
+        methods: {
+            editItems(id) {
+                this.$router.push({name: 'transport.userEdit', params: {id: id}});
             },
-            deleteItems(){},
-            GetReturnValue(arg = null, total=null) {
+            deleteItems() {
+            },
+            GetReturnValue(arg = null, total = null) {
                 let val = arg.map(st => {
                     return {
                         id: st.id,
-                        route:st.route.title,
-                        vehicle:st.vehicle.fullname,
-                        type:st.user_type,
-                        membername:st.memberdetail[0],
-                        memberreg:st.memberdetail[1],
+                        route: st.route.title,
+                        vehicle: st.vehicle.fullname,
+                        type: st.user_type,
+                        membername: st.memberdetail[0],
+                        memberreg: st.memberdetail[1],
                         status: st.status
                     }
                 });

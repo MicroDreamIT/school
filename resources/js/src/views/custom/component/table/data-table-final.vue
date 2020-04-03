@@ -192,14 +192,14 @@
             },
             editLink:{},
             viewLink:{},
-            deleteLink:{}
+            deleteLink:{},
+            searchData:{}
         },
         data() {
             return {
 
                 selected: [],
                 maxItem: 10,
-                searchData: {},
                 item: [],
                 designation: [],
             }

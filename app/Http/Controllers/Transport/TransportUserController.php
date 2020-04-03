@@ -38,7 +38,7 @@ class TransportUserController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['user'] = TransportUser::select('id', 'routes_id', 'vehicles_id', 'user_type', 'member_id', 'status')
+        $data['user'] = TransportUser::with(['route','vehicle'])
             ->where(function ($query) use ($request) {
                 if ($request->get('user_type') !== '' & $request->get('user_type') > 0) {
                     $query->where('user_type', '=', $request->get('user_type'));

@@ -190,6 +190,8 @@
             }
         },
         methods:{
+            editItems(){},
+            deleteItems(){},
             GetReturnValue(arg = null, total=null) {
                 console.log(arg, total)
                 let val = arg.map(st => {

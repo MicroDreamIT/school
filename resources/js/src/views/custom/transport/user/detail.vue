@@ -169,15 +169,21 @@
                                     </vs-td>
                                     <vs-td :data="props.data.action">
                                         <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
+                                            <a class=" pointer-all" title="shit">
+                                                <i class="text-primary fa fa-arrows-h"></i>
+                                            </a>
+                                            <a class=" pointer-all" title="leave">
+                                                <i class="text-warning fa fa-arrow-circle-right"></i>
+                                            </a>
+                                            <a class="pointer-all"
                                                title="Edit"
                                                @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
+                                                <i class="text-success fa fa-pencil"></i>
                                             </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
+                                            <a class="pointer-all"
                                                title="Delete"
                                                @click.stop="deleteItems(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
+                                                <i class="text-danger  fa fa-trash-o"></i>
                                             </a>
                                         </div>
                                     </vs-td>
@@ -213,8 +219,8 @@
                     {name: 'type', field: 'type', sort_key: 'type'},
                     {name: 'reg', field: 'memberreg', sort_key: 'memberreg'},
                     {name: 'name', field: 'membername', sort_key: 'membername'},
-                    {name: 'Status', field: 'status', sort_key: 'status'},
-                    {name: 'Action', field: 'action'}
+                    {name: 'Action', field: 'action'},
+                    {name: 'Status', field: 'status', sort_key: 'status'}
                 ],
             }
         },

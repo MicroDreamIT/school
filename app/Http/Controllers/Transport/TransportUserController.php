@@ -130,16 +130,16 @@ class TransportUserController extends CollegeBaseController
                     return parent::invalidRequest();
             }
         } else {
-            return response()->json( ['warning', ' Registration Number or User Type is not Valid.'] );
+            return response()->json(['warning', ' Registration Number or User Type is not Valid.']);
         }
 
         if (isset($data)) {
-            $request->request->add(['routes_id' => $route]);
-            $request->request->add(['vehicles_id' => $vehicle]);
-            $request->request->add(['user_type' => $userType]);
-            $request->request->add(['member_id' => $data->id]);
-            $request->request->add(['status' => $status]);
-            $request->request->add(['created_by' => auth()->user()->id]);
+            $request->merge(['routes_id' => $route]);
+            $request->merge(['vehicles_id' => $vehicle]);
+            $request->merge(['user_type' => $userType]);
+            $request->merge(['member_id' => $data->id]);
+            $request->merge(['status' => $status]);
+            $request->merge(['created_by' => auth()->user()->id]);
 
             /*Check Member Alreday Register or not*/
             $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
@@ -148,6 +148,7 @@ class TransportUserController extends CollegeBaseController
                 $message_type = 'success';
                 $message = $this->panel . ' Already Registered. Please Edit This TransportUser';
             } else {
+                dd($request->all());
                 $TransportUserRegister = TransportUser::create($request->all());
                 /*check TransportUser Register and add on history table*/
                 if ($TransportUserRegister) {
@@ -218,12 +219,12 @@ class TransportUserController extends CollegeBaseController
         }
 
         if (isset($data)) {
-            $request->request->add(['routes_id' => $route]);
-            $request->request->add(['vehicles_id' => $vehicle]);
-            $request->request->add(['user_type' => $userType]);
-            $request->request->add(['member_id' => $data->id]);
-            $request->request->add(['status' => $status]);
-            $request->request->add(['created_by' => auth()->user()->id]);
+            $request->merge(['routes_id' => $route]);
+            $request->merge(['vehicles_id' => $vehicle]);
+            $request->merge(['user_type' => $userType]);
+            $request->merge(['member_id' => $data->id]);
+            $request->merge(['status' => $status]);
+            $request->merge(['created_by' => auth()->user()->id]);
 
             /*Check Member Alreday Register or not*/
             $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
@@ -308,10 +309,10 @@ class TransportUserController extends CollegeBaseController
         }
 
         if ($data) {
-            $request->request->add(['user_type' => $request->get('user_type')]);
-            $request->request->add(['member_id' => $data->id]);
-            $request->request->add(['status' => $request->get('status')]);
-            $request->request->add(['last_updated_by' => auth()->user()->id]);
+            $request->merge(['user_type' => $request->get('user_type')]);
+            $request->merge(['member_id' => $data->id]);
+            $request->merge(['status' => $request->get('status')]);
+            $request->merge(['last_updated_by' => auth()->user()->id]);
             /*Check Member Alreday Register or not*/
             $UserStatus = TransportUser::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id', 'desc')->first();
 
@@ -434,10 +435,10 @@ class TransportUserController extends CollegeBaseController
                                 ]);
 
                                 /*update TransportUser*/
-                                $request->request->add(['routes_id' => null]);
-                                $request->request->add(['vehicles_id' => null]);
-                                $request->request->add(['status' => 'in-active']);
-                                $request->request->add(['last_updated_by' => auth()->user()->id]);
+                                $request->merge(['routes_id' => null]);
+                                $request->merge(['vehicles_id' => null]);
+                                $request->merge(['status' => 'in-active']);
+                                $request->merge(['last_updated_by' => auth()->user()->id]);
                                 $row->update($request->all());
                                 //send alert
                                 $memberId = $row->member_id;
@@ -514,10 +515,10 @@ class TransportUserController extends CollegeBaseController
         $vehicle = $row->vehicles_id;
 
         /*update TransportUser*/
-        $request->request->add(['routes_id' => null]);
-        $request->request->add(['vehicles_id' => null]);
-        $request->request->add(['status' => 'in-active']);
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['routes_id' => null]);
+        $request->merge(['vehicles_id' => null]);
+        $request->merge(['status' => 'in-active']);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
         $user = $row->update($request->all());
 
         $year = Year::where('active_status', '=', 1)->first();
@@ -537,10 +538,10 @@ class TransportUserController extends CollegeBaseController
             $userType = $row->user_type;
             $this->transportLeaveNotify($memberId, $userType);
             //alert end
-            $request->session()->flash($this->message_success, $this->panel . ' Leave Successfully.');
+            return response()->json(['success', $this->panel . ' Leave Successfully.']);
         }
 
-        return redirect()->route($this->base_route);
+
     }
 
     public function shift(request $request)
@@ -582,14 +583,14 @@ class TransportUserController extends CollegeBaseController
                     //alert end
                 }
 
-                $request->session()->flash($this->message_success, $this->panel . ' Shifted Successfully.');
+                return response()->json(['success', $this->panel . ' Shifted Successfully.']);
             } else {
-                $request->session()->flash($this->message_warning, 'TransportUser Not Select or Not Active, Please Active First.');
+                return response()->json(['warning', 'TransportUser Not Select or Not Active, Please Active First.']);
             }
         } else {
-            $request->session()->flash($this->message_warning, 'Please, Select Route, Vehicle and Bed First.');
+            return response()->json(['warning', 'Please, Select Route, Vehicle and Bed First.']);
         }
-        return redirect()->route($this->base_route);
+
     }
 
     public function history(Request $request)
@@ -653,7 +654,7 @@ class TransportUserController extends CollegeBaseController
         $data['years'] = $this->activeYears();
         $data['routes'] = $this->activeTransportRoutes();
         $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path . '.history.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function findVehicles(Request $request)

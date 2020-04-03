@@ -142,11 +142,11 @@
                 console.log(arg)
                 this.$http.post('/json/transport/user/store', this.forms)
                     .then(res=>{
-                        console.log(res.data)
+                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
                         if(arg){
 
                         }else{
-
+                            this.forms={}
                         }
                     })
                     .catch(err=>{

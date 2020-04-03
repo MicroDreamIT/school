@@ -922,6 +922,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/transport/user/:id/edit',
+                    name: 'transport.userEdit',
+                    component: () => import('./views/custom/transport/user/registrationEdit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/transport/route',
                     name: 'transport.route',
                     component: () => import('./views/custom/transport/route'),

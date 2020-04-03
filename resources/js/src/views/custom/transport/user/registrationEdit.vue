@@ -66,30 +66,6 @@
                                     <p></p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Route:</label>
-                                    <select :class="{'form-control':true, 'border-danger':error.route!==undefined}" v-model="forms.route">
-                                        <option :value="route.id" v-for="route in routes">{{route.value}}</option>
-                                    </select>
-                                    <p v-if="error.route!==undefined" class="text-danger">{{ error.route[0] }}</p>
-                                    <p></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Vehicle:</label>
-                                    <select v-model="forms.vehicle_select" :class="{'form-control':true, 'border-danger':error.vehicle_select!==undefined}">
-                                        <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">
-                                            {{vehicle.number}}|{{vehicle.type}}
-                                        </option>
-                                    </select>
-                                    <p v-if="error.vehicle_select!==undefined" class="text-danger">{{ error.vehicle_select[0] }}</p>
-                                    <p></p>
-                                </div>
-                            </div>
-
-
                             <vs-divider class="mx-3"></vs-divider>
                             <div class="row mx-0 col-md-12">
                                 <vs-button class="my-round mx-2" color="warning" @click="forms={}">Reset</vs-button>
@@ -132,22 +108,22 @@
             }
         },
         created() {
-            this.$http.get('/json/transport/user/add')
+            this.$http.get('/json/transport/user/'+this.$route.params.id+'/edit')
                 .then(res => {
-                    this.routes = this.$root.objectToArray(res.data.routes)
+                    this.forms=res.data
+                    this.forms.reg_no = res.data.memberdetail[1]
                 })
         },
         methods: {
             posting(arg=null){
-                console.log(arg)
-                this.$http.post('/json/transport/user/store', this.forms)
+                this.$http.post('/json/transport/user/'+this.$route.params.id+'/update', this.forms)
                     .then(res=>{
                         this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
                         if(arg){
                             this.forms={}
                         }else{
                             this.forms={}
-                            this.$router.push({path:'/ransport/user'})
+                            this.$router.push({path:'/transport/user'})
                         }
                     })
                     .catch(err=>{

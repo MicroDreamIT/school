@@ -281,7 +281,7 @@ class TransportUserController extends CollegeBaseController
         }
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path . '.edit'), compact('data'));
+        return response()->json($data['row']);
     }
 
     public function update(EditValidation $request, $id)
@@ -305,8 +305,7 @@ class TransportUserController extends CollegeBaseController
                     return parent::invalidRequest();
             }
         } else {
-            $request->session()->flash($this->message_warning, ' Registration Number or User Type is not Valid.');
-            return back();
+            return response()->json(['warning',' Registration Number or User Type is not Valid.']);
         }
 
         if ($data) {
@@ -319,15 +318,14 @@ class TransportUserController extends CollegeBaseController
 
             if ($UserStatus->count() > 0) {
                 $row->update($request->all());
-                $request->session()->flash($this->message_success, $this->panel . ' Updated Successfully.');
+                return response()->json(['success', $this->panel . ' Updated Successfully.']);
             } else {
-                $request->session()->flash($this->message_warning, $this->panel . ' Already Registered or Duplicate Registration. Please, Find on TransportUser List and Edit');
+                return response()->json(['warning', $this->panel . ' Already Registered or Duplicate Registration. Please, Find on TransportUser List and Edit']);
             }
         } else {
-            $request->session()->flash($this->message_warning, ' Registration Number or User Type is not Valid.');
+            return response()->json(['error', 'Registration Number or User Type is not Valid.']);
         }
 
-        return redirect()->route($this->base_route);
     }
 
     public function delete(Request $request, $id)
@@ -339,8 +337,7 @@ class TransportUserController extends CollegeBaseController
         /*Delete TransportUser*/
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel . ' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)

@@ -118,11 +118,11 @@
                                 Route Record list on table. Filter Route using the filter.
                             </div>
                             <data-table-final :headers="headers"
-                                              :tableHeader="'Route List'"
-                                              :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                              :tableHeader="'user List'"
+                                              :suggestText="'user Record list on table. Filter room type using the filter.'"
                                               :url="'/json/transport/user'"
                                               :model="'route'"
-                                              :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                              :noDataMessage="'No user data found. Please Filter room type to show.'"
                                               :hasSearch="true"
                                               :has-multiple="true"
                                               :has-pagination="true"
@@ -190,10 +190,11 @@
             }
         },
         methods:{
-            editItems(){},
+            editItems(id){
+                this.$router.push({name:'transport.userEdit', params:{id:id}});
+            },
             deleteItems(){},
             GetReturnValue(arg = null, total=null) {
-                console.log(arg, total)
                 let val = arg.map(st => {
                     return {
                         id: st.id,

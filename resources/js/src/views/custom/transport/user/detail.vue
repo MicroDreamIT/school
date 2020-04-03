@@ -65,32 +65,43 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Status:</label>
-                                                    <v-select/>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Vehicle:</label>
-                                                    <v-select/>
+                                                    <select v-model="searchData.status" class="form-control">
+                                                        <option :value="1">active</option>
+                                                        <option :value="2">in active</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Route:</label>
-                                                    <v-select/>
+                                                    <select v-model="searchData.route" class="form-control">
+                                                        <option :value="route.id" v-for="route in routes">
+                                                            {{route.value}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Vehicle:</label>
+                                                    <select v-model="searchData.vehicle_select" class="form-control">
+                                                        <option :value="vehicle.vehicles_id"
+                                                                v-for="vehicle in vehicles">{{vehicle.number}}
+                                                        </option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-<!--                                    <div class="col-md-12 mb-2 pl-0">-->
-<!--                                        <vs-button type="filled"-->
-<!--                                                   color="#00b8cf"-->
-<!--                                                   icon="double_arrow"-->
-<!--                                                   @click="filterData(searchData)"-->
-<!--                                        >-->
-<!--                                            Filter-->
-<!--                                        </vs-button>-->
-<!--                                    </div>-->
+                                    <div class="col-md-12 mb-2 pl-0">
+                                        <vs-button type="filled"
+                                                   color="#00b8cf"
+                                                   icon="double_arrow"
+                                                   @click="resetSearch()"
+                                        >
+                                            reset
+                                        </vs-button>
+                                    </div>
                                 </vs-collapse-item>
                             </vs-collapse>
                         </div>
@@ -100,12 +111,16 @@
                             </h4><br>
                             <div class="col-md-4">
                                 <div class="form-group   mb-3">
-                                    <label>Route</label>
-                                    <v-select></v-select>
+                                    <select class="form-control" v-model="route_id" @click="findVehicle(route_id)">
+                                        <option :value="route.id" v-for="route in routes">
+                                            {{route.value}}
+                                        </option>
+                                    </select>
                                 </div>
                                 <div class="form-group   mb-3">
-                                    <label>Vehicle</label>
-                                    <v-select></v-select>
+                                    <select class="form-control">
+                                        <option v-for="vehicle in vehicles">{{vehicle.number}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="clearfix mt-5">
@@ -189,6 +204,9 @@
                     vehicle_select: null,
                     status: null
                 },
+                routes: [],
+                vehicles: [],
+                route_id:null,
                 headers: [
                     {name: 'route', field: 'route', sort_key: 'route'},
                     {name: 'vehicle', field: 'vehicle', sort_key: 'vehicle'},
@@ -200,16 +218,35 @@
                 ],
             }
         },
-        watch:{
-            searchData:{
-                deep:true,
-                handler(val){
-                    console.log(val)
+        watch: {
+            searchData: {
+                deep: true,
+                handler(val) {
+                    if (val.route) {
+                        let route_id = val.route
+                        this.findVehicle(route_id)
+                    }
+
                     this.$refs.dataTableTransport.getData()
                 }
             }
         },
         methods: {
+            findVehicle(route_id) {
+                this.$http.post('/json/transport/find-vehicles', {
+                    route_id: route_id
+                })
+                    .then(res => {
+                        this.vehicles = res.data.vehicles
+                    })
+            },
+            resetSearch() {
+                this.searchData.user_type = null
+                this.searchData.reg_no = null
+                this.searchData.route = null
+                this.searchData.vehicle_select = null
+                this.searchData.status = null
+            },
             editItems(id) {
                 this.$router.push({name: 'transport.userEdit', params: {id: id}});
             },
@@ -227,6 +264,7 @@
                         status: st.status
                     }
                 });
+                this.routes = this.$root.objectToArray(total.active_routes)
                 this.$store.dispatch('updateTableData', val)
             },
         }

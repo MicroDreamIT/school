@@ -16,11 +16,11 @@
                     </div>
                     <div class="form-group   mb-3">
                         <select class="form-control" v-model="vehicle_bulk">
-                            <option v-for="vehicle in vehicles">{{vehicle.number}}</option>
+                            <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">{{vehicle.number}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn">
+                <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn && vehicle_bulk && route_bulk && selected.length>0">
                     <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
                         <i class="fa fa-check"></i>
                         Active
@@ -293,9 +293,11 @@
                 if (this.selected.length > 0) {
                     this.$http.post(this.url + '/bulk-action', {
                         bulk_action: 'active',
-                        route_bulk: this.route_bulk,
-                        vehicle_bulk: this.vehicle_bulk,
-                        chkIds: this.selected.map(val => {return val.id})
+                        route_bulk: parseInt(this.route_bulk),
+                        vehicle_bulk: parseInt(this.vehicle_bulk),
+                        chkIds: this.selected.map(val => {
+                            return parseInt(val.id)
+                        })
                     })
                         .then(res => {
                             this.$vs.notify({
@@ -324,15 +326,14 @@
                         })
                     })
                         .then(res => {
+                            this.selected = []
+                            this.getData()
                             this.$vs.notify({
                                 title: 'error',
                                 text: res.data[1],
                                 color: res.data[0],
                                 icon: 'verified_user'
                             })
-
-                            this.selected = [];
-                            this.getData()
                         })
                         .catch(err => {
                             alert(err.response.message)

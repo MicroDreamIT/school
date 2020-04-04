@@ -342,6 +342,7 @@ class TransportUserController extends CollegeBaseController
 
     public function bulkAction(Request $request)
     {
+        dd($request->all());
         if ($request->has('bulk_action') && in_array($request->get('bulk_action'), ['Active', 'Shift', 'Leave', 'Delete'])) {
             /*Assign request values*/
             $route = $request->get('route_bulk');

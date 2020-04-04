@@ -328,7 +328,7 @@ class TransportUserController extends CollegeBaseController
 
     }
 
-    public function delete(Request $request, $id)
+    public function delete($id)
     {
         if (!$row = TransportUser::find($id)) return parent::invalidRequest();
 
@@ -381,9 +381,9 @@ class TransportUserController extends CollegeBaseController
                                         //alert end
                                     }
 
-                                    $request->session()->flash($this->message_success, $this->panel . ' Re-Active Successfully.');
+                                    return response()->json(['success', $this->panel . ' Re-Active Successfully.']);
                                 } else {
-                                    $request->session()->flash($this->message_warning, 'Please Select Route & Vehicle for Active.');
+                                    return response()->json(['warning', 'Please Select Route & Vehicle for Active.']);
                                 }
 
                                 break;
@@ -414,10 +414,9 @@ class TransportUserController extends CollegeBaseController
                                         $this->transportShiftNotify($memberId, $userType, $newTransport);
                                         //alert end
                                     }
-
-                                    $request->session()->flash($this->message_success, $this->panel . ' Shifted Successfully.');
+                                    return response()->json(['success', $this->panel . ' Shifted Successfully.']);
                                 } else {
-                                    $request->session()->flash($this->message_warning, 'Please Select Route & Vehicle for Shifting.');
+                                    return response()->json(['warning', 'Please Select Route & Vehicle for Shifting.']);
                                 }
                                 break;
                             case 'Leave':
@@ -443,7 +442,7 @@ class TransportUserController extends CollegeBaseController
                                 $userType = $row->user_type;
                                 $this->transportLeaveNotify($memberId, $userType);
                                 //alert end
-                                $request->session()->flash($this->message_success, $this->panel . ' TransportUsers Leave Successfully.');
+                                return response()->json(['success',$this->panel . ' TransportUsers Leave Successfully.']);
 
                                 break;
                             case 'Delete':
@@ -451,15 +450,15 @@ class TransportUserController extends CollegeBaseController
                                 TransportHistory::where('travellers_id', '=', $row->id)->delete();
                                 /*Delete TransportUser*/
                                 $row->delete();
-                                $request->session()->flash($this->message_success, $this->panel . ' Deleted With History Successfully.');
+                                return response()->json(['success', $this->panel . ' Deleted With History Successfully.']);
                                 break;
                         }
                     }
                 }
-                return redirect()->back();
+
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->back();
+                return response()->json(['warning', 'Please, Check at least one row.']);
+
             }
         } else return parent::invalidRequest();
     }

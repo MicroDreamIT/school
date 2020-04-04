@@ -108,34 +108,8 @@
                         <div class="col-md-12 p-4">
                             <h4 class="header large lighter blue">
                                 <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Transport User List
-                            </h4><br>
-                            <div class="col-md-4">
-                                <div class="form-group   mb-3">
-                                    <select class="form-control" v-model="route_id" @click="findVehicle(route_id)">
-                                        <option :value="route.id" v-for="route in routes">
-                                            {{route.value}}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group   mb-3">
-                                    <select class="form-control">
-                                        <option v-for="vehicle in vehicles">{{vehicle.number}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="clearfix mt-5">
-                                <div class="easy-link-menu">
-                                    <a class="btn-warning btn-sm bulk-action-btn">
-                                        <i class="fa fa-compress" aria-hidden="true"></i>
-                                        Shift Time
-                                    </a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="table-header">
-                                Route Record list on table. Filter Route using the filter.
-                            </div>
-                            <data-table-final :headers="headers"
+                            </h4>
+                            <data-table-transport :headers="headers"
                                               :tableHeader="'user List'"
                                               :suggestText="'user Record list on table. Filter room type using the filter.'"
                                               :url="'/json/transport/user'"
@@ -182,13 +156,13 @@
                                             </a>
                                             <a class="pointer-all"
                                                title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
+                                               @click.stop="openAlert(props.data.id)">
                                                 <i class="text-danger  fa fa-trash-o"></i>
                                             </a>
                                         </div>
                                     </vs-td>
                                 </template>
-                            </data-table-final>
+                            </data-table-transport>
                         </div>
                     </div>
                 </vs-card>
@@ -198,8 +172,11 @@
 </template>
 
 <script>
-
+    import DataTableTransport from '../../component/table/data-table-transport.vue'
     export default {
+        components:{
+            'data-table-transport':DataTableTransport
+        },
         data() {
             return {
                 // user_type=1&reg_no=54564&route=3&vehicle_select=2&status=2
@@ -212,7 +189,8 @@
                 },
                 routes: [],
                 vehicles: [],
-                route_id:null,
+                route_id: null,
+                promptDeleteId:null,
                 headers: [
                     {name: 'route', field: 'route', sort_key: 'route'},
                     {name: 'vehicle', field: 'vehicle', sort_key: 'vehicle'},
@@ -238,6 +216,19 @@
             }
         },
         methods: {
+            openAlert(id){
+                this.promptDeleteId=id
+                this.$vs.dialog({
+                    color: 'danger',
+                    title: `Delete confirmation`,
+                    text: 'These items will be permanently deleted and cannot be recovered.',
+                    accept: this.deleteItems,
+                    close:this.resetPrompt
+                })
+            },
+            resetPrompt(){
+                this.promptDeleteId=null
+            },
             findVehicle(route_id) {
                 this.$http.post('/json/transport/find-vehicles', {
                     route_id: route_id
@@ -256,7 +247,17 @@
             editItems(id) {
                 this.$router.push({name: 'transport.userEdit', params: {id: id}});
             },
+
             deleteItems() {
+                this.$http.get('/json/transport/user/' + this.promptDeleteId + '/delete')
+                    .then(res => {
+                        this.$refs.dataTableTransport.getData()
+                        this.promptDelete=null
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
+                    })
+                    .catch(err => {
+
+                    })
             },
             GetReturnValue(arg = null, total = null) {
                 let val = arg.map(st => {

@@ -122,7 +122,6 @@
                                               ref="dataTableTransport"
                                               :ajaxVariableSet="['user']"
                                               @get-return-value="GetReturnValue"
-                                              :showAction="false"
                                               :searchData="searchData"
                             >
                                 <template slot="items" slot-scope="props">
@@ -141,26 +140,7 @@
                                     <vs-td>
                                         {{props.data.membername}}
                                     </vs-td>
-                                    <vs-td :data="props.data.action">
-                                        <div class="action-own">
-                                            <a class=" pointer-all" title="shit">
-                                                <i class="text-primary fa fa-arrows-h"></i>
-                                            </a>
-                                            <a class=" pointer-all" title="leave">
-                                                <i class="text-warning fa fa-arrow-circle-right"></i>
-                                            </a>
-                                            <a class="pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="text-success fa fa-pencil"></i>
-                                            </a>
-                                            <a class="pointer-all"
-                                               title="Delete"
-                                               @click.stop="openAlert(props.data.id)">
-                                                <i class="text-danger  fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
+
                                 </template>
                             </data-table-transport>
                         </div>
@@ -244,27 +224,12 @@
                 this.searchData.vehicle_select = null
                 this.searchData.status = null
             },
-            editItems(id) {
-                this.$router.push({name: 'transport.userEdit', params: {id: id}});
-            },
-
-            deleteItems() {
-                this.$http.get('/json/transport/user/' + this.promptDeleteId + '/delete')
-                    .then(res => {
-                        this.$refs.dataTableTransport.getData()
-                        this.promptDelete=null
-                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
-                    })
-                    .catch(err => {
-
-                    })
-            },
             GetReturnValue(arg = null, total = null) {
                 let val = arg.map(st => {
                     return {
                         id: st.id,
-                        route: st.route.title,
-                        vehicle: st.vehicle.fullname,
+                        route: st.route?st.route.title:null,
+                        vehicle: st.vehicle?st.vehicle.fullname:null,
                         type: st.user_type,
                         membername: st.memberdetail[0],
                         memberreg: st.memberdetail[1],

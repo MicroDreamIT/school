@@ -6,8 +6,9 @@
                     <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                     {{tableHeader}}
                 </h4>
-                <div class="row">
+                <div>
                     <div class="form-group   mb-3">
+                        <label>Route</label>
                         <select class="form-control" v-model="route_bulk" @change="findVehicle(route_bulk)">
                             <option :value="route.id" v-for="route in routes">
                                 {{route.value}}
@@ -15,19 +16,25 @@
                         </select>
                     </div>
                     <div class="form-group   mb-3">
+                        <label>Vehicle</label>
                         <select class="form-control" v-model="vehicle_bulk">
                             <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">{{vehicle.number}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="easy-link-menu d-flex flex-wrap" v-if="actionBtn && vehicle_bulk && route_bulk && selected.length>0">
+                <div class="easy-link-menu d-flex flex-wrap"
+                     v-if="actionBtn && vehicle_bulk && route_bulk && selected.length>0">
                     <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
                         <i class="fa fa-check"></i>
                         Active
                     </a>
-                    <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
-                        <i class="fa fa-remove"></i>
-                        In-Active
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doShift">
+                        <i class="fa fa-check"></i>
+                        Shift
+                    </a>
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doLeave">
+                        <i class="fa fa-check"></i>
+                        Leave
                     </a>
                     <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
                         <i class="fa fa-trash"></i>
@@ -285,14 +292,60 @@
                 });
 
             },
+            editItems(id) {
+                this.$router.push({name: 'transport.userEdit', params: {id: id}})
+            },
+            deleteItems() {
+                this.$http.get('/json/transport/user/' + this.promptDeleteId + '/delete')
+                    .then(res => {
+                        this.getData()
+                        this.promptDelete = null
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
+                    })
+                    .catch(err => {
+
+                    })
+            },
             doFilter() {
                 this.getData()
             },
-
+            doShift(){
+                if (this.selected.length > 0) {
+                    this.bulkAction('Shift')
+                } else {
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                }
+            },
+            doLeave(){
+                if (this.selected.length > 0) {
+                    this.bulkAction('Leave')
+                } else {
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                }
+            },
             doActive() {
                 if (this.selected.length > 0) {
+                    this.bulkAction('Active')
+                } else {
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                }
+            },
+            doDelete() {
+                if (this.selected.length > 0) {
+                    this.bulkAction('Delete')
+                } else {
+                    this.$vs.notify({
+                        title: 'error',
+                        text: 'select at least one',
+                        color: 'error',
+                        icon: 'verified_user'
+                    })
+                }
+            },
+            bulkAction(action){
+                if (this.selected.length > 0) {
                     this.$http.post(this.url + '/bulk-action', {
-                        bulk_action: 'active',
+                        bulk_action: action,
                         route_bulk: parseInt(this.route_bulk),
                         vehicle_bulk: parseInt(this.vehicle_bulk),
                         chkIds: this.selected.map(val => {
@@ -315,37 +368,6 @@
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }
-
-            },
-            doInActive() {
-                if (this.selected.length > 0) {
-                    this.$http.post(this.url + '/bulk-action', {
-                        bulk_action: 'in-active',
-                        chkIds: this.selected.map(val => {
-                            return val.id
-                        })
-                    })
-                        .then(res => {
-                            this.selected = []
-                            this.getData()
-                            this.$vs.notify({
-                                title: 'error',
-                                text: res.data[1],
-                                color: res.data[0],
-                                icon: 'verified_user'
-                            })
-                        })
-                        .catch(err => {
-                            alert(err.response.message)
-                        })
-                } else {
-                    this.$vs.notify({
-                        title: 'error',
-                        text: 'select at least one',
-                        color: 'error',
-                        icon: 'verified_user'
-                    })
-                }
             },
             doCopy() {
                 alert('doing copy')
@@ -358,10 +380,7 @@
             },
             doPrint() {
                 alert('doing print')
-            },
-            doDelete() {
-                alert('doing Delete')
-            },
+            }
 
 
         }

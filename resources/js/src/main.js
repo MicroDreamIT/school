@@ -32,10 +32,10 @@ import axios from "./axios.js"
 
 Vue.prototype.$http = axios
 
-// import VuejsDialog from 'vuejs-dialog';
+import VuejsDialog from 'vuejs-dialog';
 
 // Tell Vue to install the plugin.
-// Vue.use(VuejsDialog.main.default);
+Vue.use(VuejsDialog);
 
 // API Calls
 import "./http/requests"

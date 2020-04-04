@@ -311,31 +311,36 @@
             },
             doShift(){
                 if (this.selected.length > 0) {
-                    this.$dialog.alert('Request completed!').then(function(dialog) {
-                        console.log('Closed');
+                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
+                        this.bulkAction('Active')
                     });
-                    this.bulkAction('Shift')
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }
             },
             doLeave(){
                 if (this.selected.length > 0) {
-                    this.bulkAction('Leave')
+                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
+                        this.bulkAction('Active')
+                    });
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }
             },
             doActive() {
                 if (this.selected.length > 0) {
-                    this.bulkAction('Active')
+                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
+                        this.bulkAction('Active')
+                    });
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }
             },
             doDelete() {
                 if (this.selected.length > 0) {
-                    this.bulkAction('Delete')
+                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
+                        this.bulkAction('Active')
+                    });
                 } else {
                     this.$vs.notify({
                         title: 'error',

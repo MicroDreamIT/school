@@ -24,19 +24,19 @@
                 </div>
                 <div class="easy-link-menu d-flex flex-wrap"
                      v-if="actionBtn && vehicle_bulk && route_bulk && selected.length>0">
-                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="bulkAction('Active')">
                         <i class="fa fa-check"></i>
                         Active
                     </a>
-                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doShift">
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="bulkAction('Shift')">
                         <i class="fa fa-check"></i>
                         Shift
                     </a>
-                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doLeave">
+                    <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="bulkAction('Leave')">
                         <i class="fa fa-check"></i>
                         Leave
                     </a>
-                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
+                    <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="bulkAction('Delete')">
                         <i class="fa fa-trash"></i>
                         Delete
                     </a>
@@ -309,70 +309,31 @@
             doFilter() {
                 this.getData()
             },
-            doShift(){
+            bulkAction(action) {
                 if (this.selected.length > 0) {
-                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
-                        this.bulkAction('Active')
-                    });
-                } else {
-                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
-                }
-            },
-            doLeave(){
-                if (this.selected.length > 0) {
-                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
-                        this.bulkAction('Active')
-                    });
-                } else {
-                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
-                }
-            },
-            doActive() {
-                if (this.selected.length > 0) {
-                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
-                        this.bulkAction('Active')
-                    });
-                } else {
-                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
-                }
-            },
-            doDelete() {
-                if (this.selected.length > 0) {
-                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog=> {
-                        this.bulkAction('Active')
-                    });
-                } else {
-                    this.$vs.notify({
-                        title: 'error',
-                        text: 'select at least one',
-                        color: 'error',
-                        icon: 'verified_user'
-                    })
-                }
-            },
-            bulkAction(action){
-                if (this.selected.length > 0) {
-                    this.$http.post(this.url + '/bulk-action', {
-                        bulk_action: action,
-                        route_bulk: parseInt(this.route_bulk),
-                        vehicle_bulk: parseInt(this.vehicle_bulk),
-                        chkIds: this.selected.map(val => {
-                            return parseInt(val.id)
-                        })
-                    })
-                        .then(res => {
-                            this.$vs.notify({
-                                title: 'success',
-                                text: res.data[1],
-                                color: res.data[0],
-                                icon: 'verified_user'
+                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog => {
+                        this.$http.post(this.url + '/bulk-action', {
+                            bulk_action: action,
+                            route_bulk: parseInt(this.route_bulk),
+                            vehicle_bulk: parseInt(this.vehicle_bulk),
+                            chkIds: this.selected.map(val => {
+                                return parseInt(val.id)
                             })
-                            this.selected = [];
-                            this.getData()
                         })
-                        .catch(err => {
-                            alert(err.response.message)
-                        })
+                            .then(res => {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
+                                this.selected = [];
+                                this.getData()
+                            })
+                            .catch(err => {
+                                alert(err.response.message)
+                            })
+                    });
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }

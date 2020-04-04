@@ -311,6 +311,9 @@
             },
             doShift(){
                 if (this.selected.length > 0) {
+                    this.$dialog.alert('Request completed!').then(function(dialog) {
+                        console.log('Closed');
+                    });
                     this.bulkAction('Shift')
                 } else {
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})

@@ -173,7 +173,7 @@
                 promptDeleteId:null,
                 headers: [
                     {name: 'route', field: 'route', sort_key: 'route'},
-                    {name: 'vehicle', field: 'vehicle', sort_key: 'vehicle'},
+                    {name: 'vehicle', field: 'vehicle'  , sort_key: 'vehicle'},
                     {name: 'type', field: 'type', sort_key: 'type'},
                     {name: 'reg', field: 'memberreg', sort_key: 'memberreg'},
                     {name: 'name', field: 'membername', sort_key: 'membername'},

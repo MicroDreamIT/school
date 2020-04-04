@@ -1,5 +1,25 @@
 <template>
     <div class="custom-table">
+        <vs-prompt
+                color="primary"
+                :active.sync="activePrompt">
+            <div>
+                <div class="form-group   mb-3">
+                    <label>Route</label>
+                    <select class="form-control" v-model="route_bulk" @change="findVehicle(route_bulk)">
+                        <option :value="route.id" v-for="route in routes">
+                            {{route.value}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group   mb-3">
+                    <label>Vehicle</label>
+                    <select class="form-control" v-model="vehicle_bulk">
+                        <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">{{vehicle.number}}</option>
+                    </select>
+                </div>
+            </div>
+        </vs-prompt>
         <div class="row p-4">
             <div class="col-md-12 ">
                 <h4 class="header large lighter blue">
@@ -107,19 +127,25 @@
                             <vs-td v-if="showAction">
                                 <div class="action-own">
                                     <a class="btn btn-primary btn-sm pointer-all"
-                                       title="View"
-                                       @click.stop="viewItems(tr.id)"
+                                       title="shift"
+                                       @click.stop="shiftItem(tr.id)"
                                     >
-                                        <i class="fa fa-eye"></i>
+                                        <i class="fa fa-arrows-h"></i>
+                                    </a>
+                                    <a class="btn btn-warning btn-sm pointer-all"
+                                       title="leave"
+                                       @click.stop="leaveItem(tr.id)"
+                                    >
+                                        <i class="fa fa-arrow-circle-right"></i>
                                     </a>
                                     <a class="btn btn-success btn-sm pointer-all"
                                        title="Edit"
-                                       @click.stop="editItems(tr.id)">
+                                       @click.stop="editItem(tr.id)">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a class="btn btn-danger btn-sm pointer-all"
                                        title="Delete"
-                                       @click.stop="deleteItems(tr.id)">
+                                       @click.stop="deleteItem(tr.id)">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                                 </div>
@@ -225,7 +251,9 @@
                 designation: [],
                 vehicles: [],
                 route_bulk: null,
-                vehicle_bulk: null
+                vehicle_bulk: null,
+                activePrompt: false,
+                promptForms: {}
             }
         },
         created() {
@@ -242,45 +270,10 @@
                     })
             },
             changeStatus(id, status) {
-                let stat = status === 'active' ? 'in-active' : 'active'
-                this.$http.get(this.url + '/' + id + '/' + stat).then(res => {
-                    this.getData()
-                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
-                })
-            },
-            viewItems(id) {
-                let url = ''
-                if (this.viewLink === undefined) {
-                    url = '/' + this.model + '/' + id + '/' + 'view'
-                } else {
-                    url = this.viewLink
-                }
 
-                this.$router.push({path: url})
             },
-            editItems(id) {
-                let url = ''
-                if (this.editLink === undefined) {
-                    url = '/' + this.model + '/' + id + '/' + 'edit'
-                } else {
-                    url = this.editLink
-                }
 
-                this.$router.push({path: url})
-            },
-            deleteItems(id) {
-                let confirms = confirm('are you sure?')
-                if (!confirms) return null
-                if (this.deleteLink !== undefined) this.url = this.deleteLink
-                this.$http.get(this.url + '/' + id + '/delete')
-                    .then(res => {
-                        this.getData()
-                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
-                    })
-                    .catch(err => {
 
-                    })
-            },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
                     this.item = res.data[this.ajaxVariableSet[0]]
@@ -292,26 +285,40 @@
                 });
 
             },
-            editItems(id) {
+            shiftItem(id) {
+
+            },
+            leaveItem(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get(this.url+'/'+id+'/leave')
+                        .then(res=>{
+                            this.getData()
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
+                        })
+                })
+
+            },
+            editItem(id) {
                 this.$router.push({name: 'transport.userEdit', params: {id: id}})
             },
-            deleteItems() {
-                this.$http.get('/json/transport/user/' + this.promptDeleteId + '/delete')
-                    .then(res => {
-                        this.getData()
-                        this.promptDelete = null
-                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
-                    })
-                    .catch(err => {
+            deleteItem(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/transport/user/' + id + '/delete')
+                        .then(res => {
+                            this.getData()
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
+                        })
+                        .catch(err => {
 
-                    })
+                        })
+                })
             },
             doFilter() {
                 this.getData()
             },
             bulkAction(action) {
                 if (this.selected.length > 0) {
-                    this.$dialog.alert('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog => {
+                    this.$dialog.confirm('Are you sure, You Want To Active Using Bulk Action? Please, Be Sure When You Use Bulk Action. It Effects All The Selected Data.').then(dialog => {
                         this.$http.post(this.url + '/bulk-action', {
                             bulk_action: action,
                             route_bulk: parseInt(this.route_bulk),

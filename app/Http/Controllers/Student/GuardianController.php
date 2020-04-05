@@ -62,8 +62,8 @@ class GuardianController extends CollegeBaseController
             $guardian_image_name = "";
         }
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['guardian_image' => $guardian_image_name]);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['guardian_image' => $guardian_image_name]);
         $guardian = GuardianDetail::create($request->all());
 
 
@@ -106,7 +106,7 @@ class GuardianController extends CollegeBaseController
         if (!$row = GuardianDetail::find($id))
             return parent::invalidRequest();
 
-        $request->request->add(['updated_by' => auth()->user()->id]);
+        $request->merge(['updated_by' => auth()->user()->id]);
         $parential_image_path = public_path().DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'parents'.DIRECTORY_SEPARATOR;
 
         if ($request->hasFile('guardian_main_image')){
@@ -195,13 +195,13 @@ class GuardianController extends CollegeBaseController
     {
         if (!$row = GuardianDetail::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
         $login_detail = User::where([['role_id',7],['hook_id',$row->id]])->first();
         if($login_detail) {
-            $request->request->add(['status' => 'active']);
+            $request->merge(['status' => 'active']);
             $login_detail->update($request->all());
         }
 	    return response()->json(['success', $row->reg_no.' '.$this->panel.' Active Successfully.']);
@@ -211,13 +211,13 @@ class GuardianController extends CollegeBaseController
     {
         if (!$row = GuardianDetail::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
         $row->update($request->all());
 
         // in active guardian login detail
         $login_detail = User::where([['role_id',7],['hook_id',$row->id]])->first();
         if($login_detail) {
-            $request->request->add(['status' => 'in-active']);
+            $request->merge(['status' => 'in-active']);
             $login_detail->update($request->all());
         }
       return response()->json(['danger',$row->reg_no.' '.$this->panel.' In-Active Successfully.']);
@@ -239,7 +239,7 @@ class GuardianController extends CollegeBaseController
 
                                 $login_detail = User::where([['role_id',7],['hook_id',$row->id]])->first();
                                 if($login_detail) {
-                                    $request->request->add(['status' => $row->status]);
+                                    $request->merge(['status' => $row->status]);
                                     $login_detail->update($request->all());
                                 }
                             }

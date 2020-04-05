@@ -153,9 +153,9 @@
                         </vs-tabs>
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
+                            <vs-button class="my-round mx-2" color="warning" @click="guardian={}">Reset</vs-button>
                             <vs-button class="my-round mx-2" @click="posting">Save</vs-button>
-                            <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                            <vs-button class="my-round mx-2" color="#28c76f" @click="posting('reset')">Save And Add Another</vs-button>
                         </div>
                     </div>
 
@@ -177,15 +177,24 @@
 
         },
         methods: {
-            posting(){
+            posting(arg=null){
                 this.$http.post('/json/guardian/register', this.guardian)
                     .then(res=>{
-                        console.log(res.data)
+                        if(arg){
+                            this.guardian={}
+                            this.error = []
+                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$route.push({path:'/guardian'})
+                        }else{
+                            this.guardian={}
+                            this.error = []
+                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                        }
                     })
                     .catch(err=>{
                         if(err.response){
                             this.error = err.response.data.errors
-                            console.log(this.error)
+
                         }
                     })
 

@@ -916,7 +916,7 @@ const router = new Router({
                 {
                     path: '/transport/user/history',
                     name: 'transport.history',
-                    component: () => import('./views/custom/transport/user/history'),
+                    component: () => import('./views/custom/transport/user/historys.vue'),
                     meta: {
                         rule: 'admin'
                     }

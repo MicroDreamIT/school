@@ -75,10 +75,10 @@
                         <div class="col-md-8">
                             <data-table-final :headers="headers"
                                               :tableHeader="'Vehicle List'"
-                                              :suggestText="'Vehicle Record list on table. Filter room type using the filter.'"
+                                              :suggestText="'Vehicle Record list on table. Filter history using the filter.'"
                                               :url="'/json/transport/vehicle'"
                                               :model="'vehicle'"
-                                              :noDataMessage="'No Vehicle data found. Please Filter room type to show.'"
+                                              :noDataMessage="'No Vehicle data found. Please Filter history to show.'"
                                               :hasSearch="true"
                                               :has-multiple="true"
                                               :has-pagination="true"

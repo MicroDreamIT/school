@@ -594,6 +594,7 @@ class TransportUserController extends CollegeBaseController
     public function history(Request $request)
     {
         $data = [];
+        $data['history'] = [];
         if ($request->all()) {
             $data['history'] = TransportHistory::select('transport_histories.id', 'transport_histories.years_id',
                 'transport_histories.routes_id', 'transport_histories.vehicles_id', 'transport_histories.history_type',
@@ -652,6 +653,7 @@ class TransportUserController extends CollegeBaseController
         $data['years'] = $this->activeYears();
         $data['routes'] = $this->activeTransportRoutes();
         $data['url'] = URL::current();
+
         return response()->json($data);
     }
 

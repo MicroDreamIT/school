@@ -66,8 +66,8 @@
                         </vs-th>
                     </template>
                     <template slot-scope="{data}">
-                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in $store.state.tableData">
-                            <vs-td>{{idx+1}}</vs-td>
+                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
+                            <vs-td>{{data.indexOf(tr)+1}}</vs-td>
                             <slot name="items" v-bind:data="tr">
                             </slot>
                             <vs-td v-if="showStatus">
@@ -251,7 +251,12 @@
             },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
-                    this.item = res.data[this.ajaxVariableSet[0]];
+                    if(this.ajaxVariableSet.length>0){
+                        this.item = res.data[this.ajaxVariableSet[0]];
+                    }else{
+                        this.item= res.data
+                    }
+
                     this.$emit('get-return-value', this.item, res.data)
                     if(!this.$store.state.tableData.length>0){
                         this.$store.dispatch('updateTableData',this.item)

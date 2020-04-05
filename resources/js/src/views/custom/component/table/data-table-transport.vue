@@ -112,7 +112,7 @@
                         </vs-th>
                     </template>
                     <template slot-scope="{data}">
-                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in $store.state.tableData">
+                        <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
                             <vs-td>{{idx+1}}</vs-td>
                             <slot name="items" v-bind:data="tr">
                             </slot>

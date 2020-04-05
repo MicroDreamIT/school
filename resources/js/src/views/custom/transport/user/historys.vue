@@ -61,7 +61,9 @@
                                            <div class="col-md-3">
                                                <div class="form-group">
                                                    <label>Year:</label>
-                                                   <v-select/>
+                                                   <select v-model="searchData.year" class="form-control">
+                                                       <option :value="year.id" v-for="year in years">{{year.value}}</option>
+                                                   </select>
                                                </div>
                                            </div>
                                            <div class="col-md-3">
@@ -106,31 +108,30 @@
                            <div class="table-header">
                                Transport User Record list on table. Filter Transport User using the filter.
                            </div>
-                           <data-table :headers="tableHeader"
-                                       :url="'/student'"
-                                       :no-data-message="'No Route data found. Please Filter Route to show.'"
-                                       :searchField="searchData"
-                                       :hasSearch="true"
-                                       :has-multiple="true"
+                           <data-table-final :headers="headers"
+                                             :tableHeader="'History List'"
+                                             :suggestText="'History Record list on table. Filter room type using the filter.'"
+                                             :url="'/json/transport/user/history'"
+                                             :model="'vehicle'"
+                                             :noDataMessage="'No history data found. Please Filter history to show.'"
+                                             :hasSearch="true"
+                                             :has-multiple="true"
+                                             :has-pagination="true"
+                                             :filterSection="true"
+                                             :searchData="searchData"
+                                             ref="dataTableHistory"
+                                             :ajaxVariableSet="['history']"
+                                             @get-return-value="GetReturnValue"
                            >
                                <template slot="items" slot-scope="props">
-                                   <vs-td :data="props.data.username" class="pointer-none">
-                                       {{props.data.email}}
+                                   <vs-td>
+
                                    </vs-td>
-                
-                                   <vs-td :data="props.data.username">
-                                       {{props.data.username}}
-                                   </vs-td>
-                
-                                   <vs-td :data="props.data.id">
-                                       {{props.data.website}}
-                                   </vs-td>
-                
-                                   <vs-td :data="props.id">
-                                       {{props.data.id}}
+                                   <vs-td>
+
                                    </vs-td>
                                </template>
-                           </data-table>
+                           </data-table-final>
                        </div>
                    </div>
                </vs-card>
@@ -144,14 +145,48 @@
     export default {
         data() {
             return {
-                searchData: {},
-                tableHeader: [
+                // user_type=0&reg_no=&year=0&history_type=0&route=0&vehicle_select=0
+                searchData: {
+                    user_type:0,
+                    reg_null:null,
+                    year:0,
+                    history_type:0,
+                    route:0,
+                    vehicle_select:0
+                },
+                headers: [
                     {name: 'Email', field: 'email', sort_key: 'email'},
                     {name: 'Name', field: 'name', sort_key: 'name'},
                     {name: 'Mobile', field: 'mobile'},
                     {name: 'PID'},
                 ],
+                years:[],
+                routes:[]
             }
+        },
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    console.log(val)
+                    this.$refs.dataTableHistory.getData()
+                },
+                immediate:true
+            }
+        },
+        methods:{
+            GetReturnValue(arg = null, total = null) {
+                console.log(arg, total)
+                let val = arg.map(st => {
+                    return {
+                        id:st.id
+                    }
+                });
+                console.log(val)
+                this.years = this.$root.objectToArray(total['years'])
+                this.routes = this.$root.objectToArray(total['routes'])
+                this.$store.dispatch('updateTableData', val)
+            },
         }
     }
 </script>

@@ -112,7 +112,7 @@
                                               :url="'/json/transport/user'"
                                               :model="'route'"
                                               :noDataMessage="'No user data found. Please Filter user to show.'"
-                                              :hasSearch="false"
+                                              :hasSearch="true"
                                               :has-multiple="true"
                                               :has-pagination="true"
                                               :filterSection="true"
@@ -125,16 +125,16 @@
                                     <vs-td :data="props.data.route">
                                         {{props.data.route}}
                                     </vs-td>
-                                    <vs-td>
+                                    <vs-td :data="props.data.vehicle">
                                         {{props.data.vehicle}}
                                     </vs-td>
                                     <vs-td :data="props.data.type">
                                         {{props.data.type===1?'student':'staff'}}
                                     </vs-td>
-                                    <vs-td>
+                                    <vs-td :data="props.data.memberreg">
                                         {{props.data.memberreg}}
                                     </vs-td>
-                                    <vs-td>
+                                    <vs-td :data="props.data.membername">
                                         {{props.data.membername}}
                                     </vs-td>
 

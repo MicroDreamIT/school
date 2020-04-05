@@ -5,12 +5,13 @@
                 title="complete forms"
                 accept-text="submit"
                 @accept="submitModal"
-                :is-valid = "promptForms.route_shift > 0 && promptForms.vehicle_shift > 0"
+                :is-valid="promptForms.route_shift > 0 && promptForms.vehicle_shift > 0"
                 :active.sync="activePrompt">
             <div>
                 <div class="form-group   mb-3">
                     <label>Route</label>
-                    <select class="form-control" v-model="promptForms.route_shift" @change="findVehicle(promptForms.route_shift)">
+                    <select class="form-control" v-model="promptForms.route_shift"
+                            @change="findVehicle(promptForms.route_shift)">
                         <option :value="route.id" v-for="route in routes">
                             {{route.value}}
                         </option>
@@ -258,9 +259,9 @@
                 vehicle_bulk: null,
                 activePrompt: false,
                 promptForms: {
-                    userId:null,
-                    route_shift:null,
-                    vehicle_shift:null
+                    userId: null,
+                    route_shift: null,
+                    vehicle_shift: null
                 }
             }
         },
@@ -298,19 +299,27 @@
                 this.activePrompt = true
 
             },
-            submitModal(){
-                this.$http.post(this.url+'/shift', this.promptForms)
-                    .then(res=>{
-                        if(res.status===200){
+            submitModal() {
+                this.$http.post(this.url + '/shift', this.promptForms)
+                    .then(res => {
+                        if (res.status === 200) {
                             this.getData()
-                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                            this.promptForms.userId = null
+                            this.promptForms.route_shift = null
+                            this.promptForms.vehicle_shift = null
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                         }
                     })
             },
             leaveItem(id) {
                 this.$dialog.confirm('This Transport User Leave When You Click on Yes Leave Now.Don\'t Be Afraid, You Will Able To ReActive in Future').then(dialog => {
-                    this.$http.get(this.url+'/'+id+'/leave')
-                        .then(res=>{
+                    this.$http.get(this.url + '/' + id + '/leave')
+                        .then(res => {
                             this.getData()
                             this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
                         })

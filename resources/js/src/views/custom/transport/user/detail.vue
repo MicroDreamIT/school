@@ -106,16 +106,13 @@
                             </vs-collapse>
                         </div>
                         <div class="col-md-12 p-4">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Transport User List
-                            </h4>
                             <data-table-transport :headers="headers"
                                               :tableHeader="'user List'"
-                                              :suggestText="'user Record list on table. Filter room type using the filter.'"
+                                              :suggestText="'user Record list on table. Filter user using the filter.'"
                                               :url="'/json/transport/user'"
                                               :model="'route'"
-                                              :noDataMessage="'No user data found. Please Filter room type to show.'"
-                                              :hasSearch="true"
+                                              :noDataMessage="'No user data found. Please Filter user to show.'"
+                                              :hasSearch="false"
                                               :has-multiple="true"
                                               :has-pagination="true"
                                               :filterSection="true"
@@ -125,13 +122,13 @@
                                               :searchData="searchData"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td>
+                                    <vs-td :data="props.data.route">
                                         {{props.data.route}}
                                     </vs-td>
                                     <vs-td>
                                         {{props.data.vehicle}}
                                     </vs-td>
-                                    <vs-td>
+                                    <vs-td :data="props.data.type">
                                         {{props.data.type===1?'student':'staff'}}
                                     </vs-td>
                                     <vs-td>

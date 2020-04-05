@@ -124,10 +124,32 @@
                                               :ajaxVariableSet="['history']"
                                               @get-return-value="GetReturnValue"
                                               :showAction="false"
+                                              :showStatus="false"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td>
                                         {{props.data.year}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.route}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.vehicle}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.type}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.reg_no}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.name}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.history}}
+                                    </vs-td>
+                                    <vs-td>
+                                        {{props.data.date}}
                                     </vs-td>
                                 </template>
                             </data-table-final>
@@ -155,6 +177,13 @@
                 },
                 headers: [
                     {name: 'year', field: 'year', sort_key: 'year'},
+                    {name: 'route', field: 'route', sort_key: 'route'},
+                    {name: 'vehicle', field: 'vehicle', sort_key: 'vehicle'},
+                    {name: 'type', field: 'user_type', sort_key: 'user_type'},
+                    {name: 'reg no.', field: 'reg_no', sort_key: 'reg_no'},
+                    {name: 'name', field: 'name', sort_key: 'name'},
+                    {name: 'history', field: 'history_type', sort_key: 'history_type'},
+                    {name: 'date', field: 'date', sort_key: 'date'},
                 ],
                 years: [],
                 routes: []

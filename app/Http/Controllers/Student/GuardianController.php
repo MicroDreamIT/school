@@ -43,7 +43,6 @@ class GuardianController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
         return response()->json($data);
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
     }
 
     public function registration()
@@ -67,13 +66,8 @@ class GuardianController extends CollegeBaseController
         $request->request->add(['guardian_image' => $guardian_image_name]);
         $guardian = GuardianDetail::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
 
-        if($request->add_guardian_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+        return response()->json(['success', $this->panel. ' Created Successfully.']);
     }
 
     public function view($id)
@@ -90,7 +84,6 @@ class GuardianController extends CollegeBaseController
 
         $data['url'] = URL::current();
         return response()->json($data);
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 
     public function edit(Request $request, $id)
@@ -106,7 +99,6 @@ class GuardianController extends CollegeBaseController
             return parent::invalidRequest();
 
         return response()->json($data);
-        return view(parent::loadDataToView($this->view_path.'.registration.edit'), compact('data'));
     }
 
     public function update(EditValidation $request, $id)
@@ -149,8 +141,7 @@ class GuardianController extends CollegeBaseController
 
         $row->update($guardiansInfo);
 
-        $request->session()->flash($this->message_success, $this->panel. ' Info Updated Successfully.');
-        return back();
+        return response()->json(['success', $this->panel. ' Info Updated Successfully.']);
 
     }
 
@@ -164,8 +155,7 @@ class GuardianController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     /*student's info link*/
@@ -189,8 +179,7 @@ class GuardianController extends CollegeBaseController
             ]);
 
         };
-        $request->session()->flash($this->message_success, 'Student Llink Successfully.');
-        return back();
+        return response()->json(['success','Student Llink Successfully.']);
     }
 
     public function unlink(request $request, $student,$guardian)
@@ -199,8 +188,7 @@ class GuardianController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, 'Student Unlink Successfully.');
-        return back();
+        return response()->json(['success','Student Unlink Successfully.']);
     }
 
     public function active(request $request, $id)
@@ -217,8 +205,6 @@ class GuardianController extends CollegeBaseController
             $login_detail->update($request->all());
         }
 	    return response()->json(['success', $row->reg_no.' '.$this->panel.' Active Successfully.']);
-        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
     }
 
     public function inActive(request $request, $id)
@@ -235,8 +221,6 @@ class GuardianController extends CollegeBaseController
             $login_detail->update($request->all());
         }
       return response()->json(['danger',$row->reg_no.' '.$this->panel.' In-Active Successfully.']);
-        $request->session()->flash($this->message_success, $row->reg_no.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
     }
 
     public function bulkAction(Request $request)
@@ -279,15 +263,13 @@ class GuardianController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success','Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json('warning', 'Please, Check at least one row.');
             }
 
         } else return parent::invalidRequest();

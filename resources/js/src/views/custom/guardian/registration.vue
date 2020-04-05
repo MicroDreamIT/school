@@ -54,6 +54,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <vs-input v-model="guardian.first_name"/>
+
                                             </div>
                                             <div class="col-md-3">
                                                 <vs-input v-model="guardian.middle_name"/>
@@ -159,7 +160,7 @@
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
                             <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Save</vs-button>
+                            <vs-button class="my-round mx-2" @click="posting">Save</vs-button>
                             <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
                         </div>
                     </div>
@@ -179,8 +180,22 @@
 
             }
         },
-        methods: {
+        created(){
 
+        },
+        methods: {
+            posting(){
+                this.$http.post('/json/guardian/register', this.guardian)
+                    .then(res=>{
+                        console.log(res.data)
+                    })
+                    .catch(err=>{
+                        if(err.response){
+                            this.error = err.response.data.errors
+                        }
+                    })
+
+            }
         }
     }
 </script>

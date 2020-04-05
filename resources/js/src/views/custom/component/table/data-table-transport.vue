@@ -2,11 +2,15 @@
     <div class="custom-table">
         <vs-prompt
                 color="primary"
+                title="complete forms"
+                accept-text="submit"
+                @accept="submitModal"
+                :is-valid = "promptForms.route_shift > 0 && promptForms.vehicle_shift > 0"
                 :active.sync="activePrompt">
             <div>
                 <div class="form-group   mb-3">
                     <label>Route</label>
-                    <select class="form-control" v-model="route_bulk" @change="findVehicle(route_bulk)">
+                    <select class="form-control" v-model="promptForms.route_shift" @change="findVehicle(promptForms.route_shift)">
                         <option :value="route.id" v-for="route in routes">
                             {{route.value}}
                         </option>
@@ -14,7 +18,7 @@
                 </div>
                 <div class="form-group   mb-3">
                     <label>Vehicle</label>
-                    <select class="form-control" v-model="vehicle_bulk">
+                    <select class="form-control" v-model="promptForms.vehicle_shift">
                         <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">{{vehicle.number}}</option>
                     </select>
                 </div>
@@ -253,7 +257,11 @@
                 route_bulk: null,
                 vehicle_bulk: null,
                 activePrompt: false,
-                promptForms: {}
+                promptForms: {
+                    userId:null,
+                    route_shift:null,
+                    vehicle_shift:null
+                }
             }
         },
         created() {
@@ -286,10 +294,21 @@
 
             },
             shiftItem(id) {
+                this.promptForms.userId = id
+                this.activePrompt = true
 
             },
+            submitModal(){
+                this.$http.post(this.url+'/shift', this.promptForms)
+                    .then(res=>{
+                        if(res.status===200){
+                            this.getData()
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                        }
+                    })
+            },
             leaveItem(id) {
-                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                this.$dialog.confirm('This Transport User Leave When You Click on Yes Leave Now.Don\'t Be Afraid, You Will Able To ReActive in Future').then(dialog => {
                     this.$http.get(this.url+'/'+id+'/leave')
                         .then(res=>{
                             this.getData()

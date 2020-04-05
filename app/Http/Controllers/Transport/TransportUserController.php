@@ -545,9 +545,9 @@ class TransportUserController extends CollegeBaseController
     public function shift(request $request)
     {
         /*Get Request values on Variables */
-        $id = $request->get('userId');
-        $route = $request->get('route_shift');
-        $vehicle = $request->get('vehicle_shift');
+        $id = (integer) $request->get('userId');
+        $route = (integer) $request->get('route_shift');
+        $vehicle = (integer) $request->get('vehicle_shift');
         $year = Year::where('active_status', '=', 1)->first();
 
         if ($route > 0 && $vehicle > 0) {

@@ -19,7 +19,6 @@
                 <vs-card>
                     <div class="row mx-0">
                         <div class="col-md-12 p-4">
-                            <h4 class=""><i class="fa fa-list"></i> Transport History List</h4>
                             <router-link :to="'/transport/user'">
                                 <vs-button type="filled" class="smBtn">Detail</vs-button>
                             </router-link>
@@ -48,14 +47,16 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Type:</label>
-                                                    <v-select/>
+                                                    <select v-model="searchData.user_type" class="form-control">
+                                                        <option :value="1">student</option>
+                                                        <option :value="2">staff</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Reg No:</label>
-                                                    <vs-input placeholder=""
-                                                    />
+                                                    <vs-input placeholder="reg no" v-model="searchData.reg_no"/>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -70,19 +71,28 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>History:</label>
-                                                    <v-select/>
+                                                    <select v-model="searchData.history_type" class="form-control">
+                                                        <option value="Registration">Registration</option>
+                                                        <option value="Shift">Shift</option>
+                                                        <option value="Leave">Leave</option>
+                                                        <option value="Renew">Renew</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Vehicle:</label>
-                                                    <v-select/>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Route:</label>
-                                                    <v-select/>
+                                                    <select v-model="searchData.route" class="form-control" @change="findVehicle(searchData.route)">
+                                                        <option :value="route.id" v-for="route in routes">{{route.value}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Vehicle:</label>
+                                                    <select v-model="searchData.vehicle_select" class="form-control">
+                                                        <option :value="vehicle.vehicles_id" v-for="vehicle in vehicles">{{vehicle.number}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -91,9 +101,9 @@
                                         <vs-button type="filled"
                                                    color="#00b8cf"
                                                    icon="double_arrow"
-                                                   @click="alert(searchData)"
+                                                   @click="searchNull()"
                                         >
-                                            Filter
+                                            reset
                                         </vs-button>
                                     </div>
                                 </vs-collapse-item>
@@ -102,13 +112,7 @@
 
                         <vs-divider></vs-divider>
                         <div class="col-md-12 p-4">
-                            <h4 class="header large lighter blue">
-                                <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Transport History List
-                            </h4>
 
-                            <div class="table-header">
-                                Transport User Record list on table. Filter Transport User using the filter.
-                            </div>
                             <data-table-final :headers="headers"
                                               :tableHeader="'History List'"
                                               :suggestText="'History Record list on table. Filter room type using the filter.'"
@@ -125,6 +129,7 @@
                                               @get-return-value="GetReturnValue"
                                               :showAction="false"
                                               :showStatus="false"
+                                              :actionBtn="false"
                             >
                                 <template slot="items" slot-scope="props">
                                     <vs-td>
@@ -169,7 +174,7 @@
                 // user_type=0&reg_no=&year=0&history_type=0&route=0&vehicle_select=0
                 searchData: {
                     user_type: 0,
-                    reg_null: null,
+                    reg_no: null,
                     year: 0,
                     history_type: 0,
                     route: 0,
@@ -186,7 +191,8 @@
                     {name: 'date', field: 'date', sort_key: 'date'},
                 ],
                 years: [],
-                routes: []
+                routes: [],
+                vehicles:[]
             }
         },
         watch: {
@@ -202,6 +208,22 @@
             }
         },
         methods: {
+            findVehicle(route_id) {
+                this.$http.post('/json/transport/find-vehicles', {
+                    route_id: route_id
+                })
+                    .then(res => {
+                        this.vehicles = res.data.vehicles
+                    })
+            },
+            searchNull() {
+                this.searchData.user_type = 0
+                this.searchData.reg_no = null
+                this.searchData.year = 0
+                this.searchData.history_type = 0
+                this.searchData.route = 0
+                this.searchData.vehicle_select = 0
+            },
             GetReturnValue(arg = null, total = null) {
                 // console.log(arg, total)
                 let val = arg.map(st => {

@@ -63,22 +63,7 @@
                     </router-link>
                 </div>
             </div>
-            <div class="col-md-12" v-if="notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
-                </div>
-            </div>
+
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
@@ -176,6 +161,7 @@
             }
         },
         methods: {
+
             editItems() {
                 alert("hey hasib im edit ")
             },

@@ -596,7 +596,7 @@ class TransportUserController extends CollegeBaseController
         $data = [];
         $data['history'] = [];
         if ($request->all()) {
-            $data['history'] = TransportHistory::select('transport_histories.id', 'transport_histories.years_id',
+            $data['history'] = TransportHistory::with(['vehicle', 'route','year'])->select('transport_histories.id', 'transport_histories.years_id',
                 'transport_histories.routes_id', 'transport_histories.vehicles_id', 'transport_histories.history_type',
                 'transport_histories.created_at', 'tu.member_id', 'tu.user_type')
                 ->where(function ($query) use ($request) {

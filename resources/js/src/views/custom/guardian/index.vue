@@ -26,14 +26,14 @@
 
                 <vs-card>
                     <guardian-table :headers="guardianHeader"
-                                   :tableHeader="'Guardian List'"
-                                   :suggestText="'Guardian Record list on table. Filter Guardians using the filter.'"
-                                   :url="'/json/guardian/'"
-                                   :noDataMessage="'No Guardian data found. Please Filter Guardian to show.'"
-                                   :hasSearch="true"
-                                   :has-multiple="true"
-                                   :has-pagination="true"
-                                   :filterSection="true"
+                                    :tableHeader="'Guardian List'"
+                                    :suggestText="'Guardian Record list on table. Filter Guardians using the filter.'"
+                                    :url="'/json/guardian/'"
+                                    :noDataMessage="'No Guardian data found. Please Filter Guardian to show.'"
+                                    :hasSearch="true"
+                                    :has-multiple="true"
+                                    :has-pagination="true"
+                                    :filterSection="true"
                                     ref="guardianTable"
                     >
                         <template slot="items" slot-scope="props">
@@ -43,13 +43,13 @@
                                     {{props.data.fullname }}
                                 </a>
                             </vs-td>
-                            <vs-td >
+                            <vs-td>
                                 {{props.data.guardian_address}}
                             </vs-td>
                             <vs-td>
                                 {{props.data.guardian_mobile_1}}
                             </vs-td>
-                           
+
                             <vs-td>
                                 <a class="pointer-all text-primary"
                                    @click="studentViewItems(props.data.students[0]?props.data.students[0].id:'')">
@@ -70,27 +70,27 @@
                                 </div>
                             </vs-td>
                             <vs-td>
-                            <div class="action-own">
-                            <a class="btn btn-primary btn-sm pointer-all"
-                            title="View"
-                            @click.stop="viewItems(props.data.id)"
-    
-                            >
-                            <i class="fa fa-eye"></i>
-                            </a>
-                            <a class="btn btn-success btn-sm pointer-all"
-                            title="Edit"
-                            @click.stop="editItems(props.data.id)">
-                            <i class="fa fa-pencil"></i>
-                            </a>
-                            <a class="btn btn-danger btn-sm pointer-all"
-                            title="Delete"
-                            @click.stop="deleteItems(props.data.id)">
-                            <i class="fa fa-trash-o"></i>
-                            </a>
-                            </div>
+                                <div class="action-own">
+                                    <a class="btn btn-primary btn-sm pointer-all"
+                                       title="View"
+                                       @click.stop="viewItems(props.data.id)"
+
+                                    >
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
                             </vs-td>
-                          
+
 
                         </template>
                     </guardian-table>
@@ -102,6 +102,7 @@
 
 <script>
     import GuardianTable from "../component/table/guardian-table";
+
     export default {
         components: {GuardianTable},
         data() {
@@ -123,23 +124,32 @@
         methods: {
 
             viewItems(id) {
-                if(id) this.$router.push({name: 'guardian.details', params: {id: id}})
+                if (id) this.$router.push({name: 'guardian.details', params: {id: id}})
             },
             studentViewItems(id) {
-                if(id) this.$router.push({name: 'studentView', params: {id: id}})
+                if (id) this.$router.push({name: 'studentView', params: {id: id}})
             },
-            editItems() {
-                alert("hey hasib im edit ")
+            editItems(id) {
+                this.$router.push({path: '/guardian/' + id + '/edit'})
             },
-            deleteItems() {
-                alert("hey hasib im delete ")
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/guardian' + '/' + id + '/delete')
+                        .then(res => {
+                            this.$refs.guardianTable.getData()
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'danger'})
+                        })
+                        .catch(err => {
+
+                        })
+                })
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'
                 let url = '/json/guardian/' + id + '/' + stat
                 this.$http.get(url).then(res => {
                     this.$refs.guardianTable.getData()
-                    this.$vs.notify({title:'Success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title: 'Success', text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 })
 
             },

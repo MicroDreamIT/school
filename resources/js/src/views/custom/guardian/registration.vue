@@ -184,7 +184,7 @@
                             this.guardian={}
                             this.error = []
                             this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
-                            this.$route.push({path:'/guardian'})
+                            this.$router.push({path:'/guardian'})
                         }else{
                             this.guardian={}
                             this.error = []

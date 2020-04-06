@@ -26,7 +26,7 @@ class DesignationController extends CollegeBaseController
 
     public function store(AddValidation $request)
     {
-       $request->request->add(['created_by' => auth()->user()->id]);
+       $request->merge(['created_by' => auth()->user()->id]);
 
        StaffDesignation::create($request->all());
 
@@ -50,7 +50,7 @@ class DesignationController extends CollegeBaseController
 
        if (!$row = StaffDesignation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
 
         $row->update($request->all());
 
@@ -105,7 +105,7 @@ class DesignationController extends CollegeBaseController
     {
         if (!$row = StaffDesignation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
@@ -116,7 +116,7 @@ class DesignationController extends CollegeBaseController
     {
         if (!$row = StaffDesignation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
         return response()->json(['success', $row->semester.' '.$this->panel.' In-Active Successfully.']);

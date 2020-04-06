@@ -4,66 +4,7 @@
             <div class="col-md-12 mb-2">
                 <h2 class="pageTitle">Staff Manager</h2>
             </div>
-            <div class="col-md-12">
-                <div class="row mx-0">
-                    <router-link :to="'/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Detail
-                        </vs-button>
-                    </router-link>
-                     <router-link :to="'/staff/add'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            Registration
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/import'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            Bulk Registration
-                        </vs-button>
-                    </router-link>
-
-                    <router-link :to="'/staff/document'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>
-                            Documents
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/note'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Notes
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/payroll'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Payroll
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/library/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Library
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/attendance/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Attendance
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/designation'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Designation
-                        </vs-button>
-                    </router-link>
-                </div>
-            </div>
-
+            <staff-navigation></staff-navigation>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
@@ -79,14 +20,20 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Designation</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="designation" class="w-100"/>
+                                        <vs-input v-model="title"
+                                                  v-validate="'required'"
+                                                  data-vv-name="title"
+                                                  :danger="errors.has('title')"
+                                                  :danger-text="errors.first('title')"
+                                                  ref="stafftitle"
+                                                  class="w-100"/>
                                     </div>
                                 </div>
 
                                 <vs-divider/>
-                                <button class="btn btn-info waves-effect waves-light" @click.prevent="create">
+                                <button class="btn btn-info waves-effect waves-light" @click.prevent="submit">
                                     <i class="fa fa-save bigger-110"></i>
-                                    Create
+                                    {{buttonText}}
                                 </button>
                             </div>
                             <div class="col-md-8"><br>
@@ -104,15 +51,13 @@
                                 >
                                     <template slot="items" slot-scope="props">
                                         <vs-td>
-
+                                            {{props.data.title}}
                                         </vs-td>
-
-
                                         <vs-td>
                                             <div class="d-flex">
                                                 <vs-switch color="success"
                                                            :checked="props.data.status=='active'?true:false"
-                                                           @click.stop="changeStatus(props.data.id)"
+                                                           @click.stop="changeStatus(props.data.id, props.data.status)"
                                                            class="pointer-all ml-2"
                                                 >
                                                     <span slot="on">Active</span>
@@ -146,9 +91,11 @@
 </template>
 
 <script>
-
+    import StaffNavigation from '../../components/navigation/staff-navigation.vue'
     export default {
-
+        components:{
+            'staff-navigation':StaffNavigation
+        },
         data() {
             return {
 
@@ -157,20 +104,85 @@
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
-				notification:'',
-				designation:null
+                title: '',
+                items: [],
+                id: null,
+                mainItem: [],
+                deletePop: false,
+                deleteItem: null,
+                url: '/json/staff/designation',
+                buttonText:'create'
             }
         },
+        created() {
+            this.getData()
+        },
         methods: {
-
+            getData() {
+                this.$http.get(this.url).then(res => {
+                    this.items = res.data.designation;
+                    this.mainItem = this.items;
+                })
+            },
             editItems(id) {
-                alert("hey hasib im edit ")
+                this.$refs.stafftitle.$el.querySelector('input').focus()
+                let item = this.items.filter(st => st.id === id)[0]
+                this.title = item.title
+                this.id = item.id
+                this.buttonText = 'update'
             },
             deleteItems(id) {
-                alert("hey hasib im delete ")
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get(this.url + '/' + id + '/delete').then(res => {
+                        this.getData();
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
-            changeStatus(id) {
+            changeStatus(id, status) {
+                let stat = status === 'active' ? 'in-active' : 'active';
+                let url = this.url + '/' + id + '/' + stat;
+                this.$http.get(url).then(res => {
+                    this.getData();
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                })
+            },
+            submit() {
+                this.$validator.validateAll().then(value => {
+                    if (value) {
+                        if (this.id) {
+                            this.$http.post(this.url + '/' + this.id + '/update',{title:this.title})
+                                .then(res => {
+                                    this.$vs.notify({
+                                        title: res.data[0],
+                                        text: res.data[1],
+                                        color: res.data[0],
+                                        icon: 'verified_user'
+                                    })
+                                    this.title = ''
+                                    this.id = null
+                                    this.getData();
+                                    this.$validator.reset()
+                                })
+                        } else {
+                            this.$http.post(this.url + '/store', {
+                                title: this.title,
+                            }).then(res => {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
+                                this.title = ''
+                                this.id = null
+                                this.getData();
+                                this.$validator.reset()
+                            })
+                        }
 
+                    }
+                })
             },
         }
 

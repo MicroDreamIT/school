@@ -33,7 +33,8 @@
                                            type="filled"
                                            class="my-round"
                                            @click.prevent="submit"
-                                >Create
+                                >
+                                    {{buttonText}}
                                 </vs-button>
                             </div>
                         </div>
@@ -85,7 +86,7 @@
                                             </a>
                                             <a class="btn btn-danger btn-sm pointer-all"
                                                title="Delete"
-                                               @click.stop="deletePopModal(props.data.id)">
+                                               @click.stop="deleteItems(props.data.id)">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </div>
@@ -132,28 +133,6 @@
                 </vs-card>
             </div>
         </div>
-        <vs-popup class="holamundo"
-                  :title="'Delete Confirmation'"
-                  :active.sync="deletePop">
-            <div class="mt-3">
-                <p class="p-2 my-round delete-pop-text">These items will be permanently deleted and cannot be
-                    recovered.</p>
-
-                <p><i class="p-2 ace-icon fa fa-hand-o-right"></i>Are you sure?</p>
-            </div>
-
-            <div class="footer-modal">
-                <vs-button class="smBtn"
-                           @click="deletePop=false, deleteItem= null">
-                    <i class="fa fa-close"></i>
-                    Cancel
-                </vs-button>
-                <vs-button class="smBtn" color="danger" @click="deletePop=false, deleteItems()">
-                    <i class="fa fa-trash"></i>
-                    Yes,Delete Now!
-                </vs-button>
-            </div>
-        </vs-popup>
     </div>
 </template>
 
@@ -178,6 +157,7 @@
                 deletePop: false,
                 deleteItem: null,
                 url: '/json/year',
+                buttonText: 'create'
             }
         },
         created() {
@@ -209,7 +189,7 @@
                 this.$validator.validateAll().then(value => {
                     if (value) {
                         if (this.id) {
-                            this.$http.post(this.url + '/' + this.id + '/update',{title:this.title})
+                            this.$http.post(this.url + '/' + this.id + '/update', {title: this.title})
                                 .then(res => {
                                     this.$vs.notify({
                                         title: res.data[0],
@@ -244,7 +224,7 @@
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active';
-                let url = '/json/year/' + id + '/' + stat;
+                let url = this.url + '/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
                     this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
@@ -256,15 +236,15 @@
                 let item = this.items.filter(st => st.id === id)[0]
                 this.title = item.title
                 this.id = item.id
+                this.buttonText = 'update'
             },
-            deletePopModal(id) {
-                this.deleteItem = id;
-                this.deletePop = true
-            },
-            deleteItems() {
-                this.$http.get('/json/year/' + this.deleteItem + '/delete').then(res => {
-                    this.getData();
-                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get(this.url + '/' + id + '/delete').then(res => {
+                        this.getData();
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
                 })
             },
         }

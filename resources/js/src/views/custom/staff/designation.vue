@@ -93,13 +93,14 @@
 
                                 <ow-data-table :headers="tableHeader"
                                                :tableHeader="'Designation List'"
-                                               :url="'/json/student/'"
-                                               :noDataMessage="'No Designation data found. Please Filter Designation to show.'"
-                                               :has-search="true"
+                                               :suggestText="'Designations Record list on table. Filter Years using the filter.\n'"
+                                               :url="url"
+                                               :noDataMessage="'No Designation data found. Please Designation filter to show.'"
+                                               :hasSearch="true"
                                                :has-multiple="true"
                                                :has-pagination="true"
-                                               :print-section="false"
-                                               :suggestText="'Designation Record list on table. Filter Designation using the filter.'"
+                                               :main-item="mainItem"
+                                               :getData="getData"
                                 >
                                     <template slot="items" slot-scope="props">
                                         <vs-td>
@@ -162,13 +163,13 @@
         },
         methods: {
 
-            editItems() {
+            editItems(id) {
                 alert("hey hasib im edit ")
             },
-            deleteItems() {
+            deleteItems(id) {
                 alert("hey hasib im delete ")
             },
-            changeStatus() {
+            changeStatus(id) {
 
             },
         }

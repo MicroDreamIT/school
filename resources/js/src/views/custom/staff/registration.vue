@@ -1,84 +1,10 @@
 <template>
     <div class="row">
-            <div class="col-md-12 mb-2">
-                <h2 class="pageTitle">Staff Manager</h2>
-            </div>
-            <div class="col-md-12">
-                <div class="row mx-0">
-                    <router-link :to="'/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Detail
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/add'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            Registration
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/import'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            Bulk Registration
-                        </vs-button>
-                    </router-link>
-
-                    <router-link :to="'/staff/document'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>
-                            Documents
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/note'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Notes
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/payroll'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Payroll
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/library/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Library
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/attendance/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Attendance
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/designation'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Designation
-                        </vs-button>
-                    </router-link>
-                </div>
-            </div>
-            <div class="col-md-12" v-if="notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
-                </div>
-            </div>
-            <vs-divider class="mx-3"/>
+        <div class="col-md-12 mb-2">
+            <h2 class="pageTitle">Staff Manager</h2>
+        </div>
+        <staff-navigation></staff-navigation>
+        <vs-divider class="mx-3"/>
         <div class="col-md-12 p-0">
             <vs-card class="p-3">
                 <div class="row p-2">
@@ -104,10 +30,10 @@
                                         <div class="col-md-2">
                                             <datepicker v-model="staff.join_date"/>
                                         </div>
-										<div class="col-md-2">
-                                           Designation
+                                        <div class="col-md-2">
+                                            Designation
                                         </div>
-										<div class="col-md-2">
+                                        <div class="col-md-2">
                                             <datepicker v-model="staff.designation"/>
                                         </div>
                                     </div>
@@ -286,7 +212,7 @@
                                             <vs-input v-model="staff.experience_info"/>
                                         </div>
                                         <div class="col-md-2">
-                                           Other Info
+                                            Other Info
                                         </div>
                                         <div class="col-md-4">
                                             <vs-input v-model="staff.other_info"/>
@@ -307,14 +233,14 @@
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="staff.profile_picture"
-                                              v-if="staff.profile_picture"/>
                                         <img class="img-responsive"
                                              width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                             :src="staff.profile_picture"
+                                             v-if="staff.profile_picture"/>
+                                        <img class="img-responsive"
+                                             width="100px"
+                                             src="../../../../../assets/images/profile-default.jpg"
+                                             v-else/>
                                     </div>
                                 </div>
 
@@ -335,7 +261,12 @@
 </template>
 
 <script>
+    import StaffNavigation from '../../components/navigation/staff-navigation.vue'
+
     export default {
+        components: {
+            'staff-navigation': StaffNavigation
+        },
         data() {
             return {
                 staff: {},

@@ -4,85 +4,12 @@
             <div class="col-md-12 mb-2">
                 <h2 class="pageTitle">Student Manager</h2>
             </div>
-            <div class="col-md-12">
-                <div class="row mx-0">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Detail
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/student/registration'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            Registration
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/student/import'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            Bulk Registration
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/student/transfer'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-exchange" aria-hidden="true"></i>
-                            Transfer
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/student/document'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>
-                            Documents
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/student/note'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Notes
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/fees'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Balance Fees
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/library/student'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Library
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/attendance/student'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Attendance
-                        </vs-button>
-                    </router-link>
-                </div>
-            </div>
-            <div class="col-md-12" v-if="notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
-                </div>
-            </div>
+            <student-navigation></student-navigation>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-2">
-						<h4 class="ml-4">Student Notes Manager</h4>
+                        <h4 class="ml-4">Student Notes Manager</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">
                                 <br>
@@ -93,82 +20,76 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Reg No</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="note.reg_no" class="w-100"/>
+                                        <vs-input v-model="forms.reg_no" class="w-100"
+                                                  :danger="error.reg_no!==undefined" ref="studentnote"/>
+                                        <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0] }}</p>
+
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Sub</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="note.subject" class="w-100"/>
+                                        <vs-input v-model="forms.subject" class="w-100"
+                                                  :danger="error.subject!==undefined"/>
+                                        <p v-if="error.subject!==undefined" class="text-danger">{{ error.subject[0]
+                                            }}</p>
+
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Note</label>
                                     <div class="col-sm-9">
-                                        <vs-textarea v-model="note.note"/>
+                                        <textarea v-model="forms.note" class="form-control" :danger="error.note!==undefined"></textarea>
+                                        <p v-if="error.note!==undefined" class="text-danger">{{ error.note[0] }}</p>
                                     </div>
                                 </div>
                                 <hr>
-                                <button class="btn btn-info waves-effect waves-light">
+                                <button class="btn btn-info waves-effect waves-light" @click="posting">
                                     <i class="fa fa-save bigger-110"></i>
-                                    Create
+                                    {{buttonText}}
                                 </button>
                             </div>
                             <div class="col-md-8"><br>
 
-                                <ow-data-table :headers="tableHeader"
-                                               :tableHeader="'Student Notes List'"
-                                               :url="'/json/student/'"
-                                               :noDataMessage="'No Student Note data found. Please Filter Student Note to show.'"
-                                               :has-search="true"
-                                               :has-multiple="true"
-                                               :has-pagination="true"
-                                               :suggestText="'Student Notes Record list on table. Filter Student Notes using the filter.'"
+                                <data-table-final :headers="headers"
+                                                  :tableHeader="'Note List'"
+                                                  :suggestText="'Note Record list on table. Filter history using the filter.'"
+                                                  :url="url"
+                                                  :model="'student'"
+                                                  :noDataMessage="'No Note data found. Please Filter history to show.'"
+                                                  :hasSearch="true"
+                                                  :has-multiple="true"
+                                                  :has-pagination="true"
+                                                  :filterSection="true"
+                                                  ref="dataTableNote"
+                                                  :ajaxVariableSet="['note']"
+                                                  @get-return-value="GetReturnValue"
+                                                  :showAction="false"
                                 >
                                     <template slot="items" slot-scope="props">
                                         <vs-td :data="props.data.reg_no">
-                                            <a @click.stop="viewItems(props.data.id)"
-                                               class="pointer-all text-primary"
-                                               title="View"
-                                            >
-                                                {{props.data.reg_no}}
-                                            </a>
-
+                                            {{props.data.reg_no}}
                                         </vs-td>
-
-                                        <vs-td>
-                                            {{props.data.note}}
+                                        <vs-td :data="props.data.subject">
+                                            {{props.data.subject}}
                                         </vs-td>
-
-                                        <vs-td>
-                                            <div class="d-flex">
-                                                {{props.data.academic_status}}
-                                                <vs-switch color="success"
-                                                           :checked="props.data.status=='active'?true:false"
-                                                           @click.stop="changeStatus(props.data.id)"
-                                                           class="pointer-all ml-2"
-                                                >
-                                                    <span slot="on">Active</span>
-                                                    <span slot="off">In-Active</span>
-                                                </vs-switch>
+                                        <vs-td :data="props.data.action">
+                                            <div class="action-own">
+                                                <a class="btn btn-success btn-sm pointer-all"
+                                                   title="Edit"
+                                                   @click.stop="editItems(props.data.all)">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-sm pointer-all"
+                                                   title="Delete"
+                                                   @click.stop="deleteItems(props.data.id)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
                                             </div>
                                         </vs-td>
-
-                                        <vs-td>
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </vs-td>
                                     </template>
-                                </ow-data-table>
+                                </data-table-final>
                             </div>
                         </div>
                     </div>
@@ -180,34 +101,124 @@
 </template>
 
 <script>
+    import StudentNavigation from '../../components/navigation/student-navigation.vue'
 
     export default {
-
+        components: {
+            'student-navigation': StudentNavigation
+        },
         data() {
             return {
 
-                tableHeader: [
+                headers: [
                     {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Student Notes'},
-                    {name: 'Status'},
+                    {name: 'N.subject', sort_key: 'subject'},
                     {name: 'Action'},
+                    {name: 'Status'},
                 ],
-				notification:'',
-				note:{}
+                notification: '',
+                forms: {
+                    id: null,
+                    subject: '',
+                    note: '',
+                    reg_no: ''
+
+                },
+                error: [],
+                buttonText: 'create',
+                url: '/json/student/note'
             }
         },
         methods: {
+            GetReturnValue(arg = null, total) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        reg_no: st.student.reg_no,
+                        subject: st.subject,
+                        status: st.status,
+                        all: st
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
+            },
+            posting() {
+                if (this.forms.id) {
+                    this.$http.post(this.url + '/' + this.forms.id + '/update', this.forms)
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
+                                this.$refs.dataTableNote.getData()
+                                this.forms.id = null
+                                this.forms.subject = ''
+                                this.forms.note = ''
+                                this.forms.reg_no = ''
+                                this.buttonText = 'Create'
+                                this.error = []
+                            }
+                        })
+                        .catch(err => {
+                            if (err.response) {
+                                this.error = err.response.data.errors
+                            }
+                        })
+                } else {
+                    this.$http.post(this.url + '/store', this.forms)
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
+                                this.$refs.dataTableNote.getData()
+                                this.forms.id = null
+                                this.forms.subject = ''
+                                this.forms.note = ''
+                                this.forms.reg_no = ''
+                                this.selected = []
+                                this.error = []
+                            }
+                        })
+                        .catch(err => {
+                            if (err.response) {
+                                this.error = err.response.data.errors
+                            }
+                        })
+                }
+            },
             viewItems(id) {
-                this.$router.push({name: 'studentView', params: {id: id}})
+                this.$router.push({name: 'student.note', params: {id: id}})
             },
-            editItems() {
-                alert("hey hasib im edit ")
+            editItems(item) {
+                this.forms.id = item.id
+                this.forms.subject = item.subject
+                this.forms.reg_no = item.student.reg_no
+                this.forms.note = item.note
+                this.buttonText = 'update'
+                this.$refs.studentnote.$el.querySelector('input').focus()
             },
-            deleteItems() {
-                alert("hey hasib im delete ")
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get(this.url + '/' + id + '/delete').then(res => {
+                        this.$refs.dataTableNote.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
-            changeStatus() {
-
+            changeStatus(id) {
+                let stat = status === 'active' ? 'in-active' : 'active';
+                let url = this.url + '/' + id + '/' + stat;
+                this.$http.get(url).then(res => {
+                    this.$refs.dataTableNote.getData()
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                })
             },
         }
 

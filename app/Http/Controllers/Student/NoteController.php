@@ -19,19 +19,15 @@ class NoteController extends CollegeBaseController
     protected $panel = 'Student Notes';
     protected $filter_query = [];
 
-    public function __construct()
-    {
-
-    }
 
     public function index(Request $request)
     {
         $data = [];
-        $data['note'] = Note::select('created_at', 'id', 'member_type','member_id','subject', 'note', 'status')
+        $data['note'] = Note::with('student')->select('created_at', 'id', 'member_type','member_id','subject', 'note', 'status')
             ->where('member_type','=','student')
             ->get();
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -40,18 +36,16 @@ class NoteController extends CollegeBaseController
 
         $student = Student::select('id')->where('reg_no','=',$reg_no)->first();
         if (!$student)
-            return redirect()->route('student.note')->with('message_warning', 'Please Check Registration Number. 
-            This Registration Number is Not a valid Student Registration No.');
+            return response()->json(['warning', 'Please Check Registration Number. This Registration Number is Not a valid Student Registration No.']);
 
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['member_id' => $student->id]);
-        $request->request->add(['member_type' => 'student']);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['member_id' => $student->id]);
+        $request->merge(['member_type' => 'student']);
 
        Note::create($request->all());
 
-       $request->session()->flash($this->message_success, $this->panel. ' Create Successfully.');
-       return redirect()->route($this->base_route);
+       return response()->json(['success', $this->panel. ' Create Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -67,7 +61,7 @@ class NoteController extends CollegeBaseController
                         ->where('member_type','=','student')
                         ->get();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -80,14 +74,13 @@ class NoteController extends CollegeBaseController
             return redirect()->route('student.note')->with('message_warning', 'Please Check Registration Number. 
             This Registration Number is Not a valid Student Registration No.');
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
-        $request->request->add(['member_id' => $student->id]);
-        $request->request->add(['member_type' => 'student']);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['member_id' => $student->id]);
+        $request->merge(['member_type' => 'student']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -95,8 +88,7 @@ class NoteController extends CollegeBaseController
         if (!$row = Note::find($id)) return parent::invalidRequest();
 
         $row->delete();
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -122,15 +114,13 @@ class NoteController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -141,24 +131,22 @@ class NoteController extends CollegeBaseController
     {
         if (!$row = Note::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
     {
         if (!$row = Note::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' In-Active Successfully.']);
     }
 }

@@ -40,7 +40,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Note</label>
                                     <div class="col-sm-9">
-                                        <vs-textarea v-model="forms.note" :danger="error.note!==undefined"/>
+                                        <textarea v-model="forms.note" class="form-control" :danger="error.note!==undefined"></textarea>
                                         <p v-if="error.note!==undefined" class="text-danger">{{ error.note[0] }}</p>
                                     </div>
                                 </div>

@@ -114,7 +114,13 @@
                     {name: 'Status'},
                 ],
 				notification:'',
-				forms:{},
+				forms:{
+                    id:null,
+                    subject:'',
+                    note:'',
+                    reg_no:''
+
+                },
                 error:[],
                 buttonText:'create',
                 url:'/json/staff/note'
@@ -142,6 +148,7 @@
                                 this.$refs.dataTableNote.getData()
                                 this.forms={}
                                 this.buttonText = 'Create'
+                                this.error = []
                             }
                         })
                         .catch(err=>{
@@ -157,6 +164,7 @@
                                 this.$refs.dataTableNote.getData()
                                 this.forms={}
                                 this.selected=[]
+                                this.error = []
                             }
                         })
                         .catch(err=>{
@@ -170,14 +178,13 @@
                 this.$router.push({name: 'staff.note', params: {id: id}})
             },
             editItems(item) {
-                console.log(item)
                 this.forms.subject = 'sadf'
-                // this.forms.id = item.id
-                // this.forms.subject = item.subject
-                // this.forms.reg_no = item.staff.reg_no
-                // this.forms.note = item.note
-                console.log(this.forms)
-                // this.$refs.staffnote.$el.querySelector('input').focus()
+                this.forms.id = item.id
+                this.forms.subject = item.subject
+                this.forms.reg_no = item.staff.reg_no
+                this.forms.note = item.note
+                this.buttonText='update'
+                this.$refs.staffnote.$el.querySelector('input').focus()
             },
             deleteItems() {
 

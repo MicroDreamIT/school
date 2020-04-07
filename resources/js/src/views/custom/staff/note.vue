@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-2">
-						<h4 class="ml-4">Staff Notes Manager</h4>
+                        <h4 class="ml-4">Staff Notes Manager</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">
                                 <br>
@@ -20,7 +20,8 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Reg No</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="forms.reg_no" class="w-100" :danger="error.reg_no!==undefined" ref="staffnote"/>
+                                        <vs-input v-model="forms.reg_no" class="w-100"
+                                                  :danger="error.reg_no!==undefined" ref="staffnote"/>
                                         <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0] }}</p>
 
                                     </div>
@@ -28,8 +29,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Sub</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="forms.subject" class="w-100" :danger="error.subject!==undefined"/>
-                                        <p v-if="error.subject!==undefined" class="text-danger">{{ error.subject[0] }}</p>
+                                        <vs-input v-model="forms.subject" class="w-100"
+                                                  :danger="error.subject!==undefined"/>
+                                        <p v-if="error.subject!==undefined" class="text-danger">{{ error.subject[0]
+                                            }}</p>
 
                                     </div>
                                 </div>
@@ -68,8 +71,8 @@
                                         <vs-td :data="props.data.reg_no">
                                             {{props.data.reg_no}}
                                         </vs-td>
-                                        <vs-td :data="props.data.note">
-                                            {{props.data.note}}
+                                        <vs-td :data="props.data.subject">
+                                            {{props.data.subject}}
                                         </vs-td>
                                         <vs-td :data="props.data.action">
                                             <div class="action-own">
@@ -101,74 +104,90 @@
     import StaffNavigation from '../../components/navigation/staff-navigation.vue'
 
     export default {
-        components:{
-            'staff-navigation':StaffNavigation
+        components: {
+            'staff-navigation': StaffNavigation
         },
         data() {
             return {
 
                 headers: [
                     {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Notes', sort_key: 'note'},
+                    {name: 'N.subject', sort_key: 'subject'},
                     {name: 'Action'},
                     {name: 'Status'},
                 ],
-				notification:'',
-				forms:{
-                    id:null,
-                    subject:'',
-                    note:'',
-                    reg_no:''
+                notification: '',
+                forms: {
+                    id: null,
+                    subject: '',
+                    note: '',
+                    reg_no: ''
 
                 },
-                error:[],
-                buttonText:'create',
-                url:'/json/staff/note'
+                error: [],
+                buttonText: 'create',
+                url: '/json/staff/note'
             }
         },
         methods: {
-            GetReturnValue(arg = null, total){
-                let val =  arg.map(st => {
-                    return{
-                        id:st.id,
-                        reg_no:st.staff.reg_no,
-                        note:st.note,
-                        status:st.status,
-                        all:st
+            GetReturnValue(arg = null, total) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        reg_no: st.staff.reg_no,
+                        subject: st.subject,
+                        status: st.status,
+                        all: st
                     }
                 });
-                this.$store.dispatch('updateTableData',val)
+                this.$store.dispatch('updateTableData', val)
             },
-            posting(){
-                if(this.forms.id){
-                    this.$http.post(this.url+ '/' +this.forms.id +'/update', this.forms)
-                        .then(res=>{
-                            if(res.status===200){
-                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+            posting() {
+                if (this.forms.id) {
+                    this.$http.post(this.url + '/' + this.forms.id + '/update', this.forms)
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
                                 this.$refs.dataTableNote.getData()
-                                this.forms={}
+                                this.forms.id = null
+                                this.forms.subject = ''
+                                this.forms.note = ''
+                                this.forms.reg_no = ''
                                 this.buttonText = 'Create'
                                 this.error = []
                             }
                         })
-                        .catch(err=>{
-                            if(err.response){
+                        .catch(err => {
+                            if (err.response) {
                                 this.error = err.response.data.errors
                             }
                         })
-                }else{
+                } else {
                     this.$http.post(this.url + '/store', this.forms)
-                        .then(res=>{
-                            if(res.status===200){
-                                this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                        .then(res => {
+                            if (res.status === 200) {
+                                this.$vs.notify({
+                                    title: res.data[0],
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
                                 this.$refs.dataTableNote.getData()
-                                this.forms={}
-                                this.selected=[]
+                                this.forms.id = null
+                                this.forms.subject = ''
+                                this.forms.note = ''
+                                this.forms.reg_no = ''
+                                this.selected = []
                                 this.error = []
                             }
                         })
-                        .catch(err=>{
-                            if(err.response){
+                        .catch(err => {
+                            if (err.response) {
                                 this.error = err.response.data.errors
                             }
                         })
@@ -178,19 +197,28 @@
                 this.$router.push({name: 'staff.note', params: {id: id}})
             },
             editItems(item) {
-                this.forms.subject = 'sadf'
                 this.forms.id = item.id
                 this.forms.subject = item.subject
                 this.forms.reg_no = item.staff.reg_no
                 this.forms.note = item.note
-                this.buttonText='update'
+                this.buttonText = 'update'
                 this.$refs.staffnote.$el.querySelector('input').focus()
             },
-            deleteItems() {
-
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get(this.url + '/' + id + '/delete').then(res => {
+                        this.$refs.dataTableNote.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
-            changeStatus() {
-
+            changeStatus(id) {
+                let stat = status === 'active' ? 'in-active' : 'active';
+                let url = this.url + '/' + id + '/' + stat;
+                this.$http.get(url).then(res => {
+                    this.$refs.dataTableNote.getData()
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                })
             },
         }
 

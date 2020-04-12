@@ -23,24 +23,30 @@
                                         </div>
                                         <div class="col-md-2">
                                             <vs-input v-model="staff.reg_no" :danger="error.reg_no!==undefined"/>
-                                            <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0] }}</p>
+                                            <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0]
+                                                }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Join Date
                                         </div>
                                         <div class="col-md-2">
-                                            <datepicker v-model="staff.join_date":danger="error.join_date!==undefined"/>
-                                            <p v-if="error.join_date!==undefined" class="text-danger">{{ error.join_date[0] }}</p>
+                                            <datepicker v-model="staff.join_date"
+                                                        :danger="error.join_date!==undefined"/>
+                                            <p v-if="error.join_date!==undefined" class="text-danger">{{
+                                                error.join_date[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Designation
                                         </div>
                                         <div class="col-md-2">
-                                            <select class="form-control" v-model="staff.designation">
+                                            <select class="form-control" v-model="staff.designation"
+                                                    :danger="error.designation!==undefined">
                                                 <option :value="designation.id" v-for="designation in designations">
                                                     {{designation.value}}
                                                 </option>
                                             </select>
+                                            <p v-if="error.designation!==undefined" class="text-danger">{{
+                                                error.designation[0] }}</p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -48,13 +54,18 @@
                                             NAME OF STAFF
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.first_name"/>
+                                            <vs-input v-model="staff.first_name"
+                                                      :danger="error.first_name!==undefined"/>
+                                            <p v-if="error.first_name!==undefined" class="text-danger">{{
+                                                error.first_name[0] }}</p>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="staff.middle_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.last_name"/>
+                                            <vs-input v-model="staff.last_name" :danger="error.last_name!==undefined"/>
+                                            <p v-if="error.last_name!==undefined" class="text-danger">{{
+                                                error.last_name[0] }}</p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -79,13 +90,18 @@
                                             <vs-input
                                                     v-model="staff.date_of_birth"
                                                     v-mask="'####-##-##'"
-                                            />
+                                                    :danger="error.date_of_birth!==undefined"/>
+                                            <p v-if="error.date_of_birth!==undefined" class="text-danger">
+                                                {{error.date_of_birth[0]}}
+                                            </p>
+
                                         </div>
                                         <div class="col-md-2">
                                             Gender
                                         </div>
                                         <div class="col-md-2">
-                                            <v-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']"/>
+                                            <vs-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']" :danger="error.gender!==undefined"/>
+                                            <p v-if="error.gender!==undefined" class="text-danger">{{ error.gender[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Blood Group
@@ -112,7 +128,8 @@
                                             E-mail
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input v-model="staff.email"/>
+                                            <vs-input v-model="staff.email" :danger="error.email!==undefined"/>
+                                            <p v-if="error.email!==undefined" class="text-danger">{{ error.email[0] }}</p>
                                         </div>
                                     </div>
 
@@ -130,7 +147,8 @@
                                             Mobile1
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.mobile_1"/>
+                                            <vs-input v-model="staff.mobile_1" :danger="error.mobile_1!==undefined"/>
+                                            <p v-if="error.mobile_1!==undefined" class="text-danger">{{ error.mobile_1[0] }}</p>
                                         </div>
                                         <div class="col-md-1">
                                             Mobile2
@@ -201,7 +219,8 @@
                                             Qualification
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.qualification"/>
+                                            <vs-input v-model="staff.qualification" :danger="error.qualification!==undefined"/>
+                                            <p v-if="error.qualification!==undefined" class="text-danger">{{ error.qualification[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Experience
@@ -286,13 +305,13 @@
                 guardian: null,
                 guardians: [],
                 academicList: [],
-                error:[],
-                designations:[]
+                error: [],
+                designations: []
             }
         },
-        created(){
+        created() {
             this.$http.get('/json/staff/add')
-                .then(res=>{
+                .then(res => {
                     this.designations = this.$root.objectToArray(res.data.designations)
                     console.log(this.designations)
                 })
@@ -304,7 +323,7 @@
 
                     })
                     .catch(err => {
-                        if(err.response){
+                        if (err.response) {
                             this.error = err.response.data.errors
                         }
                     })

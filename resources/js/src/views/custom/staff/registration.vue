@@ -34,7 +34,7 @@
                                             Designation
                                         </div>
                                         <div class="col-md-2">
-                                            <datepicker v-model="staff.designation"/>
+                                            <select class="form-control" v-model="staff.designation"></select>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -284,6 +284,15 @@
             }
         },
         methods: {
+            posting() {
+                this.$http.post('/json/staff/store', this.staff)
+                    .then(res => {
+
+                    })
+                    .catch(err => {
+
+                    })
+            },
             copyPermanent() {
                 if (this.copyPerm) {
                     this.staff.temp_address = this.staff.address,

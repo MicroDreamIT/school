@@ -87,21 +87,21 @@
                                             Date Of Birth
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input
-                                                    v-model="staff.date_of_birth"
-                                                    v-mask="'####-##-##'"
-                                                    :danger="error.date_of_birth!==undefined"/>
+                                            <datepicker v-model="staff.date_of_birth"
+                                                        :format="$root.formatPicker"
+                                                        :danger="error.date_of_birth!==undefined"/>
                                             <p v-if="error.date_of_birth!==undefined" class="text-danger">
                                                 {{error.date_of_birth[0]}}
                                             </p>
-
                                         </div>
                                         <div class="col-md-2">
                                             Gender
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']" :danger="error.gender!==undefined"/>
-                                            <p v-if="error.gender!==undefined" class="text-danger">{{ error.gender[0] }}</p>
+                                            <v-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']"
+                                                      :danger="error.gender!==undefined"/>
+                                            <p v-if="error.gender!==undefined" class="text-danger">{{ error.gender[0]
+                                                }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Blood Group
@@ -129,7 +129,8 @@
                                         </div>
                                         <div class="col-md-2">
                                             <vs-input v-model="staff.email" :danger="error.email!==undefined"/>
-                                            <p v-if="error.email!==undefined" class="text-danger">{{ error.email[0] }}</p>
+                                            <p v-if="error.email!==undefined" class="text-danger">{{ error.email[0]
+                                                }}</p>
                                         </div>
                                     </div>
 
@@ -148,7 +149,8 @@
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="staff.mobile_1" :danger="error.mobile_1!==undefined"/>
-                                            <p v-if="error.mobile_1!==undefined" class="text-danger">{{ error.mobile_1[0] }}</p>
+                                            <p v-if="error.mobile_1!==undefined" class="text-danger">{{
+                                                error.mobile_1[0] }}</p>
                                         </div>
                                         <div class="col-md-1">
                                             Mobile2
@@ -219,8 +221,10 @@
                                             Qualification
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.qualification" :danger="error.qualification!==undefined"/>
-                                            <p v-if="error.qualification!==undefined" class="text-danger">{{ error.qualification[0] }}</p>
+                                            <vs-input v-model="staff.qualification"
+                                                      :danger="error.qualification!==undefined"/>
+                                            <p v-if="error.qualification!==undefined" class="text-danger">{{
+                                                error.qualification[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Experience
@@ -273,9 +277,11 @@
                         </vs-tabs>
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Save</vs-button>
-                            <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                            <vs-button class="my-round mx-2" color="warning" @click="resetting()">Reset</vs-button>
+                            <vs-button class="my-round mx-2" @click="posting">Save</vs-button>
+                            <vs-button class="my-round mx-2" color="#28c76f" @click="posting('reset')">Save And Add
+                                Another
+                            </vs-button>
                         </div>
                     </div>
 
@@ -294,7 +300,11 @@
         },
         data() {
             return {
-                staff: {},
+                staff: {
+                    id: null,
+                    reg_no: '',
+                    gender: ''
+                },
                 faculties: [],
                 semester: [],
                 batch: [],
@@ -317,10 +327,27 @@
                 })
         },
         methods: {
-            posting() {
+            resetting() {
+            },
+            posting(arg=null) {
+                this.staff.date_of_birth = this.$root.formatPicker(this.staff.date_of_birth)
+                this.staff.join_date = this.$root.formatPicker(this.staff.join_date)
+
                 this.$http.post('/json/staff/store', this.staff)
                     .then(res => {
-
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
+                        this.staff = {}
+                        this.staff.id = null
+                        this.staff.reg_no = ''
+                        this.staff.gender = ''
+                        if(arg){
+                            this.$router
+                        }
                     })
                     .catch(err => {
                         if (err.response) {

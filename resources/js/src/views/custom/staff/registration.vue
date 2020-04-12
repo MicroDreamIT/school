@@ -346,7 +346,7 @@
                         this.staff.reg_no = ''
                         this.staff.gender = ''
                         if(arg){
-                            this.$router
+                            this.$router.push({path:'/staff'})
                         }
                     })
                     .catch(err => {

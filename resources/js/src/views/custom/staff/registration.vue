@@ -22,19 +22,25 @@
                                             REG.NO.
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input v-model="staff.reg_no"/>
+                                            <vs-input v-model="staff.reg_no" :danger="error.reg_no!==undefined"/>
+                                            <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Join Date
                                         </div>
                                         <div class="col-md-2">
-                                            <datepicker v-model="staff.join_date"/>
+                                            <datepicker v-model="staff.join_date":danger="error.join_date!==undefined"/>
+                                            <p v-if="error.join_date!==undefined" class="text-danger">{{ error.join_date[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Designation
                                         </div>
                                         <div class="col-md-2">
-                                            <select class="form-control" v-model="staff.designation"></select>
+                                            <select class="form-control" v-model="staff.designation">
+                                                <option :value="designation.id" v-for="designation in designations">
+                                                    {{designation.value}}
+                                                </option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -279,9 +285,17 @@
                 whoGuardian: '',
                 guardian: null,
                 guardians: [],
-                academicList: []
-
+                academicList: [],
+                error:[],
+                designations:[]
             }
+        },
+        created(){
+            this.$http.get('/json/staff/add')
+                .then(res=>{
+                    this.designations = this.$root.objectToArray(res.data.designations)
+                    console.log(this.designations)
+                })
         },
         methods: {
             posting() {
@@ -290,7 +304,9 @@
 
                     })
                     .catch(err => {
-
+                        if(err.response){
+                            this.error = err.response.data.errors
+                        }
                     })
             },
             copyPermanent() {

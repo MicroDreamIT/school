@@ -88,7 +88,6 @@ class StaffController extends CollegeBaseController
         $request->merge(['staff_image' => $image_name]);
 
         Staff::create($request->all());
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
         return response()->json(['success', $this->panel . ' Created Successfully.']);
 
     }

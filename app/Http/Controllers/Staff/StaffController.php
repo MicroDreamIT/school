@@ -67,14 +67,13 @@ class StaffController extends CollegeBaseController
         $data['filter_query'] = $this->filter_query;
 
         return response()->json($data);
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
     }
 
     public function add()
     {
         $data = [];
         $data['designations'] = $this->staffDesignationList();
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -85,17 +84,12 @@ class StaffController extends CollegeBaseController
             $image_name = "";
         }
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['staff_image' => $image_name]);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['staff_image' => $image_name]);
 
         Staff::create($request->all());
         $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-
-        if($request->add_staff_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
 
     }
 
@@ -233,8 +227,8 @@ class StaffController extends CollegeBaseController
                 @unlink($this->folder_path.$row->staff_image);
         }
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
-        $request->request->add(['staff_image' => isset($image_name)?$image_name:$row->staff_image]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['staff_image' => isset($image_name)?$image_name:$row->staff_image]);
 
         $row->update($request->all());
 
@@ -346,7 +340,7 @@ class StaffController extends CollegeBaseController
     {
         if (!$row = Staff::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
         return response()->json(['success',$row->reg_no.' '.$this->panel.' active Successfully.']);
@@ -356,7 +350,7 @@ class StaffController extends CollegeBaseController
     {
         if (!$row = Staff::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
         return response()->json(['danger',$row->reg_no.' '.$this->panel.' In-Active Successfully..']);

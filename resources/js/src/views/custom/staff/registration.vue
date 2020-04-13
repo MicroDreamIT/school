@@ -256,20 +256,18 @@
                                 <div class="row">
                                     <div class="col-md-3">Staff Profile Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="staff.profile_picture">
-
-                                        </vs-input>
+                                        <input type="file"
+                                                name="image" id="image" ref="image"  accept="image/*" >
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img class="img-responsive"
-                                             width="100px"
-                                             :src="staff.profile_picture"
-                                             v-if="staff.profile_picture"/>
-                                        <img class="img-responsive"
-                                             width="100px"
-                                             src="../../../../../assets/images/profile-default.jpg"
-                                             v-else/>
+<!--                                        <img class="img-responsive"-->
+<!--                                             width="100px"-->
+<!--                                             :src="staff.profile_picture"-->
+<!--                                             v-if="staff.profile_picture"/>-->
+<!--                                        <img class="img-responsive"-->
+<!--                                             width="100px"-->
+<!--                                             src="../../../../../assets/images/profile-default.jpg"-->
+<!--                                             v-else/>-->
                                     </div>
                                 </div>
 
@@ -278,7 +276,7 @@
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
                             <vs-button class="my-round mx-2" color="warning" @click="resetting()">Reset</vs-button>
-                            <vs-button class="my-round mx-2" @click="posting">Save</vs-button>
+                            <vs-button class="my-round mx-2" @click="posting()">Save</vs-button>
                             <vs-button class="my-round mx-2" color="#28c76f" @click="posting('reset')">Save And Add
                                 Another
                             </vs-button>
@@ -327,33 +325,53 @@
                 })
         },
         methods: {
+
             resetting() {
+                this.staff = {}
+                this.staff.id = null
+                this.staff.reg_no = ''
+                this.staff.gender = ''
             },
             posting(arg=null) {
                 this.staff.date_of_birth = this.$root.formatPicker(this.staff.date_of_birth)
                 this.staff.join_date = this.$root.formatPicker(this.staff.join_date)
 
-                this.$http.post('/json/staff/store', this.staff)
+                var data = new FormData();
+                var imagefile = document.querySelector('#image');
+                console.log(imagefile, arg)
+                if(imagefile){
+                    data.append("profile_picture", imagefile.files[0]);
+                }
+                for(var key in this.staff){
+                    data.append(key,this.staff[key])
+                }
+
+                // data.append('staff', this.staff);
+                this.$http.post('/json/staff/store', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    body:data
+                })
                     .then(res => {
-                        this.$vs.notify({
-                            title: res.data[0],
-                            text: res.data[1],
-                            color: res.data[0],
-                            icon: 'verified_user'
-                        })
-                        this.staff = {}
-                        this.staff.id = null
-                        this.staff.reg_no = ''
-                        this.staff.gender = ''
-                        if(arg){
-                            this.$router.push({path:'/staff'})
-                        }
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
                     })
+                    this.resetting()
+                    if(arg){
+                        this.$router.push({path:'/staff'})
+                    }
+                })
                     .catch(err => {
                         if (err.response) {
                             this.error = err.response.data.errors
                         }
                     })
+
+
             },
             copyPermanent() {
                 if (this.copyPerm) {

@@ -3,30 +3,9 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Student Manager</h2>
-                <div class="p-2">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">
-                            Primary
-                        </vs-button>
-                    </router-link>
-
-                </div>
             </div>
+            <staff-navigation></staff-navigation>
+
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
@@ -44,7 +23,7 @@
                         </vs-button>
                     </div>
                     <div class="col-md-12">
-                        <profile v-if="currentView=='profile'"/>
+                        <profile v-if="currentView=='profile'" :profile="item.staff"/>
                         <payroll v-if="currentView=='payroll'"/>
                         <library v-else-if="currentView=='library'"/>
                         <attendance v-else-if="currentView=='attendance'"/>
@@ -61,7 +40,9 @@
 </template>
 
 
+
 <script>
+    import StaffNavigation from '../../components/navigation/staff-navigation.vue'
     import profile from './includes/profile'
     import payroll from "./includes/payroll";
     import library from './includes/library'
@@ -75,12 +56,20 @@
     export default {
         components: {
             payroll,
-            profile, attendance, loginAccess, library, hostel, transport, docs, notes
+            profile, attendance, loginAccess, library, hostel, transport, docs, notes, StaffNavigation
         },
         data() {
             return {
-                currentView: 'profile'
+                currentView: 'profile',
+                item:{}
             }
+        },
+        created() {
+
+            this.$http.get('/json/staff/' + this.$route.params.id+ '/view')
+                .then(res=>{
+                    this.item = res.data
+                })
         }
     }
 </script>

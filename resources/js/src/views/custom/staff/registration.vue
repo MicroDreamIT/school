@@ -257,17 +257,17 @@
                                     <div class="col-md-3">Staff Profile Picture</div>
                                     <div class="col-md-5">
                                         <input type="file"
-                                                name="image" id="image" ref="image"  accept="image/*" >
+                                               name="image" id="image" ref="image" accept="image/*">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-<!--                                        <img class="img-responsive"-->
-<!--                                             width="100px"-->
-<!--                                             :src="staff.profile_picture"-->
-<!--                                             v-if="staff.profile_picture"/>-->
-<!--                                        <img class="img-responsive"-->
-<!--                                             width="100px"-->
-<!--                                             src="../../../../../assets/images/profile-default.jpg"-->
-<!--                                             v-else/>-->
+                                        <!--                                        <img class="img-responsive"-->
+                                        <!--                                             width="100px"-->
+                                        <!--                                             :src="staff.profile_picture"-->
+                                        <!--                                             v-if="staff.profile_picture"/>-->
+                                        <!--                                        <img class="img-responsive"-->
+                                        <!--                                             width="100px"-->
+                                        <!--                                             src="../../../../../assets/images/profile-default.jpg"-->
+                                        <!--                                             v-else/>-->
                                     </div>
                                 </div>
 
@@ -321,7 +321,6 @@
             this.$http.get('/json/staff/add')
                 .then(res => {
                     this.designations = this.$root.objectToArray(res.data.designations)
-                    console.log(this.designations)
                 })
         },
         methods: {
@@ -332,18 +331,18 @@
                 this.staff.reg_no = ''
                 this.staff.gender = ''
             },
-            posting(arg=null) {
+            posting(arg = null) {
                 this.staff.date_of_birth = this.$root.formatPicker(this.staff.date_of_birth)
                 this.staff.join_date = this.$root.formatPicker(this.staff.join_date)
 
-                var data = new FormData();
-                var imagefile = document.querySelector('#image');
-                console.log(imagefile, arg)
-                if(imagefile){
+                let data = new FormData();
+                let imagefile = document.querySelector('#image');
+                // console.log(imagefile, arg)
+                if (imagefile) {
                     data.append("profile_picture", imagefile.files[0]);
                 }
-                for(var key in this.staff){
-                    data.append(key,this.staff[key])
+                for (let key in this.staff) {
+                    data.append(key, this.staff[key])
                 }
 
                 // data.append('staff', this.staff);
@@ -351,20 +350,21 @@
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
-                    body:data
+                    body: data
                 })
                     .then(res => {
-                    this.$vs.notify({
-                        title: res.data[0],
-                        text: res.data[1],
-                        color: res.data[0],
-                        icon: 'verified_user'
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
+                        this.resetting()
+                        imagefile.value = null
+                        if (!arg) {
+                            this.$router.push({path: '/staff'})
+                        }
                     })
-                    this.resetting()
-                    if(arg){
-                        this.$router.push({path:'/staff'})
-                    }
-                })
                     .catch(err => {
                         if (err.response) {
                             this.error = err.response.data.errors

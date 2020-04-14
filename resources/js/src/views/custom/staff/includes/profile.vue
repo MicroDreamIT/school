@@ -13,21 +13,22 @@
         <div class="row" v-if="fullname">
             <div class="col-xs-12 col-sm-3 center">
                 <div>
-            <span class="profile-picture">
-<!--                @if(profile.staff_image != '')-->
-<!--                                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
-<!--                                         :src="/images/"-->
-<!--                                         src="{{ asset('images'.DIRECTORY_SEPARATOR.$folder_name.DIRECTORY_SEPARATOR.profile.staff_image) }}"-->
-<!--                                         width="300px"/>-->
-<!--                                @else-->
-<!--                                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
-<!--                                         src="{{ asset('assets/images/avatars/profile-pic.jpg') }}"/>-->
-<!--                                @endif-->
-            </span>
+                    <div class="profile-picture">
+                        <div v-if="profile.staff_image !== ''">
+                            <img class="editable img-responsive"
+                                 :src="'/images/staff/' + profile.staff_image"
+                                 width="300px"/>
+                        </div>
+                        <div v-else>
+                            <img class="editable img-responsive"
+                                 :src="'/assets/images/avatars/profile-pic.jpg'"/>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-9">
-                <div class="label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm " v-if="profile.fullname!==undefined">
+                <div class="label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm "
+                     v-if="profile.fullname!==undefined">
                     {{profile.fullname}}
                 </div>
                 <div class="space-6"></div>
@@ -40,7 +41,7 @@
                         <div class="profile-info-name"> Join Date :</div>
                         <div class="profile-info-value">
                             <span class="editable" id="reg_date">
-<!--                                {{ \Carbon\Carbon::parse(profile.join_date)->format('Y-m-d')}}-->
+                                {{$root.parseDate(profile.join_date)}}
                             </span>
                         </div>
                     </div>
@@ -55,7 +56,7 @@
                         <div class="profile-info-name"> DOB :</div>
                         <div class="profile-info-value">
                             <span class="editable">
-<!--                                {{ \Carbon\Carbon::parse(profile.date_of_birth)->format('Y-m-d')}}-->
+                                {{$root.parseDate(profile.date_of_birth)}}
                             </span>
                         </div>
                     </div>
@@ -203,22 +204,6 @@
                 </div>
             </div>
 
-            <div class="space-4"></div>
-
-            <div class=" align-center">
-                <br/> <br/>
-                <span class="profile-picture">
-<!--        @if(profile.reg_no != '')-->
-                    <!--            {!! QrCode::size(200)->generate(profile.first_name.' '.-->
-                    <!--            profile.middle_name.' '.profile.last_name.'['.profile.reg_no.']'); !!}-->
-                    <!--        @else-->
-                    <!--        @endif-->
-        </span>
-            </div>
-            <!--            {{&#45;&#45;$QRCodeReader = new Libern\QRCodeReader\QRCodeReader();-->
-            <!--            $qrcode_text = $QRCodeReader->decode(base64_encode("image_stream"));-->
-            <!--            echo $qrcode_text;&#45;&#45;}}-->
-
         </div>
 
     </div>
@@ -228,9 +213,9 @@
     export default {
         name: "profile",
         props: ['profile'],
-        computed:{
-            fullname(){
-                return !! this.profile && this.profile.fullname!==undefined && this.profile.address!==undefined
+        computed: {
+            fullname() {
+                return !!this.profile && this.profile.fullname !== undefined && this.profile.address !== undefined
             }
         }
     }

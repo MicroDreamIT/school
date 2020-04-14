@@ -199,8 +199,6 @@ class StaffController extends CollegeBaseController
         $data['staff_login'] = User::where([['role_id',5],['hook_id',$data['staff']->id]])->first();
         $data['folder_path'] = $this->folder_path;
         return response()->json($data);
-        $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 
     public function edit(Request $request, $id)

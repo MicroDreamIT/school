@@ -23,7 +23,7 @@
                         </vs-button>
                     </div>
                     <div class="col-md-12">
-                        <profile v-if="currentView=='profile'" :profile="item.staff"/>
+                        <profile v-if="currentView=='profile'" :profile="item.staff" />
                         <payroll v-if="currentView=='payroll'"/>
                         <library v-else-if="currentView=='library'"/>
                         <attendance v-else-if="currentView=='attendance'"/>

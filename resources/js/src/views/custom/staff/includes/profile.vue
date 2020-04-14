@@ -15,18 +15,19 @@
                 <div>
             <span class="profile-picture">
 <!--                @if(profile.staff_image != '')-->
-                <!--                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
-                <!--                         src="{{ asset('images'.DIRECTORY_SEPARATOR.$folder_name.DIRECTORY_SEPARATOR.profile.staff_image) }}"-->
-                <!--                         width="300px"/>-->
-                <!--                @else-->
-                <!--                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
-                <!--                         src="{{ asset('assets/images/avatars/profile-pic.jpg') }}"/>-->
-                <!--                @endif-->
+<!--                                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
+<!--                                         :src="/images/"-->
+<!--                                         src="{{ asset('images'.DIRECTORY_SEPARATOR.$folder_name.DIRECTORY_SEPARATOR.profile.staff_image) }}"-->
+<!--                                         width="300px"/>-->
+<!--                                @else-->
+<!--                                    <img id="avatar" class="editable img-responsive" alt="{{ profile.title }}"-->
+<!--                                         src="{{ asset('assets/images/avatars/profile-pic.jpg') }}"/>-->
+<!--                                @endif-->
             </span>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-9">
-                <div class="label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm ">
+                <div class="label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm " v-if="profile.fullname!==undefined">
                     {{profile.fullname}}
                 </div>
                 <div class="space-6"></div>
@@ -47,7 +48,7 @@
                     <div class="profile-info-row">
                         <div class="profile-info-name"> Name :</div>
                         <div class="profile-info-value">
-                    <span class="editable">
+                    <span class="editable" v-if="profile.fullname!==undefined">
                         {{ profile.fullname }}
                     </span>
                         </div>
@@ -106,7 +107,7 @@
                 </div>
             </div>
         </div><!-- /.row -->
-        <div class="row">
+        <div class="row" v-if="profile && profile.address!==undefined">
             <div class="space-6"></div>
             <div class="label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1">
                 Permanent Address
@@ -229,7 +230,7 @@
         props: ['profile'],
         computed:{
             fullname(){
-                console.log(this.profile)
+                return !! this.profile && this.profile.fullname!==undefined && this.profile.address!==undefined
             }
         }
     }

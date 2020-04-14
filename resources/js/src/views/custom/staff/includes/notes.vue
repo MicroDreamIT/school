@@ -8,24 +8,15 @@
                 <data-table :headers="tableHeader1"
                             :url="'/student'"
                             :no-data-message="'No matching records found'"
-                            :searchField="searchData"
                             :hasSearch="false"
+                            :items="note"
                 >
                     <template slot="items" slot-scope="props">
-                        <vs-td :data="props.data.username">
-                            {{props.data.email}}
+                        <vs-td :data="props.data.subject">
+                            {{props.data.subject}}
                         </vs-td>
-
-                        <vs-td :data="props.data.username">
-                            {{props.data.username}}
-                        </vs-td>
-
-                        <vs-td :data="props.data.id">
-                            {{props.data.website}}
-                        </vs-td>
-
-                        <vs-td :data="props.id">
-                            {{props.data.id}}
+                        <vs-td :data="props.data.note">
+                            {{props.data.note}}
                         </vs-td>
                     </template>
                 </data-table>
@@ -41,10 +32,8 @@
         data(){
             return{
                 tableHeader1: [
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                    {name: 'Subject', field: 'subject', sort_key: 'subject'},
+                    {name: 'Description', field: 'description', sort_key: 'description'},
                 ],
             }
         }

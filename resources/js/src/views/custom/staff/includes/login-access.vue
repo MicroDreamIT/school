@@ -3,7 +3,9 @@
         <div class="col-md-12" v-if="item.staff_login">
             <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>&nbsp;Edit Staff Login Access</h4>
             <div>
-                <a @click="userAction(item.staff_login.id, 'active')"  title="Active" class="btn-success btn-sm"><i class="fa fa-unlock-alt" aria-hidden="true" ></i> Un-Lock User</a>
+                <a @click="userAction(item.staff_login.id, 'active')"  title="Active" class="btn-success btn-sm">
+                    <i class="fa fa-unlock-alt" aria-hidden="true" ></i> Un-Lock User
+                </a>
 
                 <a @click="userAction(item.staff_login.id, 'in-active')"  title="In-Active" class="btn-warning btn-sm"><i class="fa fa-lock" aria-hidden="true" ></i> Lock User</a>
 

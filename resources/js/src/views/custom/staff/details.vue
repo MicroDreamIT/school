@@ -28,7 +28,7 @@
                         <library v-else-if="currentView=='library'"/>
                         <attendance v-else-if="currentView=='attendance'"/>
                         <hostel v-else-if="currentView=='hostel'"/>
-                        <transport v-else-if="currentView=='transport'"/>
+                        <transport v-else-if="currentView=='transport'" :transport="item.transport_history"/>
                         <docs v-else-if="currentView=='docs'" :doc="item.document" :reg="item.staff.reg_no" />
                         <notes v-else-if="currentView=='notes'" :note="item.note" />
                         <login-access v-if="currentView=='login_access'" :item="item" @getData="getData()"/>

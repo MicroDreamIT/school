@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import moment from "moment";
 
 Vue.filter('capitalize', function (value) {
 	if (!value) return ''
@@ -79,4 +80,7 @@ Vue.filter('filter_tags', function(value) {
 
 Vue.filter('k_formatter', function(num) {
 	return num > 999 ? (num/1000).toFixed(1) + 'k' : num
+})
+Vue.filter('formatDate', (val)=>{
+	return moment(val).format('YYYY-MM-DD');
 })

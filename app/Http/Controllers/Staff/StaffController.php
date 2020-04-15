@@ -187,7 +187,7 @@ class StaffController extends CollegeBaseController
 
 
         /*Transport History*/
-        $data['transport_history'] = TransportHistory::select('transport_histories.id', 'transport_histories.years_id',
+        $data['transport_history'] = TransportHistory::with(['vehicle', 'route','year'])->select('transport_histories.id', 'transport_histories.years_id',
             'transport_histories.routes_id', 'transport_histories.vehicles_id',  'transport_histories.history_type',
             'transport_histories.created_at','tu.user_type')
             ->where([['tu.user_type','=', 2],['tu.member_id','=',$data['staff']->id]])

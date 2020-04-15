@@ -7,7 +7,6 @@
             <input type="hidden" v-model="login.hook_id">
             <div class="form-group">
                 <label>name:</label>
-                {{item.staff.fullname}}
                 <vs-input type="text" v-model="login.name" ></vs-input>
             </div>
             <div class="form-group">
@@ -23,12 +22,12 @@
                 <vs-input type="password" v-model="login.confirm_password"></vs-input>
             </div>
             <div class="form-group">
-                <button class="btn" type="reset">
+                <button class="btn" type="reset" @click="login.password, login.confirm_password">
                     <i class="fa fa-undo bigger-110"></i>
                     Reset
                 </button>
 
-                <button class="btn btn-info" type="submit">
+                <button class="btn btn-info" type="submit" @click="posting()">
                     <i class="fa fa-save bigger-110"></i>
                     Create Login Access
                 </button>
@@ -122,8 +121,16 @@
         created() {
             this.login.name=this.item.staff.fullname
             this.login.email = this.item.staff.email
-            this.login.hook_id = parseInt(item.staff.id)
+            this.login.hook_id = parseInt(this.item.staff.id)
             this.login.role_id = parseInt(5)
+        },
+        methods:{
+            posting(){
+                this.$http.post('/json/staff/user/create')
+                    .then(res=>{
+
+                    })
+            }
         }
     }
 </script>

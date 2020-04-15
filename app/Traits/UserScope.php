@@ -49,11 +49,11 @@ trait UserScope{
     public function createUser(AddValidation $request)
     {
         if($request->password != $request->confirmPassword){
-            $request->session()->flash($this->message_warning, 'Password & Confirm Password Not Match.');
-            return redirect()->back();
+            return response()->json(['success', 'Password & Confirm Password Not Match.']);
+
         }
 
-        $request->request->add(['password' => bcrypt($request->get('password'))]);
+        $request->merge(['password' => bcrypt($request->get('password'))]);
 
         $user = User::create($request->all());
 
@@ -65,8 +65,7 @@ trait UserScope{
 
         $user->userRole()->sync($roles);
 
-        $request->session()->flash($this->message_success, 'Create Login Detail Successfully.');
-        return redirect()->back();
+        return response()->json(['success', 'Create Login Detail Successfully.']);
     }
 
     public function updateUser(EditValidation $request, $id)
@@ -74,15 +73,14 @@ trait UserScope{
         if (!$row = User::find($id)) return parent::invalidRequest();
 
         if($request->password != $request->confirmPassword){
-            $request->session()->flash($this->message_warning, 'Password & Confirm Password Not Match.');
-            return redirect()->back();
+            return response()->json(['warning', 'Password & Confirm Password Not Match.']);
         }
 
         if ($request->get('password')){
             $new_password= bcrypt($request->get('password'));
         }
 
-        $request->request->add(['password' => isset($new_password)?$new_password:$row->password]);
+        $request->merge(['password' => isset($new_password)?$new_password:$row->password]);
 
         $row->update($request->all());
 
@@ -94,8 +92,8 @@ trait UserScope{
 
         $row->userRole()->sync($roles);
 
-        $request->session()->flash($this->message_success, 'Login Detail Updated Successfully.');
-        return redirect()->back();
+        return response()->json(['success', 'Login Detail Updated Successfully.']);
+
     }
 
     public function deleteUser(Request $request, $id)
@@ -116,8 +114,8 @@ trait UserScope{
 
         $row->userRole()->sync($roles);
 
-        $request->session()->flash($this->message_success,'Login Access Deleted Successfully.');
-        return redirect()->back();
+        return response()->json(['success', 'Login Access Deleted Successfully.']);
+
 
     }
 
@@ -125,24 +123,24 @@ trait UserScope{
     {
         if (!$row = User::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, 'User Un-Locked Successfully.');
-        return redirect()->back();
+        return response()->json(['success', 'User Un-Locked Successfully.']);
+
     }
 
     public function inActiveUser(request $request, $id)
     {
         if (!$row = User::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, 'User Locked Successfully.');
-        return redirect()->back();
+        return response()->json(['success', 'User Locked Successfully.']);
+
     }
 
 }

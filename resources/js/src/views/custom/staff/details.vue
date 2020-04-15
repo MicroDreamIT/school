@@ -31,7 +31,7 @@
                         <transport v-else-if="currentView=='transport'"/>
                         <docs v-else-if="currentView=='docs'" :doc="item.document" :reg="item.staff.reg_no" />
                         <notes v-else-if="currentView=='notes'" :note="item.note" />
-                        <login-access v-if="currentView=='login_access'" :item="item"/>
+                        <login-access v-if="currentView=='login_access'" :item="item" @getData="getData()"/>
                     </div>
                 </vs-card>
             </div>
@@ -65,11 +65,16 @@
             }
         },
         created() {
-
-            this.$http.get('/json/staff/' + this.$route.params.id+ '/view')
-                .then(res=>{
-                    this.item = res.data
-                })
+            this.getData()
+        },
+        methods:{
+            getData(){
+                this.$http.get('/json/staff/' + this.$route.params.id+ '/view')
+                    .then(res=>{
+                        this.item = res.data
+                        this.currentView='profile'
+                    })
+            }
         }
     }
 </script>

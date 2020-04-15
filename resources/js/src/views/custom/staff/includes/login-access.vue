@@ -19,10 +19,10 @@
             </div>
             <div class="form-group">
                 <label>confirm password</label>
-                <vs-input type="password" v-model="login.confirm_password"></vs-input>
+                <vs-input type="password" v-model="login.confirmPassword"></vs-input>
             </div>
             <div class="form-group">
-                <button class="btn" type="reset" @click="login.password, login.confirm_password">
+                <button class="btn" type="reset" @click="login.password, login.confirmPassword">
                     <i class="fa fa-undo bigger-110"></i>
                     Reset
                 </button>
@@ -126,9 +126,17 @@
         },
         methods:{
             posting(){
-                this.$http.post('/json/staff/user/create')
+                this.$http.post('/json/staff/user/create', this.login)
                     .then(res=>{
-
+                        if(res.status===200){
+                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$emit('getData')
+                        }
+                    })
+                    .catch(err=>{
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
                     })
             }
         }

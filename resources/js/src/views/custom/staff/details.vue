@@ -31,7 +31,7 @@
                         <transport v-else-if="currentView=='transport'"/>
                         <docs v-else-if="currentView=='docs'" :doc="item.document" :reg="item.staff.reg_no" />
                         <notes v-else-if="currentView=='notes'" :note="item.note" />
-                        <login-access v-if="currentView=='login_access'"/>
+                        <login-access v-if="currentView=='login_access'" :item="item"/>
                     </div>
                 </vs-card>
             </div>

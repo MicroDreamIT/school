@@ -29,8 +29,8 @@
                         <attendance v-else-if="currentView=='attendance'"/>
                         <hostel v-else-if="currentView=='hostel'"/>
                         <transport v-else-if="currentView=='transport'"/>
-                        <docs v-else-if="currentView=='docs'"/>
-                        <notes v-else-if="currentView=='notes'" :note="item.note"/>
+                        <docs v-else-if="currentView=='docs'" :doc="item.document" :reg="item.staff.reg_no" />
+                        <notes v-else-if="currentView=='notes'" :note="item.note" />
                         <login-access v-if="currentView=='login_access'"/>
                     </div>
                 </vs-card>

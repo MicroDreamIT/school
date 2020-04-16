@@ -343,7 +343,7 @@
                 }
 
                 // data.append('staff', this.staff);
-                this.$http.post('/json/staff/store', data, {
+                this.$http.post('/json/staff/'+this.$route.params.id+'/update', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -356,11 +356,9 @@
                             color: res.data[0],
                             icon: 'verified_user'
                         })
+                        this.$router.push({path:'/staff/'+this.$route.params.id+'/details'})
                         this.resetting()
                         imagefile.value = null
-                        if (!arg) {
-                            this.$router.push({path: '/staff'})
-                        }
                     })
                     .catch(err => {
                         if (err.response) {

@@ -92,11 +92,17 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    var _this = this;
+    this.getData();
+  },
+  methods: {
+    getData: function getData() {
+      var _this = this;
 
-    this.$http.get('/json/staff/' + this.$route.params.id + '/view').then(function (res) {
-      _this.item = res.data;
-    });
+      this.$http.get('/json/staff/' + this.$route.params.id + '/view').then(function (res) {
+        _this.item = res.data;
+        _this.currentView = 'profile';
+      });
+    }
   }
 });
 
@@ -138,8 +144,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "docs"
+  name: "docs",
+  props: ['doc', 'reg'],
+  data: function data() {
+    return {
+      tableHeader1: [{
+        name: 'link',
+        field: 'link',
+        sort_key: 'link'
+      }, {
+        name: 'Description',
+        field: 'description',
+        sort_key: 'description'
+      }]
+    };
+  }
 });
 
 /***/ }),
@@ -297,8 +340,116 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "login-access"
+  name: "login-access",
+  props: ['item'],
+  data: function data() {
+    return {
+      login: {
+        role_id: null,
+        hook_id: null
+      },
+      buttonText: 'create'
+    };
+  },
+  created: function created() {
+    if (this.item.staff_login) {
+      this.login.id = this.item.staff_login.id;
+      this.buttonText = 'update';
+    }
+
+    this.login.name = this.item.staff.fullname;
+    this.login.email = this.item.staff.email;
+    this.login.hook_id = parseInt(this.item.staff.id);
+    this.login.role_id = parseInt(5);
+  },
+  methods: {
+    userAction: function userAction(id, action) {
+      var _this = this;
+
+      this.$http.get('/json/staff/' + id + '/user/' + action).then(function (res) {
+        if (res.status === 200) {
+          _this.$vs.notify({
+            title: res.data[0],
+            text: res.data[1],
+            color: res.data[0],
+            icon: 'verified_user'
+          });
+
+          _this.$emit('getData');
+        }
+      });
+    },
+    posting: function posting() {
+      var _this2 = this;
+
+      var url = this.item.staff_login ? '/json/staff/' + this.item.staff_login.id + '/user/update' : '/json/staff/user/create';
+      this.$http.post(url, this.login).then(function (res) {
+        if (res.status === 200) {
+          _this2.$vs.notify({
+            title: res.data[0],
+            text: res.data[1],
+            color: res.data[0],
+            icon: 'verified_user'
+          });
+
+          _this2.$emit('getData');
+        }
+      }).catch(function (err) {
+        if (err.response) {
+          _this2.error = err.response.data.errors;
+        }
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -339,32 +490,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "notes",
+  props: ['note'],
   data: function data() {
     return {
       tableHeader1: [{
-        name: 'Name',
-        field: 'name',
-        sort_key: 'name'
+        name: 'Subject',
+        field: 'subject',
+        sort_key: 'subject'
       }, {
-        name: 'Email',
-        field: 'email',
-        sort_key: 'email'
-      }, {
-        name: 'Mobile',
-        field: 'mobile'
-      }, {
-        name: 'PID'
+        name: 'Description',
+        field: 'description',
+        sort_key: 'description'
       }]
     };
   }
@@ -611,26 +749,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "profile",
   props: ['profile'],
   computed: {
     fullname: function fullname() {
-      console.log(this.profile);
+      return !!this.profile && this.profile.fullname !== undefined && this.profile.address !== undefined;
     }
   }
 });
@@ -682,23 +806,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "transport",
+  props: ['transport'],
   data: function data() {
     return {
       tableHeader1: [{
-        name: 'Name',
-        field: 'name',
-        sort_key: 'name'
+        name: 'year',
+        field: 'year',
+        sort_key: 'year'
       }, {
-        name: 'Email',
-        field: 'email',
-        sort_key: 'email'
+        name: 'route',
+        field: 'route',
+        sort_key: 'route'
       }, {
-        name: 'Mobile',
-        field: 'mobile'
+        name: 'vehicle',
+        field: 'vehicle',
+        sort_key: 'vehicle'
       }, {
-        name: 'PID'
+        name: 'history',
+        field: 'history',
+        sort_key: 'history'
+      }, {
+        name: 'date',
+        field: 'date',
+        sort_key: ''
       }]
     };
   }
@@ -1102,15 +1235,29 @@ var render = function() {
                     : _vm.currentView == "hostel"
                     ? _c("hostel")
                     : _vm.currentView == "transport"
-                    ? _c("transport")
+                    ? _c("transport", {
+                        attrs: { transport: _vm.item.transport_history }
+                      })
                     : _vm.currentView == "docs"
-                    ? _c("docs")
+                    ? _c("docs", {
+                        attrs: {
+                          doc: _vm.item.document,
+                          reg: _vm.item.staff.reg_no
+                        }
+                      })
                     : _vm.currentView == "notes"
-                    ? _c("notes")
+                    ? _c("notes", { attrs: { note: _vm.item.note } })
                     : _vm._e(),
                   _vm._v(" "),
                   _vm.currentView == "login_access"
-                    ? _c("login-access")
+                    ? _c("login-access", {
+                        attrs: { item: _vm.item },
+                        on: {
+                          getData: function($event) {
+                            return _vm.getData()
+                          }
+                        }
+                      })
                     : _vm._e()
                 ],
                 1
@@ -1179,7 +1326,71 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    i am docs\n")])
+  return _c("div", [
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-12" }, [
+        _vm._v("\n            Notes List\n        ")
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-12" },
+        [
+          _c("data-table", {
+            attrs: {
+              headers: _vm.tableHeader1,
+              "no-data-message": "No matching records found",
+              hasSearch: false,
+              items: _vm.doc
+            },
+            scopedSlots: _vm._u([
+              {
+                key: "items",
+                fn: function(props) {
+                  return [
+                    _c("vs-td", { attrs: { data: props.data.title } }, [
+                      _vm.reg
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "pointer-all text-primary",
+                              attrs: {
+                                href:
+                                  "/documents/staff/" +
+                                  _vm.reg +
+                                  "/" +
+                                  props.data.file,
+                                target: "_blank"
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                            " +
+                                  _vm._s(props.data.title) +
+                                  "\n                        "
+                              )
+                            ]
+                          )
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("vs-td", { attrs: { data: props.data.description } }, [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(props.data.description) +
+                          "\n                    "
+                      )
+                    ])
+                  ]
+                }
+              }
+            ])
+          })
+        ],
+        1
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -1377,9 +1588,286 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    i am login-access\n")])
+  return _c("div", { staticClass: "row" }, [
+    _vm.item.staff_login
+      ? _c("div", { staticClass: "col-md-12" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", [
+            _c(
+              "a",
+              {
+                staticClass: "btn-success btn-sm",
+                attrs: { title: "Active" },
+                on: {
+                  click: function($event) {
+                    return _vm.userAction(_vm.item.staff_login.id, "active")
+                  }
+                }
+              },
+              [
+                _c("i", {
+                  staticClass: "fa fa-unlock-alt",
+                  attrs: { "aria-hidden": "true" }
+                }),
+                _vm._v(" Un-Lock User\n            ")
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "btn-warning btn-sm",
+                attrs: { title: "In-Active" },
+                on: {
+                  click: function($event) {
+                    return _vm.userAction(_vm.item.staff_login.id, "in-active")
+                  }
+                }
+              },
+              [
+                _c("i", {
+                  staticClass: "fa fa-lock",
+                  attrs: { "aria-hidden": "true" }
+                }),
+                _vm._v(" Lock User")
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "btn-danger btn-sm",
+                attrs: { title: "Delete" },
+                on: {
+                  click: function($event) {
+                    return _vm.userAction(_vm.item.staff_login.id, "delete")
+                  }
+                }
+              },
+              [
+                _c("i", {
+                  staticClass: "fa fa-trash",
+                  attrs: { "aria-hidden": "true" }
+                }),
+                _vm._v(" Delete User")
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("br")
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-md-12" }, [
+      !_vm.item.staff_login
+        ? _c("h4", { staticClass: "header large lighter blue" }, [
+            _c("i", {
+              staticClass: "fa fa-key",
+              attrs: { "aria-hidden": "true" }
+            }),
+            _vm._v(" Create Staff Login Access")
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.item.staff_login
+        ? _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.login.id,
+                expression: "login.id"
+              }
+            ],
+            attrs: { type: "hidden" },
+            domProps: { value: _vm.login.id },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.login, "id", $event.target.value)
+              }
+            }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.login.role_id,
+            expression: "login.role_id"
+          }
+        ],
+        attrs: { type: "hidden" },
+        domProps: { value: _vm.login.role_id },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.login, "role_id", $event.target.value)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.login.hook_id,
+            expression: "login.hook_id"
+          }
+        ],
+        attrs: { type: "hidden" },
+        domProps: { value: _vm.login.hook_id },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.login, "hook_id", $event.target.value)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "form-group" },
+        [
+          _c("label", [_vm._v("name:")]),
+          _vm._v(" "),
+          _c("vs-input", {
+            attrs: { type: "text" },
+            model: {
+              value: _vm.login.name,
+              callback: function($$v) {
+                _vm.$set(_vm.login, "name", $$v)
+              },
+              expression: "login.name"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "form-group" },
+        [
+          _c("label", [_vm._v("email")]),
+          _vm._v(" "),
+          _c("vs-input", {
+            attrs: { type: "email" },
+            model: {
+              value: _vm.login.email,
+              callback: function($$v) {
+                _vm.$set(_vm.login, "email", $$v)
+              },
+              expression: "login.email"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "form-group" },
+        [
+          _c("label", [_vm._v("password")]),
+          _vm._v(" "),
+          _c("vs-input", {
+            attrs: { type: "password" },
+            model: {
+              value: _vm.login.password,
+              callback: function($$v) {
+                _vm.$set(_vm.login, "password", $$v)
+              },
+              expression: "login.password"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "form-group" },
+        [
+          _c("label", [_vm._v("confirm password")]),
+          _vm._v(" "),
+          _c("vs-input", {
+            attrs: { type: "password" },
+            model: {
+              value: _vm.login.confirmPassword,
+              callback: function($$v) {
+                _vm.$set(_vm.login, "confirmPassword", $$v)
+              },
+              expression: "login.confirmPassword"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn",
+            attrs: { type: "reset" },
+            on: {
+              click: function($event) {
+                _vm.login.password, _vm.login.confirmPassword
+              }
+            }
+          },
+          [
+            _c("i", { staticClass: "fa fa-undo bigger-110" }),
+            _vm._v("\n                Reset\n            ")
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-info",
+            attrs: { type: "submit" },
+            on: {
+              click: function($event) {
+                return _vm.posting()
+              }
+            }
+          },
+          [
+            _c("i", { staticClass: "fa fa-save bigger-110" }),
+            _vm._v(
+              "\n                " +
+                _vm._s(_vm.buttonText) +
+                " Login Access\n            "
+            )
+          ]
+        )
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", { staticClass: "header large lighter blue" }, [
+      _c("i", { staticClass: "fa fa-key", attrs: { "aria-hidden": "true" } }),
+      _vm._v(" Edit Staff Login Access")
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -1416,42 +1904,26 @@ var render = function() {
               headers: _vm.tableHeader1,
               url: "/student",
               "no-data-message": "No matching records found",
-              searchField: _vm.searchData,
-              hasSearch: false
+              hasSearch: false,
+              items: _vm.note
             },
             scopedSlots: _vm._u([
               {
                 key: "items",
                 fn: function(props) {
                   return [
-                    _c("vs-td", { attrs: { data: props.data.username } }, [
+                    _c("vs-td", { attrs: { data: props.data.subject } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.email) +
+                          _vm._s(props.data.subject) +
                           "\n                    "
                       )
                     ]),
                     _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.data.username } }, [
+                    _c("vs-td", { attrs: { data: props.data.note } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.username) +
-                          "\n                    "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.data.id } }, [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(props.data.website) +
-                          "\n                    "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.id } }, [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(props.data.id) +
+                          _vm._s(props.data.note) +
                           "\n                    "
                       )
                     ])
@@ -1525,10 +1997,10 @@ var render = function() {
           },
           [
             _c("i", { staticClass: "ace-icon fa fa-pencil" }),
-            _vm._v(" Edit\n        ")
+            _vm._v(" Edit\n    ")
           ]
         ),
-        _vm._v("\n         | \n        "),
+        _vm._v("\n     | \n    "),
         _vm._m(0)
       ],
       1
@@ -1538,23 +2010,46 @@ var render = function() {
     _vm._v(" "),
     _vm.fullname
       ? _c("div", { staticClass: "row" }, [
-          _vm._m(1),
+          _c("div", { staticClass: "col-xs-12 col-sm-3 center" }, [
+            _c("div", [
+              _c("div", { staticClass: "profile-picture" }, [
+                _vm.profile.staff_image !== ""
+                  ? _c("div", [
+                      _c("img", {
+                        staticClass: "editable img-responsive",
+                        attrs: {
+                          src: "/images/staff/" + _vm.profile.staff_image,
+                          width: "300px"
+                        }
+                      })
+                    ])
+                  : _c("div", [
+                      _c("img", {
+                        staticClass: "editable img-responsive",
+                        attrs: { src: "/assets/images/avatars/profile-pic.jpg" }
+                      })
+                    ])
+              ])
+            ])
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-xs-12 col-sm-9" }, [
-            _c(
-              "div",
-              {
-                staticClass:
-                  "label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm "
-              },
-              [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.profile.fullname) +
-                    "\n                "
+            _vm.profile.fullname !== undefined
+              ? _c(
+                  "div",
+                  {
+                    staticClass:
+                      "label label-info label-xlg arrowed-in arrowed-right arrowed mb-1 btn btn-warning btn-sm "
+                  },
+                  [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(_vm.profile.fullname) +
+                        "\n            "
+                    )
+                  ]
                 )
-              ]
-            ),
+              : _vm._e(),
             _vm._v(" "),
             _c("div", { staticClass: "space-6" }),
             _vm._v(" "),
@@ -1579,7 +2074,19 @@ var render = function() {
                     _vm._v(" Join Date :")
                   ]),
                   _vm._v(" "),
-                  _vm._m(2)
+                  _c("div", { staticClass: "profile-info-value" }, [
+                    _c(
+                      "span",
+                      { staticClass: "editable", attrs: { id: "reg_date" } },
+                      [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(_vm.$root.parseDate(_vm.profile.join_date)) +
+                            "\n                        "
+                        )
+                      ]
+                    )
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "profile-info-row" }, [
@@ -1588,20 +2095,32 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "profile-info-value" }, [
-                    _c("span", { staticClass: "editable" }, [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(_vm.profile.fullname) +
-                          "\n                    "
-                      )
-                    ])
+                    _vm.profile.fullname !== undefined
+                      ? _c("span", { staticClass: "editable" }, [
+                          _vm._v(
+                            "\n                    " +
+                              _vm._s(_vm.profile.fullname) +
+                              "\n                "
+                          )
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "profile-info-name" }, [
                     _vm._v(" DOB :")
                   ]),
                   _vm._v(" "),
-                  _vm._m(3)
+                  _c("div", { staticClass: "profile-info-value" }, [
+                    _c("span", { staticClass: "editable" }, [
+                      _vm._v(
+                        "\n                            " +
+                          _vm._s(
+                            _vm.$root.parseDate(_vm.profile.date_of_birth)
+                          ) +
+                          "\n                        "
+                      )
+                    ])
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "profile-info-row" }, [
@@ -1701,237 +2220,244 @@ var render = function() {
         ])
       : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
-        },
-        [_vm._v("\n                Permanent Address\n            ")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "profile-user-info profile-user-info-striped" },
-        [
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Address :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.address))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" State :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.state))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Country :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.country))
-              ])
-            ])
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
-        },
-        [_vm._v("\n                Temporary Address\n            ")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "profile-user-info profile-user-info-striped" },
-        [
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Address :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.temp_address))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" State :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c(
-                "span",
-                {
-                  staticClass: "editable",
-                  attrs: { id: "permanent_district" }
-                },
-                [_vm._v(_vm._s(_vm.profile.temp_state))]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Country :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c(
-                "span",
-                { staticClass: "editable", attrs: { id: "permanent_zone" } },
-                [_vm._v(_vm._s(_vm.profile.temp_country))]
-              )
-            ])
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
-        },
-        [_vm._v("\n                Parential Info\n            ")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "profile-user-info profile-user-info-striped" },
-        [
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v("Father Name :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.father_name))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Mother Name :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.mother_name))
-              ])
-            ])
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
-        },
-        [_vm._v("\n                Qualification Detail\n            ")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-6" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "profile-user-info profile-user-info-striped" },
-        [
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Qualification :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c("span", { staticClass: "editable" }, [
-                _vm._v(_vm._s(_vm.profile.qualification))
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Experience :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c(
-                "span",
-                {
-                  staticClass: "editable",
-                  attrs: { id: "guardian_eligibility" }
-                },
-                [_vm._v(_vm._s(_vm.profile.experience))]
-              )
-            ])
-          ]),
+    _vm.profile && _vm.profile.address !== undefined
+      ? _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "space-6" }),
           _vm._v(" "),
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Experience Information :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c(
-                "span",
-                { staticClass: "editable", attrs: { id: "guardian_office" } },
-                [_vm._v(_vm._s(_vm.profile.experience_info))]
-              )
-            ])
-          ]),
+          _c(
+            "div",
+            {
+              staticClass:
+                "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
+            },
+            [_vm._v("\n            Permanent Address\n        ")]
+          ),
           _vm._v(" "),
-          _c("div", { staticClass: "profile-info-row" }, [
-            _c("div", { staticClass: "profile-info-name" }, [
-              _vm._v(" Other Informaiton :")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "profile-info-value" }, [
-              _c(
-                "span",
-                { staticClass: "editable", attrs: { id: "mother_mobile_1" } },
-                [_vm._v(_vm._s(_vm.profile.other_info))]
-              )
-            ])
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "space-4" }),
-      _vm._v(" "),
-      _vm._m(4)
-    ])
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "profile-user-info profile-user-info-striped" },
+            [
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Address :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.address))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" State :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.state))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Country :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.country))
+                  ])
+                ])
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
+            },
+            [_vm._v("\n            Temporary Address\n        ")]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "profile-user-info profile-user-info-striped" },
+            [
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Address :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.temp_address))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" State :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "editable",
+                      attrs: { id: "permanent_district" }
+                    },
+                    [_vm._v(_vm._s(_vm.profile.temp_state))]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Country :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "editable",
+                      attrs: { id: "permanent_zone" }
+                    },
+                    [_vm._v(_vm._s(_vm.profile.temp_country))]
+                  )
+                ])
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
+            },
+            [_vm._v("\n            Parential Info\n        ")]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "profile-user-info profile-user-info-striped" },
+            [
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v("Father Name :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.father_name))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Mother Name :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.mother_name))
+                  ])
+                ])
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "label label-info label-xlg arrowed-in arrowed-right arrowed btn btn-primary btn-sm mt-1 mb-1"
+            },
+            [_vm._v("\n            Qualification Detail\n        ")]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "space-6" }),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "profile-user-info profile-user-info-striped" },
+            [
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Qualification :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c("span", { staticClass: "editable" }, [
+                    _vm._v(_vm._s(_vm.profile.qualification))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Experience :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "editable",
+                      attrs: { id: "guardian_eligibility" }
+                    },
+                    [_vm._v(_vm._s(_vm.profile.experience))]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Experience Information :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "editable",
+                      attrs: { id: "guardian_office" }
+                    },
+                    [_vm._v(_vm._s(_vm.profile.experience_info))]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "profile-info-row" }, [
+                _c("div", { staticClass: "profile-info-name" }, [
+                  _vm._v(" Other Informaiton :")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "profile-info-value" }, [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "editable",
+                      attrs: { id: "mother_mobile_1" }
+                    },
+                    [_vm._v(_vm._s(_vm.profile.other_info))]
+                  )
+                ])
+              ])
+            ]
+          )
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [
@@ -1945,47 +2471,8 @@ var staticRenderFns = [
         staticClass: "btn-primary btn-sm",
         attrs: { href: "#", onclick: "window.print();" }
       },
-      [
-        _c("i", { staticClass: "ace-icon fa fa-print" }),
-        _vm._v(" Print\n        ")
-      ]
+      [_c("i", { staticClass: "ace-icon fa fa-print" }), _vm._v(" Print\n    ")]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-xs-12 col-sm-3 center" }, [
-      _c("div", [_c("span", { staticClass: "profile-picture" })])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "profile-info-value" }, [
-      _c("span", { staticClass: "editable", attrs: { id: "reg_date" } })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "profile-info-value" }, [
-      _c("span", { staticClass: "editable" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: " align-center" }, [
-      _c("br"),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("span", { staticClass: "profile-picture" })
-    ])
   }
 ]
 render._withStripped = true
@@ -2012,7 +2499,7 @@ var render = function() {
   return _c("div", [
     _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-md-12" }, [
-        _vm._v("\n            Transport History\n        ")
+        _vm._v("\n            transport history\n        ")
       ]),
       _vm._v(" "),
       _c(
@@ -2024,42 +2511,50 @@ var render = function() {
               headers: _vm.tableHeader1,
               url: "/student",
               "no-data-message": "No matching records found",
-              searchField: _vm.searchData,
-              hasSearch: false
+              hasSearch: false,
+              items: _vm.transport
             },
             scopedSlots: _vm._u([
               {
                 key: "items",
                 fn: function(props) {
                   return [
-                    _c("vs-td", { attrs: { data: props.data.username } }, [
+                    _c("vs-td", { attrs: { data: props.data.year } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.email) +
+                          _vm._s(props.data.year.title) +
                           "\n                    "
                       )
                     ]),
                     _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.data.username } }, [
+                    _c("vs-td", { attrs: { data: props.data.route } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.username) +
+                          _vm._s(props.data.route.title) +
                           "\n                    "
                       )
                     ]),
                     _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.data.id } }, [
+                    _c("vs-td", { attrs: { data: props.data.vehicle } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.website) +
+                          _vm._s(props.data.vehicle.fullname) +
                           "\n                    "
                       )
                     ]),
                     _vm._v(" "),
-                    _c("vs-td", { attrs: { data: props.id } }, [
+                    _c("vs-td", { attrs: { data: props.data.vehicle } }, [
                       _vm._v(
                         "\n                        " +
-                          _vm._s(props.data.id) +
+                          _vm._s(props.data.history_type) +
+                          "\n                    "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("vs-td", { attrs: { data: props.data.date } }, [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(_vm._f("formatDate")(props.data.created_at)) +
                           "\n                    "
                       )
                     ])

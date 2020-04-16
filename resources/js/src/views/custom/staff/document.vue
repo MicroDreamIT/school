@@ -51,58 +51,27 @@
                             </div>
                             <div class="col-md-8"><br>
 
-                                <ow-data-table :headers="tableHeader"
-                                               :tableHeader="'Staff Documents List'"
-                                               :url="'/json/student/'"
-                                               :noDataMessage="'No Staff Document data found. Please Filter Staff Document to show.'"
-                                               :has-search="true"
-                                               :has-multiple="true"
-                                               :has-pagination="true"
-                                               :suggestText="'Staff Documents Record list on table. Filter Staff Documents using the filter.'"
+                                <data-table-final :headers="headers"
+                                                  :tableHeader="'Route List'"
+                                                  :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                                  :url="'/json/staff/document'"
+                                                  :model="'route'"
+                                                  :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                                  :hasSearch="true"
+                                                  :has-multiple="true"
+                                                  :has-pagination="true"
+                                                  :filterSection="true"
+                                                  ref="dataTableRoute"
+                                                  :ajaxVariableSet="['route']"
+                                                  @get-return-value="GetReturnValue"
+                                                  :showAction="false"
                                 >
                                     <template slot="items" slot-scope="props">
-                                        <vs-td :data="props.data.reg_no">
-                                            <a @click.stop="viewItems(props.data.id)"
-                                               class="pointer-all text-primary"
-                                               title="View"
-                                            >
-                                                {{props.data.reg_no}}
-                                            </a>
-
-                                        </vs-td>
-
                                         <vs-td>
-                                            {{props.data.document}}
-                                        </vs-td>
 
-                                        <vs-td>
-                                            <div class="d-flex">
-                                                {{props.data.academic_status}}
-                                                <vs-switch color="success"
-                                                           :checked="props.data.status=='active'?true:false"
-                                                           @click.stop="changeStatus(props.data.id)"
-                                                           class="pointer-all ml-2"
-                                                >
-                                                    <span slot="on">Active</span>
-                                                    <span slot="off">In-Active</span>
-                                                </vs-switch>
-                                            </div>
-                                        </vs-td>
-
-                                        <vs-td>
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deleteItems(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
                                         </vs-td>
                                     </template>
-                                </ow-data-table>
+                                </data-table-final>
                             </div>
                         </div>
                     </div>
@@ -123,7 +92,7 @@
         data() {
             return {
 
-                tableHeader: [
+                headers: [
                     {name: 'Reg. No.', sort_key: 'reg_no'},
                     {name: 'Staff Documents'},
                     {name: 'Status'},

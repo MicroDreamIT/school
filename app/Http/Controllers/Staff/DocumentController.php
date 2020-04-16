@@ -32,8 +32,7 @@ class DocumentController extends CollegeBaseController
         $data['document'] = Document::select('id', 'member_type','member_id', 'title', 'file', 'status')
             ->where('member_type','=','staff')
             ->get();
-
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -42,7 +41,7 @@ class DocumentController extends CollegeBaseController
 
         $staff = Staff::select('id')->where('reg_no','=',$reg_no)->first();
         if (!$staff)
-            return redirect()->route('student.document')->with('message_warning', 'Please Check Staff Registration Number. This Registration Number is Not a valid Staff Registration.');
+            return response()->json(['warning', 'Please Check Staff Registration Number. This Registration Number is Not a valid Staff Registration.']);
 
         $name = str_slug($request->get('title'));
 
@@ -50,15 +49,14 @@ class DocumentController extends CollegeBaseController
             $document_file = parent::uploadFile($request, $reg_no , $name ,'document_file');
         }
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['member_id' => $staff->id]);
-        $request->request->add(['file' => $document_file]);
-        $request->request->add(['member_type' => 'staff']);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['member_id' => $staff->id]);
+        $request->merge(['file' => $document_file]);
+        $request->merge(['member_type' => 'staff']);
 
         Document::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Uploaded Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel. ' Uploaded Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -74,7 +72,7 @@ class DocumentController extends CollegeBaseController
             ->where('member_type','=','staff')
             ->get();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -90,15 +88,14 @@ class DocumentController extends CollegeBaseController
             @unlink($this->folder_path.$reg_no.DIRECTORY_SEPARATOR.$row->file);
         }
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
-        $request->request->add(['member_id' => $student->id]);
-        $request->request->add(['member_type' => 'staff']);
-        $request->request->add(['file' => isset($document_file)?$document_file:$row->file]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['member_id' => $student->id]);
+        $request->merge(['member_type' => 'staff']);
+        $request->merge(['file' => isset($document_file)?$document_file:$row->file]);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -113,8 +110,7 @@ class DocumentController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -145,15 +141,13 @@ class DocumentController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -164,24 +158,22 @@ class DocumentController extends CollegeBaseController
     {
         if (!$row = Document::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
     {
         if (!$row = Document::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' In-Active Successfully.']);
     }
 }

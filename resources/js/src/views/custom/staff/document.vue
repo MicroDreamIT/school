@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <vs-card>
                     <div class="row p-4">
-						<h4 class="ml-4">Staff Documents Manager</h4>
+                        <h4 class="ml-4">Staff Documents Manager</h4>
                         <div class="col-md-12 row">
                             <div class="col-md-4">
                                 <br>
@@ -34,7 +34,7 @@
                                     <div class="col-sm-9">
                                         <vs-input type="file" v-model="document.document_file" class="w-100">
 
-										</vs-input>
+                                        </vs-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -52,24 +52,49 @@
                             <div class="col-md-8"><br>
 
                                 <data-table-final :headers="headers"
-                                                  :tableHeader="'Route List'"
-                                                  :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                                  :tableHeader="'Document List'"
+                                                  :suggestText="'Document list on table. Filter Document using the filter.'"
                                                   :url="'/json/staff/document'"
                                                   :model="'route'"
-                                                  :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                                  :noDataMessage="'No Document data found. Please Filter document to show.'"
                                                   :hasSearch="true"
                                                   :has-multiple="true"
                                                   :has-pagination="true"
                                                   :filterSection="true"
-                                                  ref="dataTableRoute"
-                                                  :ajaxVariableSet="['route']"
+                                                  ref="dataTableDocument"
+                                                  :ajaxVariableSet="['document']"
                                                   @get-return-value="GetReturnValue"
                                                   :showAction="false"
                                 >
                                     <template slot="items" slot-scope="props">
-                                        <vs-td>
+                                        <vs-td :data="props.data.reg_no">
+                                            <router-link class="pointer-all text-primary" :to="'/staff/'+props.data.member_id+'/details'">
+                                                {{props.data.reg_no}}
+                                            </router-link>
 
                                         </vs-td>
+                                        <vs-td :data="props.data.file">
+                                            <a :href="'/documents/staff/'+props.data.reg_no+'/'+props.data.file"
+                                               class="pointer-all text-primary"
+                                               target="_blank">
+                                                {{props.data.file}}
+                                            </a>
+                                        </vs-td>
+                                        <vs-td>
+                                            <div class="action-own">
+                                                <a class="btn btn-success btn-sm pointer-all"
+                                                   title="Edit"
+                                                   @click.stop="editItems(props.data.id)">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-sm pointer-all"
+                                                   title="Delete"
+                                                   @click.stop="deleteItems(props.data.id)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            </div>
+                                        </vs-td>
+
                                     </template>
                                 </data-table-final>
                             </div>
@@ -93,29 +118,41 @@
             return {
 
                 headers: [
-                    {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Staff Documents'},
-                    {name: 'Status'},
+                    {name: 'reg no', sort_key: 'reg_no'},
+                    {name: 'Staff Documents', field: 'file'},
                     {name: 'Action'},
+                    {name: 'Status', field: 'status'},
                 ],
-				notification:'',
-				document:{}
+                notification: '',
+                document: {}
             }
         },
-        created(){
+        created() {
 
         },
         methods: {
-            getData(){
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        reg_no: st.staffregno,
+                        status: st.status,
+                        file: st.file,
+                        member_id:st.member_id
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
+            },
+            getData() {
 
             },
             viewItems(id) {
                 this.$router.push({name: 'studentView', params: {id: id}})
             },
-            editItems() {
+            editItems(id) {
                 alert("hey hasib im edit ")
             },
-            deleteItems() {
+            deleteItems(id) {
                 alert("hey hasib im delete ")
             },
             changeStatus() {

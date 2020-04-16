@@ -177,8 +177,8 @@
             viewItems(id) {
                 this.$router.push({name: 'staff.view', params: {id: id}})
             },
-            editItems() {
-                alert("hey hasib im edit ")
+            editItems(id) {
+                this.$router.push({name:'staff.edit', params:{id:id}})
             },
             deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {

@@ -1,94 +1,20 @@
 <template>
     <div class="row">
-            <div class="col-md-12 mb-2">
-                <h2 class="pageTitle">Staff Manager</h2>
-            </div>
-            <div class="col-md-12">
-                <div class="row mx-0">
-                    <router-link :to="'/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Detail
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/add'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            Registration
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/import'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            Bulk Registration
-                        </vs-button>
-                    </router-link>
-
-                    <router-link :to="'/staff/document'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-files-o" aria-hidden="true"></i>
-                            Documents
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/note'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Notes
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/payroll'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                            Payroll
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/library/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calculator" aria-hidden="true"></i>
-                            Library
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/attendance/staff'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Attendance
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/staff/designation'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-calendar" aria-hidden="true"></i>
-                            Designation
-                        </vs-button>
-                    </router-link>
-                </div>
-            </div>
-            <div class="col-md-12" v-if="notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{notification}}
-                </div>
-            </div>
-            <vs-divider class="mx-3"/>
+        <div class="col-md-12 mb-2">
+            <h2 class="pageTitle">Staff Manager</h2>
+        </div>
+        <staff-navigation></staff-navigation>
+        <vs-divider class="mx-3"/>
         <div class="col-md-12 p-0">
             <vs-card class="p-3">
                 <div class="row p-2">
-                    <h4 class="card-title">Edit Registration
+                    <h4 class="card-title">Staff edit
                     </h4>
                     <div class="col-md-12">
                         <vs-tabs class="custom-tab mt-2">
                             <vs-tab label="General Information">
                                 <div>
-                                    <span class="badge badge badge-danger badge-pill mr-2">
+                                                <span class="badge badge badge-danger badge-pill mr-2">
 													Red mark input are required. </span>
                                     <vs-divider/>
                                     <div class="row my-2">
@@ -96,19 +22,31 @@
                                             REG.NO.
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input v-model="staff.reg_no"/>
+                                            <vs-input v-model="staff.reg_no" :danger="error.reg_no!==undefined"/>
+                                            <p v-if="error.reg_no!==undefined" class="text-danger">{{ error.reg_no[0]
+                                                }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Join Date
                                         </div>
                                         <div class="col-md-2">
-                                            <datepicker v-model="staff.join_date"/>
+                                            <datepicker v-model="staff.join_date"
+                                                        :danger="error.join_date!==undefined"/>
+                                            <p v-if="error.join_date!==undefined" class="text-danger">{{
+                                                error.join_date[0] }}</p>
                                         </div>
-										<div class="col-md-2">
-                                           Designation
+                                        <div class="col-md-2">
+                                            Designation
                                         </div>
-										<div class="col-md-2">
-                                            <datepicker v-model="staff.designation"/>
+                                        <div class="col-md-2">
+                                            <select class="form-control" v-model="staff.designation"
+                                                    :danger="error.designation!==undefined">
+                                                <option :value="designation.id" v-for="designation in designations">
+                                                    {{designation.value}}
+                                                </option>
+                                            </select>
+                                            <p v-if="error.designation!==undefined" class="text-danger">{{
+                                                error.designation[0] }}</p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -116,13 +54,18 @@
                                             NAME OF STAFF
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.first_name"/>
+                                            <vs-input v-model="staff.first_name"
+                                                      :danger="error.first_name!==undefined"/>
+                                            <p v-if="error.first_name!==undefined" class="text-danger">{{
+                                                error.first_name[0] }}</p>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="staff.middle_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.last_name"/>
+                                            <vs-input v-model="staff.last_name" :danger="error.last_name!==undefined"/>
+                                            <p v-if="error.last_name!==undefined" class="text-danger">{{
+                                                error.last_name[0] }}</p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -144,16 +87,21 @@
                                             Date Of Birth
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input
-                                                    v-model="staff.date_of_birth"
-                                                    v-mask="'####-##-##'"
-                                            />
+                                            <datepicker v-model="staff.date_of_birth"
+                                                        :format="$root.formatPicker"
+                                                        :danger="error.date_of_birth!==undefined"/>
+                                            <p v-if="error.date_of_birth!==undefined" class="text-danger">
+                                                {{error.date_of_birth[0]}}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Gender
                                         </div>
                                         <div class="col-md-2">
-                                            <v-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']"/>
+                                            <v-select v-model="staff.gender" :options="['MALE','FEMALE','OTHER']"
+                                                      :danger="error.gender!==undefined"/>
+                                            <p v-if="error.gender!==undefined" class="text-danger">{{ error.gender[0]
+                                                }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Blood Group
@@ -180,7 +128,9 @@
                                             E-mail
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input v-model="staff.email"/>
+                                            <vs-input v-model="staff.email" :danger="error.email!==undefined"/>
+                                            <p v-if="error.email!==undefined" class="text-danger">{{ error.email[0]
+                                                }}</p>
                                         </div>
                                     </div>
 
@@ -198,7 +148,9 @@
                                             Mobile1
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.mobile_1"/>
+                                            <vs-input v-model="staff.mobile_1" :danger="error.mobile_1!==undefined"/>
+                                            <p v-if="error.mobile_1!==undefined" class="text-danger">{{
+                                                error.mobile_1[0] }}</p>
                                         </div>
                                         <div class="col-md-1">
                                             Mobile2
@@ -269,7 +221,10 @@
                                             Qualification
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="staff.qualification"/>
+                                            <vs-input v-model="staff.qualification"
+                                                      :danger="error.qualification!==undefined"/>
+                                            <p v-if="error.qualification!==undefined" class="text-danger">{{
+                                                error.qualification[0] }}</p>
                                         </div>
                                         <div class="col-md-2">
                                             Experience
@@ -286,7 +241,7 @@
                                             <vs-input v-model="staff.experience_info"/>
                                         </div>
                                         <div class="col-md-2">
-                                           Other Info
+                                            Other Info
                                         </div>
                                         <div class="col-md-4">
                                             <vs-input v-model="staff.other_info"/>
@@ -301,20 +256,18 @@
                                 <div class="row">
                                     <div class="col-md-3">Staff Profile Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="staff.profile_picture">
-
-                                        </vs-input>
+                                        <input type="file"
+                                               name="image" id="image" ref="image" accept="image/*">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
-                                        <img  class="img-responsive"
-                                             width="100px"
-                                              :src="staff.profile_picture"
-                                              v-if="staff.profile_picture"/>
-                                        <img class="img-responsive"
-                                             width="100px"
-                                                src="../../../../../assets/images/profile-default.jpg"
-                                                v-else />
+                                        <!--                                        <img class="img-responsive"-->
+                                        <!--                                             width="100px"-->
+                                        <!--                                             :src="staff.profile_picture"-->
+                                        <!--                                             v-if="staff.profile_picture"/>-->
+                                        <!--                                        <img class="img-responsive"-->
+                                        <!--                                             width="100px"-->
+                                        <!--                                             src="../../../../../assets/images/profile-default.jpg"-->
+                                        <!--                                             v-else/>-->
                                     </div>
                                 </div>
 
@@ -322,9 +275,7 @@
                         </vs-tabs>
                         <vs-divider></vs-divider>
                         <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Save</vs-button>
-                            <vs-button class="my-round mx-2" color="#28c76f">Save And Add Another</vs-button>
+                            <vs-button class="my-round mx-2" @click="posting()">update</vs-button>
                         </div>
                     </div>
 
@@ -335,10 +286,19 @@
 </template>
 
 <script>
+    import StaffNavigation from '../../components/navigation/staff-navigation.vue'
+
     export default {
+        components: {
+            'staff-navigation': StaffNavigation
+        },
         data() {
             return {
-                staff: {},
+                staff: {
+                    id: null,
+                    reg_no: '',
+                    gender: ''
+                },
                 faculties: [],
                 semester: [],
                 batch: [],
@@ -348,11 +308,68 @@
                 whoGuardian: '',
                 guardian: null,
                 guardians: [],
-                academicList: []
-
+                academicList: [],
+                error: [],
+                designations: []
             }
         },
+        created() {
+            this.$http.get('/json/staff/'+this.$route.params.id+'/edit')
+                .then(res => {
+                    this.staff = res.data.row
+                    this.designations = this.$root.objectToArray(res.data.designations)
+                })
+        },
         methods: {
+
+            resetting() {
+                this.staff = {}
+                this.staff.id = null
+                this.staff.reg_no = ''
+                this.staff.gender = ''
+            },
+            posting(arg = null) {
+                this.staff.date_of_birth = this.$root.formatPicker(this.staff.date_of_birth)
+                this.staff.join_date = this.$root.formatPicker(this.staff.join_date)
+
+                let data = new FormData();
+                let imagefile = document.querySelector('#image');
+                // console.log(imagefile, arg)
+                if (imagefile) {
+                    data.append("profile_picture", imagefile.files[0]);
+                }
+                for (let key in this.staff) {
+                    data.append(key, this.staff[key])
+                }
+
+                // data.append('staff', this.staff);
+                this.$http.post('/json/staff/store', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    body: data
+                })
+                    .then(res => {
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
+                        this.resetting()
+                        imagefile.value = null
+                        if (!arg) {
+                            this.$router.push({path: '/staff'})
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
+
+
+            },
             copyPermanent() {
                 if (this.copyPerm) {
                     this.staff.temp_address = this.staff.address,

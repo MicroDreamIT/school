@@ -208,7 +208,7 @@ class StaffController extends CollegeBaseController
 
         $data['designations'] = $this->staffDesignationList();
 
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -230,9 +230,7 @@ class StaffController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Updated Successfully.');
-        return redirect()->route($this->base_route);
-
+        return response()->json(['success', $this->panel. ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -320,18 +318,16 @@ class StaffController extends CollegeBaseController
         }
 
         if($errCount > 0){
-            $request->session()->flash($this->message_warning, $this->panel.' not delete. If you want to erase student data, please check err below and delete all the data first.');
-            return back()->withErrors($errors);
+            return response()->json(['error', $this->panel.' not delete. If you want to erase student data, please check err below and delete all the data first.']);
         }else{
             //remove images
             if (file_exists($this->folder_path.$row->staff_image))
                 @unlink($this->folder_path.$row->staff_image);
 
             $row->delete();
-            $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
+            return response()->json(['success', $this->panel.' Deleted Successfully.']);
         }
 
-        return redirect()->route($this->base_route);
     }
 
     public function active(request $request, $id)

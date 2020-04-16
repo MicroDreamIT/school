@@ -150,7 +150,7 @@ const router = new Router({
                 },
                 {
                     path: '/staff/:id/edit',
-                    name: 'staffEdit',
+                    name: 'staff.edit',
                     component: () => import('./views/custom/staff/edit.vue'),
                     meta: {
                         rule: 'admin'

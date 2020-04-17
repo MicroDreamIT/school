@@ -94,7 +94,7 @@
                                             <div class="action-own">
                                                 <a class="btn btn-success btn-sm pointer-all"
                                                    title="Edit"
-                                                   @click.stop="editItems(props.data.id)">
+                                                   @click.stop="editItems(props.data.all)">
                                                     <i class="fa fa-pencil"></i>
                                                 </a>
                                                 <a class="btn btn-danger btn-sm pointer-all"
@@ -149,12 +149,13 @@
                         reg_no: st.staffregno,
                         status: st.status,
                         file: st.file,
-                        member_id: st.member_id
+                        member_id: st.member_id,
+                        all:st
                     }
                 });
                 this.$store.dispatch('updateTableData', val)
             },
-            posting() {
+            posting(arg=null) {
                 let data = new FormData();
                 let document_file = document.querySelector('#document_file');
                 if (document_file) {
@@ -163,9 +164,11 @@
                 for (let key in this.document) {
                     data.append(key, this.document[key])
                 }
-
+                let url = this.document.id!==undefined && this.document.id
+                    ? '/json/staff/document/' + this.document.id + '/update'
+                    : '/json/staff/document/store'
                 // data.append('staff', this.staff);
-                this.$http.post('/json/staff/document/store', data, {
+                this.$http.post(url, data, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -174,6 +177,8 @@
                     .then(res => {
                         if(res.status===200){
                             this.$refs.dataTableDocument.getData()
+                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                            this.document={}
                         }
                     })
                     .catch(err=>{
@@ -182,8 +187,12 @@
                         }
                     })
             },
-            editItems(id) {
-                alert("hey hasib im edit ")
+            editItems(item) {
+                console.log(item)
+                this.document.id = item.id
+                this.document.title = item.title
+                this.document.reg_no=item.reg_no
+                this.document.description = item.description
             },
             deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {

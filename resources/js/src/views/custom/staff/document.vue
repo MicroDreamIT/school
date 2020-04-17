@@ -20,21 +20,30 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Reg No</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="document.reg_no" class="w-100"/>
+                                        <vs-input v-model="document.reg_no" class="w-100"
+                                                  :danger="error.reg_no!==undefined"/>
+                                        <p v-if="error.reg_no!==undefined" class="text-danger">
+                                            {{ error.reg_no[0] }}
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Title</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="document.title" class="w-100"/>
+                                        <vs-input v-model="document.title" class="w-100" :danger="error.title!==undefined"/>
+                                        <p v-if="error.title!==undefined" class="text-danger">
+                                            {{ error.title[0] }}
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Select File</label>
                                     <div class="col-sm-9">
-                                        <vs-input type="file" v-model="document.document_file" class="w-100">
-
-                                        </vs-input>
+                                        <input type="file" name="document_file" id="document_file" ref="document_file"
+                                               class="w-100" :danger="error.document_file!==undefined">
+                                        <p v-if="error.document_file!==undefined" class="text-danger">
+                                            {{ error.document_file[0] }}
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -44,7 +53,7 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <button class="btn btn-info waves-effect waves-light" type="submit">
+                                <button class="btn btn-info waves-effect waves-light" type="submit" @click="posting">
                                     <i class="fa fa-save bigger-110"></i>
                                     upload
                                 </button>
@@ -68,7 +77,8 @@
                                 >
                                     <template slot="items" slot-scope="props">
                                         <vs-td :data="props.data.reg_no">
-                                            <router-link class="pointer-all text-primary" :to="'/staff/'+props.data.member_id+'/details'">
+                                            <router-link class="pointer-all text-primary"
+                                                         :to="'/staff/'+props.data.member_id+'/details'">
                                                 {{props.data.reg_no}}
                                             </router-link>
 
@@ -124,6 +134,7 @@
                     {name: 'Status', field: 'status'},
                 ],
                 notification: '',
+                error:[],
                 document: {}
             }
         },
@@ -138,25 +149,49 @@
                         reg_no: st.staffregno,
                         status: st.status,
                         file: st.file,
-                        member_id:st.member_id
+                        member_id: st.member_id
                     }
                 });
                 this.$store.dispatch('updateTableData', val)
             },
-            getData() {
+            posting() {
+                let data = new FormData();
+                let document_file = document.querySelector('#document_file');
+                if (document_file) {
+                    data.append("document_file", document_file.files[0]);
+                }
+                for (let key in this.document) {
+                    data.append(key, this.document[key])
+                }
 
-            },
-            viewItems(id) {
-                this.$router.push({name: 'studentView', params: {id: id}})
+                // data.append('staff', this.staff);
+                this.$http.post('/json/staff/document/store', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    body: data
+                })
+                    .then(res => {
+                        if(res.status===200){
+                            this.$refs.dataTableDocument.getData()
+                        }
+                    })
+                    .catch(err=>{
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
             },
             editItems(id) {
                 alert("hey hasib im edit ")
             },
             deleteItems(id) {
-                alert("hey hasib im delete ")
-            },
-            changeStatus() {
-
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/staff/document/' + id + '/delete').then(res => {
+                        this.$refs.dataTableDocument.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
         }
 

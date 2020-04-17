@@ -30,7 +30,8 @@
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label">Title</label>
                                     <div class="col-sm-9">
-                                        <vs-input v-model="document.title" class="w-100" :danger="error.title!==undefined"/>
+                                        <vs-input v-model="document.title" class="w-100"
+                                                  :danger="error.title!==undefined"/>
                                         <p v-if="error.title!==undefined" class="text-danger">
                                             {{ error.title[0] }}
                                         </p>
@@ -134,13 +135,13 @@
                     {name: 'Status', field: 'status'},
                 ],
                 notification: '',
-                error:[],
+                error: [],
                 document: {
-                    id:null,
-                    reg_no:'',
-                    title:'',
+                    id: null,
+                    reg_no: '',
+                    title: '',
                 },
-                buttonText:'upload'
+                buttonText: 'upload'
             }
         },
         created() {
@@ -155,12 +156,12 @@
                         status: st.status,
                         file: st.file,
                         member_id: st.member_id,
-                        all:st
+                        all: st
                     }
                 });
                 this.$store.dispatch('updateTableData', val)
             },
-            posting(arg=null) {
+            posting(arg = null) {
                 let data = new FormData();
                 let document_file = document.querySelector('#document_file');
                 if (document_file) {
@@ -169,7 +170,7 @@
                 for (let key in this.document) {
                     data.append(key, this.document[key])
                 }
-                let url = this.document.id!==undefined && this.document.id
+                let url = this.document.id !== undefined && this.document.id
                     ? '/json/staff/document/' + this.document.id + '/update'
                     : '/json/staff/document/store'
                 // data.append('staff', this.staff);
@@ -180,14 +181,19 @@
                     body: data
                 })
                     .then(res => {
-                        if(res.status===200){
+                        if (res.status === 200) {
                             this.$refs.dataTableDocument.getData()
-                            this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
-                            this.document={}
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified'
+                            })
+                            this.document = {}
                             this.buttonText = 'upload'
                         }
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         if (err.response) {
                             this.error = err.response.data.errors
                         }
@@ -196,10 +202,10 @@
             editItems(item) {
                 this.document.id = item.id
                 this.document.title = item.title
-                this.document.reg_no=item.staffregno
+                this.document.reg_no = item.staffregno
                 this.document.description = item.description
                 this.$refs['document_reg'].$el.querySelector('input').focus()
-                this.buttonText='update'
+                this.buttonText = 'update'
             },
             deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {

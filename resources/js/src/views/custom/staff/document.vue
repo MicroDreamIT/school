@@ -21,7 +21,7 @@
                                     <label class="col-sm-3 col-form-label">Reg No</label>
                                     <div class="col-sm-9">
                                         <vs-input v-model="document.reg_no" class="w-100"
-                                                  :danger="error.reg_no!==undefined"/>
+                                                  :danger="error.reg_no!==undefined" ref="document_reg"/>
                                         <p v-if="error.reg_no!==undefined" class="text-danger">
                                             {{ error.reg_no[0] }}
                                         </p>
@@ -55,7 +55,7 @@
                                 <hr>
                                 <button class="btn btn-info waves-effect waves-light" type="submit" @click="posting">
                                     <i class="fa fa-save bigger-110"></i>
-                                    upload
+                                    {{buttonText}}
                                 </button>
                             </div>
                             <div class="col-md-8"><br>
@@ -135,7 +135,12 @@
                 ],
                 notification: '',
                 error:[],
-                document: {}
+                document: {
+                    id:null,
+                    reg_no:'',
+                    title:'',
+                    buttonText:'upload'
+                }
             }
         },
         created() {
@@ -179,6 +184,7 @@
                             this.$refs.dataTableDocument.getData()
                             this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
                             this.document={}
+                            this.buttonText = 'upload'
                         }
                     })
                     .catch(err=>{
@@ -188,11 +194,12 @@
                     })
             },
             editItems(item) {
-                console.log(item)
                 this.document.id = item.id
                 this.document.title = item.title
-                this.document.reg_no=item.reg_no
+                this.document.reg_no=item.staffregno
                 this.document.description = item.description
+                this.$refs['document_reg'].$el.querySelector('input').focus()
+                this.buttonText='update'
             },
             deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {

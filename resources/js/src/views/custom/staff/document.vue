@@ -203,7 +203,7 @@
             },
             deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
-                    this.$http.get('/staff/document/' + id + '/delete').then(res => {
+                    this.$http.get('/json/staff/document/' + id + '/delete').then(res => {
                         this.$refs.dataTableDocument.getData()
                         this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
                     })

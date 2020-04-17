@@ -139,8 +139,8 @@
                     id:null,
                     reg_no:'',
                     title:'',
-                    buttonText:'upload'
-                }
+                },
+                buttonText:'upload'
             }
         },
         created() {

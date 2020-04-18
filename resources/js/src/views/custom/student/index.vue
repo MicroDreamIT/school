@@ -289,16 +289,20 @@
             editItems() {
                 alert("hey hasib im edit ")
             },
-            deleteItems() {
-
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/student/' + id + '/delete').then(res => {
+                        this.$refs.studentTable.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
             changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'
                 let url = '/json/student/' + id + '/' + stat
                 this.$http.get(url).then(res => {
                     this.$refs.studentTable.getData()
-                    this.$root.notification.status = res.data[0]
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
                 })
 
             },

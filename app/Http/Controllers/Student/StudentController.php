@@ -240,13 +240,7 @@ class StudentController extends CollegeBaseController
         }
         //end sms email
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-
-        if($request->add_student_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
     }
 
     public function view($id)
@@ -274,8 +268,7 @@ class StudentController extends CollegeBaseController
             ->first();
 
         if (!$data['student']){
-            request()->session()->flash($this->message_warning, "Not a Vali d Student");
-            return redirect()->route($this->base_route);
+            return response()->json(['warning', "Not a Valid Student"]);
         }
 
         $data['fee_master'] = $data['student']->feeMaster()->orderBy('fee_due_date','desc')->get();
@@ -517,7 +510,6 @@ class StudentController extends CollegeBaseController
 
         $data['url'] = URL::current();
         return response()->json($data);
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
     }
 
     public function edit(Request $request, $id)
@@ -561,6 +553,7 @@ class StudentController extends CollegeBaseController
         $data['academicInfo-html'] = view($this->view_path.'.registration.includes.forms.academic_tr_edit', [
             'academicInfos' => $data['academicInfo']
         ])->render();
+
 
         return view(parent::loadDataToView($this->view_path.'.registration.edit'), compact('data'));
     }
@@ -929,8 +922,7 @@ class StudentController extends CollegeBaseController
         }
 
         if($errCount > 0){
-            $request->session()->flash($this->message_warning, $this->panel.' not delete. If you want to erase student data, please check err below and request administrator to delete all the data first.');
-            return back()->withErrors($errors);
+            return response()->json(['warning', $this->panel.' not delete. If you want to erase student data, please check err below and request administrator to delete all the data first.']);
         }else{
             //remove images
             if (file_exists($this->folder_path.$row->student_image))
@@ -950,7 +942,7 @@ class StudentController extends CollegeBaseController
                 @unlink($this->parent_folder_path.$row->reg_no.'_guardian'.'.*');*/
 
             $row->delete();
-            $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
+            return response()->json(['success', $this->panel.' Deleted Successfully.']);
         }
 
         //return redirect()->route($this->base_route);

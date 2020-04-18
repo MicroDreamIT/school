@@ -104,7 +104,7 @@
                                     </div>
                                     <div class="row my-2">
                                         <div class="col-md-2">
-                                            Date Of Birth
+                                            Date Of Birth (yyyy-mm-dd)
                                         </div>
                                         <div class="col-md-2">
                                             <vs-input
@@ -793,7 +793,7 @@
         },
         methods: {
             postData() {
-                this.$http.post('/json/student/register', this.student)
+                this.$http.post('/json/student/store', this.student)
                     .then(res => {
                         console.log(res)
                     })

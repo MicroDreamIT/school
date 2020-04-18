@@ -118,6 +118,7 @@ Vue.component('student-table', require('./views/custom/component/table/student-t
 Vue.component('roomtype-table', require('./views/custom/component/table/roomtype-table').default);
 Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
 Vue.component('notify-bar', require('./views/custom/component/notification/notification').default);
+Vue.component('student-navigation', require('./views/custom/student/includes/student-navigation').default)
 import Datepicker from 'vuejs-datepicker';
 
 Vue.component('datepicker', Datepicker);
@@ -200,7 +201,7 @@ new Vue({
             let array = [];
             if (obj) {
                 Object.keys(obj).forEach(key => {
-                    array.push({id: key, value: obj[key]})
+                    array.push({id: parseInt(key), value: obj[key]})
                 });
             }
             return array;

@@ -21,8 +21,13 @@ class Student extends BaseModel
 
     public function getFullnameAttribute($value)
     {
-        $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
-        return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
+        if(array_key_exists('first_name', $this->attributes) && $this->attributes['first_name']){
+            $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
+            return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
+        }else{
+            return null;
+        }
+
 
     }
 

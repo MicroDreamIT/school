@@ -3,80 +3,7 @@
         <div class="col-md-12 mb-2">
             <h2 class="pageTitle">Student Manager</h2>
         </div>
-        <div class="col-md-12">
-            <div class="row mx-0">
-                <router-link :to="'/student'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                        Detail
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/student/registration'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        Registration
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/student/import'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-upload" aria-hidden="true"></i>
-                        Bulk Registration
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/student/transfer'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-exchange" aria-hidden="true"></i>
-                        Transfer
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/student/document'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-files-o" aria-hidden="true"></i>
-                        Documents
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/student/note'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-sticky-note" aria-hidden="true"></i>
-                        Notes
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/account/fees'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-calculator" aria-hidden="true"></i>
-                        Balance Fees
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/library/student'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-calculator" aria-hidden="true"></i>
-                        Library
-                    </vs-button>
-                </router-link>
-                <router-link :to="'/attendance/student'">
-                    <vs-button type="filled" class="smBtn">
-                        <i class="fa fa-calendar" aria-hidden="true"></i>
-                        Attendance
-                    </vs-button>
-                </router-link>
-            </div>
-        </div>
-        <div class="col-md-12" v-if="$root.notification.success">
-            <div role="alert"
-                 class="mt-2 alert alert-success alert-dismissible display-block"
-            >
-                <button type="button"
-                        data-dismiss="alert"
-                        aria-label="Close"
-                        class="close"
-                        @click="$root.emptyNotification()"
-                >
-                    <span aria-hidden="true">×</span>
-                </button>
-                <i class="ace-icon fa fa-hand-o-right"></i>
-                {{$root.notification.message}}
-            </div>
-        </div>
+        <student-navigation></student-navigation>
         <vs-divider class="mx-3"/>
         <div class="col-md-12 p-0">
             <vs-card class="p-3">
@@ -825,7 +752,12 @@
     export default {
         data() {
             return {
-                student: {},
+                student: {
+                    reg_no: '',
+                    first_name: '',
+                    middle_name: '',
+                    last_name: ''
+                },
                 faculties: [],
                 semester: [],
                 batch: [],
@@ -839,22 +771,19 @@
 
             }
         },
-        created(){
-            this.$http.get('/json/student/registration').then(res=>{
-                Object.keys(res.data.academic_status).forEach(key => {
-                    this.academic_status.push({id: key, value: res.data.academic_status[key]})
-                });
-                this.faculties = res.data.faculties;
-                this.batch = res.data.batch;
-                Object.keys(res.data.semester).forEach(key => {
-                    this.semester.push({id: key, value: res.data.semester[key]})
-                });
+        created() {
+            this.$http.get('/json/student/registration').then(res => {
+                this.academic_status = this.$root.objectToArray(res.data.academic_status)
+                this.batch = this.$root.objectToArray(res.data.batch)
+                this.faculties = this.$root.objectToArray(res.data.faculties)
+                this.semester = this.$root.objectToArray(res.data.semester)
+                console.log(this.batch, this.faculties, this.semester)
             })
         },
         methods: {
-            postData(){
+            postData() {
                 this.$http.post('/json/student/register', this.student)
-                    .then(res=>{
+                    .then(res => {
                         console.log(res)
                     })
                     .catch()

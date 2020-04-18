@@ -49,17 +49,21 @@
                                             Faculty/Class
                                         </div>
                                         <div class="col-md-5">
-                                            <v-select v-model="student.faculty" :options="faculties"/>
+                                            <select v-model="student.faculty" class="form-control">
+                                                <option :value="faculty.id" v-for="faculty in faculties">
+                                                    {{faculty.value}}
+                                                </option>
+                                            </select>
                                         </div>
                                         <div class="col-md-2">
                                             Sem./Sec.
                                         </div>
                                         <div class="col-md-3">
-
-                                            <v-select v-model="student.semester"
-                                                      label="value"
-                                                      value="id"
-                                                      :options="semester"/>
+                                            <select v-model="student.semester" class="form-control">
+                                                <option :value="semester.id" v-for="semester in semesters">
+                                                    {{semester.value}}
+                                                </option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -67,13 +71,21 @@
                                             Batch
                                         </div>
                                         <div class="col-md-5">
-                                            <v-select v-model="student.batch" :options="batch"/>
+                                            <select v-model="student.batch" class="form-control">
+                                                <option :value="batch.id" v-for="batch in batches">
+                                                    {{batch.value}}
+                                                </option>
+                                            </select>
                                         </div>
                                         <div class="col-md-2">
                                             Status
                                         </div>
                                         <div class="col-md-3">
-                                            <v-select v-model="student.academic_status" :options="academic_status"/>
+                                            <select v-model="student.academic_status" class="form-control">
+                                                <option :value="academic_status.id" v-for="academic_status in academic_statuses">
+                                                    {{academic_status.value}}
+                                                </option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -759,9 +771,9 @@
                     last_name: ''
                 },
                 faculties: [],
-                semester: [],
-                batch: [],
-                academic_status: [],
+                semesters: [],
+                batches: [],
+                academic_statuses: [],
                 copyPerm: false,
                 notification: '',
                 whoGuardian: '',
@@ -773,11 +785,10 @@
         },
         created() {
             this.$http.get('/json/student/registration').then(res => {
-                this.academic_status = this.$root.objectToArray(res.data.academic_status)
-                this.batch = this.$root.objectToArray(res.data.batch)
+                this.academic_statuses = this.$root.objectToArray(res.data.academic_status)
+                this.batches = this.$root.objectToArray(res.data.batch)
                 this.faculties = this.$root.objectToArray(res.data.faculties)
-                this.semester = this.$root.objectToArray(res.data.semester)
-                console.log(this.batch, this.faculties, this.semester)
+                this.semesters = this.$root.objectToArray(res.data.semester)
             })
         },
         methods: {

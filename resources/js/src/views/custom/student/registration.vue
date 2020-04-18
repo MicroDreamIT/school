@@ -774,8 +774,8 @@
                                     <div class="col-md-3">Guardian Picture</div>
                                     <div class="col-md-5">
                                         <input type="file"
-                                                  id="guardian_main_image"
-                                                  ref="guardian_main_image">
+                                               id="guardian_main_image"
+                                               ref="guardian_main_image">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -838,6 +838,8 @@
         },
         methods: {
             postData() {
+
+                this.student.reg_date = this.$root.formatPicker(this.student.reg_date)
                 let data = new FormData();
 
                 let student_main_image = document.querySelector('#student_main_image');
@@ -864,7 +866,7 @@
                 for (let key in this.student) {
                     data.append(key, this.student[key])
                 }
-                this.$http.post('/json/student/register', this.student)
+                this.$http.post('/json/student/register', data)
                     .then(res => {
                         console.log(res)
                     })

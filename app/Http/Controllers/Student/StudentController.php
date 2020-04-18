@@ -101,6 +101,7 @@ class StudentController extends CollegeBaseController
 
     public function register(AddValidation $request)
     {
+        dd($request->all());
         if(!isset($request->reg_no)){
             //RegNo Generator Start
             $oldStudent = Student::where('faculty',$request->faculty)->orderBy('id', 'desc')->first();

@@ -118,9 +118,9 @@ class StudentController extends CollegeBaseController
             //$regNum = $faculty.'-'.$year.'-'.$sn;
             $regNum = $facultyCode.$year.$sn;
             //reg generator End
-            $request->request->add(['reg_no' => $regNum]);
+            $request->merge(['reg_no' => $regNum]);
         }else{
-            $request->request->add(['reg_no' => $request->reg_no]);
+            $request->merge(['reg_no' => $request->reg_no]);
         }
 
         if ($request->hasFile('student_main_image')){
@@ -139,10 +139,10 @@ class StudentController extends CollegeBaseController
             $student_signature_image_name = "";
         }
 
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['semester' => $request->get('semester')]);
-        $request->request->add(['student_image' => $student_image_name]);
-        $request->request->add(['student_signature' => $student_signature_image_name]);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['semester' => $request->get('semester')]);
+        $request->merge(['student_image' => $student_image_name]);
+        $request->merge(['student_signature' => $student_signature_image_name]);
 
         $student = Student::create($request->all());
 
@@ -172,11 +172,11 @@ class StudentController extends CollegeBaseController
             $guardian_image_name = "";
         }
 
-        $request->request->add(['father_image' => $father_image_name]);
-        $request->request->add(['mother_image' => $mother_image_name]);
-        $request->request->add(['guardian_image' => $guardian_image_name]);
+        $request->merge(['father_image' => $father_image_name]);
+        $request->merge(['mother_image' => $mother_image_name]);
+        $request->merge(['guardian_image' => $guardian_image_name]);
 
-        $request->request->add(['students_id' => $student->id]);
+        $request->merge(['students_id' => $student->id]);
         $addressinfo = Addressinfo::create($request->all());
         $parentdetail = ParentDetail::create($request->all());
 
@@ -585,15 +585,15 @@ class StudentController extends CollegeBaseController
             $student_signature->move($this->folder_path, $student_signature_name);
         }
 
-        $request->request->add(['updated_by' => auth()->user()->id]);
-        $request->request->add(['student_image' => isset($student_image_name)?$student_image_name:$row->student_image]);
-        $request->request->add(['student_signature' => isset($student_signature_name)?$student_signature_name:$row->student_signature]);
+        $request->merge(['updated_by' => auth()->user()->id]);
+        $request->merge(['student_image' => isset($student_image_name)?$student_image_name:$row->student_image]);
+        $request->merge(['student_signature' => isset($student_signature_name)?$student_signature_name:$row->student_signature]);
 
         $student = $row->update($request->all());
 
         /*Update Associate Address Info*/
         $row->address()->update([
-            'address'    =>  $request->address,
+            'address'    =>  $mergeress,
             'state'      =>  $request->state,
             'country'    =>  $request->country,
             'temp_address' =>  $request->temp_address,
@@ -953,7 +953,7 @@ class StudentController extends CollegeBaseController
     {
         if (!$row = Student::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
@@ -966,20 +966,20 @@ class StudentController extends CollegeBaseController
     {
         if (!$row = Student::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
         $row->update($request->all());
 
         //in active student login detail
         $login_detail = User::where([['role_id',6],['hook_id',$row->id]])->first();
         if($login_detail){
-            $request->request->add(['status' => 'in-active']);
+            $request->merge(['status' => 'in-active']);
             $login_detail->update($request->all());
         }
 
         // in active guardian login detail
         $login_detail = User::where([['role_id',7],['hook_id',$row->id]])->first();
         if($login_detail) {
-            $request->request->add(['status' => 'in-active']);
+            $request->merge(['status' => 'in-active']);
             $login_detail->update($request->all());
         }
 

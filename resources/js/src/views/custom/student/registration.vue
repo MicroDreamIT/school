@@ -165,7 +165,7 @@
                                             Extra Info
                                         </div>
                                         <div class="col-md-10">
-                                            <vs-input v-model="student.extra_info"/>
+                                            <vs-textarea v-model="student.extra_info"/>
                                         </div>
                                     </div>
 
@@ -521,7 +521,7 @@
                                     <div v-else class="row">
                                         <div class="col-md-6">
                                             Find Guardian Using Name | Mobile Number | Email & Click on Link Now
-                                            <v-select v-model="guardian"
+                                            <v-select v-model="student.guardian_link_id"
                                                       :options="guardians"
                                                       placeholder="Select Guardian"
                                             />
@@ -556,7 +556,7 @@
                                                 </tr>
 
                                                 </thead>
-                                                <draggable v-model="academicList" tag="tbody">
+                                                <draggable v-model="student.academicList" tag="tbody">
                                                     <tr :key="i" v-for="(tr, i) in academicList">
                                                         <td class="w-16 align-middle text-center">
                                                             <vs-button class="my-round">
@@ -649,15 +649,15 @@
                                     <div class="col-md-3">Student Profile Picture</div>
                                     <div class="col-md-5">
                                         <vs-input type="file"
-                                                  v-model="student.profile_picture">
+                                                  v-model="student.student_main_image">
 
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
                                              width="100px"
-                                             :src="student.profile_picture"
-                                             v-if="student.profile_picture"/>
+                                             :src="student.student_main_image"
+                                             v-if="student.student_main_image"/>
                                         <img class="img-responsive"
                                              width="100px"
                                              src="../../../../../assets/images/profile-default.jpg"
@@ -669,15 +669,15 @@
                                     <div class="col-md-3">Student Signature</div>
                                     <div class="col-md-5">
                                         <vs-input type="file"
-                                                  v-model="student.signature">
+                                                  v-model="student.student_signature_main_image">
 
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
                                              width="100px"
-                                             :src="student.signature"
-                                             v-if="student.signature"/>
+                                             :src="student.student_signature_main_image"
+                                             v-if="student.student_signature_main_image"/>
                                         <img class="img-responsive"
                                              width="100px"
                                              src="../../../../../assets/images/profile-default.jpg"
@@ -689,15 +689,15 @@
                                     <div class="col-md-3">Father Picture</div>
                                     <div class="col-md-5">
                                         <vs-input type="file"
-                                                  v-model="student.father_picture">
+                                                  v-model="student.father_main_image">
 
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
                                              width="100px"
-                                             :src="student.father_picture"
-                                             v-if="student.father_picture"/>
+                                             :src="student.father_main_image"
+                                             v-if="student.father_main_image"/>
                                         <img class="img-responsive"
                                              width="100px"
                                              src="../../../../../assets/images/profile-default.jpg"
@@ -709,15 +709,15 @@
                                     <div class="col-md-3">Mother Picture</div>
                                     <div class="col-md-5">
                                         <vs-input type="file"
-                                                  v-model="student.mother_picture">
+                                                  v-model="student.mother_main_image">
 
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
                                              width="100px"
-                                             :src="student.mother_picture"
-                                             v-if="student.mother_picture"/>
+                                             :src="student.mother_main_image"
+                                             v-if="student.mother_main_image"/>
                                         <img class="img-responsive"
                                              width="100px"
                                              src="../../../../../assets/images/profile-default.jpg"
@@ -729,15 +729,15 @@
                                     <div class="col-md-3">Guardian Picture</div>
                                     <div class="col-md-5">
                                         <vs-input type="file"
-                                                  v-model="student.guardian_picture">
+                                                  v-model="student.guardian_main_image">
 
                                         </vs-input>
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
                                              width="100px"
-                                             :src="student.guardian_picture"
-                                             v-if="student.guardian_picture"/>
+                                             :src="student.guardian_main_image"
+                                             v-if="student.guardian_main_image"/>
                                         <img class="img-responsive"
                                              width="100px"
                                              src="../../../../../assets/images/profile-default.jpg"
@@ -793,7 +793,7 @@
         },
         methods: {
             postData() {
-                this.$http.post('/json/student/store', this.student)
+                this.$http.post('/json/student/register', this.student)
                     .then(res => {
                         console.log(res)
                     })

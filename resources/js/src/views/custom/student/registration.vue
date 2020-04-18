@@ -27,7 +27,10 @@
                                             REG.NO.
                                         </div>
                                         <div class="col-md-4">
-                                            <vs-input v-model="student.reg_no"/>
+                                            <vs-input v-model="student.reg_no" :danger="error.reg_no!==undefined"/>
+                                            <p v-if="error.reg_no!==undefined" class="text-danger">
+                                                {{ error.reg_no[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Date of Admission
@@ -49,21 +52,29 @@
                                             Faculty/Class
                                         </div>
                                         <div class="col-md-5">
-                                            <select v-model="student.faculty" class="form-control">
+                                            <select v-model="student.faculty" class="form-control"
+                                                    :danger="error.faculty!==undefined">
                                                 <option :value="faculty.id" v-for="faculty in faculties">
                                                     {{faculty.value}}
                                                 </option>
                                             </select>
+                                            <p v-if="error.faculty!==undefined" class="text-danger">
+                                                {{ error.faculty[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Sem./Sec.
                                         </div>
                                         <div class="col-md-3">
-                                            <select v-model="student.semester" class="form-control">
+                                            <select v-model="student.semester" class="form-control"
+                                                    :danger="error.semester!==undefined">
                                                 <option :value="semester.id" v-for="semester in semesters">
                                                     {{semester.value}}
                                                 </option>
                                             </select>
+                                            <p v-if="error.semester!==undefined" class="text-danger">
+                                                {{ error.semester[0] }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -71,18 +82,24 @@
                                             Batch
                                         </div>
                                         <div class="col-md-5">
-                                            <select v-model="student.batch" class="form-control">
+                                            <select v-model="student.batch" class="form-control"
+                                                    :danger="error.batch!==undefined">
                                                 <option :value="batch.id" v-for="batch in batches">
                                                     {{batch.value}}
                                                 </option>
                                             </select>
+
+                                            <p v-if="error.batch!==undefined" class="text-danger">
+                                                {{ error.batch[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Status
                                         </div>
                                         <div class="col-md-3">
                                             <select v-model="student.academic_status" class="form-control">
-                                                <option :value="academic_status.id" v-for="academic_status in academic_statuses">
+                                                <option :value="academic_status.id"
+                                                        v-for="academic_status in academic_statuses">
                                                     {{academic_status.value}}
                                                 </option>
                                             </select>
@@ -93,13 +110,21 @@
                                             NAME OF STUDENT
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.first_name"/>
+                                            <vs-input v-model="student.first_name"
+                                                      :danger="error.first_name!==undefined"/>
+                                            <p v-if="error.first_name!==undefined" class="text-danger">
+                                                {{ error.first_name[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-3">
                                             <vs-input v-model="student.middle_name"/>
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.last_name"/>
+                                            <vs-input v-model="student.last_name"
+                                                      :danger="error.last_name!==undefined"/>
+                                            <p v-if="error.last_name!==undefined" class="text-danger">
+                                                {{ error.last_name[0] }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="row my-2">
@@ -110,13 +135,20 @@
                                             <vs-input
                                                     v-model="student.date_of_birth"
                                                     v-mask="'####-##-##'"
-                                            />
+                                                    :danger="error.date_of_birth!==undefined"/>
+                                            <p v-if="error.date_of_birth!==undefined" class="text-danger">
+                                                {{ error.date_of_birth[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Gender
                                         </div>
                                         <div class="col-md-2">
-                                            <v-select v-model="student.gender" :options="['MALE','FEMALE','OTHER']"/>
+                                            <v-select v-model="student.gender" :options="['MALE','FEMALE','OTHER']"
+                                                      :danger="error.gender!==undefined"/>
+                                            <p v-if="error.gender!==undefined" class="text-danger">
+                                                {{ error.gender[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Blood Group
@@ -145,7 +177,11 @@
                                             Nationality
                                         </div>
                                         <div class="col-md-2">
-                                            <vs-input v-model="student.nationality"/>
+                                            <vs-input v-model="student.nationality"
+                                                      :danger="error.nationality!==undefined"/>
+                                            <p v-if="error.nationality!==undefined" class="text-danger">
+                                                {{ error.nationality[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-2">
                                             Mother Tongue
@@ -200,19 +236,28 @@
                                             Address
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.address"/>
+                                            <vs-input v-model="student.address" :danger="error.address!==undefined"/>
+                                            <p v-if="error.address!==undefined" class="text-danger">
+                                                {{ error.address[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-1">
                                             State
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.state"/>
+                                            <vs-input v-model="student.state" :danger="error.state!==undefined"/>
+                                            <p v-if="error.state!==undefined" class="text-danger">
+                                                {{ error.state[0] }}
+                                            </p>
                                         </div>
                                         <div class="col-md-1">
                                             Country
                                         </div>
                                         <div class="col-md-3">
-                                            <vs-input v-model="student.country"/>
+                                            <vs-input v-model="student.country" :danger="error.country!==undefined"/>
+                                            <p v-if="error.country!==undefined" class="text-danger">
+                                                {{ error.country[0] }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="badge badge badge-primary badge-pill  mt-2">Temporary Address
@@ -648,10 +693,10 @@
                                 <div class="row">
                                     <div class="col-md-3">Student Profile Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="student.student_main_image">
-
-                                        </vs-input>
+                                        <input type="file"
+                                               id="student_main_image"
+                                               ref="student_main_image"
+                                               class="form-control">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -668,10 +713,10 @@
                                 <div class="row">
                                     <div class="col-md-3">Student Signature</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="student.student_signature_main_image">
-
-                                        </vs-input>
+                                        <input type="file"
+                                               id="student_signature_main_image"
+                                               ref="student_signature_main_image"
+                                               class="form-control">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -688,10 +733,10 @@
                                 <div class="row">
                                     <div class="col-md-3">Father Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="student.father_main_image">
-
-                                        </vs-input>
+                                        <input type="file"
+                                               id="father_main_image"
+                                               class="form-control"
+                                               ref="father_main_image">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -708,10 +753,10 @@
                                 <div class="row">
                                     <div class="col-md-3">Mother Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="student.mother_main_image">
-
-                                        </vs-input>
+                                        <input type="file"
+                                               class="form-control"
+                                               id="mother_main_image"
+                                               ref="mother_main_image">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -728,10 +773,9 @@
                                 <div class="row">
                                     <div class="col-md-3">Guardian Picture</div>
                                     <div class="col-md-5">
-                                        <vs-input type="file"
-                                                  v-model="student.guardian_main_image">
-
-                                        </vs-input>
+                                        <input type="file"
+                                                  id="guardian_main_image"
+                                                  ref="guardian_main_image">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center">
                                         <img class="img-responsive"
@@ -779,7 +823,8 @@
                 whoGuardian: '',
                 guardian: null,
                 guardians: [],
-                academicList: []
+                academicList: [],
+                error: []
 
             }
         },
@@ -793,11 +838,41 @@
         },
         methods: {
             postData() {
+                let data = new FormData();
+
+                let student_main_image = document.querySelector('#student_main_image');
+                if (student_main_image) {
+                    data.append("student_main_image", student_main_image.files[0]);
+                }
+                let student_signature_main_image = document.querySelector('#student_signature_main_image');
+                if (student_signature_main_image) {
+                    data.append("student_signature_main_image", student_signature_main_image.files[0]);
+                }
+                let father_main_image = document.querySelector('#father_main_image');
+                if (father_main_image) {
+                    data.append("father_main_image", father_main_image.files[0]);
+                }
+                let mother_main_image = document.querySelector('#mother_main_image');
+                if (mother_main_image) {
+                    data.append("mother_main_image", mother_main_image.files[0]);
+                }
+                let guardian_main_image = document.querySelector('#guardian_main_image');
+                if (guardian_main_image) {
+                    data.append("guardian_main_image", guardian_main_image.files[0]);
+                }
+
+                for (let key in this.student) {
+                    data.append(key, this.student[key])
+                }
                 this.$http.post('/json/student/register', this.student)
                     .then(res => {
                         console.log(res)
                     })
-                    .catch()
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
             },
             copyPermanent() {
                 if (this.copyPerm) {

@@ -198,23 +198,19 @@ class StudentController extends CollegeBaseController
             $item = json_decode($request->get('institution'), true);
             foreach ($item as $index => $value) {
                 if(count($value)){
-                    foreach ($value as $key=>$val){
-                        dd($value, $key, $val);
-                    }
+                    AcademicInfo::create([
+                        'students_id' => $student->id,
+                        'institution' => $value['institution'],
+                        'board' => $value['board'],
+                        'pass_year' => $value['pass_year'],
+                        'symbol_no' => $value['symbol_no'],
+                        'percentage' => $value['percentage'],
+                        'division_grade' => $value['division_grade'],
+                        'major_subjects' => $value['major_subject'],
+                        'remark' => $value['remarks'],
+                        'created_by' => auth()->user()->id,
+                    ]);
                 }
-
-//                AcademicInfo::create([
-//                    'students_id' => $student->id,
-//                    'institution' => $institute,
-//                    'board' => $request->get('board')[$key],
-//                    'pass_year' => $request->get('pass_year')[$key],
-//                    'symbol_no' => $request->get('symbol_no')[$key],
-//                    'percentage' => $request->get('percentage')[$key],
-//                    'division_grade' => $request->get('division_grade')[$key],
-//                    'major_subjects' => $request->get('major_subjects')[$key],
-//                    'remark' => $request->get('remark')[$key],
-//                    'created_by' => auth()->user()->id,
-//                ]);
             }
         }
         /*Academic Info End*/

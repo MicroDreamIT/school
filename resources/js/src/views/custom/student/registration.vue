@@ -879,11 +879,12 @@
                                 icon: 'verified_user'
                             })
                         }
-                        // this.student = {}
-                        // this.student.reg_no = ''
-                        // this.student.first_name = ''
-                        // this.student.middle_name = ''
-                        // this.student.last_name = ''
+                        this.student = {}
+                        this.student.reg_no = ''
+                        this.student.first_name = ''
+                        this.student.middle_name = ''
+                        this.student.last_name = ''
+                        this.$router.push({path:'/student'})
                     })
                     .catch(err => {
                         if (err.response) {

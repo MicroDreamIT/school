@@ -195,21 +195,26 @@ class StudentController extends CollegeBaseController
 
         /*Academic Info Start*/
         if ($request->has('institution') && $request->input('institution')) {
+            $item = json_decode($request->get('institution'), true);
+            foreach ($item as $index => $value) {
+                if(count($value)){
+                    foreach ($value as $key=>$val){
+                        dd($value, $key, $val);
+                    }
+                }
 
-            foreach ($request->get('institution') as $key => $institute) {
-                dd($key, $institute, $request->get('board')[$key]);
-                AcademicInfo::create([
-                    'students_id' => $student->id,
-                    'institution' => $institute,
-                    'board' => $request->get('board')[$key],
-                    'pass_year' => $request->get('pass_year')[$key],
-                    'symbol_no' => $request->get('symbol_no')[$key],
-                    'percentage' => $request->get('percentage')[$key],
-                    'division_grade' => $request->get('division_grade')[$key],
-                    'major_subjects' => $request->get('major_subjects')[$key],
-                    'remark' => $request->get('remark')[$key],
-                    'created_by' => auth()->user()->id,
-                ]);
+//                AcademicInfo::create([
+//                    'students_id' => $student->id,
+//                    'institution' => $institute,
+//                    'board' => $request->get('board')[$key],
+//                    'pass_year' => $request->get('pass_year')[$key],
+//                    'symbol_no' => $request->get('symbol_no')[$key],
+//                    'percentage' => $request->get('percentage')[$key],
+//                    'division_grade' => $request->get('division_grade')[$key],
+//                    'major_subjects' => $request->get('major_subjects')[$key],
+//                    'remark' => $request->get('remark')[$key],
+//                    'created_by' => auth()->user()->id,
+//                ]);
             }
         }
         /*Academic Info End*/

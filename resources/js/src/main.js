@@ -213,6 +213,9 @@ new Vue({
             let data =  moment(event).format('YYYY-MM-DD');
             return data;
         },
+        mysqlDatetime(val){
+            return moment(val).format('YYYY-MM-DD HH:mm:ss')
+        },
         saveAsJson(table) {
             var data = {
                 "header": [],

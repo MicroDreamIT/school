@@ -839,7 +839,10 @@
         methods: {
             postData() {
 
-                this.student.reg_date = this.$root.formatPicker(this.student.reg_date)
+                this.student.reg_date = this.$root.mysqlDatetime(this.student.reg_date)
+                this.student.date_of_birth = this.$root.mysqlDatetime(this.student.date_of_birth)
+                console.log(this.student.reg_date, this.student.date_of_birth)
+                this.student.institution = this.academicList
                 let data = new FormData();
 
                 let student_main_image = document.querySelector('#student_main_image');
@@ -868,7 +871,19 @@
                 }
                 this.$http.post('/json/student/register', data)
                     .then(res => {
-                        console.log(res)
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+                        }
+                        this.student = {}
+                        this.student.reg_no = ''
+                        this.student.first_name = ''
+                        this.student.middle_name = ''
+                        this.student.last_name = ''
                     })
                     .catch(err => {
                         if (err.response) {

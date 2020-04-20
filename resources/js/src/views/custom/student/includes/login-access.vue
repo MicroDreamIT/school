@@ -32,12 +32,12 @@
                         <label class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-4">
                             <vs-input class="w-100"
-                                      v-model="studentLogin.name"></vs-input>
+                                      v-model="student_login.name"></vs-input>
                         </div>
                         <label class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-4">
                             <vs-input type="email" class="w-100"
-                                      v-model="studentLogin.email"></vs-input>
+                                      v-model="student_login.email"></vs-input>
                         </div>
                     </div>
                     <br>
@@ -45,11 +45,11 @@
                     <div class="row">
                         <label class="col-sm-2 control-label">Password</label>
                         <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
+                            <vs-input class="w-100" v-model="student_login.password"></vs-input>
                         </div>
                         <label class="col-sm-2 control-label">Confirm Password</label>
                         <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
+                            <vs-input class="w-100" v-model="student_login.confirmPassword"></vs-input>
                         </div>
                     </div>
                     <br>
@@ -79,39 +79,28 @@
                 <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>
                     Create Guardian Login Access
                 </h4>
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    alert content
-                </div>
 
                 <form method="POST" class="form-horizontal mt-5">
                     <div class="row">
                         <label class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
+                            <vs-input class="w-100"
+                                      v-model="guardian_login.name"></vs-input>
                         </div>
                         <label class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-4">
-                            <vs-input type="email" class="w-100"></vs-input>
+                            <vs-input type="email" class="w-100"
+                                      v-model="guardian_login.email"></vs-input>
                         </div>
                     </div>
                     <br>
 
                     <div class="row">
-                        <label class="col-sm-2 control-label">Password</label>
+                        <label class="col-sm-2 control-label" v-model="guardian_login.password">Password</label>
                         <div class="col-sm-4">
                             <vs-input class="w-100"></vs-input>
                         </div>
-                        <label class="col-sm-2 control-label">Confirm Password</label>
+                        <label class="col-sm-2 control-label" v-model="guardian_login.confirmPassword">Confirm Password</label>
                         <div class="col-sm-4">
                             <vs-input class="w-100"></vs-input>
                         </div>
@@ -124,12 +113,12 @@
                     </div>
                     <hr class="own-hr my-3">
                     <div class="col-md-12">
-                        <button class="btn waves-effect waves-light" type="reset">
+                        <button class="btn waves-effect waves-light" type="reset" @click="student_login.password='', student_login.confirmPassword=''">
                             <i class="fa fa-undo bigger-110"></i>
                             Reset
                         </button>
 
-                        <button class="btn btn-info waves-effect waves-light" type="submit">
+                        <button class="btn btn-info waves-effect waves-light" type="submit" @click="posting()">
                             <i class="fa fa-save bigger-110"></i>
                             {{studentButton}}
                         </button>
@@ -159,15 +148,20 @@
                 this.student_login.id = this.item.student_login.id
                 this.student_login.name = this.item.student_login.name
                 this.student_login.email = this.item.student_login.email
+                this.studentButton = 'update'
 
-                this.guardian_login.id = this.item.guardian_login.id
-                this.guardian_login.name = this.item.guardian_login.name
-                this.guardian_login.email = this.item.guardian_login.email
-                this.buttonText = 'update'
             } else {
                 this.student_login.name = this.item.student.fullname
                 this.student_login.email = this.item.student.email
-                this.guardian_login.name = $root.singleSpacing(this.item.student.guardian_first_name
+            }
+
+            if(this.item.guardian_login){
+                this.guardian_login.id = this.item.guardian_login.id
+                this.guardian_login.name = this.item.guardian_login.name
+                this.guardian_login.email = this.item.guardian_login.email
+                this.guardianButton='update'
+            }else{
+                this.guardian_login.name = this.$root.singleSpacing(this.item.student.guardian_first_name
                     + this.item.student.guardian_middle_name
                     + this.item.student.guardian_last_name)
                 this.guardian_login.email = this.item.student.guardian_email
@@ -177,7 +171,7 @@
             this.student_login.role_id = parseInt(6)
 
             this.guardian_login.hook_id = parseInt(this.item.student.id)
-            this.guardian_login.role_id = parseInt(6)
+            this.guardian_login.role_id = parseInt(7)
 
         },
         methods: {

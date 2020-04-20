@@ -6,24 +6,14 @@
                     Edit Student Login Access
                 </h4>
                 <div class="row mx-0" v-if="item.student_login">
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn btn-success">
-                            <i class="fa fa-book" aria-hidden="true"></i>
-                            Un-Lock User
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn btn-warning">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                            Lock User
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn btn-danger">
-                            <i class="fa fa-users" aria-hidden="true"></i>
-                            Delete User
-                        </vs-button>
-                    </router-link>
+                    <a type="filled" class="btn-success btn-sm" @click="userAction(item.staff_login.id, 'active')">
+                        <i class="fa fa-book" aria-hidden="true"></i>
+                        Un-Lock User
+                    </a>
+                    <a @click="userAction(item.staff_login.id, 'in-active')"  title="In-Active" class="btn-warning btn-sm"><i class="fa fa-lock" aria-hidden="true" ></i> Lock User</a>
+
+                    <a @click="userAction(item.staff_login.id, 'delete')"  title="Delete" class="btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true" ></i> Delete User</a>
+
 
                 </div>
 
@@ -175,6 +165,15 @@
 
         },
         methods: {
+            userAction(id, action){
+                this.$http.get('/json/student/' + id + '/user/' + action)
+                    .then(res=>{
+                        if(res.status===200){
+                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                            this.$emit('getData')
+                        }
+                    })
+            },
             posting() {
 
                 let url = this.student.id !== undefined && this.student.id

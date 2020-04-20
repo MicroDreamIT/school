@@ -7,18 +7,18 @@
                 </h4>
                 <div class="row mx-0" v-if="item.student_login">
                     <a type="filled" class="btn-success btn-sm"
-                       @click="userAction(item.student.id, 'active')">
+                       @click="userAction(item.student_login.id, 'active')">
                         <i class="fa fa-book" aria-hidden="true"></i>
                         Un-Lock User
                     </a>
-                    <a @click="userAction(item.student.id, 'in-active')"
+                    <a @click="userAction(item.student_login.id, 'in-active')"
                        title="In-Active"
                        class="btn-warning btn-sm">
                         <i class="fa fa-lock" aria-hidden="true"></i>
                         Lock User
                     </a>
 
-                    <a @click="userAction(item.student.id, 'delete')"
+                    <a @click="userAction(item.student_login.id, 'delete')"
                        title="Delete"
                        class="btn-danger btn-sm">
                         <i class="fa fa-trash" aria-hidden="true"></i>
@@ -219,7 +219,7 @@
                 console.log(url)
                 this.$http.get(url)
                     .then(res => {
-                        console.log(res.data)
+                        console.log(res)
                         if (res.status === 200) {
                             this.$vs.notify({
                                 title: res.data[0],

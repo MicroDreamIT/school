@@ -96,7 +96,6 @@ class StudentController extends CollegeBaseController
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
         return response()->json($data);
-//        return view(parent::loadDataToView($this->view_path.'.registration.register'), compact('data'));
     }
 
     public function register(AddValidation $request)
@@ -558,7 +557,7 @@ class StudentController extends CollegeBaseController
         ])->render();
 
 
-        return view(parent::loadDataToView($this->view_path.'.registration.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -743,10 +742,8 @@ class StudentController extends CollegeBaseController
                 }
             }
         }
-        /*Academic Info End*/
-        $request->session()->flash($this->message_success, $this->panel. ' Info Updated Successfully.');
-        //return redirect()->route($this->base_route);
-        return back();
+
+        return response()->json(['success', $this->panel. ' Info Updated Successfully.']);
 
     }
 

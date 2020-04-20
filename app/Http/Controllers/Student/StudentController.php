@@ -263,7 +263,7 @@ class StudentController extends CollegeBaseController
             'gd.guardian_eligibility', 'gd.guardian_occupation', 'gd.guardian_office', 'gd.guardian_office_number', 'gd.guardian_residence_number',
             'gd.guardian_mobile_1', 'gd.guardian_mobile_2', 'gd.guardian_email', 'gd.guardian_relation', 'gd.guardian_address',
             'students.student_image','students.student_signature', 'pd.father_image', 'pd.mother_image', 'gd.guardian_image')
-            ->where('students.id','=',$id)
+            ->where('students.id',$id)
             ->join('parent_details as pd', 'pd.students_id', '=', 'students.id')
             ->join('addressinfos as ai', 'ai.students_id', '=', 'students.id')
             ->join('student_guardians as sg', 'sg.students_id','=','students.id')

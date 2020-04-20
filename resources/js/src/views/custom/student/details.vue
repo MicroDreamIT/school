@@ -3,46 +3,8 @@
         <div class="row ">
             <div class="col-md-12">
                 <h2 class="pageTitle">Student Manager</h2>
-                <div class="p-2">
-                    <router-link :to="'/student'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">Primary</vs-button>
-                    </router-link>
-                    <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn">
-                            Primary
-                        </vs-button>
-                    </router-link>
-
-                </div>
             </div>
-            <div class="col-md-12" v-if="$root.notification">
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                            @click="$root.notification=''"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    {{$root.notification}}
-                </div>
-            </div>
+            <student-navigation></student-navigation>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                    <vs-card class="p-4">

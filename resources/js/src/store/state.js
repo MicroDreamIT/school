@@ -68,8 +68,9 @@ const state = {
     // Note: Above breakpoint state is for internal use of sidebar & navbar component
     windowWidth: null,
 
-    tableData:[]
-
+    //custom
+    tableData:[],
+    defaultProfileImage:'/assets/images/avatars/profile-pic.jpg',
 
 }
 

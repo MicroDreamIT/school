@@ -145,6 +145,8 @@ String.prototype.trunc = String.prototype.trunc ||
         return (message.length > n) ? this.substr(0, n-1) + '...' : message;
     };
 
+
+
 new Vue({
     router,
     store,

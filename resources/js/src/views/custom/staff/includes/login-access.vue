@@ -21,19 +21,31 @@
             <input type="hidden" v-model="login.hook_id">
             <div class="form-group">
                 <label>name:</label>
-                <vs-input type="text" v-model="login.name" ></vs-input>
+                <vs-input type="text" v-model="login.name" :danger="error.name!==undefined"></vs-input>
+                <p v-if="error.name!==undefined" class="text-danger">
+                    {{ error.name[0] }}
+                </p>
             </div>
             <div class="form-group">
                 <label>email</label>
-                <vs-input type="email" v-model="login.email" ></vs-input>
+                <vs-input type="email" v-model="login.email" :danger="error.email!==undefined"></vs-input>
+                <p v-if="error.email!==undefined" class="text-danger">
+                    {{ error.email[0] }}
+                </p>
             </div>
             <div class="form-group">
                 <label>password</label>
-                <vs-input type="password" v-model="login.password"></vs-input>
+                <vs-input type="password" v-model="login.password" :danger="error.password!==undefined"/>
+                <p v-if="error.password!==undefined" class="text-danger">
+                    {{ error.password[0] }}
+                </p>
             </div>
             <div class="form-group">
                 <label>confirm password</label>
-                <vs-input type="password" v-model="login.confirmPassword"></vs-input>
+                <vs-input type="password" v-model="login.confirmPassword" :danger="error.confirmPassword!==undefined"/>
+                <p v-if="error.confirmPassword!==undefined" class="text-danger">
+                    {{ error.confirmPassword[0] }}
+                </p>
             </div>
             <div class="form-group">
                 <button class="btn" type="reset" @click="login.password, login.confirmPassword">
@@ -64,7 +76,8 @@
                     role_id:null,
                     hook_id:null,
                 },
-                buttonText:'create'
+                buttonText:'create',
+                error:[]
             }
         },
         created() {

@@ -38,6 +38,7 @@
                            <docs v-else-if="currentView=='docs'"/>
                            <notes v-else-if="currentView=='notes'"/>
                            <login-access v-if="currentView=='login_access'"
+                                         @getData="getData()"
                                          :item="datas" />
                        </div>
                    </vs-card>
@@ -72,10 +73,16 @@
             }
         },
         created() {
-            let url ='/json/student/' + this.$route.params.id + '/view'
-            this.$http.get(url).then(res=>{
-                this.datas = res.data
-            })
+            this.getData()
+        },
+        methods:{
+            getData(){
+                let url ='/json/student/' + this.$route.params.id + '/view'
+                this.$http.get(url).then(res=>{
+                    this.datas = res.data
+                    this.currentView='profile'
+                })
+            }
         }
     }
 </script>

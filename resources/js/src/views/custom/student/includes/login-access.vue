@@ -6,114 +6,156 @@
                     Edit Student Login Access
                 </h4>
                 <div class="row mx-0" v-if="item.student_login">
-                    <a type="filled" class="btn-success btn-sm" @click="userAction(item.staff_login.id, 'active')">
+                    <a type="filled" class="btn-success btn-sm"
+                       @click="userAction(item.student.id, 'active')">
                         <i class="fa fa-book" aria-hidden="true"></i>
                         Un-Lock User
                     </a>
-                    <a @click="userAction(item.staff_login.id, 'in-active')"  title="In-Active" class="btn-warning btn-sm"><i class="fa fa-lock" aria-hidden="true" ></i> Lock User</a>
+                    <a @click="userAction(item.student.id, 'in-active')"
+                       title="In-Active"
+                       class="btn-warning btn-sm">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        Lock User
+                    </a>
 
-                    <a @click="userAction(item.staff_login.id, 'delete')"  title="Delete" class="btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true" ></i> Delete User</a>
+                    <a @click="userAction(item.student.id, 'delete')"
+                       title="Delete"
+                       class="btn-danger btn-sm">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete User
+                    </a>
+                </div>
+                <br>
+                <div class="row">
+                    <label class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-4">
+                        <vs-input class="w-100"
+                                  type="text"
+                                  v-model="student_login.name" :danger="error.name!==undefined"/>
+                        <p v-if="error.name!==undefined" class="text-danger">
+                            {{ error.name[0] }}
+                        </p>
+                    </div>
+                    <label class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-4">
+                        <vs-input type="email" class="w-100"
+                                  v-model="student_login.email" :danger="error.email!==undefined"/>
+                        <p v-if="error.email!==undefined" class="text-danger">
+                            {{ error.email[0] }}
+                        </p>
+                    </div>
+                </div>
+                <br>
 
+                <div class="row">
+                    <label class="col-sm-2 control-label">Password</label>
+                    <div class="col-sm-4">
+                        <vs-input class="w-100" type="password" v-model="student_login.password"
+                                  :danger="error.password!==undefined"/>
+                        <p v-if="error.password!==undefined" class="text-danger">
+                            {{ error.password[0] }}
+                        </p>
+                    </div>
+                    <label class="col-sm-2 control-label">Confirm Password</label>
+                    <div class="col-sm-4">
+                        <vs-input class="w-100" type="password" v-model="student_login.confirmPassword"
+                                  :danger="error.confirmPassword!==undefined"/>
+                        <p v-if="error.confirmPassword!==undefined" class="text-danger">
+                            {{ error.confirmPassword[0] }}
+                        </p>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-4">
+                    <label>
+                        Active User
+                    </label>
+                </div>
+                <hr class="own-hr my-3">
+                <div class="col-md-12">
+                    <button class="btn waves-effect waves-light" type="reset"
+                            @click="student_login.password='', student_login.confirmPassword=''">
+                        <i class="fa fa-undo bigger-110"></i>
+                        Reset
+                    </button>
 
+                    <button class="btn btn-info waves-effect waves-light"
+                            type="submit"
+                            @click="posting()">
+                        <i class="fa fa-save bigger-110"></i>
+                        {{studentButton}}
+                    </button>
                 </div>
 
-                <form method="POST" class="form-horizontal mt-5">
-                    <div class="row">
-                        <label class="col-sm-2 control-label">Name</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100"
-                                      v-model="student_login.name"></vs-input>
-                        </div>
-                        <label class="col-sm-2 control-label">Email</label>
-                        <div class="col-sm-4">
-                            <vs-input type="email" class="w-100"
-                                      v-model="student_login.email"></vs-input>
-                        </div>
-                    </div>
-                    <br>
 
-                    <div class="row">
-                        <label class="col-sm-2 control-label">Password</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100" v-model="student_login.password"></vs-input>
-                        </div>
-                        <label class="col-sm-2 control-label">Confirm Password</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100" v-model="student_login.confirmPassword"></vs-input>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="col-sm-4">
-                        <label>
-                            Active User
-                        </label>
-                    </div>
-                    <hr class="own-hr my-3">
-                    <div class="col-md-12">
-                        <button class="btn waves-effect waves-light" type="reset">
-                            <i class="fa fa-undo bigger-110"></i>
-                            Reset
-                        </button>
-
-                        <button class="btn btn-info waves-effect waves-light" type="submit">
-                            <i class="fa fa-save bigger-110"></i>
-                            {{studentButton}}
-                        </button>
-                    </div>
-
-
-                    <div class="hr hr-24"></div>
-                </form>
+                <div class="hr hr-24"></div>
             </div>
             <div class="col-md-12 mt-3">
                 <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>
                     Create Guardian Login Access
                 </h4>
 
-                <form method="POST" class="form-horizontal mt-5">
-                    <div class="row">
-                        <label class="col-sm-2 control-label">Name</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100"
-                                      v-model="guardian_login.name"></vs-input>
-                        </div>
-                        <label class="col-sm-2 control-label">Email</label>
-                        <div class="col-sm-4">
-                            <vs-input type="email" class="w-100"
-                                      v-model="guardian_login.email"></vs-input>
-                        </div>
-                    </div>
-                    <br>
-
-                    <div class="row">
-                        <label class="col-sm-2 control-label" v-model="guardian_login.password">Password</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
-                        </div>
-                        <label class="col-sm-2 control-label" v-model="guardian_login.confirmPassword">Confirm Password</label>
-                        <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
-                        </div>
-                    </div>
-                    <br>
+                <div class="row">
+                    <label class="col-sm-2 control-label">Name</label>
                     <div class="col-sm-4">
-                        <label>
-                            Active User
-                        </label>
+                        <vs-input class="w-100"
+                                  type="text"
+                                  v-model="guardian_login.name" :danger="error.name!==undefined"/>
+                        <p v-if="error.name!==undefined" class="text-danger">
+                            {{ error.name[0] }}
+                        </p>
                     </div>
-                    <hr class="own-hr my-3">
-                    <div class="col-md-12">
-                        <button class="btn waves-effect waves-light" type="reset" @click="student_login.password='', student_login.confirmPassword=''">
-                            <i class="fa fa-undo bigger-110"></i>
-                            Reset
-                        </button>
+                    <label class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-4">
+                        <vs-input type="email" class="w-100"
+                                  v-model="guardian_login.email" :danger="error.email!==undefined"/>
+                        <p v-if="error.email!==undefined" class="text-danger">
+                            {{ error.email[0] }}
+                        </p>
+                    </div>
+                </div>
+                <br>
 
-                        <button class="btn btn-info waves-effect waves-light" type="submit" @click="posting()">
-                            <i class="fa fa-save bigger-110"></i>
-                            {{studentButton}}
-                        </button>
+                <div class="row">
+                    <label class="col-sm-2 control-label">Password</label>
+                    <div class="col-sm-4">
+                        <vs-input class="w-100" type="password"
+                                  v-model="guardian_login.password" :danger="error.password!==undefined"/>
+                        <p v-if="error.password!==undefined" class="text-danger">
+                            {{ error.password[0] }}
+                        </p>
                     </div>
-                </form>
+                    <label class="col-sm-2 control-label" type="password">
+                        Confirm Password
+                    </label>
+                    <div class="col-sm-4">
+                        <vs-input class="w-100" type="password"
+                                  v-model="guardian_login.confirmPassword"
+                                  :danger="error.confirmPassword!==undefined"/>
+                        <p v-if="error.confirmPassword!==undefined" class="text-danger">
+                            {{ error.confirmPassword[0] }}
+                        </p>
+                    </div>
+                </div>
+                <br>
+                <div class="col-sm-4">
+                    <label>
+                        Active User
+                    </label>
+                </div>
+                <hr class="own-hr my-3">
+                <div class="col-md-12">
+                    <button class="btn waves-effect waves-light" type="reset"
+                            @click="guardian_login.password='', guardian_login.confirmPassword=''">
+                        <i class="fa fa-undo bigger-110"></i>
+                        Reset
+                    </button>
+
+                    <button class="btn btn-info waves-effect waves-light" type="submit">
+                        <i class="fa fa-save bigger-110"></i>
+                        {{guardianButton}}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -127,10 +169,17 @@
         ],
         data() {
             return {
+                error:[],
                 studentButton: 'create',
                 guardianButton: 'create',
-                student_login: {},
-                guardian_login: {}
+                student_login: {
+                    name:'',
+                    email:''
+                },
+                guardian_login: {
+                    name:'',
+                    email:''
+                }
             }
         },
         created() {
@@ -145,12 +194,12 @@
                 this.student_login.email = this.item.student.email
             }
 
-            if(this.item.guardian_login){
+            if (this.item.guardian_login) {
                 this.guardian_login.id = this.item.guardian_login.id
                 this.guardian_login.name = this.item.guardian_login.name
                 this.guardian_login.email = this.item.guardian_login.email
-                this.guardianButton='update'
-            }else{
+                this.guardianButton = 'update'
+            } else {
                 this.guardian_login.name = this.$root.singleSpacing(this.item.student.guardian_first_name
                     + this.item.student.guardian_middle_name
                     + this.item.student.guardian_last_name)
@@ -165,22 +214,29 @@
 
         },
         methods: {
-            userAction(id, action){
-                this.$http.get('/json/student/' + id + '/user/' + action)
-                    .then(res=>{
-                        if(res.status===200){
-                            this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+            userAction(id, action) {
+                let url ='/json/student/' + id + '/user/' + action
+                console.log(url)
+                this.$http.get(url)
+                    .then(res => {
+                        console.log(res.data)
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.$emit('getData')
                         }
                     })
             },
             posting() {
-
-                let url = this.student.id !== undefined && this.student.id
-                    ? '/json/student/user/' + this.student.id + '/update'
+                let url =  this.student_login.id!==undefined && this.student_login.id
+                    ? '/json/student/'+ this.student_login.id +'/user/update'
                     : '/json/student/user/create'
 
-                this.$http.post(url, this.login)
+                this.$http.post(url, this.student_login)
                     .then(res => {
                         if (res.status === 200) {
                             this.$vs.notify({
@@ -189,6 +245,7 @@
                                 color: res.data[0],
                                 icon: 'verified_user'
                             })
+
                             this.$emit('getData')
                         }
                     })

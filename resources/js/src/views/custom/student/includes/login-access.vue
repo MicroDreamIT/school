@@ -5,20 +5,7 @@
                 <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>
                     Edit Student Login Access
                 </h4>
-                <div role="alert"
-                     class="mt-2 alert alert-success alert-dismissible display-block"
-                >
-                    <button type="button"
-                            data-dismiss="alert"
-                            aria-label="Close"
-                            class="close"
-                    >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <i class="ace-icon fa fa-hand-o-right"></i>
-                    alert content
-                </div>
-                <div class="row mx-0">
+                <div class="row mx-0" v-if="item.student_login">
                     <router-link :to="'/'">
                         <vs-button type="filled" class="smBtn btn-success">
                             <i class="fa fa-book" aria-hidden="true"></i>
@@ -44,11 +31,13 @@
                     <div class="row">
                         <label class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-4">
-                            <vs-input class="w-100"></vs-input>
+                            <vs-input class="w-100"
+                                      v-model="studentLogin.name"></vs-input>
                         </div>
                         <label class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-4">
-                            <vs-input type="email" class="w-100"></vs-input>
+                            <vs-input type="email" class="w-100"
+                                      v-model="studentLogin.email"></vs-input>
                         </div>
                     </div>
                     <br>
@@ -155,15 +144,41 @@
     export default {
         name: "login-access",
         props: [
-            'student', 'guardian'
+            'item'
         ],
         data() {
             return {
                 studentButton: 'create',
                 guardianButton: 'create',
-				studentLogin:{},
-				guardianLogin:{}
+                student_login: {},
+                guardian_login: {}
             }
+        },
+        created() {
+            if (this.item.student_login) {
+                this.student_login.id = this.item.student_login.id
+                this.student_login.name = this.item.student_login.name
+                this.student_login.email = this.item.student_login.email
+
+                this.guardian_login.id = this.item.guardian_login.id
+                this.guardian_login.name = this.item.guardian_login.name
+                this.guardian_login.email = this.item.guardian_login.email
+                this.buttonText = 'update'
+            } else {
+                this.student_login.name = this.item.student.fullname
+                this.student_login.email = this.item.student.email
+                this.guardian_login.name = $root.singleSpacing(this.item.student.guardian_first_name
+                    + this.item.student.guardian_middle_name
+                    + this.item.student.guardian_last_name)
+                this.guardian_login.email = this.item.student.guardian_email
+            }
+
+            this.student_login.hook_id = parseInt(this.item.student.id)
+            this.student_login.role_id = parseInt(6)
+
+            this.guardian_login.hook_id = parseInt(this.item.student.id)
+            this.guardian_login.role_id = parseInt(6)
+
         },
         methods: {
             posting() {

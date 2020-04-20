@@ -71,10 +71,13 @@
             if (this.item.staff_login) {
                 this.login.id = this.item.staff_login.id
                 this.buttonText = 'update'
+                this.login.name=this.item.staff_login.name
+                this.login.email = this.item.staff_login.email
+            }else{
+                this.login.name=this.item.staff.fullname
+                this.login.email = this.item.staff.email
             }
 
-            this.login.name=this.item.staff.fullname
-            this.login.email = this.item.staff.email
             this.login.hook_id = parseInt(this.item.staff.id)
             this.login.role_id = parseInt(5)
 

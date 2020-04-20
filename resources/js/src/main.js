@@ -171,6 +171,9 @@ new Vue({
         }
     },
     methods: {
+        singleSpacing(value){
+            return value.replace(/\s\s+/g, ' ')
+        },
         emptyNotification() {
             this.notification.status = ''
             this.notification.message = ''

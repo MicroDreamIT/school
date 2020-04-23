@@ -100,17 +100,17 @@
                     <div class="col-sm-4">
                         <vs-input class="w-100"
                                   type="text"
-                                  v-model="guardian_login.name" :danger="error.name!==undefined"/>
-                        <p v-if="error.name!==undefined" class="text-danger">
-                            {{ error.name[0] }}
+                                  v-model="guardian_login.name" :danger="guardian_error.name!==undefined"/>
+                        <p v-if="guardian_error.name!==undefined" class="text-danger">
+                            {{ guardian_error.name[0] }}
                         </p>
                     </div>
                     <label class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-4">
                         <vs-input type="email" class="w-100"
-                                  v-model="guardian_login.email" :danger="error.email!==undefined"/>
-                        <p v-if="error.email!==undefined" class="text-danger">
-                            {{ error.email[0] }}
+                                  v-model="guardian_login.email" :danger="guardian_error.email!==undefined"/>
+                        <p v-if="guardian_error.email!==undefined" class="text-danger">
+                            {{ guardian_error.email[0] }}
                         </p>
                     </div>
                 </div>
@@ -120,9 +120,9 @@
                     <label class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-4">
                         <vs-input class="w-100" type="password"
-                                  v-model="guardian_login.password" :danger="error.password!==undefined"/>
-                        <p v-if="error.password!==undefined" class="text-danger">
-                            {{ error.password[0] }}
+                                  v-model="guardian_login.password" :danger="guardian_error.password!==undefined"/>
+                        <p v-if="guardian_error.password!==undefined" class="text-danger">
+                            {{ guardian_error.password[0] }}
                         </p>
                     </div>
                     <label class="col-sm-2 control-label" type="password">
@@ -131,9 +131,9 @@
                     <div class="col-sm-4">
                         <vs-input class="w-100" type="password"
                                   v-model="guardian_login.confirmPassword"
-                                  :danger="error.confirmPassword!==undefined"/>
-                        <p v-if="error.confirmPassword!==undefined" class="text-danger">
-                            {{ error.confirmPassword[0] }}
+                                  :danger="guardian_error.confirmPassword!==undefined"/>
+                        <p v-if="guardian_error.confirmPassword!==undefined" class="text-danger">
+                            {{ guardian_error.confirmPassword[0] }}
                         </p>
                     </div>
                 </div>
@@ -169,6 +169,7 @@
         ],
         data() {
             return {
+                guardian_error:[],
                 error:[],
                 studentButton: 'create',
                 guardianButton: 'create',
@@ -232,7 +233,7 @@
                     })
             },
             guardianPosting(){
-                let url =  this.student_login.id!==undefined && this.student_login.id
+                let url =  this.guardian_login.id!==undefined && this.guardian_login.id
                     ? '/json/student/guardian/'+ this.student_login.id +'/user/update'
                     : '/json/student/guardian/user/create'
 
@@ -251,7 +252,7 @@
                     })
                     .catch(err => {
                         if (err.response) {
-                            this.error = err.response.data.errors
+                            this.guardian_error = err.response.data.errors
                         }
                     })
             },

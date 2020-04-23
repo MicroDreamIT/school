@@ -232,7 +232,28 @@
                     })
             },
             guardianPosting(){
+                let url =  this.student_login.id!==undefined && this.student_login.id
+                    ? '/json/student/guardian/'+ this.student_login.id +'/user/update'
+                    : '/json/student/guardian/user/create'
 
+                this.$http.post(url, this.guardian_login)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+
+                            this.$emit('getData')
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
             },
             posting() {
                 let url =  this.student_login.id!==undefined && this.student_login.id

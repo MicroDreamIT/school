@@ -151,7 +151,7 @@
                         Reset
                     </button>
 
-                    <button class="btn btn-info waves-effect waves-light" type="submit">
+                    <button class="btn btn-info waves-effect waves-light" type="submit" @click="guardianPosting()">
                         <i class="fa fa-save bigger-110"></i>
                         {{guardianButton}}
                     </button>
@@ -230,6 +230,9 @@
                             this.$emit('getData')
                         }
                     })
+            },
+            guardianPosting(){
+
             },
             posting() {
                 let url =  this.student_login.id!==undefined && this.student_login.id

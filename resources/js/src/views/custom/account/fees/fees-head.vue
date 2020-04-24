@@ -230,16 +230,12 @@
                     })
             },
             deleteItems(id){
-                let confirms = confirm('are you sure?')
-                if(!confirms) return null
-                this.$http.get('/json/transport/vehicle' + '/' + id + '/delete')
-                    .then(res=>{
-                        this.$refs.dataTableVehicle.getData()
-                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/account/fees/head/' + id + '/delete').then(res => {
+                        this.$refs.fees_head.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
                     })
-                    .catch(err=>{
-
-                    })
+                })
             },
             posting(){
                 let url =  this.fee_head.id!==undefined && this.fee_head.id

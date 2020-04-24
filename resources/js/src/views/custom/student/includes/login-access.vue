@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12 my-3">
                 <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>
-                    Edit Student Login Access
+                    Student Login Access
                 </h4>
                 <div class="row mx-0" v-if="item.student_login">
                     <a type="filled" class="btn-success btn-sm"
@@ -66,11 +66,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="col-sm-4">
-                    <label>
-                        Active User
-                    </label>
-                </div>
+
                 <hr class="own-hr my-3">
                 <div class="col-md-12">
                     <button class="btn waves-effect waves-light" type="reset"
@@ -92,9 +88,29 @@
             </div>
             <div class="col-md-12 mt-3">
                 <h4 class="header large lighter blue"><i class="fa fa-key" aria-hidden="true"></i>
-                    Create Guardian Login Access
+                    Guardian Login Access
                 </h4>
+                <div class="row mx-0" v-if="item.guardian_login">
+                    <a type="filled" class="btn-success btn-sm"
+                       @click="userAction(item.guardian_login.id, 'active')">
+                        <i class="fa fa-book" aria-hidden="true"></i>
+                        Un-Lock User
+                    </a>
+                    <a @click="userAction(item.guardian_login.id, 'in-active')"
+                       title="In-Active"
+                       class="btn-warning btn-sm">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        Lock User
+                    </a>
 
+                    <a @click="userAction(item.guardian_login.id, 'delete')"
+                       title="Delete"
+                       class="btn-danger btn-sm">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        Delete User
+                    </a>
+                </div>
+                <br>
                 <div class="row">
                     <label class="col-sm-2 control-label">Name</label>
                     <div class="col-sm-4">
@@ -140,7 +156,7 @@
                 <br>
                 <div class="col-sm-4">
                     <label>
-                        Active User
+                        {{guardian_login?guardian_login.status :''}}
                     </label>
                 </div>
                 <hr class="own-hr my-3">

@@ -138,33 +138,73 @@
 
                     </div>
                     <div class="col-md-8">
-                        <ow-data-table :headers="tableHeader"
-                                       :tableHeader="'Fees Head List'"
-                                       :suggestText="'Fees Head Record list on table. Filter Fees Head using the filter.'"
-                                       :url="'/student'"
-                                       :noDataMessage="'No Fees Head data found. Please Filter Fees Head to show.'"
-                                       :hasSearch="true"
-                                       :has-multiple="true"
-                                       :has-pagination="true"
+                        <data-table-final :headers="headers"
+                                          :tableHeader="'Route List'"
+                                          :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                          :url="'/json/account/fees/head'"
+                                          :model="'route'"
+                                          :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                          :hasSearch="true"
+                                          :has-multiple="true"
+                                          :has-pagination="true"
+                                          :filterSection="true"
+                                          ref="dataTableRoute"
+                                          :ajaxVariableSet="['route']"
+                                          @get-return-value="GetReturnValue"
+                                          :showAction="false"
                         >
                             <template slot="items" slot-scope="props">
-                                <vs-td :data="props.data.username" class="pointer-none">
-                                    {{props.data.email}}
+                                <vs-td>
+                                    <table>
+                                        <tr>
+                                            <th>title:</th>
+                                            <td>{{props.data.title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>rent:</th>
+                                            <td>{{props.data.rent}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>description:</th>
+                                            <td>{{props.data.description}}</td>
+                                        </tr>
+                                    </table>
                                 </vs-td>
-
-                                <vs-td :data="props.data.username">
-                                    {{props.data.username}}
+                                <vs-td>
+                                    <table v-for="vehicle in props.data.vehicles">
+                                        <tr>
+                                            <th>number</th>
+                                            <td>{{vehicle.number}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>model</th>
+                                            <td>{{vehicle.model}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>type:</th>
+                                            <td>{{vehicle.type}}'</td>
+                                        </tr>
+                                        <tr>
+                                            <hr v-if="props.data.vehicles.length>0">
+                                        </tr>
+                                    </table>
                                 </vs-td>
-
-                                <vs-td :data="props.data.id">
-                                    {{props.data.website}}
-                                </vs-td>
-
-                                <vs-td :data="props.id">
-                                    {{props.data.id}}
+                                <vs-td :data="props.data.action">
+                                    <div class="action-own">
+                                        <a class="btn btn-success btn-sm pointer-all"
+                                           title="Edit"
+                                           @click.stop="editItems(props.data.id)">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm pointer-all"
+                                           title="Delete"
+                                           @click.stop="deleteItems(props.data.id)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </div>
                                 </vs-td>
                             </template>
-                        </ow-data-table>
+                        </data-table-final>
                     </div>
                 </div>
 
@@ -190,6 +230,16 @@
                 createFeesHead: true,
                 importFeesHead: false
             }
+        },
+        methods:{
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
+            },
         }
     }
 </script>

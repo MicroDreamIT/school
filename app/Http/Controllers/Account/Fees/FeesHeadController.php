@@ -26,7 +26,7 @@ class FeesHeadController extends CollegeBaseController
         $data = [];
         $data['fees_head'] = FeeHead::orderBy('fee_head_title','asc')->get();
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -35,8 +35,7 @@ class FeesHeadController extends CollegeBaseController
 
         $faculty = FeeHead::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -48,7 +47,8 @@ class FeesHeadController extends CollegeBaseController
         $data['fees_head'] = FeeHead::select('id', 'fee_head_title', 'status')->orderBy('fee_head_title','asc')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -58,8 +58,7 @@ class FeesHeadController extends CollegeBaseController
         $request->request->add(['last_updated_by' => auth()->user()->id]);
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -67,8 +66,8 @@ class FeesHeadController extends CollegeBaseController
         if (!$row = FeeHead::find($id)) return parent::invalidRequest();
 
         $row->delete();
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -94,15 +93,14 @@ class FeesHeadController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
+
             }
 
         } else return parent::invalidRequest();
@@ -117,8 +115,7 @@ class FeesHeadController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->faculty.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -129,8 +126,7 @@ class FeesHeadController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->faculty.' '.$this->panel.' In-Active Successfully.']);
     }
 
 
@@ -180,7 +176,6 @@ class FeesHeadController extends CollegeBaseController
 
         }
 
-        $request->session()->flash($this->message_success,'Fee Head imported Successfully');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', 'Fee Head imported Successfully']);
     }
 }

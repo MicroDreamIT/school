@@ -569,3 +569,155 @@ Route::group(['prefix' => 'transport/', 'as' => 'transport', 'namespace' => 'Tra
     Route::post('find-vehicles', ['as' => '.find-vehicles', 'uses' => 'TransportUserController@findVehicles']);
 
 });
+
+/*Accounting Grouping*/
+Route::group(['prefix' => 'account/', 'as' => 'account.', 'namespace' => 'Account\\'], function () {
+    /*Fees Group*/
+
+    /*Balance Fees*/
+    Route::get('fees/', ['as' => 'fees', 'middleware' => ['ability:super-admin,fees-index'], 'uses' => 'Fees\FeesBaseController@index']);
+    Route::get('fees/balance', ['as' => 'fees.balance', 'middleware' => ['ability:super-admin,fees-balance'], 'uses' => 'Fees\FeesBaseController@balance']);
+
+    /*Fee Head*/
+    Route::get('fees/head', ['as' => 'fees.head', 'middleware' => ['ability:super-admin,fees-head-index'], 'uses' => 'Fees\FeesHeadController@index']);
+    Route::post('fees/head/store', ['as' => 'fees.head.store', 'middleware' => ['ability:super-admin,fees-head-add'], 'uses' => 'Fees\FeesHeadController@store']);
+    Route::get('fees/head/{id}/edit', ['as' => 'fees.head.edit', 'middleware' => ['ability:super-admin,fees-head-edit'], 'uses' => 'Fees\FeesHeadController@edit']);
+    Route::post('fees/head/{id}/update', ['as' => 'fees.head.update', 'middleware' => ['ability:super-admin,fees-head-edit'], 'uses' => 'Fees\FeesHeadController@update']);
+    Route::get('fees/head/{id}/delete', ['as' => 'fees.head.delete', 'middleware' => ['ability:super-admin,fees-head-delete'], 'uses' => 'Fees\FeesHeadController@delete']);
+    Route::get('fees/head/{id}/active', ['as' => 'fees.head.active', 'middleware' => ['ability:super-admin,fees-head-active'], 'uses' => 'Fees\FeesHeadController@Active']);
+    Route::get('fees/head/{id}/in-active', ['as' => 'fees.head.in-active', 'middleware' => ['ability:super-admin,fees-head-in-active'], 'uses' => 'Fees\FeesHeadController@inActive']);
+    Route::post('fees/head/bulk-action', ['as' => 'fees.head.bulk-action', 'middleware' => ['ability:super-admin,fees-head-bulk-action'], 'uses' => 'Fees\FeesHeadController@bulkAction']);
+
+    Route::post('fees/head/import', ['as' => 'fees.head.bulk.import', 'middleware' => ['ability:super-admin,fees-head-add'], 'uses' => 'Fees\FeesHeadController@handleImportFeeHead']);
+
+    /*Fee Master*/
+    Route::get('fees/master', ['as' => 'fees.master', 'middleware' => ['ability:super-admin,fees-master-index'], 'uses' => 'Fees\FeesMasterController@index']);
+    Route::get('fees/master/add', ['as' => 'fees.master.add', 'middleware' => ['ability:super-admin,fees-master-add'], 'uses' => 'Fees\FeesMasterController@add']);
+    Route::post('fees/master/store', ['as' => 'fees.master.store', 'middleware' => ['ability:super-admin,fees-master-add'], 'uses' => 'Fees\FeesMasterController@store']);
+    Route::get('fees/master/{id}/edit', ['as' => 'fees.master.edit', 'middleware' => ['ability:super-admin,fees-master-edit'], 'uses' => 'Fees\FeesMasterController@edit']);
+    Route::post('fees/master/{id}/update', ['as' => 'fees.master.update', 'middleware' => ['ability:super-admin,fees-master-edit'], 'uses' => 'Fees\FeesMasterController@update']);
+    Route::get('fees/master/{id}/delete', ['as' => 'fees.master.delete', 'middleware' => ['ability:super-admin,fees-master-delete'], 'uses' => 'Fees\FeesMasterController@delete']);
+    Route::post('fees/master/bulk-action', ['as' => 'fees.master.bulk-action', 'middleware' => ['ability:super-admin,fees-master-bulk-action'], 'uses' => 'Fees\FeesMasterController@bulkAction']);
+    Route::get('fees/master/{id}/active', ['as' => 'fees.master.active', 'middleware' => ['ability:super-admin,fees-master-active'], 'uses' => 'Fees\FeesMasterController@Active']);
+    Route::get('fees/master/{id}/in-active', ['as' => 'fees.master.in-active', 'middleware' => ['ability:super-admin,fees-master-in-active'], 'uses' => 'Fees\FeesMasterController@inActive']);
+    Route::post('fees/master/fee-html', ['as' => 'fees.master.fee-html', 'uses' => 'Fees\FeesMasterController@feeHtmlRow']);
+
+    /*Quick Fee Receive */
+    Route::get('fees/quick-receive', ['as' => 'fees.quick-receive', 'middleware' => ['ability:super-admin,fees-quick-receive-add'], 'uses' => 'Fees\FeesCollectionController@quickReceive']);
+    Route::post('fees/quick-receive/store', ['as' => 'fees.quick-receive.store', 'middleware' => ['ability:super-admin,fees-quick-receive-add'], 'uses' => 'Fees\FeesCollectionController@quickReceiveStore']);
+    Route::post('student-detail-html', ['as' => 'student-detail-html', 'uses' => 'Fees\FeesCollectionController@studentDetail']);
+
+    /*Collect Fee */
+    Route::get('fees/collection', ['as' => 'fees.collection', 'middleware' => ['ability:super-admin,fees-collection-index'], 'uses' => 'Fees\FeesCollectionController@index']);
+    Route::get('fees/collection/{id}/add', ['as' => 'fees.collection.add', 'middleware' => ['ability:super-admin,fees-collection-add'], 'uses' => 'Fees\FeesCollectionController@add']);
+    Route::post('fees/collection/store', ['as' => 'fees.collection.store', 'middleware' => ['ability:super-admin,fees-collection-add'], 'uses' => 'Fees\FeesCollectionController@store']);
+    Route::get('fees/collection/{id}/view', ['as' => 'fees.collection.view', 'middleware' => ['ability:super-admin,fees-collection-view'], 'uses' => 'Fees\FeesCollectionController@view']);
+    Route::get('fees/collection/{id}/delete', ['as' => 'fees.collection.delete', 'middleware' => ['ability:super-admin,fees-collection-delete'], 'uses' => 'Fees\FeesCollectionController@delete']);
+
+    /*online payment*/
+    //stripe
+    Route::post('fees/pay-with-stripe', ['as' => 'fees.stripePayment', 'uses' => 'Fees\Payment\StripePaymentController@stripePayment']);
+
+    //Route::get('fees/pay-with-instamojo/index',             ['as' => 'fees.instamojoPayment.index',                         'uses' => 'Fees\Payment\InstamojoPaymentController@index']);
+    Route::post('fees/pay-with-instamojo/index', ['as' => 'fees.instamojoPayment.index', 'uses' => 'Fees\Payment\InstamojoPaymentController@index']);
+    Route::post('fees/pay-with-instamojo/pay', ['as' => 'fees.instamojoPayment.pay', 'uses' => 'Fees\Payment\InstamojoPaymentController@pay']);
+    Route::get('fees/pay-with-instamojo/pay-success', ['as' => 'fees.instamojoPayment.success', 'uses' => 'Fees\Payment\InstamojoPaymentController@success']);
+
+    //Route::post('fees/online-payment',                  ['as' => 'fees.online-payment',                'uses' => 'Fees\OnlinePaymentController@paymentProcessed']);
+    //Route::post('fees/pay-with-stripe',               ['as' => 'fees.stripePayment',                 'middleware' => ['ability:super-admin,fees-payment-stripe-payment'],     'uses' => 'Fees\Payment\StripePaymentController@stripePayment']);
+
+    Route::post('fees/payumoney-form', ['as' => 'fees.payumoney-form', 'uses' => 'Fees\Payment\PayumoneyPaymentController@payumoneyForm']);
+    Route::post('fees/pay-with-payumoney/success', ['as' => 'fees.payumoney.success', 'uses' => 'Fees\Payment\PayumoneyPaymentController@payumoneyPaymentSuccess']);
+    Route::post('fees/pay-with-payumoney/failure', ['as' => 'fees.payumoney.failure', 'uses' => 'Fees\Payment\PayumoneyPaymentController@payumoneyPaymentFailure']);
+
+
+    //Route::post('fees/pay-with-khalti',               ['as' => 'fees.khaltiPayment',                 'middleware' => ['ability:super-admin,fees-payment-khalti-payment'],     'uses' => 'Fees\FeesCollectionController@khaltiPayment']);
+
+    //Route::post('fees/pesapal-form',                 ['as' => 'fees.pesapal-form',                      'middleware' => ['ability:super-admin,fees-payment-pesapal'],              'uses' => 'Fees\Payment\PesapalPaymentController@pesapalForm']);
+    //Route::post('fees/pay-with-pesapal',             ['as' => 'fees.pesapal',                           'middleware' => ['ability:super-admin,fees-payment-pesapal'],             'uses' => 'Fees\Payment\PesapalPaymentController@payment']);
+    //Route::get('fees/pesapal/donepayment',           ['as' => 'fees.pesapal.paymentsuccess',            'middleware' => ['ability:super-admin,fees-payment-pesapal'],             'uses' => 'Fees\Payment\PesapalPaymentController@paymentsuccess']);
+    //Route::get('fees/pesapal/paymentconfirmation',   ['as' => 'fees.pesapal.paymentconfirmation',       'middleware' => ['ability:super-admin,fees-payment-pesapal'],             'uses' => 'Fees\Payment\PesapalPaymentController@paymentconfirmation']);
+
+    /*Payroll Group*/
+    /*Balance Payroll*/
+    Route::get('payroll/', ['as' => 'payroll', 'middleware' => ['ability:super-admin,payroll-index'], 'uses' => 'Payroll\PayrollBaseController@index']);
+    Route::get('payroll/balance', ['as' => 'payroll.balance', 'middleware' => ['ability:super-admin,payroll-balance'], 'uses' => 'Payroll\PayrollBaseController@balance']);
+
+    /*Payroll Head*/
+    Route::get('payroll/head', ['as' => 'payroll.head', 'middleware' => ['ability:super-admin,payroll-head-index'], 'uses' => 'Payroll\PayrollHeadController@index']);
+    Route::post('payroll/head/store', ['as' => 'payroll.head.store', 'middleware' => ['ability:super-admin,payroll-head-add'], 'uses' => 'Payroll\PayrollHeadController@store']);
+    Route::get('payroll/head/{id}/edit', ['as' => 'payroll.head.edit', 'middleware' => ['ability:super-admin,payroll-head-edit'], 'uses' => 'Payroll\PayrollHeadController@edit']);
+    Route::post('payroll/head/{id}/update', ['as' => 'payroll.head.update', 'middleware' => ['ability:super-admin,payroll-head-edit'], 'uses' => 'Payroll\PayrollHeadController@update']);
+    Route::get('payroll/head/{id}/delete', ['as' => 'payroll.head.delete', 'middleware' => ['ability:super-admin,payroll-head-delete'], 'uses' => 'Payroll\PayrollHeadController@delete']);
+    Route::get('payroll/head/{id}/active', ['as' => 'payroll.head.active', 'middleware' => ['ability:super-admin,payroll-head-active'], 'uses' => 'Payroll\PayrollHeadController@Active']);
+    Route::get('payroll/head/{id}/in-active', ['as' => 'payroll.head.in-active', 'middleware' => ['ability:super-admin,payroll-head-in-active'], 'uses' => 'Payroll\PayrollHeadController@inActive']);
+    Route::post('payroll/head/bulk-action', ['as' => 'payroll.head.bulk-action', 'middleware' => ['ability:super-admin,payroll-head-bulk-action'], 'uses' => 'Payroll\PayrollHeadController@bulkAction']);
+
+    /*Payroll Master*/
+    Route::get('payroll/master', ['as' => 'payroll.master', 'middleware' => ['ability:super-admin,payroll-master-index'], 'uses' => 'Payroll\PayrollMasterController@index']);
+    Route::get('payroll/master/add', ['as' => 'payroll.master.add', 'middleware' => ['ability:super-admin,payroll-master-add'], 'uses' => 'Payroll\PayrollMasterController@add']);
+    Route::post('payroll/master/store', ['as' => 'payroll.master.store', 'middleware' => ['ability:super-admin,payroll-master-add'], 'uses' => 'Payroll\PayrollMasterController@store']);
+    Route::get('payroll/master/{id}/edit', ['as' => 'payroll.master.edit', 'middleware' => ['ability:super-admin,payroll-master-edit'], 'uses' => 'Payroll\PayrollMasterController@edit']);
+    Route::post('payroll/master/{id}/update', ['as' => 'payroll.master.update', 'middleware' => ['ability:super-admin,payroll-master-edit'], 'uses' => 'Payroll\PayrollMasterController@update']);
+    Route::get('payroll/master/{id}/delete', ['as' => 'payroll.master.delete', 'middleware' => ['ability:super-admin,payroll-master-delete'], 'uses' => 'Payroll\PayrollMasterController@delete']);
+    Route::post('payroll/master/bulk-action', ['as' => 'payroll.master.bulk-action', 'middleware' => ['ability:super-admin,payroll-master-bulk-action'], 'uses' => 'Payroll\PayrollMasterController@bulkAction']);
+    Route::get('payroll/master/{id}/active', ['as' => 'payroll.master.active', 'middleware' => ['ability:super-admin,payroll-master-active'], 'uses' => 'Payroll\PayrollMasterController@Active']);
+    Route::get('payroll/master/{id}/in-active', ['as' => 'payroll.master.in-active', 'middleware' => ['ability:super-admin,payroll-master-in-active'], 'uses' => 'Payroll\PayrollMasterController@inActive']);
+    Route::post('payroll/master/payroll-html', ['as' => 'payroll.master.payroll-html', 'uses' => 'Payroll\PayrollMasterController@payrollHtmlRow']);
+
+    /*Pay Salary*/
+    Route::get('salary/payment', ['as' => 'salary.payment', 'middleware' => ['ability:super-admin,salary-payment-index'], 'uses' => 'Payroll\SalaryPayController@index']);
+    Route::get('salary/payment/{id}/add', ['as' => 'salary.payment.add', 'middleware' => ['ability:super-admin,salary-payment-add'], 'uses' => 'Payroll\SalaryPayController@add']);
+    Route::post('salary/payment/store', ['as' => 'salary.payment.store', 'middleware' => ['ability:super-admin,salary-payment-add'], 'uses' => 'Payroll\SalaryPayController@store']);
+    Route::get('salary/payment/{id}/view', ['as' => 'salary.payment.view', 'middleware' => ['ability:super-admin,salary-payment-view'], 'uses' => 'Payroll\SalaryPayController@view']);
+    Route::get('salary/payment/{id}/delete', ['as' => 'salary.payment.delete', 'middleware' => ['ability:super-admin,salary-payment-delete'], 'uses' => 'Payroll\SalaryPayController@delete']);
+
+    /*Transaction Head*/
+    Route::get('transaction-head', ['as' => 'transaction-head', 'middleware' => ['ability:super-admin,transaction-head-index'], 'uses' => 'Transaction\TransactionHeadController@index']);
+    Route::post('transaction-head/store', ['as' => 'transaction-head.store', 'middleware' => ['ability:super-admin,transaction-head-add'], 'uses' => 'Transaction\TransactionHeadController@store']);
+    Route::get('transaction-head/{id}/edit', ['as' => 'transaction-head.edit', 'middleware' => ['ability:super-admin,transaction-head-edit'], 'uses' => 'Transaction\TransactionHeadController@edit']);
+    Route::post('transaction-head/{id}/update', ['as' => 'transaction-head.update', 'middleware' => ['ability:super-admin,transaction-head-edit'], 'uses' => 'Transaction\TransactionHeadController@update']);
+    Route::get('transaction-head/{id}/view', ['as' => 'transaction-head.view', 'middleware' => ['ability:super-admin,transaction-head-view'], 'uses' => 'Transaction\TransactionHeadController@view']);
+    Route::get('transaction-head/{id}/delete', ['as' => 'transaction-head.delete', 'middleware' => ['ability:super-admin,transaction-head-delete'], 'uses' => 'Transaction\TransactionHeadController@delete']);
+    Route::get('transaction-head/{id}/active', ['as' => 'transaction-head.active', 'middleware' => ['ability:super-admin,transaction-head-active'], 'uses' => 'Transaction\TransactionHeadController@Active']);
+    Route::get('transaction-head/{id}/in-active', ['as' => 'transaction-head.in-active', 'middleware' => ['ability:super-admin,transaction-head-in-active'], 'uses' => 'Transaction\TransactionHeadController@inActive']);
+    Route::post('transaction-head/bulk-action', ['as' => 'transaction-head.bulk-action', 'middleware' => ['ability:super-admin,transaction-head-bulk-action'], 'uses' => 'Transaction\TransactionHeadController@bulkAction']);
+
+    /*Transaction*/
+    Route::get('transaction', ['as' => 'transaction', 'middleware' => ['ability:super-admin,transaction-index'], 'uses' => 'Transaction\TransactionController@index']);
+    Route::get('transaction/add', ['as' => 'transaction.add', 'middleware' => ['ability:super-admin,transaction-add'], 'uses' => 'Transaction\TransactionController@add']);
+    Route::post('transaction/store', ['as' => 'transaction.store', 'middleware' => ['ability:super-admin,transaction-add'], 'uses' => 'Transaction\TransactionController@store']);
+    Route::get('transaction/{id}/edit', ['as' => 'transaction.edit', 'middleware' => ['ability:super-admin,transaction-edit'], 'uses' => 'Transaction\TransactionController@edit']);
+    Route::post('transaction/{id}/update', ['as' => 'transaction.update', 'middleware' => ['ability:super-admin,transaction-edit'], 'uses' => 'Transaction\TransactionController@update']);
+    Route::get('transaction/{id}/delete', ['as' => 'transaction.delete', 'middleware' => ['ability:super-admin,transaction-delete'], 'uses' => 'Transaction\TransactionController@delete']);
+    Route::post('transaction/bulk-action', ['as' => 'transaction.bulk-action', 'middleware' => ['ability:super-admin,transaction-bulk-action'], 'uses' => 'Transaction\TransactionController@bulkAction']);
+    Route::get('transaction/{id}/active', ['as' => 'transaction.active', 'middleware' => ['ability:super-admin,transaction-active'], 'uses' => 'Transaction\TransactionController@Active']);
+    Route::get('transaction/{id}/in-active', ['as' => 'transaction.in-active', 'middleware' => ['ability:super-admin,transaction-in-active'], 'uses' => 'Transaction\TransactionController@inActive']);
+    Route::post('transaction/tr-html', ['as' => 'transaction.tr-html', 'uses' => 'Transaction\TransactionController@trHtmlRow']);
+
+    /*Bank */
+    Route::get('bank', ['as' => 'bank', 'middleware' => ['ability:super-admin,bank-index'], 'uses' => 'Bank\BankController@index']);
+    Route::get('bank/add', ['as' => 'bank.add', 'middleware' => ['ability:super-admin,bank-add'], 'uses' => 'Bank\BankController@add']);
+    Route::post('bank/store', ['as' => 'bank.store', 'middleware' => ['ability:super-admin,bank-add'], 'uses' => 'Bank\BankController@store']);
+    Route::get('bank/{id}/edit', ['as' => 'bank.edit', 'middleware' => ['ability:super-admin,bank-edit'], 'uses' => 'Bank\BankController@edit']);
+    Route::post('bank/{id}/update', ['as' => 'bank.update', 'middleware' => ['ability:super-admin,bank-edit'], 'uses' => 'Bank\BankController@update']);
+    Route::get('bank/{id}/view', ['as' => 'bank.view', 'middleware' => ['ability:super-admin,bank-view'], 'uses' => 'Bank\BankController@view']);
+    Route::get('bank/{id}/delete', ['as' => 'bank.delete', 'middleware' => ['ability:super-admin,bank-delete'], 'uses' => 'Bank\BankController@delete']);
+    Route::post('bank/bulk-action', ['as' => 'bank.bulk-action', 'middleware' => ['ability:super-admin,bank-bulk-action'], 'uses' => 'Bank\BankController@bulkAction']);
+    Route::get('bank/{id}/active', ['as' => 'bank.active', 'middleware' => ['ability:super-admin,bank-active'], 'uses' => 'Bank\BankController@Active']);
+    Route::get('bank/{id}/in-active', ['as' => 'bank.in-active', 'middleware' => ['ability:super-admin,bank-in-active'], 'uses' => 'Bank\BankController@inActive']);
+
+    /*Bank */
+    Route::get('bank-transaction', ['as' => 'bank-transaction', 'middleware' => ['ability:super-admin,bank-transaction-index'], 'uses' => 'Bank\BankTrController@index']);
+    Route::get('bank-transaction/add', ['as' => 'bank-transaction.add', 'middleware' => ['ability:super-admin,bank-transaction-add'], 'uses' => 'Bank\BankTrController@add']);
+    Route::post('bank-transaction/store', ['as' => 'bank-transaction.store', 'middleware' => ['ability:super-admin,bank-transaction-add'], 'uses' => 'Bank\BankTrController@store']);
+    Route::get('bank-transaction/{id}/delete', ['as' => 'bank-transaction.delete', 'middleware' => ['ability:super-admin,bank-transaction-delete'], 'uses' => 'Bank\BankTrController@delete']);
+    Route::post('bank-transaction/bulk-action', ['as' => 'bank-transaction.bulk-action', 'middleware' => ['ability:super-admin,bank-transaction-bulk-action'], 'uses' => 'Bank\BankTrController@bulkAction']);
+
+
+    /*Account Report*/
+    Route::get('report/cash-book', ['as' => 'report.cash-book', 'middleware' => ['ability:super-admin,report-cash-book'], 'uses' => 'Report\CashBookReportController@cashBook']);
+    Route::get('report/fee-collection', ['as' => 'report.fee-collection', 'middleware' => ['ability:super-admin,report-fee-collection'], 'uses' => 'Report\FeeCollectionReportController@feecollection']);
+    Route::get('report/fee-collection-head', ['as' => 'report.fee-collection-head', 'middleware' => ['ability:super-admin,report-fee-collection-head'], 'uses' => 'Report\FeeCollectionHeadReportController@feeCollectionHead']);
+
+});

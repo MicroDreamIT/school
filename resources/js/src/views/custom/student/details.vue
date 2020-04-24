@@ -36,7 +36,7 @@
                            <hostel v-else-if="currentView=='hostel'"/>
                            <transport v-else-if="currentView=='transport'"/>
                            <docs v-else-if="currentView=='docs'"/>
-                           <notes v-else-if="currentView=='notes'"/>
+                           <notes v-else-if="currentView=='notes'" :note="datas.note" />
                            <login-access v-if="currentView=='login_access'"
                                          @getData="getData()"
                                          :item="datas" />

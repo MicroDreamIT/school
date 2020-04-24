@@ -94,7 +94,9 @@
                                    type="filled"
                                    class="my-round"
                                    @click="createFeesHead=true,
-                                       importFeesHead=false">Create
+                                       importFeesHead=false,
+                                       resetting()">
+                            Create
                         </vs-button>
                         <vs-button color="#00b8cf"
                                    type="filled"
@@ -120,6 +122,7 @@
                             <vs-divider></vs-divider>
                             <vs-button color="warning"
                                        type="filled"
+                                       @click="resetting()"
                                        class="my-round">Reset
                             </vs-button>
                             <vs-button color="#00b8cf"
@@ -217,6 +220,12 @@
             }
         },
         methods:{
+            resetting(){
+                this.fee={}
+                this.fee_head.fee_head_amount=''
+                this.fee_head.fee_head_title=''
+                this.buttonText = 'create'
+            },
             editItems(id){
                 this.$refs['fee_form'].$el.querySelector('input').focus()
 
@@ -253,10 +262,7 @@
                             })
 
                             this.$refs.fees_head.getData()
-                            this.fee={}
-                            this.fee_head.fee_head_amount=''
-                            this.fee_head.fee_head_title=''
-
+                            this.resetting()
                         }
                     })
                     .catch(err => {

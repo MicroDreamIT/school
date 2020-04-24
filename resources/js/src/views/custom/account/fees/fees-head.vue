@@ -138,56 +138,27 @@
 
                     </div>
                     <div class="col-md-8">
-                        <data-table-final :headers="headers"
+                        <data-table-final :headers="tableHeader"
                                           :tableHeader="'Route List'"
                                           :suggestText="'Route Record list on table. Filter room type using the filter.'"
                                           :url="'/json/account/fees/head'"
-                                          :model="'route'"
+                                          :model="'feehead'"
                                           :noDataMessage="'No Route data found. Please Filter room type to show.'"
                                           :hasSearch="true"
                                           :has-multiple="true"
                                           :has-pagination="true"
                                           :filterSection="true"
                                           ref="dataTableRoute"
-                                          :ajaxVariableSet="['route']"
+                                          :ajaxVariableSet="['fees_head']"
                                           @get-return-value="GetReturnValue"
                                           :showAction="false"
                         >
                             <template slot="items" slot-scope="props">
-                                <vs-td>
-                                    <table>
-                                        <tr>
-                                            <th>title:</th>
-                                            <td>{{props.data.title}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>rent:</th>
-                                            <td>{{props.data.rent}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>description:</th>
-                                            <td>{{props.data.description}}</td>
-                                        </tr>
-                                    </table>
+                                <vs-td :data="props.data.fee_head_title">
+                                    {{props.data.fee_head_title}}
                                 </vs-td>
-                                <vs-td>
-                                    <table v-for="vehicle in props.data.vehicles">
-                                        <tr>
-                                            <th>number</th>
-                                            <td>{{vehicle.number}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>model</th>
-                                            <td>{{vehicle.model}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>type:</th>
-                                            <td>{{vehicle.type}}'</td>
-                                        </tr>
-                                        <tr>
-                                            <hr v-if="props.data.vehicles.length>0">
-                                        </tr>
-                                    </table>
+                                <vs-td :data="props.data.fee_head_amount">
+                                    {{props.data.fee_head_amount}}
                                 </vs-td>
                                 <vs-td :data="props.data.action">
                                     <div class="action-own">
@@ -221,10 +192,10 @@
         data() {
             return {
                 tableHeader: [
-                    {name: 'Email', field: 'email', sort_key: 'email'},
-                    {name: 'Name', field: 'name', sort_key: 'name'},
-                    {name: 'Mobile', field: 'mobile'},
-                    {name: 'PID'},
+                    {name: 'fee head', field: 'fee_head_title', sort_key: 'fee_head_title'},
+                    {name: 'amount', field: 'name', sort_key: 'name'},
+                    {name: 'Action', sort_key: ''},
+                    {name: 'status', field: 'status'},
                 ],
                 notification: '',
                 createFeesHead: true,
@@ -236,6 +207,8 @@
                 let val = arg.map(st => {
                     return {
                         id: st.id,
+                        fee_head_title:st.fee_head_title,
+                        fee_head_amount:st.fee_head_amount
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

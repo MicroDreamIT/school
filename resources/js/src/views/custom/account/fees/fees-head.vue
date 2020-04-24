@@ -105,11 +105,17 @@
                         <div v-if="createFeesHead">
                             <div class="form-group mt-3 ">
                                 <label class="col-sm-3">Head</label>
-                                <vs-input class="col-sm-12"></vs-input>
+                                <vs-input class="col-sm-12" ref="fee_form" v-model="fee_head.fee_head_title" :danger="error.fee_head_title!==undefined"/>
+                                <p v-if="error.fee_head_title!==undefined" class="text-danger">
+                                    {{ error.fee_head_title[0] }}
+                                </p>
                             </div>
                             <div class="form-group  mt-3 ">
                                 <label class="col-sm-3">Amount</label>
-                                <vs-input class="col-sm-12"></vs-input>
+                                <vs-input class="col-sm-12" v-model="fee_head.fee_head_amount" :danger="error.fee_head_amount!==undefined"/>
+                                <p v-if="error.fee_head_amount!==undefined" class="text-danger">
+                                    {{ error.fee_head_amount[0] }}
+                                </p>
                             </div>
                             <vs-divider></vs-divider>
                             <vs-button color="warning"
@@ -118,7 +124,9 @@
                             </vs-button>
                             <vs-button color="#00b8cf"
                                        type="filled"
-                                       class="my-round">Create
+                                       @click="posting"
+                                       class="my-round">
+                                {{buttonText}}
                             </vs-button>
                         </div>
                         <div v-if="importFeesHead">
@@ -148,7 +156,7 @@
                                           :has-multiple="true"
                                           :has-pagination="true"
                                           :filterSection="true"
-                                          ref="dataTableRoute"
+                                          ref="fees_head"
                                           :ajaxVariableSet="['fees_head']"
                                           @get-return-value="GetReturnValue"
                                           :showAction="false"
@@ -191,6 +199,10 @@
 
         data() {
             return {
+                fee_head:{
+                    fee_head_amount:'',
+                    fee_head_title:'',
+                },
                 tableHeader: [
                     {name: 'fee head', field: 'fee_head_title', sort_key: 'fee_head_title'},
                     {name: 'amount', field: 'name', sort_key: 'name'},
@@ -199,16 +211,71 @@
                 ],
                 notification: '',
                 createFeesHead: true,
-                importFeesHead: false
+                importFeesHead: false,
+                error:[],
+                buttonText:'create'
             }
         },
         methods:{
+            editItems(id){
+                this.$refs['fee_form'].$el.querySelector('input').focus()
+
+                this.$http.get('/json/account/fees/head/' + id + '/edit')
+                    .then(res=>{
+                        this.fee_head = res.data.row
+                        this.buttonText = 'Update'
+                    })
+                    .catch(err=>{
+
+                    })
+            },
+            deleteItems(id){
+                let confirms = confirm('are you sure?')
+                if(!confirms) return null
+                this.$http.get('/json/transport/vehicle' + '/' + id + '/delete')
+                    .then(res=>{
+                        this.$refs.dataTableVehicle.getData()
+                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
+                    })
+                    .catch(err=>{
+
+                    })
+            },
+            posting(){
+                let url =  this.fee_head.id!==undefined && this.fee_head.id
+                    ? '/json/account/fees/head/'+ this.fee_head.id +'/update'
+                    : '/json/account/fees/head/store'
+
+                this.$http.post(url, this.fee_head)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+
+                            this.$refs.fees_head.getData()
+                            this.fee={}
+                            this.fee_head.fee_head_amount=''
+                            this.fee_head.fee_head_title=''
+
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
+            },
             GetReturnValue(arg = null) {
                 let val = arg.map(st => {
                     return {
                         id: st.id,
                         fee_head_title:st.fee_head_title,
-                        fee_head_amount:st.fee_head_amount
+                        fee_head_amount:st.fee_head_amount,
+                        status:st.status
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

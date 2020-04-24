@@ -35,7 +35,7 @@
                            <certificate v-else-if="currentView=='certificate'"/>
                            <hostel v-else-if="currentView=='hostel'"/>
                            <transport v-else-if="currentView=='transport'"/>
-                           <docs v-else-if="currentView=='docs'"/>
+                           <docs v-else-if="currentView=='docs'" :doc="datas.document" :reg="datas.student.reg_no"/>
                            <notes v-else-if="currentView=='notes'" :note="datas.note" />
                            <login-access v-if="currentView=='login_access'"
                                          @getData="getData()"

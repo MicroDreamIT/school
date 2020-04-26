@@ -171,17 +171,14 @@ class FeesMasterController extends CollegeBaseController
                         ]);
                     }
                 }else {
-                    $request->session()->flash($this->message_warning, 'Please, Add Fee Master at least one row.');
-                    return redirect()->route($this->base_route);
+                    return response()->json(['warning', 'Please, Add Fee Master at least one row.']);
                 }
             }
         }else {
-            $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-            return redirect()->route($this->base_route);
+            return response()->json(['warning', 'Please, Check at least one row.']);
         }
 
-        $request->session()->flash($this->message_success, $this->panel. ' Add Successfully.');
-        return back();
+        return response()->json(['success', $this->panel. ' Add Successfully.']);
 
     }
 
@@ -203,7 +200,7 @@ class FeesMasterController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(Request $request, $id)
@@ -215,8 +212,7 @@ class FeesMasterController extends CollegeBaseController
             'fee_amount' => $request->get('fee_amount'),
             'last_updated_by' => auth()->user()->id,
         ]);
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$this->panel.' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -225,8 +221,7 @@ class FeesMasterController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->back();
+        return response()->json(['success',$this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -252,15 +247,13 @@ class FeesMasterController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success','Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning','Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -275,8 +268,7 @@ class FeesMasterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->faculty.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -287,8 +279,7 @@ class FeesMasterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success',$row->faculty.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function feeHtmlRow()

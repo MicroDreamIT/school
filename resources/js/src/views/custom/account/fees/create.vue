@@ -394,7 +394,10 @@
 
         methods: {
             getData() {
-
+                this.$http.get('/json/account/fees/master/add')
+                    .then(res=>{
+                        console.log(res.data)
+                    })
             },
             viewItems() {
                 alert("hey hasib im view ")

@@ -19,10 +19,6 @@ class FeesMasterController extends CollegeBaseController
     protected $panel = 'Fees Master';
     protected $filter_query = [];
 
-    public function __construct()
-    {
-
-    }
 
     public function index(Request $request)
     {

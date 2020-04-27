@@ -283,8 +283,9 @@
                                             </datepicker>
                                         </td>
                                         <td>
-                                            <v-select v-model="tr.fee_head" >
-                                            </v-select>
+                                            <select v-model="tr.fee_head" class="form-control">
+                                                <option :value="fee.id" v-for="fee in feeheads">{{fee.value}}</option>
+                                            </select>
                                         </td>
                                         <td>
 
@@ -378,6 +379,7 @@
                 selected: [],
                 notification2: true,
                 feeList: [],
+                feeheads:[],
                 dragging: false
 
             }
@@ -396,7 +398,7 @@
             getData() {
                 this.$http.get('/json/account/fees/master/add')
                     .then(res=>{
-                        console.log(res.data)
+                        this.feeheads = this.$root.objectToArray(res.data.fee_heads)
                     })
             },
             viewItems() {

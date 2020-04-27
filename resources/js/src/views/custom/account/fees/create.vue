@@ -125,23 +125,18 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Batch</label>
-                                                    <v-select :options="batch"
-                                                              v-model="searchData.batch">
-
-                                                    </v-select>
+                                                    <select v-model="searchData.batch" class="form-control">
+                                                        <option :value="batch.id" v-for="batch in batches">{{batch.value}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Academic Status:</label>
-                                                    <v-select v-model="searchData.academic_status"
-                                                              :options="academic_status"
-                                                              label="value"
-                                                              value="id"
-                                                              placeholder="Select Academic Status"
-                                                    >
-                                                    </v-select>
+                                                    <select v-model="searchData.academic_status" class="form-control">
+                                                        <option :value="as.id" v-for="as in academic_statuses">{{as.value}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -370,9 +365,10 @@
                     {name: 'Name of Student', sort_key: ''},
                 ],
                 searchData: {},
-                academic_status: [],
+                academic_statuses: [],
                 faculties: [],
-                batch: [],
+                facilities:[],
+                batches: [],
                 semester: [],
                 item: [],
                 mainItem: [],
@@ -391,14 +387,18 @@
 
         },
         created() {
-            this.getData()
+            this.onLoading()
         },
 
         methods: {
-            getData() {
+            onLoading() {
                 this.$http.get('/json/account/fees/master/add')
                     .then(res=>{
                         this.feeheads = this.$root.objectToArray(res.data.fee_heads)
+                        this.faculties = this.$root.objectToArray(res.data.faculties)
+                        this.facilities = this.$root.objectToArray(res.data.facility)
+                        this.batches = this.$root.objectToArray(res.data.batch)
+                        this.academic_statuses = this.$root.objectToArray(res.data.academic_status)
                     })
             },
             viewItems() {

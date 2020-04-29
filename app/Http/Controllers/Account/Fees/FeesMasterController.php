@@ -140,7 +140,7 @@ class FeesMasterController extends CollegeBaseController
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
         $data['fee_heads'] = $this->activeFeeHead();
-
+        $data['semester']=$this->activeSemester();
         $data['facility'] = ['0'=>'Select Facility','1'=>'Library','2'=>'Hostel','3'=>'Transport'];
 
         $data['url'] = URL::current();

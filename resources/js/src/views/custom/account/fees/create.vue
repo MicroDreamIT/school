@@ -142,11 +142,9 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Faculty/Class</label>
-                                                    <v-select v-model="searchData.faculties"
-                                                              :options="faculties"
-                                                              placeholder="Select Faculty/Class"
-                                                    >
-                                                    </v-select>
+                                                    <select v-model="searchData.faculties" class="form-control">
+                                                        <option :value="f.id" v-for="f in faculties">{{f.value}}</option>
+                                                    </select>
 
                                                 </div>
                                             </div>
@@ -200,17 +198,9 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Facility:</label>
-                                                    <v-select v-model="searchData.facility"
-                                                              :options="[
-															  		{value:'0',text:'Select Facility '},
-															  		{value:'1',text:'Library'},
-															  		{value:'2',text:'Hostel'},
-															  		{value:'3',text:'Transport'},
-															  ]"
-                                                              label="text"
-                                                    >
-
-                                                    </v-select>
+                                                    <select v-model="searchData.facility" class="form-control">
+                                                        <option :value="fa.id" v-for="fa in faculties">{{fa.value}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

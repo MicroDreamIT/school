@@ -151,13 +151,9 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Sem./Sec.</label>
-                                                    <v-select v-model="searchData.semester"
-                                                              :options="semester"
-                                                              label="value"
-                                                              value="id"
-                                                              placeholder="Select Sem./Sec."
-                                                    >
-                                                    </v-select>
+                                                    <select v-model="searchData.semester" class="form-control">
+                                                        <option :value="s.id" v-for="s in semesters">{{s.value}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -359,7 +355,7 @@
                 faculties: [],
                 facilities:[],
                 batches: [],
-                semester: [],
+                semesters: [],
                 item: [],
                 mainItem: [],
                 selected: [],
@@ -389,6 +385,7 @@
                         this.facilities = this.$root.objectToArray(res.data.facility)
                         this.batches = this.$root.objectToArray(res.data.batch)
                         this.academic_statuses = this.$root.objectToArray(res.data.academic_status)
+                        this.semesters = this.$root.objectToArray(res.data.semester)
                     })
             },
             viewItems() {

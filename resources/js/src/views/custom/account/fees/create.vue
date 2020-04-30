@@ -201,15 +201,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 mb-2 pl-0">
-                                        <vs-button type="filled"
-                                                   color="#00b8cf"
-                                                   icon="double_arrow"
-                                                   @click.prevent="doFilter"
-                                        >
-                                            Filter
-                                        </vs-button>
-                                    </div>
                                 </div>
                             </vs-collapse-item>
                         </vs-collapse>
@@ -258,10 +249,7 @@
                                         </td>
 
                                         <td>
-
-                                            <datepicker v-model="tr.due_date">
-
-                                            </datepicker>
+                                            <datepicker v-model="tr.due_date"></datepicker>
                                         </td>
                                         <td>
                                             <select v-model="tr.fee_head" class="form-control">
@@ -269,12 +257,9 @@
                                             </select>
                                         </td>
                                         <td>
-
                                             <vs-input v-model="tr.amount" type="number">
                                             </vs-input>
-
                                         </td>
-
                                         <td class="w-12">
                                             <vs-button class="rounded"
                                                        color="danger"
@@ -282,8 +267,6 @@
                                                 <i class="fa fa-trash"></i>
                                             </vs-button>
                                         </td>
-
-
                                     </tr>
                                 </draggable>
                             </table>
@@ -439,18 +422,6 @@
                         this.academic_statuses = this.$root.objectToArray(res.data.academic_status)
                         this.semesters = this.$root.objectToArray(res.data.semester)
                     })
-            },
-            viewItems() {
-                alert("hey hasib im view ")
-            },
-            editItems() {
-                alert("hey hasib im edit ")
-            },
-            deleteItems() {
-                alert("hey hasib im delete ")
-            },
-            doFilter() {
-
             },
             addRow() {
                 this.feeList.push({

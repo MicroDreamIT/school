@@ -216,7 +216,7 @@
                             after that you will change manually.
 
                         </vs-alert>
-                        <div class="table-responsive mt-4 " :style="feeList.length>0?'padding-bottom: 300px;':''">
+                        <div class="table-responsive mt-4 " :style="fee_head.length>0?'padding-bottom: 300px;':''">
                             <table class="table  table-striped fees-sort-table">
                                 <thead>
                                 <tr>
@@ -428,14 +428,14 @@
                     })
             },
             addRow() {
-                this.feeList.push({
+                this.fee_head.push({
                     due_date: '',
                     fee_head: null,
                     amount: null,
                 })
             },
             removeList(idx) {
-                this.feeList.splice(idx, 1)
+                this.fee_head.splice(idx, 1)
             },
 
         }

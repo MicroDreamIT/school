@@ -304,34 +304,49 @@
                             Fees Master Record list on table. Filter Fees Master using the filter.
                         </div>
                     </div>
-                    <vs-table
-                            v-model="selected"
-                            pagination
-                            :multiple="true"
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            :noDataText="'No Student data found. Please Filter Student to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="feesHeader"
+                                      :tableHeader="'Student List'"
+                                      :suggestText="'Student Record list on table. Filter history using the filter.'"
+                                      :url="'/json/account/fees/master/add'"
+                                      :model="'vehicle'"
+                                      :noDataMessage="'No Student data found. Please Filter history to show.'"
+                                      :hasSearch="true"
+                                      :searchData="searchData"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      ref="dataTableStudent"
+                                      :ajaxVariableSet="['student']"
+                                      @get-return-value="GetReturnValue"
+                                      :showAction="false"
+                                      :showStatus="false"
                     >
-
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in feesHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.faculty">
+                                {{props.data.faculty}}
+                            </vs-td>
+                            <vs-td :data="props.data.semester">
+                                {{props.data.semester}}
+                            </vs-td>
+                            <vs-td :data="props.data.reg_no">
+                                {{props.data.reg_no}}
+                            </vs-td>
+                            <vs-td :data="props.data.fullname">
+                                {{props.data.fullname}}
+                            </vs-td>
+                            <vs-td :data="props.data.academic_status_data">
+                                {{props.data.academic_status_data}}
+                            </vs-td>
+                            <vs-td>
+                                <a class="btn btn-primary btn-sm pointer-all"
+                                   title="View"
+                                   @click.stop="viewStudent(props.data.id)"
+                                >
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -345,10 +360,12 @@
         data() {
             return {
                 feesHeader: [
-                    {name: 'Faculty/Class.', sort_key: 'reg_no'},
-                    {name: 'Sem/Sec', sort_key: ''},
-                    {name: 'Reg.Num.', sort_key: ''},
-                    {name: 'Name of Student', sort_key: ''},
+                    {name: 'Faculty/Class.', sort_key: 'faculty'},
+                    {name: 'Sem/Sec', sort_key: 'semester'},
+                    {name: 'Reg.Num.', sort_key: 'reg_no'},
+                    {name: 'Name of Student', sort_key: 'fullname'},
+                    {name: 'admission Status', sort_key: 'academic_status_data'},
+                    {name:'action'}
                 ],
                 searchData: {},
                 academic_statuses: [],
@@ -381,11 +398,29 @@
                 deep:true,
                 handler(val){
                     console.log(val)
+                    this.$refs.dataTableStudent.getData()
                 }
             }
         },
 
         methods: {
+            viewStudent(id){
+                console.log(id)
+            },
+            GetReturnValue(arg = null){
+                console.log(arg)
+                let val =  arg.map(st => {
+                    return{
+                        id:st.id,
+                        faculty:st.faculty_data.faculty,
+                        semester:st.semester_data.semester,
+                        fullname:st.fullname,
+                        reg_no:st.reg_no,
+                        academic_status_data:st.academic_status_data.title
+                    }
+                });
+                this.$store.dispatch('updateTableData',val)
+            },
             onLoading() {
                 this.$http.get('/json/account/fees/master/add')
                     .then(res=>{

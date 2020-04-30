@@ -218,6 +218,9 @@ new Vue({
             let data =  moment(event).format('YYYY-MM-DD');
             return data;
         },
+        formatDatePickerToComma(val){
+            return moment(val).format('d MMM, YYYY')
+        },
         mysqlDatetime(val){
             return moment(val).format('YYYY-MM-DD HH:mm:ss')
         },

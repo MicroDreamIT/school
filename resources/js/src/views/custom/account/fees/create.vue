@@ -114,10 +114,10 @@
                                                 <div class="form-group">
                                                     <label>Reg Date From</label>
                                                     <div class="d-flex justify-content-between">
-                                                        <datepicker v-model="searchData.fromRegDate"
-                                                                    class="flex-1"></datepicker>
+                                                        <datepicker v-model="searchData.reg_start_date"
+                                                                    class="flex-1" :format="$root.formatDatePickerToComma"></datepicker>
                                                         <label>To:</label>
-                                                        <datepicker v-model="searchData.toRegDate" class="flex-1">
+                                                        <datepicker v-model="searchData.reg_start_end" class="flex-1">
                                                         </datepicker>
                                                     </div>
                                                 </div>
@@ -151,7 +151,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Sem./Sec.</label>
-                                                    <select v-model="searchData.semester" class="form-control">
+                                                    <select v-model="searchData.semester_select" class="form-control">
                                                         <option :value="s.id" v-for="s in semesters">{{s.value}}</option>
                                                     </select>
                                                 </div>
@@ -195,7 +195,7 @@
                                                 <div class="form-group">
                                                     <label>Facility:</label>
                                                     <select v-model="searchData.facility" class="form-control">
-                                                        <option :value="fa.id" v-for="fa in faculties">{{fa.value}}</option>
+                                                        <option :value="fa.id" v-for="fa in facilities">{{fa.value}}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -355,6 +355,8 @@
 </template>
 
 <script>
+    import moment from 'moment'
+
     export default {
 
         data() {
@@ -398,6 +400,12 @@
                 deep:true,
                 handler(val){
                     console.log(val)
+                    if(val.reg_start_date!==undefined && val.reg_start_date){
+                        val.reg_start_date = moment(val).format('d MMM, YYYY')
+                    }
+                    if(val.reg_end_date!==undefined && val.reg_end_date){
+                        val.reg_end_date = moment(val).format('d MMM, YYYY')
+                    }
                     this.$refs.dataTableStudent.getData()
                 }
             }

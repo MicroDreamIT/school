@@ -151,6 +151,7 @@ class FeesMasterController extends CollegeBaseController
 
     public function store(Request $request)
     {
+        dd($request->all());
         if ($request->has('chkIds')) {
             foreach ($request->get('chkIds') as $row_id) {
                 $row = Student::find($row_id);

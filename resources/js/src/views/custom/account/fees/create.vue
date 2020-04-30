@@ -240,8 +240,8 @@
                                 </tr>
 
                                 </thead>
-                                <draggable v-model="feeList" tag="tbody">
-                                    <tr :key="i" v-for="(tr, i) in feeList">
+                                <draggable v-model="fee_head" tag="tbody">
+                                    <tr :key="i" v-for="(tr, i) in fee_head">
                                         <td class="w-12">
                                             <vs-button class="my-round">
                                                 <i class="fa fa-arrows"></i>
@@ -274,7 +274,7 @@
                         <vs-divider></vs-divider>
                         <div>
                             <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2">Add Fee</vs-button>
+                            <vs-button class="my-round mx-2" @click="postFee()">Add Fee</vs-button>
                         </div>
 
                     </div>
@@ -363,6 +363,7 @@
                 selected: [],
                 notification2: true,
                 feeList: [],
+                fee_head:[],
                 feeheads:[],
                 dragging: false
 
@@ -395,6 +396,9 @@
         },
 
         methods: {
+            postFee(){
+
+            },
             viewStudent(id){
                 console.log(id)
             },

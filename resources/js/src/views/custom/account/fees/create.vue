@@ -376,6 +376,15 @@
             this.onLoading()
         },
 
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    console.log(val)
+                }
+            }
+        },
+
         methods: {
             onLoading() {
                 this.$http.get('/json/account/fees/master/add')

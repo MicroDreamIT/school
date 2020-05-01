@@ -115,7 +115,8 @@
                                                     <label>Reg Date From</label>
                                                     <div class="d-flex justify-content-between">
                                                         <datepicker v-model="searchData.reg_start_date"
-                                                                    class="flex-1" :format="$root.formatDatePickerToComma"></datepicker>
+                                                                    class="flex-1"
+                                                                    :format="$root.formatDatePickerToComma"></datepicker>
                                                         <label>To:</label>
                                                         <datepicker v-model="searchData.reg_start_end" class="flex-1">
                                                         </datepicker>
@@ -126,7 +127,9 @@
                                                 <div class="form-group">
                                                     <label>Batch</label>
                                                     <select v-model="searchData.batch" class="form-control">
-                                                        <option :value="batch.id" v-for="batch in batches">{{batch.value}}</option>
+                                                        <option :value="batch.id" v-for="batch in batches">
+                                                            {{batch.value}}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -135,7 +138,9 @@
                                                 <div class="form-group">
                                                     <label>Academic Status:</label>
                                                     <select v-model="searchData.academic_status" class="form-control">
-                                                        <option :value="as.id" v-for="as in academic_statuses">{{as.value}}</option>
+                                                        <option :value="as.id" v-for="as in academic_statuses">
+                                                            {{as.value}}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -143,7 +148,8 @@
                                                 <div class="form-group">
                                                     <label>Faculty/Class</label>
                                                     <select v-model="searchData.faculties" class="form-control">
-                                                        <option :value="f.id" v-for="f in faculties">{{f.value}}</option>
+                                                        <option :value="f.id" v-for="f in faculties">{{f.value}}
+                                                        </option>
                                                     </select>
 
                                                 </div>
@@ -152,7 +158,8 @@
                                                 <div class="form-group">
                                                     <label>Sem./Sec.</label>
                                                     <select v-model="searchData.semester_select" class="form-control">
-                                                        <option :value="s.id" v-for="s in semesters">{{s.value}}</option>
+                                                        <option :value="s.id" v-for="s in semesters">{{s.value}}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -195,7 +202,8 @@
                                                 <div class="form-group">
                                                     <label>Facility:</label>
                                                     <select v-model="searchData.facility" class="form-control">
-                                                        <option :value="fa.id" v-for="fa in facilities">{{fa.value}}</option>
+                                                        <option :value="fa.id" v-for="fa in facilities">{{fa.value}}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -220,23 +228,23 @@
                             <table class="table  table-striped fees-sort-table">
                                 <thead>
                                 <tr>
-                                    <th >
-                                    Sort
-                                </th>
-                                <th >
-                                    Due Date
-                                </th>
-                                <th >
-                                    Fees Head
-                                </th>
-                                <th >
-                                    Amount
-                                </th>
-                                <th>
-                                    <vs-button @click="addRow" class="my-round">
-                                        New
-                                    </vs-button>
-                                </th>
+                                    <th>
+                                        Sort
+                                    </th>
+                                    <th>
+                                        Due Date
+                                    </th>
+                                    <th>
+                                        Fees Head
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                    <th>
+                                        <vs-button @click="addRow" class="my-round">
+                                            New
+                                        </vs-button>
+                                    </th>
                                 </tr>
 
                                 </thead>
@@ -351,13 +359,13 @@
                     {name: 'Reg.Num.', sort_key: 'reg_no'},
                     {name: 'Name of Student', sort_key: 'fullname'},
                     {name: 'admission Status', sort_key: 'academic_status_data'},
-                    {name:'action'}
+                    {name: 'action'}
                 ],
-                selectedIds:[],
+                selectedIds: [],
                 searchData: {},
                 academic_statuses: [],
                 faculties: [],
-                facilities:[],
+                facilities: [],
                 batches: [],
                 semesters: [],
                 item: [],
@@ -365,8 +373,8 @@
                 selected: [],
                 notification2: true,
                 feeList: [],
-                fee_head:[],
-                feeheads:[],
+                fee_head: [],
+                feeheads: [],
                 dragging: false
 
             }
@@ -381,15 +389,15 @@
             this.onLoading()
         },
 
-        watch:{
-            searchData:{
-                deep:true,
-                handler(val){
+        watch: {
+            searchData: {
+                deep: true,
+                handler(val) {
                     console.log(val)
-                    if(val.reg_start_date!==undefined && val.reg_start_date){
+                    if (val.reg_start_date !== undefined && val.reg_start_date) {
                         val.reg_start_date = moment(val).format('d MMM, YYYY')
                     }
-                    if(val.reg_end_date!==undefined && val.reg_end_date){
+                    if (val.reg_end_date !== undefined && val.reg_end_date) {
                         val.reg_end_date = moment(val).format('d MMM, YYYY')
                     }
                     this.$refs.dataTableStudent.getData()
@@ -398,29 +406,43 @@
         },
 
         methods: {
-            postFee(){
-                console.log(this.fee_head, this.selectedIds)
+            postFee() {
+                if (!this.fee_head.length && !this.selectedIds.length) {
+                    alert('please fill the forms')
+                    return null
+                }
+                this.$http.post('/json/account/fees/master/store', {
+                    checkIds: this.selectedIds,
+                    fee_head: this.fee_head
+                })
+                    .then(res => {
+                        console.log(res.data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                // console.log(this.fee_head, this.selectedIds)
             },
-            viewStudent(id){
+            viewStudent(id) {
                 console.log(id)
             },
-            GetReturnValue(arg = null){
+            GetReturnValue(arg = null) {
                 console.log(arg)
-                let val =  arg.map(st => {
-                    return{
-                        id:st.id,
-                        faculty:st.faculty_data.faculty,
-                        semester:st.semester_data.semester,
-                        fullname:st.fullname,
-                        reg_no:st.reg_no,
-                        academic_status_data:st.academic_status_data.title
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        faculty: st.faculty_data.faculty,
+                        semester: st.semester_data.semester,
+                        fullname: st.fullname,
+                        reg_no: st.reg_no,
+                        academic_status_data: st.academic_status_data.title
                     }
                 });
-                this.$store.dispatch('updateTableData',val)
+                this.$store.dispatch('updateTableData', val)
             },
             onLoading() {
                 this.$http.get('/json/account/fees/master/add')
-                    .then(res=>{
+                    .then(res => {
                         this.feeheads = this.$root.objectToArray(res.data.fee_heads)
                         this.faculties = this.$root.objectToArray(res.data.faculties)
                         this.facilities = this.$root.objectToArray(res.data.facility)

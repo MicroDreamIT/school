@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use URL;
 use ViewHelper;
+
 class FeesMasterController extends CollegeBaseController
 {
     protected $base_route = 'account.fees.master';
@@ -23,7 +24,7 @@ class FeesMasterController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        if($request->all()) {
+        if ($request->all()) {
             $data['fee_master'] = FeeMaster::select('fee_masters.id', 'fee_masters.students_id', 'fee_masters.semester',
                 'fee_masters.fee_head', 'fee_masters.fee_due_date', 'fee_masters.fee_amount', 'fee_masters.status',
                 'students.reg_no', 'students.reg_date', 'students.first_name', 'students.middle_name', 'students.last_name', 'students.semester')
@@ -63,7 +64,7 @@ class FeesMasterController extends CollegeBaseController
                 ->orderBy('fee_masters.fee_due_date', 'desc')
                 ->join('students', 'students.id', '=', 'fee_masters.students_id')
                 ->get();
-        }else{
+        } else {
             $year = $this->getActiveYear();
             $data['fee_master'] = FeeMaster::select('fee_masters.id', 'fee_masters.students_id', 'fee_masters.semester',
                 'fee_masters.fee_head', 'fee_masters.fee_due_date', 'fee_masters.fee_amount', 'fee_masters.status',
@@ -88,7 +89,7 @@ class FeesMasterController extends CollegeBaseController
     public function add(Request $request)
     {
         $data = [];
-        if($request->all()) {
+        if ($request->all()) {
             if ($request->has('facility')) {
                 /*with library facility*/
                 if ($request->get('facility') == 1) {
@@ -97,7 +98,7 @@ class FeesMasterController extends CollegeBaseController
                         ->where(function ($query) use ($request) {
                             $this->commonStudentFilterCondition($query, $request);
                         })
-                        ->where('l.user_type','=',1)
+                        ->where('l.user_type', '=', 1)
                         ->join('library_members as l', 'l.member_id', '=', 'students.id')
                         ->get();
                 }
@@ -109,7 +110,7 @@ class FeesMasterController extends CollegeBaseController
                         ->where(function ($query) use ($request) {
                             $this->commonStudentFilterCondition($query, $request);
                         })
-                        ->where('r.user_type',1)
+                        ->where('r.user_type', 1)
                         ->join('residents as r', 'r.member_id', '=', 'students.id')
                         ->get();
                 }
@@ -121,7 +122,7 @@ class FeesMasterController extends CollegeBaseController
                         ->where(function ($query) use ($request) {
                             $this->commonStudentFilterCondition($query, $request);
                         })
-                        ->where('tu.user_type',1)
+                        ->where('tu.user_type', 1)
                         ->join('transport_users as tu', 'tu.member_id', '=', 'students.id')
                         ->get();
                 }
@@ -140,8 +141,8 @@ class FeesMasterController extends CollegeBaseController
         $data['batch'] = $this->activeBatch();
         $data['academic_status'] = $this->activeStudentAcademicStatus();
         $data['fee_heads'] = $this->activeFeeHead();
-        $data['semester']=$this->activeSemester();
-        $data['facility'] = ['0'=>'Select Facility','1'=>'Library','2'=>'Hostel','3'=>'Transport'];
+        $data['semester'] = $this->activeSemester();
+        $data['facility'] = ['0' => 'Select Facility', '1' => 'Library', '2' => 'Hostel', '3' => 'Transport'];
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
@@ -167,31 +168,31 @@ class FeesMasterController extends CollegeBaseController
                             'created_by' => auth()->user()->id,
                         ]);
                     }
-                }else {
+                } else {
                     return response()->json(['warning', 'Please, Add Fee Master at least one row.']);
                 }
             }
-        }else {
+        } else {
             return response()->json(['warning', 'Please, Check at least one row.']);
         }
 
-        return response()->json(['success', $this->panel. ' Add Successfully.']);
+        return response()->json(['success', $this->panel . ' Add Successfully.']);
 
     }
 
     public function edit(Request $request, $id)
     {
         $data = [];
-        $data['row'] = FeeMaster::select('id', 'students_id', 'semester', 'fee_head','fee_due_date','fee_amount','status')
-            ->where('id','=',$id)
+        $data['row'] = FeeMaster::select('id', 'students_id', 'semester', 'fee_head', 'fee_due_date', 'fee_amount', 'status')
+            ->where('id', '=', $id)
             ->first();
         if (!$data['row'])
             return parent::invalidRequest();
 
-        $data['row']->reg_no = parent::getStudentById($data['row']->students_id) ;
-        $data['row']->student_name = parent::getStudentNameById($data['row']->students_id) ;
-        $data['row']->semester = parent::getSemesterById($data['row']->semester) ;
-        $data['row']->fee_head = parent::getFeeHeadById($data['row']->fee_head) ;
+        $data['row']->reg_no = parent::getStudentById($data['row']->students_id);
+        $data['row']->student_name = parent::getStudentNameById($data['row']->students_id);
+        $data['row']->semester = parent::getSemesterById($data['row']->semester);
+        $data['row']->fee_head = parent::getFeeHeadById($data['row']->fee_head);
 
         $data['faculties'] = $this->activeFaculties();
 
@@ -209,7 +210,7 @@ class FeesMasterController extends CollegeBaseController
             'fee_amount' => $request->get('fee_amount'),
             'last_updated_by' => auth()->user()->id,
         ]);
-        return response()->json(['success',$this->panel.' Updated Successfully.']);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -218,7 +219,7 @@ class FeesMasterController extends CollegeBaseController
 
         $row->delete();
 
-        return response()->json(['success',$this->panel.' Deleted Successfully.']);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -232,7 +233,7 @@ class FeesMasterController extends CollegeBaseController
                         case 'in-active':
                             $row = FeeMaster::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -244,13 +245,13 @@ class FeesMasterController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    return response()->json(['success',$request->get('bulk_action'). ' Action Successfully.']);
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
-                    return response()->json(['success','Deleted successfully.']);
+                    return response()->json(['success', 'Deleted successfully.']);
 
 
             } else {
-                return response()->json(['warning','Please, Check at least one row.']);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -265,7 +266,7 @@ class FeesMasterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success',$row->faculty.' '.$this->panel.' Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -276,26 +277,24 @@ class FeesMasterController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success',$row->faculty.' '.$this->panel.' In-Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' In-Active Successfully.']);
     }
 
     public function feeHtmlRow()
     {
         //get all head
         $feeHeadAll = FeeHead::Active()->orderby('fee_head_title')->get();
-        $feeHead = $feeHeadAll->pluck('fee_head_title','id');
+        $feeHead = $feeHeadAll->pluck('fee_head_title', 'id');
         //$feeHead = array_prepend($feeHead,'Select Fee Head','id');
-        $randomId = rand(999,1);
+        $randomId = rand(999, 1);
         //Create an array of option attribute
-        $fee_head_attributes =  $feeHeadAll->mapWithKeys(function ($feeHead) use($randomId) {
-                return [$feeHead->id => ['data-feeHead-amount' => $feeHead->fee_head_amount, 'data-rand-id' => $randomId]];
-            })->all();
+        $fee_head_attributes = $feeHeadAll->mapWithKeys(function ($feeHead) use ($randomId) {
+            return [$feeHead->id => ['data-feeHead-amount' => $feeHead->fee_head_amount, 'data-rand-id' => $randomId]];
+        })->all();
 
-        $response['html'] = view($this->view_path.'.includes.fee_tr', ['fee_heads' => $feeHead, "fee_head_attributes" => $fee_head_attributes, 'randId' => $randomId])->render();
+        $response['html'] = view($this->view_path . '.includes.fee_tr', ['fee_heads' => $feeHead, "fee_head_attributes" => $fee_head_attributes, 'randId' => $randomId])->render();
         return response()->json(json_encode($response));
     }
-
-
 
 
 }

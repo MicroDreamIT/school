@@ -303,6 +303,7 @@
                                       @get-return-value="GetReturnValue"
                                       :showAction="false"
                                       :showStatus="false"
+                                      :selectedIds.sync="selectedIds"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.faculty">
@@ -352,6 +353,7 @@
                     {name: 'admission Status', sort_key: 'academic_status_data'},
                     {name:'action'}
                 ],
+                selectedIds:[],
                 searchData: {},
                 academic_statuses: [],
                 faculties: [],
@@ -397,7 +399,7 @@
 
         methods: {
             postFee(){
-
+                console.log(this.fee_head, this.selectedIds)
             },
             viewStudent(id){
                 console.log(id)

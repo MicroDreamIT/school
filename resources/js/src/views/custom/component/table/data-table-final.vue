@@ -193,7 +193,11 @@
             editLink:{},
             viewLink:{},
             deleteLink:{},
-            searchData:{}
+            searchData:{},
+            selectedIds:{
+                type:Array,
+                default:()=>[]
+            }
         },
         data() {
             return {
@@ -207,7 +211,11 @@
         created() {
             this.getData()
         },
-
+        watch:{
+            selected(val){
+                this.$emit('update:selectedIds', val)
+            }
+        },
         methods: {
             changeStatus(id, status){
                 let stat = status === 'active' ? 'in-active' : 'active'

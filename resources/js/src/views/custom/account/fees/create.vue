@@ -444,7 +444,7 @@
                 // console.log(this.fee_head, this.selectedIds)
             },
             viewStudent(id) {
-                console.log(id)
+                this.$router.push({name:'feesView', params:{id:id}})
             },
             GetReturnValue(arg = null) {
                 console.log(arg)

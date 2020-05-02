@@ -152,19 +152,22 @@ class FeesMasterController extends CollegeBaseController
 
     public function store(Request $request)
     {
-        dd($request->all());
-        if ($request->has('chkIds')) {
+//        dd($request->all());
+        if ($request->has('chkIds') && count($request->input('chkIds'))>0) {
             foreach ($request->get('chkIds') as $row_id) {
                 $row = Student::find($row_id);
                 if ($row && $request->has('fee_head')) {
                     foreach ($request->get('fee_head') as $key => $fee_head) {
-                        $date = Carbon::parse($request->get('fee_due_date')[$key])->format('Y-m-d');
+                        if(!$fee_head['fee_due_date'] or !$fee_head['fee_head'] or !$fee_head['fee_amount']){
+                            return response()->json(['warning', 'please fill date, head, and amount']);
+                        }
+                        $date = Carbon::parse($fee_head['fee_due_date'])->format('Y-m-d');
                         FeeMaster::create([
                             'students_id' => $row->id,
                             'semester' => $row->semester,
-                            'fee_head' => $request->get('fee_head')[$key],
+                            'fee_head' => $fee_head['fee_head'],
                             'fee_due_date' => $date,
-                            'fee_amount' => $request->get('fee_amount')[$key],
+                            'fee_amount' => $fee_head['fee_amount'],
                             'created_by' => auth()->user()->id,
                         ]);
                     }

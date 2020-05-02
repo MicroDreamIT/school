@@ -257,7 +257,7 @@
                                         </td>
 
                                         <td>
-                                            <datepicker v-model="tr.due_date"></datepicker>
+                                            <datepicker v-model="tr.fee_due_date"></datepicker>
                                         </td>
                                         <td>
                                             <select v-model="tr.fee_head" class="form-control">
@@ -265,7 +265,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <vs-input v-model="tr.amount" type="number">
+                                            <vs-input v-model="tr.fee_amount" type="number">
                                             </vs-input>
                                         </td>
                                         <td class="w-12">
@@ -412,14 +412,34 @@
                     return null
                 }
                 this.$http.post('/json/account/fees/master/store', {
-                    checkIds: this.selectedIds,
-                    fee_head: this.fee_head
+                    chkIds: this.selectedIds.map(item => {
+                        return item.id
+                    }),
+                    fee_head: this.fee_head.map(item => {
+                        return {
+                            fee_due_date: this.$root.formatPicker(item.fee_due_date),
+                            fee_head: item.fee_head,
+                            fee_amount: item.fee_amount,
+                        }
+                    })
                 })
                     .then(res => {
-                        console.log(res.data)
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
+                        this.fee_head=[]
+
                     })
                     .catch(err => {
-                        console.log(err)
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
                     })
                 // console.log(this.fee_head, this.selectedIds)
             },
@@ -453,9 +473,9 @@
             },
             addRow() {
                 this.fee_head.push({
-                    due_date: '',
+                    fee_due_date: '',
                     fee_head: null,
-                    amount: null,
+                    fee_amount: null,
                 })
             },
             removeList(idx) {

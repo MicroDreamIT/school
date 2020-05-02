@@ -9,6 +9,7 @@ use App\Http\Requests\Account\FeeHead\EditValidation;
 use App\Models\FeeHead;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+
 class FeesHeadController extends CollegeBaseController
 {
     protected $base_route = 'account.fees.head';
@@ -24,7 +25,7 @@ class FeesHeadController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['fees_head'] = FeeHead::orderBy('fee_head_title','asc')->get();
+        $data['fees_head'] = FeeHead::orderBy('fee_head_title', 'asc')->get();
 
         return response()->json($data);
     }
@@ -44,7 +45,7 @@ class FeesHeadController extends CollegeBaseController
         if (!$data['row'] = FeeHead::find($id))
             return parent::invalidRequest();
 
-        $data['fees_head'] = FeeHead::select('id', 'fee_head_title', 'status')->orderBy('fee_head_title','asc')->get();
+        $data['fees_head'] = FeeHead::select('id', 'fee_head_title', 'status')->orderBy('fee_head_title', 'asc')->get();
 
         $data['base_route'] = $this->base_route;
 
@@ -58,7 +59,7 @@ class FeesHeadController extends CollegeBaseController
         $request->merge(['last_updated_by' => auth()->user()->id]);
         $row->update($request->all());
 
-        return response()->json(['success', $this->panel.' Updated Successfully.']);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -67,7 +68,7 @@ class FeesHeadController extends CollegeBaseController
 
         $row->delete();
 
-        return response()->json(['success', $this->panel.' Deleted Successfully.']);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -81,7 +82,7 @@ class FeesHeadController extends CollegeBaseController
                         case 'in-active':
                             $row = FeeHead::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -93,7 +94,7 @@ class FeesHeadController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
                     return response()->json(['success', 'Deleted successfully.']);
 
@@ -115,7 +116,7 @@ class FeesHeadController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->faculty.' '.$this->panel.' Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -126,7 +127,7 @@ class FeesHeadController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->faculty.' '.$this->panel.' In-Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' In-Active Successfully.']);
     }
 
 
@@ -158,7 +159,7 @@ class FeesHeadController extends CollegeBaseController
 
             //Staff validation
             $validator = Validator::make($row, [
-                'fee_head_title'                => 'required | max:100 | unique:fee_heads,fee_head_title',
+                'fee_head_title' => 'required | max:100 | unique:fee_heads,fee_head_title',
             ]);
 
             if ($validator->fails()) {
@@ -169,9 +170,9 @@ class FeesHeadController extends CollegeBaseController
 
             //Student import
             $feeHead = FeeHead::create([
-                "fee_head_title"     => $row['fee_head_title'],
-                "fee_head_amount"    => $row['fee_head_amount'],
-                'created_by'         => auth()->user()->id
+                "fee_head_title" => $row['fee_head_title'],
+                "fee_head_amount" => $row['fee_head_amount'],
+                'created_by' => auth()->user()->id
             ]);
 
         }

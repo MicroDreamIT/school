@@ -24,14 +24,14 @@ class BookCategoryController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['student-status'] = BookCategory::select('id', 'title', 'slug', 'status')->get();
+        $data['categories'] = BookCategory::select('id', 'title', 'slug', 'status')->get();
         return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-       $request->request->add(['created_by' => auth()->user()->id]);
-       $request->request->add(['slug' => $request->get('title')]);
+       $request->merge(['created_by' => auth()->user()->id]);
+       $request->merge(['slug' => $request->get('title')]);
 
        BookCategory::create($request->all());
 
@@ -44,7 +44,7 @@ class BookCategoryController extends CollegeBaseController
         if (!$data['row'] = BookCategory::find($id))
             return parent::invalidRequest();
 
-        $data['student-status'] = BookCategory::select('id', 'title', 'slug', 'status')->orderBy('title')->get();
+        $data['row'] = BookCategory::where('id',$id)->first();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);
@@ -55,8 +55,8 @@ class BookCategoryController extends CollegeBaseController
 
        if (!$row = BookCategory::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
-        $request->request->add(['slug' => $request->get('title')]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['slug' => $request->get('title')]);
 
         $row->update($request->all());
 
@@ -111,7 +111,7 @@ class BookCategoryController extends CollegeBaseController
     {
         if (!$row = BookCategory::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
@@ -122,7 +122,7 @@ class BookCategoryController extends CollegeBaseController
     {
         if (!$row = BookCategory::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 

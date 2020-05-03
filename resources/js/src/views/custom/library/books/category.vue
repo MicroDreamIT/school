@@ -85,70 +85,58 @@
                             <div class="form-group  ">
                                 <label class="col-sm-3 ">Title</label>
                                 <div class="col-sm-9">
-                                    <vs-input v-model="document.reg_no" class="w-100"/>
+                                    <vs-input v-model="forms.title" class="w-100" :danger="error.title!==undefined"
+                                              ref="title"></vs-input>
+                                    <p v-if="error.title!==undefined" class="text-danger">{{ error.title[0] }}</p>
                                 </div>
                             </div>
 
                             <hr>
-                            <button class="btn btn-primary " type="submit">
+                            <button class="btn btn-primary " type="submit" @click="posting()">
                                 <i class="fa fa-save "></i>
-                                Create
+                                {{buttonText}}
                             </button>
                         </div>
                         <div class="col-md-8"><br>
 
-                            <ow-data-table :headers="tableHeader"
-                                           :tableHeader="'Book Category List'"
-                                           :url="'/json/student/'"
-                                           :noDataMessage="'Book Category Record list on table. Filter Book Category using the filter.'"
-                                           :has-search="true"
-                                           :has-multiple="true"
-                                           :has-pagination="true"
-                                           :suggestText="'No Book Category data found. Please Filter Book Category to show.'"
+                            <data-table-final :headers="headers"
+                                              :tableHeader="'Category List'"
+                                              :suggestText="'Category Record list on table. Filter category using the filter.'"
+                                              :url="'/json/library/book/category'"
+                                              :model="'route'"
+                                              :noDataMessage="'No Category data found. Please Filter category to show.'"
+                                              :hasSearch="true"
+                                              :has-multiple="true"
+                                              :has-pagination="true"
+                                              :filterSection="true"
+                                              ref="dataTableCategory"
+                                              :ajaxVariableSet="['categories']"
+                                              @get-return-value="GetReturnValue"
+                                              :showAction="false"
                             >
                                 <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.reg_no">
-                                        <a @click.stop="viewItems(props.data.id)"
-                                           class="pointer-all text-primary"
-                                           title="View"
-                                        >
-                                            {{props.data.reg_no}}
-                                        </a>
-
+                                    <vs-td :data="props.data.title">
+                                        {{props.data.title}}
                                     </vs-td>
-
-                                    <vs-td>
-                                        {{props.data.document}}
+                                    <vs-td :data="props.data.slug">
+                                        {{props.data.slug}}
                                     </vs-td>
-
-                                    <vs-td>
-                                        <div class="d-flex">
-                                            {{props.data.academic_status}}
-                                            <vs-switch color="success"
-                                                       :checked="props.data.status=='active'?true:false"
-                                                       @click.stop="changeStatus(props.data.id)"
-                                                       class="pointer-all ml-2"
-                                            >
-                                                <span slot="on">Active</span>
-                                                <span slot="off">In-Active</span>
-                                            </vs-switch>
+                                    <vs-td :data="props.data.action">
+                                        <div class="action-own">
+                                            <a class="btn btn-success btn-sm pointer-all"
+                                               title="Edit"
+                                               @click.stop="editItems(props.data.id)">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm pointer-all"
+                                               title="Delete"
+                                               @click.stop="deleteItems(props.data.id)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
                                         </div>
                                     </vs-td>
-
-                                    <vs-td>
-                                        <a class="btn btn-success btn-sm pointer-all"
-                                           title="Edit"
-                                           @click.stop="editItems(props.data.id)">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
-                                        <a class="btn btn-danger btn-sm pointer-all"
-                                           title="Delete"
-                                           @click.stop="deleteItems(props.data.id)">
-                                            <i class="fa fa-trash-o"></i>
-                                        </a>
-                                    </vs-td>
                                 </template>
-                            </ow-data-table>
+                            </data-table-final>
                         </div>
                     </div>
                 </vs-card>
@@ -164,31 +152,75 @@
         data() {
             return {
 
-                tableHeader: [
-                    {name: 'Reg. No.', sort_key: 'reg_no'},
-                    {name: 'Staff Documents'},
-                    {name: 'Status'},
+                headers: [
+                    {name: 'book category.', sort_key: 'title', field: 'title'},
+                    {name: 'slug', sort_key: 'slug', field: 'slug'},
                     {name: 'Action'},
+                    {name: 'status'},
                 ],
                 notification: '',
-                document: {}
+                forms: {
+                    title:''
+                },
+                buttonText: 'create',
+                error:[]
             }
         },
-        created(){
-            this.getData()
-        },
         methods: {
-            getData(){
-                this.$http.get()
+            posting() {
+                this.$http.post(this.forms.id ? '/json/library/book/category/' + this.forms.id + '/update' : '/json/library/book/category/store', this.forms)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+                            this.$refs.dataTableCategory.getData()
+                            this.forms = {}
+                            this.selected = []
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
+            },
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        title: st.title,
+                        slug: st.slug,
+                        status: st.status
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
             },
             viewItems(id) {
                 this.$router.push({name: 'studentView', params: {id: id}})
             },
-            editItems() {
-                alert("hey hasib im edit ")
+            editItems(id) {
+                this.$refs['title'].$el.querySelector('input').focus()
+
+                this.$http.get('/json/library/book/category/' + id + '/edit')
+                    .then(res => {
+                        this.forms = res.data.row
+                        this.buttonText = 'Update'
+                    })
+                    .catch(err => {
+
+                    })
             },
-            deleteItems() {
-                alert("hey hasib im delete ")
+            deleteItems(id) {
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/library/book/category/' + id + '/delete').then(res => {
+                        this.$refs.dataTableCategory.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
             },
             changeStatus() {
 

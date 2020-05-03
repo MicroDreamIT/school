@@ -219,7 +219,17 @@
 
 <script>
     export default {
-
+        created() {
+            this.getData()
+        },
+        methods:{
+            getData(){
+                this.$http.get('/json/library/book/add')
+                    .then(res=>{
+                        console.log(res.data)
+                    })
+            }
+        }
     }
 
 

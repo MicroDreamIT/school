@@ -125,7 +125,7 @@ class BookController extends CollegeBaseController
         foreach (BookStatus::select('id', 'title')->get() as $book_status) {
             $data['book_status'][$book_status->id] = $book_status->title;
         }
-
+        return response()->json($data);
         $data['url'] = URL::current();
         return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
     }

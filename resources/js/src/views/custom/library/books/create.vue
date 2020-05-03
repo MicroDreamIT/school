@@ -99,7 +99,9 @@
                             </div>
                             <div class="form-group">
                                 <label>Category </label>
-                                <vs-select class="w-100"></vs-select>
+                                <select v-model="forms.category" class="form-control">
+                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.categories)">{{c.value}}</option>
+                                </select>
                             </div>
                             <div class="form-group ">
                                 <label>Language</label>
@@ -107,7 +109,9 @@
                             </div>
                             <div class="form-group ">
                                 <label>Book Status </label>
-                                <vs-select class="w-100"></vs-select>
+                                <select v-model="forms.status" class="form-control">
+                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.book_status)">{{c.value}}</option>
+                                </select>
                             </div>
                             <div class="form-group ">
                                 <label>Book Image </label>
@@ -219,6 +223,14 @@
 
 <script>
     export default {
+        data(){
+            return {
+                forms:{},
+                loadedData:{
+
+                }
+            }
+        },
         created() {
             this.getData()
         },
@@ -226,7 +238,7 @@
             getData(){
                 this.$http.get('/json/library/book/add')
                     .then(res=>{
-                        console.log(res.data)
+                        this.loadedData = res.data
                     })
             }
         }

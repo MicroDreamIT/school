@@ -444,6 +444,7 @@
                 // console.log(this.fee_head, this.selectedIds)
             },
             viewStudent(id) {
+                // window.open('/account/fees/collection/'+id+'/view')
                 this.$router.push({name:'feesView', params:{id:id}})
             },
             GetReturnValue(arg = null) {

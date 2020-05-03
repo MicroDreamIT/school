@@ -53,6 +53,10 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('web')
             ->namespace($this->namespace)
+            ->group(base_path('routes/old.php'));
+
+        Route::middleware('web')
+            ->namespace($this->namespace)
             ->prefix('json')
             ->group(base_path('routes/json.php'));
 

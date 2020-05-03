@@ -174,7 +174,13 @@
                 document: {}
             }
         },
+        created(){
+            this.getData()
+        },
         methods: {
+            getData(){
+                this.$http.get()
+            },
             viewItems(id) {
                 this.$router.push({name: 'studentView', params: {id: id}})
             },

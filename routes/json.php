@@ -721,3 +721,82 @@ Route::group(['prefix' => 'account/', 'as' => 'account.', 'namespace' => 'Accoun
     Route::get('report/fee-collection-head', ['as' => 'report.fee-collection-head', 'middleware' => ['ability:super-admin,report-fee-collection-head'], 'uses' => 'Report\FeeCollectionHeadReportController@feeCollectionHead']);
 
 });
+
+/*Library Grouping*/
+Route::group(['prefix' => 'library/', 'as' => 'library.', 'namespace' => 'Library\\'], function () {
+
+    Route::get('', ['as' => '', 'middleware' => ['ability:super-admin,library-index'], 'uses' => 'LibraryBaseController@index']);
+    Route::post('issue', ['as' => 'issue', 'middleware' => ['ability:super-admin,library-book-issue'], 'uses' => 'LibraryBaseController@issueBook']);
+
+    Route::get('{id}/{member}/request-cancel', ['as' => 'request-cancel', 'uses' => 'LibraryBaseController@bookRequestCancel']);
+
+    Route::get('{id}/return', ['as' => 'return', 'middleware' => ['ability:super-admin,library-book-return'], 'uses' => 'LibraryBaseController@returnBook']);
+    Route::get('return-over', ['as' => 'return-over', 'middleware' => ['ability:super-admin,library-return-over'], 'uses' => 'LibraryBaseController@returnOver']);
+    Route::get('issue-history', ['as' => 'issue-history', 'middleware' => ['ability:super-admin,library-issue-history'], 'uses' => 'LibraryBaseController@issueHistory']);
+    Route::post('book-detail-html', ['as' => 'book-detail-html', 'uses' => 'LibraryBaseController@bookDetail']);
+    Route::get('book-name-autocomplete', ['as' => 'book-name-autocomplete', 'uses' => 'LibraryBaseController@bookNameAutocomplete']);
+
+    /*Book Master*/
+    Route::get('book', ['as' => 'book', 'middleware' => ['ability:super-admin,book-index'], 'uses' => 'BookController@index']);
+    Route::get('book/add', ['as' => 'book.add', 'middleware' => ['ability:super-admin,book-add'], 'uses' => 'BookController@add']);
+    Route::post('book/store', ['as' => 'book.store', 'middleware' => ['ability:super-admin,book-add'], 'uses' => 'BookController@store']);
+    Route::get('book/{id}/edit', ['as' => 'book.edit', 'middleware' => ['ability:super-admin,book-edit'], 'uses' => 'BookController@edit']);
+    Route::post('book/{id}/update', ['as' => 'book.update', 'middleware' => ['ability:super-admin,book-edit'], 'uses' => 'BookController@update']);
+
+    Route::get('book/import', ['as' => 'book.import', 'middleware' => ['ability:super-admin,book-add'], 'uses' => 'BookController@importBook']);
+    Route::post('book/import', ['as' => 'book.bulk.import', 'middleware' => ['ability:super-admin,book-add'], 'uses' => 'BookController@handleImportBook']);
+
+
+    Route::get('book/{id}/view', ['as' => 'book.view', 'middleware' => ['ability:super-admin,book-view'], 'uses' => 'BookController@view']);
+    Route::get('book/{id}/delete', ['as' => 'book.delete', 'middleware' => ['ability:super-admin,book-delete'], 'uses' => 'BookController@delete']);
+    Route::get('book/{id}/active', ['as' => 'book.active', 'middleware' => ['ability:super-admin,book-active'], 'uses' => 'BookController@Active']);
+    Route::get('book/{id}/in-active', ['as' => 'book.in-active', 'middleware' => ['ability:super-admin,book-in-active'], 'uses' => 'BookController@inActive']);
+    Route::post('book/bulk-action', ['as' => 'book.bulk-action', 'middleware' => ['ability:super-admin,book-bulk-action'], 'uses' => 'BookController@bulkAction']);
+
+    /*Book Level*/
+    Route::post('book/add/copies', ['as' => 'book.add.copies', 'middleware' => ['ability:super-admin,book-add-copies'], 'uses' => 'BookController@addCopies']);
+    Route::get('book/{id}/book-status/{status}', ['as' => 'book.book-status', 'middleware' => ['ability:super-admin,book-status'], 'uses' => 'BookController@bookStatus']);
+    Route::post('book/bulk-copies-delete', ['as' => 'book.bulk-copies-delete', 'middleware' => ['ability:super-admin,book-bulk-copies-delete'], 'uses' => 'BookController@bulkCopiesDelete']);
+
+    /*Books Category Routes*/
+    Route::get('book/category', ['as' => 'book.category', 'middleware' => ['ability:super-admin,book-category-index'], 'uses' => 'BookCategoryController@index']);
+    Route::post('book/category/store', ['as' => 'book.category.store', 'middleware' => ['ability:super-admin,book-category-add'], 'uses' => 'BookCategoryController@store']);
+    Route::get('book/category/{id}/edit', ['as' => 'book.category.edit', 'middleware' => ['ability:super-admin,book-category-edit'], 'uses' => 'BookCategoryController@edit']);
+    Route::post('book/category/{id}/update', ['as' => 'book.category.update', 'middleware' => ['ability:super-admin,book-category-edit'], 'uses' => 'BookCategoryController@update']);
+    Route::get('book/category/{id}/delete', ['as' => 'book.category.delete', 'middleware' => ['ability:super-admin,book-category-delete'], 'uses' => 'BookCategoryController@delete']);
+    Route::get('book/category/{id}/active', ['as' => 'book.category.active', 'middleware' => ['ability:super-admin,book-category-active'], 'uses' => 'BookCategoryController@Active']);
+    Route::get('book/category/{id}/in-active', ['as' => 'book.category.in-active', 'middleware' => ['ability:super-admin,book-category-in-active'], 'uses' => 'BookCategoryController@inActive']);
+    Route::post('book/category/bulk-action', ['as' => 'book.category.bulk-action', 'middleware' => ['ability:super-admin,book-category-bulk-action'], 'uses' => 'BookCategoryController@bulkAction']);
+
+    /*Books Category Routes*/
+    Route::get('circulation', ['as' => 'circulation', 'middleware' => ['ability:super-admin,library-circulation-index'], 'uses' => 'CirculationController@index']);
+    Route::post('circulation/store', ['as' => 'circulation.store', 'middleware' => ['ability:super-admin,library-circulation-add'], 'uses' => 'CirculationController@store']);
+    Route::get('circulation/{id}/edit', ['as' => 'circulation.edit', 'middleware' => ['ability:super-admin,library-circulation-edit'], 'uses' => 'CirculationController@edit']);
+    Route::post('circulation/{id}/update', ['as' => 'circulation.update', 'middleware' => ['ability:super-admin,library-circulation-edit'], 'uses' => 'CirculationController@update']);
+    Route::get('circulation/{id}/delete', ['as' => 'circulation.delete', 'middleware' => ['ability:super-admin,library-circulation-delete'], 'uses' => 'CirculationController@delete']);
+    Route::get('circulation/{id}/active', ['as' => 'circulation.active', 'middleware' => ['ability:super-admin,library-circulation-active'], 'uses' => 'CirculationController@Active']);
+    Route::get('circulation/{id}/in-active', ['as' => 'circulation.in-active', 'middleware' => ['ability:super-admin,library-circulation-in-active'], 'uses' => 'CirculationController@inActive']);
+    Route::post('circulation/bulk-action', ['as' => 'circulation.bulk-action', 'middleware' => ['ability:super-admin,library-circulation-bulk-action'], 'uses' => 'CirculationController@bulkAction']);
+
+    /*Library Member Routes*/
+    Route::get('member', ['as' => 'member', 'middleware' => ['ability:super-admin,library-member-index'], 'uses' => 'MemberController@index']);
+    Route::get('member/add', ['as' => 'member.add', 'middleware' => ['ability:super-admin,library-member-add'], 'uses' => 'MemberController@add']);
+    Route::post('member/store', ['as' => 'member.store', 'middleware' => ['ability:super-admin,library-member-add'], 'uses' => 'MemberController@store']);
+    Route::get('member/quick-membership', ['as' => 'member.quick-membership', 'middleware' => ['ability:super-admin,library-member-add'], 'uses' => 'MemberController@quickMembership']);
+    Route::get('member/{id}/edit', ['as' => 'member.edit', 'middleware' => ['ability:super-admin,library-member-edit'], 'uses' => 'MemberController@edit']);
+    Route::post('member/{id}/update', ['as' => 'member.update', 'middleware' => ['ability:super-admin,library-member-edit'], 'uses' => 'MemberController@update']);
+    Route::get('member/{id}/delete', ['as' => 'member.delete', 'middleware' => ['ability:super-admin,library-member-delete'], 'uses' => 'MemberController@delete']);
+    Route::get('member/{id}/active', ['as' => 'member.active', 'middleware' => ['ability:super-admin,library-member-active'], 'uses' => 'MemberController@Active']);
+    Route::get('member/{id}/in-active', ['as' => 'member.in-active', 'middleware' => ['ability:super-admin,library-member-in-active'], 'uses' => 'MemberController@inActive']);
+    Route::post('member/bulk-action', ['as' => 'member.bulk-action', 'middleware' => ['ability:super-admin,library-member-bulk-action'], 'uses' => 'MemberController@bulkAction']);
+
+    /*Library Member Staff Routes*/
+    /*Staff Member*/
+    Route::get('staff', ['as' => 'staff', 'middleware' => ['ability:super-admin,library-member-staff'], 'uses' => 'StaffMemberController@staff']);
+    Route::get('staff/{id}/view', ['as' => 'staff.view', 'middleware' => ['ability:super-admin,library-member-staff-view'], 'uses' => 'StaffMemberController@staffView']);
+
+    /*Student Member*/
+    Route::get('student', ['as' => 'student', 'middleware' => ['ability:super-admin,library-member-student'], 'uses' => 'StudentMemberController@student']);
+    Route::get('student/{id}/view', ['as' => 'student.view', 'middleware' => ['ability:super-admin,library-member-student-view'], 'uses' => 'StudentMemberController@studentView']);
+
+});

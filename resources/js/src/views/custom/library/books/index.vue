@@ -244,29 +244,49 @@
                                       :has-pagination="true"
                                       :filterSection="true"
                                       ref="dataTableBook"
-                                      :ajaxVariableSet="['book']"
+                                      :ajaxVariableSet="['books']"
                                       @get-return-value="GetReturnValue"
-                                      :showAction="false"
                     >
                         <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.category">
+                                {{props.data.category}}
+                            </vs-td>
                             <vs-td :data="props.data.title">
                                 {{props.data.title}}
                             </vs-td>
-
-                            <vs-td :data="props.data.action">
-                                <div class="action-own">
-                                    <a class="btn btn-success btn-sm pointer-all"
-                                       title="Edit"
-                                       @click.stop="editItems(props.data.id)">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a class="btn btn-danger btn-sm pointer-all"
-                                       title="Delete"
-                                       @click.stop="deleteItems(props.data.id)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                </div>
+                            <vs-td :data="props.data.image">
+                                <img :src="'/images/book/' + props.data.image" alt="" width="40px" v-if="props.data.image">
                             </vs-td>
+                            <vs-td :data="props.data.author">
+                                {{props.data.author}}
+                            </vs-td>
+                            <vs-td :data="props.data.publisher">
+                                {{props.data.publisher}}
+                            </vs-td>
+                            <vs-td :data="props.data.total">
+                                {{props.data.total}}
+                            </vs-td>
+                            <vs-td :data="props.data.issued">
+                                {{props.data.issued}}
+                            </vs-td>
+                            <vs-td :data="props.data.available">
+                                {{props.data.available}}
+                            </vs-td>
+
+<!--                            <vs-td :data="props.data.action">-->
+<!--                                <div class="action-own">-->
+<!--                                    <a class="btn btn-success btn-sm pointer-all"-->
+<!--                                       title="Edit"-->
+<!--                                       @click.stop="editItems(props.data.id)">-->
+<!--                                        <i class="fa fa-pencil"></i>-->
+<!--                                    </a>-->
+<!--                                    <a class="btn btn-danger btn-sm pointer-all"-->
+<!--                                       title="Delete"-->
+<!--                                       @click.stop="deleteItems(props.data.id)">-->
+<!--                                        <i class="fa fa-trash-o"></i>-->
+<!--                                    </a>-->
+<!--                                </div>-->
+<!--                            </vs-td>-->
                         </template>
                     </data-table-final>
                 </vs-card>
@@ -282,7 +302,16 @@
             return {
                 selected: [],
                 headers: [
-                    {name: 'Date', sort_key: ''},
+                    {name:'category', sort_key: 'category'},
+                    {name: 'name', sort_key: 'title'},
+                    {name: 'image', sort_key: 'image'},
+                    {name: 'author', sort_key: 'author'},
+                    {name: 'publisher', sort_key: 'publisher'},
+                    {name: 'total', sort_key: 'total'},
+                    {name: 'issued', sort_key: 'issued'},
+                    {name: 'available', sort_key: 'available'},
+                    {name: 'status'},
+                    {name: 'action'},
                 ],
                 searchData: {},
                 mainItem: []
@@ -293,7 +322,15 @@
             GetReturnValue(arg = null) {
                 let val = arg.map(st => {
                     return {
-                        id: st.id
+                        id: st.id,
+                        category:st.categories_rel.title,
+                        title:st.title,
+                        image:st.image,
+                        author:st.author,
+                        publisher:st.publisher,
+                        total:st.book_collection.length,
+                        issued:_.dropRightWhile(st.book_collection, ['book_status', 2]).length,
+                        available:_.dropRightWhile(st.book_collection, ['book_status', 1]).length,
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

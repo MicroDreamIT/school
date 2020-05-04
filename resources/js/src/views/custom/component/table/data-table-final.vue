@@ -108,7 +108,6 @@
                     </template>
 
 
-
                 </vs-table>
             </div>
         </div>
@@ -178,25 +177,25 @@
                 type: Array,
                 default: () => []
             },
-            showStatus:{
-                type:Boolean,
-                default:()=>true
+            showStatus: {
+                type: Boolean,
+                default: () => true
             },
-            showAction:{
-                type:Boolean,
-                default:()=>true
+            showAction: {
+                type: Boolean,
+                default: () => true
             },
-            model:{
-                type:String,
-                default:()=>''
+            model: {
+                type: String,
+                default: () => ''
             },
-            editLink:{},
-            viewLink:{},
-            deleteLink:{},
-            searchData:{},
-            selectedIds:{
-                type:Array,
-                default:()=>[]
+            editLink: {},
+            viewLink: {},
+            deleteLink: {},
+            searchData: {},
+            selectedIds: {
+                type: Array,
+                default: () => []
             }
         },
         data() {
@@ -211,63 +210,59 @@
         created() {
             this.getData()
         },
-        watch:{
-            selected(val){
+        watch: {
+            selected(val) {
                 this.$emit('update:selectedIds', val)
             }
         },
         methods: {
-            changeStatus(id, status){
+            changeStatus(id, status) {
                 let stat = status === 'active' ? 'in-active' : 'active'
                 this.$http.get(this.url + '/' + id + '/' + stat).then(res => {
                     this.getData()
-                    this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 })
             },
-            viewItems(id){
-                let url = ''
-                if(this.viewLink===undefined){
-                    url = '/' + this.model + '/' + id + '/' + 'view'
-                }else{
-                    url = this.viewLink
-                }
 
-                this.$router.push({path:url})
+            viewItems(id) {
+                let url = this.viewLink === undefined ? this.url + '/' + id + '/view' : this.viewLink;
+                this.$router.push({path: url.replace('/json','')})
             },
-            editItems(id){
-                let url = ''
-                if(this.editLink===undefined){
-                    url = '/' + this.model + '/' + id + '/' + 'edit'
-                }else{
-                    url = this.editLink
-                }
 
-                this.$router.push({path:url})
+            editItems(id) {
+                let url = this.editLink === undefined ? this.url + '/' + id + '/edit' : this.editLink;
+                this.$router.push({path: url.replace('/json','')})
             },
             deleteItems(id){
-                let confirms = confirm('are you sure?')
-                if(!confirms) return null
-                if (this.deleteLink !== undefined) this.url = this.deleteLink
-                this.$http.get(this.url + '/' + id + '/delete')
-                    .then(res=>{
-                        this.getData()
-                        this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'danger'})
-                    })
-                    .catch(err=>{
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    if (this.deleteLink !== undefined) this.url = this.deleteLink
+                    this.$http.get(this.url + '/' + id + '/delete')
+                        .then(res => {
+                            this.getData()
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'danger'
+                            })
+                        })
+                        .catch(err => {
+                            alert('can not be deleted')
+                        })
+                })
 
-                    })
             },
             getData() {
                 this.$http.get(this.url, {params: this.searchData}).then(res => {
-                    if(this.ajaxVariableSet.length>0){
+                    if (this.ajaxVariableSet.length > 0) {
                         this.item = res.data[this.ajaxVariableSet[0]];
-                    }else{
-                        this.item= res.data
+                    } else {
+                        this.item = res.data
                     }
 
                     this.$emit('get-return-value', this.item, res.data)
-                    if(!this.$store.state.tableData.length>0){
-                        this.$store.dispatch('updateTableData',this.item)
+                    if (!this.$store.state.tableData.length > 0) {
+                        this.$store.dispatch('updateTableData', this.item)
                     }
                 });
 
@@ -298,7 +293,7 @@
                             alert(err.response.message)
                         })
                 } else {
-                    this.$vs.notify({title:res.data[0],text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 }
 
             },
@@ -348,7 +343,6 @@
             doDelete() {
                 alert('doing Delete')
             },
-
 
 
         }

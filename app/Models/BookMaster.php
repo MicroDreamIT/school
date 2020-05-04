@@ -10,6 +10,13 @@ class BookMaster extends BaseModel
         'language', 'editor', 'categories', 'edition', 'edition_year', 'publisher', 'publish_year', 'series', 'author',
         'rack_location', 'price', 'total_pages', 'source', 'notes', 'status'];
 
+    protected $with = ['categories_rel', 'bookCollection'];
+
+    public function categories_rel()
+    {
+        return $this->belongsTo(BookCategory::class, 'categories');
+    }
+
     public function bookCollection()
     {
         return $this->hasMany(Book::class, 'book_masters_id');

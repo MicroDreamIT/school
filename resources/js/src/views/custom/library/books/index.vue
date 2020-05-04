@@ -233,38 +233,42 @@
                             <span>Print</span>
                         </button>
                     </div>
-                    <vs-table
-                            v-model="selected"
-                            pagination
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            search
-                            :multiple="true"
-                            :noDataText="'No Book data found. Please Filter Book to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="headers"
+                                      :tableHeader="'Book List'"
+                                      :suggestText="'Book Record list on table. Filter book using the filter.'"
+                                      :url="'/json/library/book'"
+                                      :model="'book'"
+                                      :noDataMessage="'No Book data found. Please Filter book to show.'"
+                                      :hasSearch="true"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      ref="dataTableBook"
+                                      :ajaxVariableSet="['book']"
+                                      @get-return-value="GetReturnValue"
+                                      :showAction="false"
                     >
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.title">
+                                {{props.data.title}}
+                            </vs-td>
 
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in tableHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                            <vs-td :data="props.data.action">
+                                <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -277,13 +281,8 @@
         data() {
             return {
                 selected: [],
-                tableHeader: [
+                headers: [
                     {name: 'Date', sort_key: ''},
-                    {name: 'Ledger/Head', sort_key: ''},
-                    {name: 'Dr Amount', sort_key: ''},
-                    {name: 'Cr Amount', sort_key: ''},
-                    {name: 'Description', sort_key: ''},
-                    {name: 'Action', sort_key: ''},
                 ],
                 searchData: {},
                 mainItem: []
@@ -291,6 +290,14 @@
             }
         },
         methods: {
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
+            },
             doFilter() {
 
             },

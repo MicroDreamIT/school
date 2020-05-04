@@ -236,7 +236,8 @@
                 deep:true,
                 handler(val){
                     if(val.code !== undefined && val.code){
-                        val.start_code
+                        val.start_preview = val.code + val.start?val.start:''
+                        console.log(val.start_preview)
                     }
                 }
             }

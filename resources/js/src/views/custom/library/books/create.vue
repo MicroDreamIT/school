@@ -126,7 +126,7 @@
 
                             <div class="form-group ">
                                 <label>Start</label>
-                                <vs-input class="w-100" v-model="forms.start"></vs-input>
+                                <vs-input class="w-100" v-model="forms.start" type="number"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Start Code</label>
@@ -162,7 +162,7 @@
                         <div class="col-md-4">
                             <div class="form-group ">
                                 <label>End</label>
-                                <vs-input class="w-100" v-model="forms.end"></vs-input>
+                                <vs-input class="w-100" v-model="forms.end" type="number"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>End Code</label>
@@ -228,6 +228,16 @@
                 forms:{},
                 loadedData:{
 
+                }
+            }
+        },
+        watch:{
+            forms:{
+                deep:true,
+                handler(val){
+                    if(val.code !== undefined && val.code){
+                        val.start_code
+                    }
                 }
             }
         },

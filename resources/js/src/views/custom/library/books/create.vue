@@ -170,14 +170,14 @@
                             </div>
                             <div class="form-group ">
                                 <label>Price </label>
-                                <vs-input class="w-100" v-model="forms.price" :danger="error.price!==undefined"/>
+                                <vs-input class="w-100" v-model="forms.price" type="number" :danger="error.price!==undefined"/>
                                 <p v-if="error.price!==undefined" class="text-danger">
                                     {{ error.price[0] }}
                                 </p>
                             </div>
                             <div class="form-group ">
                                 <label>Total Page </label>
-                                <vs-input class="w-100" v-model="forms.total_pages"></vs-input>
+                                <vs-input class="w-100" v-model="forms.total_pages" type="number"></vs-input>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -199,7 +199,7 @@
 
                             <div class="form-group ">
                                 <label>Edition Year</label>
-                                <vs-input class="w-100" v-model="forms.edition_year" v-mask="'####'"/>
+                                <vs-input class="w-100" v-model="forms.edition_year" type="number" v-mask="'####'"/>
                             </div>
                             <div class="form-group ">
                                 <label>Publisher</label>
@@ -211,7 +211,7 @@
                             </div>
                             <div class="form-group ">
                                 <label>Publish Year</label>
-                                <vs-input class="w-100" v-model="forms.publish_year" v-mask="'####'"/>
+                                <vs-input class="w-100" v-model="forms.publish_year" type="number" v-mask="'####'"/>
                             </div>
 
                             <div class="form-group ">

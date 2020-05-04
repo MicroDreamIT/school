@@ -86,113 +86,113 @@
                         <div class="col-md-4">
                             <div class="form-group ">
                                 <label>ISBN Number</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.isbn_number"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Code</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.code"></vs-input>
                             </div>
 
                             <div class="form-group ">
                                 <label> Book Name</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.title"></vs-input>
                             </div>
                             <div class="form-group">
                                 <label>Category </label>
-                                <select v-model="forms.category" class="form-control">
+                                <select v-model="forms.categories" class="form-control">
                                     <option :value="c.id" v-for="c in $root.objectToArray(loadedData.categories)">{{c.value}}</option>
                                 </select>
                             </div>
                             <div class="form-group ">
                                 <label>Language</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.language"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Book Status </label>
-                                <select v-model="forms.status" class="form-control">
+                                <select v-model="forms.book_status" class="form-control">
                                     <option :value="c.id" v-for="c in $root.objectToArray(loadedData.book_status)">{{c.value}}</option>
                                 </select>
                             </div>
                             <div class="form-group ">
                                 <label>Book Image </label>
-                                <vs-input class="w-100" type="file"></vs-input>
+                                <vs-input class="w-100" type="file" id="main_image" name="main_image"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Notes </label>
-                                <vs-textarea class="w-100"></vs-textarea>
+                                <vs-textarea class="w-100" v-model="forms.notes"></vs-textarea>
                             </div>
                         </div>
                         <div class="col-md-4">
 
                             <div class="form-group ">
                                 <label>Start</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.start"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Start Code</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.start_preview"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Sub Title</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.sub_title"></vs-input>
                             </div>
 
                             <div class="form-group ">
                                 <label>Edition</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.edition"></vs-input>
                             </div>
 
                             <div class="form-group ">
                                 <label>Series</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.series"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Rack Location </label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.rack_location"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Price </label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.price"></vs-input>
                             </div>
                             <div class="form-group ">
-                                <label>Page </label>
-                                <vs-input class="w-100"></vs-input>
+                                <label>Total Page </label>
+                                <vs-input class="w-100" v-model="forms.total_pages"></vs-input>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group ">
                                 <label>End</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.end"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>End Code</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.end_preview"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label> Total Quantity </label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.total_copy"></vs-input>
                             </div>
 
                             <div class="form-group ">
                                 <label>Edition Year</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.edition_year"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Publisher</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.publisher"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Author</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.author"></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Publish Year</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.publish_year"></vs-input>
                             </div>
 
                             <div class="form-group ">
                                 <label>Source</label>
-                                <vs-input class="w-100"></vs-input>
+                                <vs-input class="w-100" v-model="forms.source"></vs-input>
                             </div>
                         </div>
                     </div>

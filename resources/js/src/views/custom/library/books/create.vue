@@ -83,11 +83,13 @@
                         </vs-button>
                     </router-link>
                     <div class="row px-4">
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="form-group ">
                                 <label>ISBN Number</label>
                                 <vs-input class="w-100" v-model="forms.isbn_number"></vs-input>
                             </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group ">
                                 <label>Code</label>
                                 <vs-input class="w-100" v-model="forms.code"></vs-input>
@@ -100,7 +102,9 @@
                             <div class="form-group">
                                 <label>Category </label>
                                 <select v-model="forms.categories" class="form-control">
-                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.categories)">{{c.value}}</option>
+                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.categories)">
+                                        {{c.value}}
+                                    </option>
                                 </select>
                             </div>
                             <div class="form-group ">
@@ -110,7 +114,9 @@
                             <div class="form-group ">
                                 <label>Book Status </label>
                                 <select v-model="forms.book_status" class="form-control">
-                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.book_status)">{{c.value}}</option>
+                                    <option :value="c.id" v-for="c in $root.objectToArray(loadedData.book_status)">
+                                        {{c.value}}
+                                    </option>
                                 </select>
                             </div>
                             <div class="form-group ">
@@ -130,7 +136,7 @@
                             </div>
                             <div class="form-group ">
                                 <label>Start Code</label>
-                                <vs-input class="w-100" v-model="forms.start_preview"></vs-input>
+                                <vs-input class="w-100" v-model="forms.start_preview" readonly></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label>Sub Title</label>
@@ -166,11 +172,11 @@
                             </div>
                             <div class="form-group ">
                                 <label>End Code</label>
-                                <vs-input class="w-100" v-model="forms.end_preview"></vs-input>
+                                <vs-input class="w-100" v-model="forms.end_preview" readonly></vs-input>
                             </div>
                             <div class="form-group ">
                                 <label> Total Quantity </label>
-                                <vs-input class="w-100" v-model="forms.total_copy"></vs-input>
+                                <vs-input class="w-100" v-model="forms.total_copy" readonly=""></vs-input>
                             </div>
 
                             <div class="form-group ">
@@ -223,21 +229,38 @@
 
 <script>
     export default {
-        data(){
+        data() {
             return {
-                forms:{},
-                loadedData:{
-
-                }
+                forms: {},
+                loadedData: {}
             }
         },
-        watch:{
-            forms:{
-                deep:true,
-                handler(val){
-                    if(val.code !== undefined && val.code){
-                        val.start_preview = val.code + val.start?val.start:''
-                        console.log(val.start_preview)
+        watch: {
+            forms: {
+                deep: true,
+                handler(val) {
+                    if (val.code !== undefined && val.code) {
+                        let startcode = val.start ? val.start : ''
+                        val.start_preview = val.code + startcode
+                    }
+                    if (val.code !== undefined && val.code) {
+                        let endcode = val.end ? val.end : ''
+                        val.end_preview = val.code + endcode
+                    }
+
+                    if (val.code !== undefined && val.code) {
+                        if (val.start && val.end) {
+                            if (val.code && parseInt(val.start) <= parseInt(val.end))
+                                val.total_copy = parseInt(val.end) - parseInt(val.start) + 1
+                            else
+                                this.$vs.notify({
+                                    title: 'warning',
+                                    text: 'Attention!, Yo have enter End Value is Less than Starting. Correct It.',
+                                    color: 'warning',
+                                    icon: 'verified_user'
+                                })
+                        }
+
                     }
                 }
             }
@@ -245,10 +268,10 @@
         created() {
             this.getData()
         },
-        methods:{
-            getData(){
+        methods: {
+            getData() {
                 this.$http.get('/json/library/book/add')
-                    .then(res=>{
+                    .then(res => {
                         this.loadedData = res.data
                     })
             }

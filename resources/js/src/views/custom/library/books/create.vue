@@ -92,20 +92,29 @@
                         <div class="col-md-4">
                             <div class="form-group ">
                                 <label>Code</label>
-                                <vs-input class="w-100" v-model="forms.code"></vs-input>
+                                <vs-input class="w-100" v-model="forms.code" :danger="error.code!==undefined"/>
+                                <p v-if="error.code!==undefined" class="text-danger">
+                                    {{ error.code[0] }}
+                                </p>
                             </div>
 
                             <div class="form-group ">
                                 <label> Book Name</label>
-                                <vs-input class="w-100" v-model="forms.title"></vs-input>
+                                <vs-input class="w-100" v-model="forms.title" :danger="error.title!==undefined"/>
+                                <p v-if="error.title!==undefined" class="text-danger">
+                                    {{ error.title[0] }}
+                                </p>
                             </div>
                             <div class="form-group">
                                 <label>Category </label>
-                                <select v-model="forms.categories" class="form-control">
+                                <select v-model="forms.categories" class="form-control" :danger="error.categories!==undefined">
                                     <option :value="c.id" v-for="c in $root.objectToArray(loadedData.categories)">
                                         {{c.value}}
                                     </option>
                                 </select>
+                                <p v-if="error.categories!==undefined" class="text-danger">
+                                    {{ error.categories[0] }}
+                                </p>
                             </div>
                             <div class="form-group ">
                                 <label>Language</label>
@@ -132,7 +141,10 @@
 
                             <div class="form-group ">
                                 <label>Start</label>
-                                <vs-input class="w-100" v-model="forms.start" type="number"></vs-input>
+                                <vs-input class="w-100" v-model="forms.start" type="number" :danger="error.start!==undefined"/>
+                                <p v-if="error.start!==undefined" class="text-danger">
+                                    {{ error.start[0] }}
+                                </p>
                             </div>
                             <div class="form-group ">
                                 <label>Start Code</label>
@@ -158,7 +170,10 @@
                             </div>
                             <div class="form-group ">
                                 <label>Price </label>
-                                <vs-input class="w-100" v-model="forms.price"></vs-input>
+                                <vs-input class="w-100" v-model="forms.price" :danger="error.price!==undefined"/>
+                                <p v-if="error.price!==undefined" class="text-danger">
+                                    {{ error.price[0] }}
+                                </p>
                             </div>
                             <div class="form-group ">
                                 <label>Total Page </label>
@@ -168,7 +183,10 @@
                         <div class="col-md-4">
                             <div class="form-group ">
                                 <label>End</label>
-                                <vs-input class="w-100" v-model="forms.end" type="number"></vs-input>
+                                <vs-input class="w-100" v-model="forms.end" type="number" :danger="error.end!==undefined"/>
+                                <p v-if="error.end!==undefined" class="text-danger">
+                                    {{ error.end[0] }}
+                                </p>
                             </div>
                             <div class="form-group ">
                                 <label>End Code</label>
@@ -181,7 +199,7 @@
 
                             <div class="form-group ">
                                 <label>Edition Year</label>
-                                <vs-input class="w-100" v-model="forms.edition_year"></vs-input>
+                                <vs-input class="w-100" v-model="forms.edition_year" v-mask="'####'"/>
                             </div>
                             <div class="form-group ">
                                 <label>Publisher</label>
@@ -193,7 +211,7 @@
                             </div>
                             <div class="form-group ">
                                 <label>Publish Year</label>
-                                <vs-input class="w-100" v-model="forms.publish_year"></vs-input>
+                                <vs-input class="w-100" v-model="forms.publish_year" v-mask="'####'"/>
                             </div>
 
                             <div class="form-group ">
@@ -209,7 +227,7 @@
                                 <i class="fa fa-undo"></i>
                                 Reset
                             </button>
-                            <button class="btn btn-primary " type="submit">
+                            <button class="btn btn-primary " type="submit" @click="posting()">
                                 <i class="fa fa-save "></i>
                                 Save
                             </button>
@@ -232,7 +250,8 @@
         data() {
             return {
                 forms: {},
-                loadedData: {}
+                loadedData: {},
+                error:[]
             }
         },
         watch: {
@@ -269,6 +288,25 @@
             this.getData()
         },
         methods: {
+            posting(){
+                let data = new FormData()
+                let main_image = document.querySelector('#main_image')
+                if (main_image) {
+                    data.append("main_image", main_image.files[0])
+                }
+                for (let key in this.forms) {
+                    data.append(key, this.forms[key])
+                }
+                this.$http.post('/json/library/book/store', data)
+                    .then(res=>{
+                        console.log(res.data)
+                    })
+                    .catch(err=>{
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
+            },
             getData() {
                 this.$http.get('/json/library/book/add')
                     .then(res => {

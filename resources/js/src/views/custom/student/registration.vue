@@ -841,7 +841,6 @@
 
                 this.student.reg_date = this.$root.mysqlDatetime(this.student.reg_date)
                 this.student.date_of_birth = this.$root.mysqlDatetime(this.student.date_of_birth)
-                console.log(this.student.reg_date, this.student.date_of_birth)
                 this.student.institution = JSON.stringify(this.academicList)
                 let data = new FormData();
 

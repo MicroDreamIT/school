@@ -331,6 +331,7 @@
                         total:st.book_collection.length,
                         issued:_.dropRightWhile(st.book_collection, ['book_status', 2]).length,
                         available:_.dropRightWhile(st.book_collection, ['book_status', 1]).length,
+                        status:st.status
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

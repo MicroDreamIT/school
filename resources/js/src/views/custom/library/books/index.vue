@@ -272,21 +272,6 @@
                             <vs-td :data="props.data.available">
                                 {{props.data.available}}
                             </vs-td>
-
-<!--                            <vs-td :data="props.data.action">-->
-<!--                                <div class="action-own">-->
-<!--                                    <a class="btn btn-success btn-sm pointer-all"-->
-<!--                                       title="Edit"-->
-<!--                                       @click.stop="editItems(props.data.id)">-->
-<!--                                        <i class="fa fa-pencil"></i>-->
-<!--                                    </a>-->
-<!--                                    <a class="btn btn-danger btn-sm pointer-all"-->
-<!--                                       title="Delete"-->
-<!--                                       @click.stop="deleteItems(props.data.id)">-->
-<!--                                        <i class="fa fa-trash-o"></i>-->
-<!--                                    </a>-->
-<!--                                </div>-->
-<!--                            </vs-td>-->
                         </template>
                     </data-table-final>
                 </vs-card>

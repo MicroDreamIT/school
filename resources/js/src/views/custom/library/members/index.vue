@@ -162,38 +162,26 @@
                             <span>Print</span>
                         </button>
                     </div>
-                    <vs-table
-                            v-model="selected"
-                            pagination
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            search
-                            :multiple="true"
-                            :noDataText="'No Member data found. Please Filter Member to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="headers"
+                                      :tableHeader="'Book List'"
+                                      :suggestText="'Book Record list on table. Filter book using the filter.'"
+                                      :url="'/json/library/member'"
+                                      :model="'book'"
+                                      :noDataMessage="'No Book data found. Please Filter book to show.'"
+                                      :hasSearch="true"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      ref="dataTableBook"
+                                      :ajaxVariableSet="['books']"
+                                      @get-return-value="GetReturnValue"
                     >
-
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in tableHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.user_type">
+                                {{props.data.user_type}}
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -207,19 +195,23 @@
             return {
                 selected: [],
                 tableHeader: [
-                    {name: 'Date', sort_key: ''},
-                    {name: 'Ledger/Head', sort_key: ''},
-                    {name: 'Dr Amount', sort_key: ''},
-                    {name: 'Cr Amount', sort_key: ''},
-                    {name: 'Description', sort_key: ''},
-                    {name: 'Action', sort_key: ''},
+                    {name: 'user type', sort_key: 'user_type'},
                 ],
                 searchData: {},
                 mainItem: []
 
             }
         },
+
         methods: {
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
+            },
             doFilter() {
 
             },

@@ -74,7 +74,7 @@ class MemberController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
@@ -92,7 +92,7 @@ class MemberController extends CollegeBaseController
         $data['filter_query'] = $this->filter_query;
         $data['reg_no'] = '';
 
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -121,19 +121,14 @@ class MemberController extends CollegeBaseController
                 $userType = $member->user_type;
                 $this->sendRegistrationAlert($memberId,$userType);
 
-                $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
+                return response()->json(['success', $this->panel. ' Created Successfully.']);
+                
             }else{
-                $request->session()->flash($this->message_warning,'Member already registerd. Please find and edit.');
-                return back();
+                return response()->json(['warning','Member already registered. Please find and edit.']);
+
             }
         }else{
-            $request->session()->flash($this->message_warning,'Registration Number or User Type is not Valid.');
-        }
-
-        if($request->add_member_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
+            return response()->json(['warning','Registration Number or User Type is not Valid.']);
         }
 
     }
@@ -164,16 +159,15 @@ class MemberController extends CollegeBaseController
                 $userType = $member->user_type;
                 $this->sendRegistrationAlert($memberId,$userType);
 
-                $request->session()->flash($this->message_success, 'Library Member Created Successfully.');
+                return response()->json(['success', 'Library Member Created Successfully.']);
             }else{
-                $request->session()->flash($this->message_warning,'Member already registered. Please find and edit.');
-                return back();
+                return response()->json(['warning','Member already registered. Please find and edit.']);
+
             }
         }else{
-            $request->session()->flash($this->message_warning,'Registration Number or User Type is not Valid.');
+            return response()->json(['warning','Registration Number or User Type is not Valid.']);
         }
 
-        return back();
 
     }
 
@@ -198,7 +192,7 @@ class MemberController extends CollegeBaseController
         }
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -227,11 +221,9 @@ class MemberController extends CollegeBaseController
                 $row->save();
             }
 
-            $request->session()->flash($this->message_success, $this->panel. ' Updated Successfully.');
-            return redirect()->route($this->base_route);
+            return response()->json(['success', $this->panel. ' Updated Successfully.']);
         }else{
-            $request->session()->flash($this->message_warning,'Registration Number or User Type is not Valid.');
-            return back();
+            return response()->json(['warning','Registration Number or User Type is not Valid.']);
         }
     }
 
@@ -241,8 +233,7 @@ class MemberController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -268,15 +259,13 @@ class MemberController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -290,8 +279,7 @@ class MemberController extends CollegeBaseController
         $request->request->add(['status' => 'active']);
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->semester.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -301,8 +289,7 @@ class MemberController extends CollegeBaseController
         $request->request->add(['status' => 'in-active']);
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->semester.' '.$this->panel.' In-Active Successfully.']);
     }
 
     public function sendRegistrationAlert($memberId,$userType)

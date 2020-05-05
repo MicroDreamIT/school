@@ -51,7 +51,7 @@
 					<student-table :headers="studentHeader"
 					               :tableHeader="'Library Member Student List'"
 					               :suggestText="'Library Member Student Record list on table. Filter Library Member Student using the filter.'"
-					               :url="'/json/student/'"
+					               :url="'/json/library/student'"
 					               :noDataMessage="'No Student data found. Please Filter Student to show.'"
 					               :hasSearch="true"
 					               :has-multiple="true"
@@ -62,15 +62,15 @@
 							<vs-td :data="props.data.faculty" class="pointer-none">
 								{{props.data.faculty}}
 							</vs-td>
-							
+
 							<vs-td :data="props.data.semester">
 								{{props.data.semester}}
 							</vs-td>
-							
+
 							<vs-td :data="props.data.reg_no">
 								{{props.data.reg_no}}
 							</vs-td>
-							
+
 							<vs-td :data="props.data.name">
 								{{props.data.first_name+' '+props.data.middle_name+' '+props.data.last_name}}
 							</vs-td>
@@ -116,15 +116,7 @@
         },
 
         methods: {
-            viewItems() {
-                alert("hey hasib im view ")
-            },
-            editItems() {
-                alert("hey hasib im edit ")
-            },
-            deleteItems() {
-                alert("hey hasib im delete ")
-            },
+
 
         }
 

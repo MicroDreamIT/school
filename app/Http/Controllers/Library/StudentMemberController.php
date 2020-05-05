@@ -53,7 +53,7 @@ class StudentMemberController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function studentView(Request $request, $id)
@@ -100,8 +100,7 @@ class StudentMemberController extends CollegeBaseController
 
         }
 
-        $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
+        return response()->json($data);
     }
 
 }

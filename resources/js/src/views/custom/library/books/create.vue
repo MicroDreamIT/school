@@ -231,11 +231,6 @@
                                 <i class="fa fa-save "></i>
                                 Save
                             </button>
-                            <button class="btn btn-success " type="submit">
-                                <i class="fa fa-save "></i>
-                                <i class="fa fa-plus "></i>
-                                Save And Add Another
-                            </button>
                         </div>
                     </div>
                 </vs-card>
@@ -306,6 +301,7 @@
                             icon: 'verified_user'
                         })
                         this.forms={}
+                        this.$router.push({path:'/library/book'})
                     })
                     .catch(err=>{
                         if (err.response) {

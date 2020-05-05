@@ -64,9 +64,9 @@
                     </div>
                     <vs-divider/>
                     <div>
-                    <h4><i class="fa fa-plus"></i>
-                    Members
-                    </h4>
+                        <h4><i class="fa fa-plus"></i>
+                            Members
+                        </h4>
                     </div>
                     <div class="row">
                         <div class="col-md-2">Member Type</div>
@@ -99,9 +99,9 @@
                     </div>
                     <vs-divider></vs-divider>
                     <div class="row mx-0">
-                            <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
-                            <vs-button class="my-round mx-2" @click="posting()">Save</vs-button>
-                        </div>
+                        <vs-button class="my-round mx-2" color="warning">Reset</vs-button>
+                        <vs-button class="my-round mx-2" @click="posting()">Save</vs-button>
+                    </div>
                 </vs-card>
             </div>
         </div>
@@ -126,13 +126,14 @@
         },
         methods: {
             getData(){
-              this.$http.get('/json/library/member/add')
-                  .then(res=>{
-                      // console.log(res.data)
-                  })
+                this.$http.get('/json/library/member/' + this.$route.params.id + '/edit')
+                    .then(res=>{
+                        this.forms = res.data.row
+                        this.forms.reg_no = this.forms.memberdetail[2]
+                    })
             },
             posting(){
-                this.$http.post('/json/library/member/store', this.forms)
+                this.$http.post('/json/library/member/' + this.$route.params.id + '/update' , this.forms)
                     .then(res=>{
                         this.$vs.notify({
                             title: res.data[0],

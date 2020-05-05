@@ -539,6 +539,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/library/member/:id/edit',
+                    name: 'library.memberEdit',
+                    component: () => import('./views/custom/library/members/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/library/student',
                     name: 'library.student',
                     component: () => import('./views/custom/library/members/student'),

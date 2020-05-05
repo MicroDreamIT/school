@@ -113,8 +113,8 @@ class MemberController extends CollegeBaseController
         if($data){
             $currentMember = LibraryMember::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id','desc')->first();
             if(!$currentMember){
-                $request->request->add(['member_id' => $data->id]);
-                $request->request->add(['created_by' => auth()->user()->id]);
+                $request->merge(['member_id' => $data->id]);
+                $request->merge(['created_by' => auth()->user()->id]);
                 $member = LibraryMember::create($request->all());
 
                 $memberId = $member->member_id;
@@ -151,8 +151,8 @@ class MemberController extends CollegeBaseController
         if($data){
             $currentMember = LibraryMember::where(['user_type' => $request->user_type, 'member_id' => $data->id])->orderBy('id','desc')->first();
             if(!$currentMember){
-                $request->request->add(['member_id' => $data->id]);
-                $request->request->add(['created_by' => auth()->user()->id]);
+                $request->merge(['member_id' => $data->id]);
+                $request->merge(['created_by' => auth()->user()->id]);
                 $member = LibraryMember::create($request->all());
 
                 $memberId = $member->member_id;
@@ -276,7 +276,7 @@ class MemberController extends CollegeBaseController
     {
         if (!$row = LibraryMember::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
         $row->update($request->all());
 
         return response()->json(['success', $row->semester.' '.$this->panel.' Active Successfully.']);
@@ -286,7 +286,7 @@ class MemberController extends CollegeBaseController
     {
         if (!$row = LibraryMember::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
         $row->update($request->all());
 
         return response()->json(['success', $row->semester.' '.$this->panel.' In-Active Successfully.']);

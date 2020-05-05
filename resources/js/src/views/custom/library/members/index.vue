@@ -81,19 +81,21 @@
                                         <div class="col-md-4">
                                             <div class="form-group ">
                                                 <label>Member Type</label>
-                                                <v-select v-model="searchData.isbn_number" >
-                                                </v-select>
+                                                <select v-model="searchData.user_type" class="form-control">
+                                                    <option value="1">student</option>
+                                                    <option value="2">staff</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-5">
-                                            <div class="form-group ">
+                                            <div class="form-group " v-if="searchData.user_type">
                                                 <label>REG. NO.</label>
-                                                <vs-input v-model="searchData.name" class="w-100">
+                                                <vs-input v-model="searchData.reg_no" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="form-group ">
+                                            <div class="form-group " v-if="searchData.user_type">
                                                 <label>Status</label>
                                                 <v-select v-model="searchData.status"
                                                           :options="['active','in-active']"
@@ -105,80 +107,33 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-2 pl-0">
-                                    <vs-button type="filled"
-                                               color="#00b8cf"
-                                               icon="double_arrow"
-                                               @click.prevent="doFilter"
-                                    >
-                                        Filter
-                                    </vs-button>
-                                </div>
                             </div>
                         </vs-collapse-item>
                     </vs-collapse>
-                    <h4 class="header large lighter blue mt-4">
-                        <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
-                        Members List
-                    </h4>
-                    <div class="easy-link-menu d-flex flex-wrap">
-                        <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
-                            <i class="fa fa-check"></i>
-                            Active
-                        </a>
-                        <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
-                            <i class="fa fa-remove"></i>
-                            In-Active
-                        </a>
-                        <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
-                            <i class="fa fa-trash"></i>
-                            Delete
-                        </a>
-                    </div>
-                    <br>
-                    <div class="table-header">
-                        Members Record list on table. Filter Members using the filter.
-                    </div>
-                    <div class="dt-buttons btn-group action-group my-3">
-                        <button class="btn btn-secondary buttons-copy "
 
-                                @click.prevent="doCopy"
-                        >
-                            <span>Copy</span>
-                        </button>
-                        <button class="btn btn-secondary buttons-pdf "
-                                @click.prevent="doPdf"
-                        >
-                            <span>PDF</span>
-                        </button>
-                        <button class="btn btn-secondary"
-                                @click.prevent="doJson"
-                        >
-                            <span>JSON</span>
-                        </button>
-                        <button class="btn btn-secondary buttons-print"
-                                @click.prevent="doPrint"
-                        >
-                            <span>Print</span>
-                        </button>
-                    </div>
+                    <br>
+
                     <data-table-final :headers="headers"
-                                      :tableHeader="'Book List'"
-                                      :suggestText="'Book Record list on table. Filter book using the filter.'"
+                                      :tableHeader="'member List'"
+                                      :suggestText="'member Record list on table. Filter member using the filter.'"
                                       :url="'/json/library/member'"
-                                      :model="'book'"
-                                      :noDataMessage="'No Book data found. Please Filter book to show.'"
+                                      :model="'member'"
+                                      :noDataMessage="'No member data found. Please Filter member to show.'"
                                       :hasSearch="true"
                                       :has-multiple="true"
                                       :has-pagination="true"
                                       :filterSection="true"
-                                      ref="dataTableBook"
-                                      :ajaxVariableSet="['books']"
+                                      :searchData="searchData"
+                                      ref="dataTableMember"
+                                      :ajaxVariableSet="['member']"
                                       @get-return-value="GetReturnValue"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.user_type">
                                 {{props.data.user_type}}
+                            </vs-td>
+                            <vs-td :data="props.data.reg_no">
+                                {{props.data.reg_no}}
                             </vs-td>
                         </template>
                     </data-table-final>
@@ -194,12 +149,23 @@
         data() {
             return {
                 selected: [],
-                tableHeader: [
+                headers: [
                     {name: 'user type', sort_key: 'user_type'},
+                    {name: 'reg no', sort_key: 'reg_no'},
+                    {name: 'status'},
+                    {name: 'action'},
                 ],
                 searchData: {},
                 mainItem: []
 
+            }
+        },
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    this.$refs.dataTableMember.getData()
+                }
             }
         },
 
@@ -208,6 +174,9 @@
                 let val = arg.map(st => {
                     return {
                         id: st.id,
+                        user_type: st.user_type===1?'student':'staff',
+                        reg_no: st.memberdetail[2],
+                        status: st.status,
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

@@ -515,6 +515,14 @@ const router = new Router({
                     }
                 },
                 {
+                    path: '/library/book/:id/edit',
+                    name: 'library.bookEdit',
+                    component: () => import('./views/custom/library/books/edit'),
+                    meta: {
+                        rule: 'admin'
+                    }
+                },
+                {
                     path: '/library/member',
                     name: 'library.member',
                     component: () => import('./views/custom/library/members/index.vue'),

@@ -299,7 +299,13 @@
                 }
                 this.$http.post('/json/library/book/store', data)
                     .then(res=>{
-                        console.log(res.data)
+                        this.$vs.notify({
+                            title: res.data[0],
+                            text: res.data[1],
+                            color: res.data[0],
+                            icon: 'verified_user'
+                        })
+                        this.forms={}
                     })
                     .catch(err=>{
                         if (err.response) {

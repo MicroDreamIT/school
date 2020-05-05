@@ -245,12 +245,12 @@
                 let data = new FormData()
                 let main_image = document.querySelector('#main_image')
                 if (main_image && main_image.files[0]!==undefined) {
-                    console.log(main_image.files[0])
                     data.append("main_image", main_image.files[0])
                 }
                 for (let key in this.forms) {
                     data.append(key, this.forms[key])
                 }
+                console.log(data)
                 this.$http.post('/json/library/book/' + this.$route.params.id + '/update', data)
                     .then(res => {
                         this.$vs.notify({

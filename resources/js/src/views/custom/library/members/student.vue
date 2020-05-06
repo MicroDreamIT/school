@@ -99,7 +99,7 @@
                                         <div class="form-group">
                                             <label>Status:</label>
                                             <v-select v-model="searchData.status"
-                                                      :options="['Active','In-Active']"
+                                                      :options="['active','in-active']"
                                                       placeholder="Select Status"
                                             >
                                             </v-select>
@@ -149,15 +149,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-2 pl-0">
-                                <vs-button type="filled"
-                                           color="#00b8cf"
-                                           icon="double_arrow"
-                                           @click.prevent="doFilter"
-                                >
-                                    Filter
-                                </vs-button>
-                            </div>
+
                         </div>
                     </vs-collapse-item>
                 </vs-collapse>
@@ -280,7 +272,7 @@
                         taken:st.taken,
                         eligible:st.eligible,
                         status:st.status,
-                        fullname:this.$root.singleSpacing(st.first_name+' '+st.middle_name+' '+st.last_name)
+                        fullname:st.fullname
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

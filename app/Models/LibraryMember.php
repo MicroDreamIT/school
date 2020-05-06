@@ -8,8 +8,17 @@ class LibraryMember extends BaseModel
 {
     protected $fillable = ['created_by', 'last_updated_by', 'user_type', 'member_id', 'status'];
 
-    protected $appends = ['memberdetail'];
+    protected $appends = ['memberdetail', 'fullname'];
 
+    public function getFullnameAttribute($value)
+    {
+        if($this->attributes){
+            $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
+            return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
+        }
+
+
+    }
     public function getMemberdetailAttribute($value)
     {
 

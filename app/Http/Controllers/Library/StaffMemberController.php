@@ -49,7 +49,7 @@ class StaffMemberController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function staffView(Request $request, $id)
@@ -63,7 +63,7 @@ class StaffMemberController extends CollegeBaseController
             ->join('staff','staff.id','=','library_members.member_id')
             ->first();
 
-        if(!$data['staff']) return back()->with($this->message_warning,'Target member is not valid at this time.');
+        if(!$data['staff']) return response()->json(['warning','Target member is not valid at this time.']);
 
         $data['circulation'] = $data['staff']->libCirculation()->first();
 
@@ -95,7 +95,7 @@ class StaffMemberController extends CollegeBaseController
         }
 
         $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
+        return response()->json($data);
     }
 
 }

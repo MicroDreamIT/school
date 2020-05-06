@@ -77,7 +77,7 @@
                                         <div class="form-group">
                                             <label>Reg Date From</label>
                                             <datepicker
-                                                    :value="searchData.reg_start_date"
+                                                    v-model="searchData.reg_start_date"
                                                     :format="'yyyy-MM-dd'"
                                                     @input="searchData.reg_start_date=$root.formatPicker($event)"
                                             />
@@ -108,20 +108,16 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Faculty/Class</label>
-                                            <select v-model="searchData.faculty" class="form-control">
+                                            <select v-model="searchData.faculty" class="form-control" @change="findSemester(searchData.faculty)">
                                                 <option :value="f.id" v-for="f in faculties">{{f.value}}</option>
                                             </select>
 
                                         </div>
                                         <div class="form-group">
                                             <label>Sem./Sec.</label>
-                                            <v-select v-model="searchData.semester_select"
-                                                      :options="semester"
-                                                      label="semester"
-                                                      :reduce="a => a.id"
-                                                      placeholder="Select Sem./Sec."
-                                            >
-                                            </v-select>
+                                            <select v-model="searchData.semester_select" class="form-control">
+                                                <option :value="f.id" v-for="f in semesters">{{f.semester}}</option>
+                                            </select>
                                         </div>
 
                                     </div>
@@ -228,6 +224,7 @@
                 faculties:[],
                 filterSection:true,
                 batches:[],
+                semesters:[],
                 searchData:{},
                 headers: [
                     {name: 'Faculty/Class', sort_key: 'faculty'},
@@ -256,6 +253,18 @@
         },
 
         methods: {
+            findSemester(faculty) {
+                if (faculty) {
+                    this.$http.post('/json/student/find-semester', {
+                        faculty_id: faculty
+                    }).then(res => {
+                        this.semesters = res.data.semester
+                    }).catch(err => {
+                        alert(err.response.message)
+                    })
+                }
+
+            },
             GetReturnValue(arg = null, all) {
                 let faculty = this.$root.objectToArray(all.faculties)
                 this.faculties=faculty

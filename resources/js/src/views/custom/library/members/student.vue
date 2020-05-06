@@ -243,7 +243,6 @@
             searchData:{
                 deep:true,
                 handler(val){
-                    console.log(val)
                     this.$refs.dataTableStudent.getData()
                 }
             }

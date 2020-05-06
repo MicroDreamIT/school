@@ -215,8 +215,10 @@ new Vue({
             if(date) return date.toString().substr(0, 10)
         },
         formatPicker(event) {
-            let data =  moment(event).format('YYYY-MM-DD');
-            return data;
+            if(event){
+                return moment(event).format('YYYY-MM-DD');
+            }
+            return null;
         },
         formatDatePickerToComma(val){
             return moment(val).format('d MMM, YYYY')

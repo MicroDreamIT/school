@@ -12,34 +12,36 @@ class LibraryMember extends BaseModel
 
     public function getFullnameAttribute($value)
     {
-        if($this->attributes){
-            $str = $this->attributes['first_name'].' '.$this->attributes['middle_name'].' '.$this->attributes['last_name'];
+        if ($this->attributes && array_key_exists('first_name', $this->attributes)) {
+            $str = $this->attributes['first_name'] . ' ' . $this->attributes['middle_name'] . ' ' . $this->attributes['last_name'];
             return $str ? preg_replace('/\s\s+/', ' ', $str) : null;
         }
 
 
     }
+
     public function getMemberdetailAttribute($value)
     {
 
-        if(array_key_exists('member_id',$this->attributes)){
-            if($this->attributes['user_type']===1){
+        if (array_key_exists('member_id', $this->attributes)) {
+            if ($this->attributes['user_type'] === 1) {
                 $member = Student::where('id', $this->attributes['member_id'])->first();
             }
-            if($this->attributes['user_type']===2){
+            if ($this->attributes['user_type'] === 2) {
                 $member = Staff::where('id', $this->attributes['member_id'])->first();
             }
 
             return [$member->id, $member->fullname, $member->reg_no];
-        }else{
+        } else {
             return null;
         }
 
 
     }
+
     public function libCirculation()
     {
-        return $this->belongsTo(LibraryCirculation::class, 'user_type','id');
+        return $this->belongsTo(LibraryCirculation::class, 'user_type', 'id');
     }
 
     public function libBookIssue()
@@ -49,6 +51,6 @@ class LibraryMember extends BaseModel
 
     public function bookRequest()
     {
-        return $this->belongsTo(BookRequest::class, 'member_id','id');
+        return $this->belongsTo(BookRequest::class, 'member_id', 'id');
     }
 }

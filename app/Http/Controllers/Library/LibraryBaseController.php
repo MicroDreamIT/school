@@ -55,9 +55,9 @@ class LibraryBaseController extends CollegeBaseController
                 $current_issued = $member->libBookIssue()->where('status','=',1)->count();
                 $book_eligible = $issue_limit_books - $current_issued;
                 if ($book_eligible <= 0){
-                    $request->session()->flash($this->message_warning,'Member is not eligible for book taken in this time. 
-                    Already taken maximum number of books');
-                    return back();
+                    return response()->json(['warning','Member is not eligible for book taken in this time. 
+                    Already taken maximum number of books']);
+
                 }
 
                 /*check book availability if duplicate book select for issue on same time */
@@ -78,20 +78,20 @@ class LibraryBaseController extends CollegeBaseController
                             //remove from request list
                             BookRequest::where(['book_masters_id' => $request->get('master_id')[$key],'member_id'=>$request->get('member_id')])->delete();
                         }
-                        $request->session()->flash($this->message_success,' Book Issued Successfully.');
+                        return response()->json(['success',' Book Issued Successfully.']);
                     }else{
-                        $request->session()->flash($this->message_warning, 'Book Not Issued. Please Choose Available Books Copy When Book Issue.');
+                        return response()->json(['warning', 'Book Not Issued. Please Choose Available Books Copy When Book Issue.']);
                     }
 
-                    $request->session()->flash($this->message_success,' Book Issued Successfully.');
+                    return response()->json(['success',' Book Issued Successfully.']);
                 }else{
-                    $request->session()->flash($this->message_warning, 'Book Not Available for issue or Damage or Lost. Please check book detail for more info.');
+                    return response()->json(['warning', 'Book Not Available for issue or Damage or Lost. Please check book detail for more info.']);
                 }
             }
         }else{
-            $request->session()->flash($this->message_warning,'Book Not Issued Please Choose Available Books For Issue.');
+            return response()->json(['warning','Book Not Issued Please Choose Available Books For Issue.']);
         }
-        return back();
+
     }
 
     public function bookRequestCancel(Request $request, $bookId, $memberId)
@@ -103,11 +103,10 @@ class LibraryBaseController extends CollegeBaseController
         $bookRequested = BookRequest::where(['book_masters_id'=>$bookId, 'member_id'=>$memberId])->first();
         if($bookRequested){
             $bookRequested->delete();
-            $request->session()->flash($this->message_danger, 'Successfully Cancel your book request.');
+            return response()->json(['danger', 'Successfully Cancel your book request.']);
         }else{
-            $request->session()->flash($this->message_warning, 'Invalid Request.');
+            return response()->json(['warning', 'Invalid Request.']);
         }
-        return back();
     }
 
     public function bookRequestIssue(Request $request, $bookId, $memberId)
@@ -119,9 +118,9 @@ class LibraryBaseController extends CollegeBaseController
         /*$bookRequested = BookRequest::where(['book_masters_id'=>$bookId, 'member_id'=>$memberId])->first();
         if($bookRequested){
             $bookRequested->delete();
-            $request->session()->flash($this->message_danger, 'Successfully Cancel your book request.');
+            return response()->json(['danger', 'Successfully Cancel your book request.']);
         }else{
-            $request->session()->flash($this->message_warning, 'Invalid Request.');
+            return response()->json(['warning', 'Invalid Request.']);
         }
         return back();*/
 
@@ -145,9 +144,9 @@ class LibraryBaseController extends CollegeBaseController
                 $current_issued = $member->libBookIssue()->where('status','=',1)->count();
                 $book_eligible = $issue_limit_books - $current_issued;
                 if ($book_eligible <= 0){
-                    $request->session()->flash($this->message_warning,'Member is not eligible for book taken in this time. 
-                    Already taken maximum number of books');
-                    return back();
+                    return response()->json(['warning','Member is not eligible for book taken in this tim]e. 
+                    Already taken maximum number of books']);
+
                 }
 
                 /*check book availability if duplicate book select for issue on same time */
@@ -165,21 +164,21 @@ class LibraryBaseController extends CollegeBaseController
                         if($book_issue) {
                             Book::where('id','=',$book)->update(['book_status' => 2]);
                         }
-                        $request->session()->flash($this->message_success,' Book Issued Successfully.');
+                        return response()->json(['success',' Book Issued Successfully.']);
                     }else{
-                        $request->session()->flash($this->message_warning, 'Book Not Issued. Please Choose Available Books Copy When Book Issue.');
+                        return response()->json(['warning', 'Book Not Issued. Please Choose Available Books Copy When Book Issue.']);
                     }
 
-                    $request->session()->flash($this->message_success,' Book Issued Successfully.');
+                    return response()->json(['success',' Book Issued Successfully.']);
                 }else{
-                    $request->session()->flash($this->message_warning, 'Book Not Available for issue or Damage or Lost. Please check book detail for more info.');
+                    return response()->json(['warning', 'Book Not Available for issue or Damage or Lost. Please check book detail for more info.']);
                 }
             }
         }else{
-            $request->session()->flash($this->message_warning,'Book Not Issued Please Choose Available Books For Issue.');
+            return response()->json(['warning','Book Not Issued Please Choose Available Books For Issue.']);
         }
 
-        return back();
+
     }
 
     public function returnBook(Request $request, $id)
@@ -202,8 +201,8 @@ class LibraryBaseController extends CollegeBaseController
         $data['book_issue']->update(['return_date' => Carbon::now(), 'status' => 'in-active']);
         $data['book']->update(['book_status' => 1]);
 
-        $request->session()->flash($this->message_success,'Book Return Successfully.');
-        return back();
+        return response()->json(['success','Book Return Successfully.']);
+
     }
 
     public function bookNameAutocomplete(Request $request)
@@ -269,7 +268,7 @@ class LibraryBaseController extends CollegeBaseController
             ->join('staff as s','s.id','=','lm.member_id')
             ->get();
 
-        return view(parent::loadDataToView('library.return-over.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function issueHistory(Request $request)
@@ -351,7 +350,7 @@ class LibraryBaseController extends CollegeBaseController
         $data['books'] = $this->activeBookMasters();
 
         $data['url'] = URL::current();
-        return view(parent::loadDataToView($this->view_path.'.issue-history.index'), compact('data'));
+        return response()->json($data);
 
     }
 }

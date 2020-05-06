@@ -22,19 +22,18 @@ class CirculationController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['circulation'] = LibraryCirculation::select('id', 'user_type', 'slug', 'code_prefix','issue_limit_days','issue_limit_books',
+        $data['circulation'] = LibraryCirculation::select('id', 'user_type', 'slug', 'code_prefix', 'issue_limit_days', 'issue_limit_books',
             'fine_per_day', 'status')->get();
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(Request $request)
     {
-       $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by' => auth()->user()->id]);
 
-       LibraryCirculation::create($request->all());
+        LibraryCirculation::create($request->all());
 
-       $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-       return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -43,24 +42,23 @@ class CirculationController extends CollegeBaseController
         if (!$data['row'] = LibraryCirculation::find($id))
             return parent::invalidRequest();
 
-        $data['circulation'] = LibraryCirculation::select('id', 'user_type', 'slug', 'code_prefix', 'issue_limit_days','issue_limit_books',
+        $data['circulation'] = LibraryCirculation::select('id', 'user_type', 'slug', 'code_prefix', 'issue_limit_days', 'issue_limit_books',
             'fine_per_day', 'status')->get();
 
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(Request $request, $id)
     {
 
-       if (!$row = LibraryCirculation::find($id)) return parent::invalidRequest();
+        if (!$row = LibraryCirculation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -69,8 +67,7 @@ class CirculationController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -84,7 +81,7 @@ class CirculationController extends CollegeBaseController
                         case 'in-active':
                             $row = LibraryCirculation::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -96,15 +93,13 @@ class CirculationController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -115,22 +110,20 @@ class CirculationController extends CollegeBaseController
     {
         if (!$row = LibraryCirculation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->semester . ' ' . $this->panel . ' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
     {
         if (!$row = LibraryCirculation::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->semester.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->semester . ' ' . $this->panel . ' In-Active Successfully.']);
     }
 }

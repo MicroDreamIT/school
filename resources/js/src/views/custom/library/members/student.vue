@@ -68,9 +68,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Batch</label>
-                                            <v-select :options="batch"
-                                                      v-model="searchData.batch">
-                                            </v-select>
+                                            <select v-model="searchData.batch" class="form-control">
+                                                <option :value="b.id" v-for="b in batches">{{b.value}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -92,13 +92,9 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Academic Status:</label>
-                                            <v-select v-model="searchData.academic_status"
-                                                      :options="academic_status"
-                                                      label="value"
-                                                      :reduce="a => a.id"
-                                                      placeholder="Select Academic Status"
-                                            >
-                                            </v-select>
+                                            <select v-model="searchData.academic_status" class="form-control">
+                                                <option :value="as.id" v-for="as in academic_statuses">{{as.value}}</option>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Status:</label>
@@ -112,14 +108,9 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Faculty/Class</label>
-                                            <v-select v-model="searchData.faculty"
-                                                      :options="faculties"
-                                                      label="value"
-                                                      :reduce="a => a.id"
-                                                      placeholder="Select Faculty/Class"
-                                                      @input="findSemester(searchData.faculty)"
-                                            >
-                                            </v-select>
+                                            <select v-model="searchData.faculty" class="form-control">
+                                                <option :value="f.id" v-for="f in faculties">{{f.value}}</option>
+                                            </select>
 
                                         </div>
                                         <div class="form-group">
@@ -233,7 +224,10 @@
 
         data() {
             return {
+                academic_statuses:[],
+                faculties:[],
                 filterSection:true,
+                batches:[],
                 searchData:{},
                 headers: [
                     {name: 'Faculty/Class', sort_key: 'faculty'},
@@ -264,6 +258,9 @@
         methods: {
             GetReturnValue(arg = null, all) {
                 let faculty = this.$root.objectToArray(all.faculties)
+                this.faculties=faculty
+                this.academic_statuses = this.$root.objectToArray(all.academic_status)
+                this.batches = this.$root.objectToArray(all.batch)
                 let val = arg.map(st => {
                     return {
                         id: st.id,

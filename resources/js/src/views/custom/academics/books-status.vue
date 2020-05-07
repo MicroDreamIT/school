@@ -180,8 +180,12 @@
                         this.$http.post(this.url + '/store', {
                             title: this.title,
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.getData();
                             this.$validator.reset()
@@ -194,13 +198,17 @@
                 let url = '/json/book-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
             editItems(id) {
-                this.$router.push({name: 'dayEdit', params: {id: id}})
+                this.$router.push({name: 'bookStatusEdit', params: {id: id}})
             },
             deletePopModal(id) {
                 this.deleteItem = id;
@@ -209,8 +217,12 @@
             deleteItems() {
                 this.$http.get('/json/book-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
             },
         }

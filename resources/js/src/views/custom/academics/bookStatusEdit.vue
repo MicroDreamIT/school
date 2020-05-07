@@ -68,11 +68,6 @@
 
                                     <vs-td>
                                         <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
                                             <a class="btn btn-danger btn-sm pointer-all"
                                                title="Delete"
                                                @click.stop="deletePopModal(props.data.id)">
@@ -182,13 +177,18 @@
                             title: this.title,
                             display_class:this.display_class
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.display_class = '';
                             this.getData();
                             this.$validator.reset()
                         })
+                        this.$router.push({path:'/books-status'})
                     }
                 })
             },
@@ -197,8 +197,12 @@
                 let url = '/json/book-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -212,8 +216,13 @@
             deleteItems() {
                 this.$http.get('/json/book-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
+                    this.$router.push({path:'/books-status'})
                 })
             },
         }

@@ -51,7 +51,7 @@
                                           data-vv-name="title"
                                           :danger="errors.first('title')?true:false"
                                           :danger-text="errors.first('title')"
-                                          ref="title"
+                                          ref="bedtitle"
                                 >
 
                                 </vs-input>
@@ -248,6 +248,7 @@
                 this.title = item.title
                 this.id = item.id
                 this.submitText = 'update'
+                this.$refs.bedtitle.$el.querySelector('input').focus()
             },
             deletePopModal(id) {
                 this.deleteItem = id;

@@ -184,12 +184,17 @@
                             title: this.title,
                             display_class:this.display_class
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.display_class = '';
                             this.getData();
                             this.$validator.reset()
+                            this.$router.push({path:'/day'})
                         })
                     }
                 })
@@ -199,8 +204,12 @@
                 let url = '/json/day/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -214,8 +223,13 @@
             deleteItems() {
                 this.$http.get('/json/day/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
+                    this.$router.push({path:'/day'})
                 })
             },
         }

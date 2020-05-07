@@ -211,9 +211,16 @@
             deleteItems() {
                 this.$http.get('/json/student-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
+                    .catch(err=>{
+
+                    })
             },
         }
     }

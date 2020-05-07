@@ -171,7 +171,8 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url).then(res => {
+                this.$http.get(this.url + '/'+this.$route.params.id+'/edit').then(res => {
+                    this.title=res.data.row.title;
                     this.items = res.data.data;
                     this.mainItem = this.items;
                 })
@@ -179,14 +180,19 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url + '/store', {
+                        this.$http.post(this.url + '/'+this.$route.params.id+'/update', {
                             title: this.title,
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.getData();
                             this.$validator.reset()
+                            this.$router.push({path:'/student-status'})
                         })
                     }
                 })
@@ -196,8 +202,12 @@
                 let url = '/json/student-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -211,8 +221,13 @@
             deleteItems() {
                 this.$http.get('/json/student-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
+                    this.$router.push({path:'/student-status'})
                 })
             },
         }

@@ -9,6 +9,7 @@ use App\Http\Requests\Academic\Grading\EditValidation;
 use App\Models\GradingScale;
 use App\Models\GradingType;
 use Illuminate\Http\Request;
+
 class GradingController extends CollegeBaseController
 {
     protected $base_route = 'grading';
@@ -23,13 +24,13 @@ class GradingController extends CollegeBaseController
 
     public function index()
     {
-       $data = [];
-       $data['data'] = GradingType::select('id', 'title', 'status')
+        $data = [];
+        $data['data'] = GradingType::select('id', 'title', 'status')
             ->with('gradingScale')
             ->orderBy('title')
             ->get();
 
-       return response()->json($data);
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
@@ -39,8 +40,8 @@ class GradingController extends CollegeBaseController
 
         $gradingType = GradingType::create($request->all());
 
-        if($request->get('name')){
-            foreach ($request->get('name') as $key => $row_id){
+        if ($request->get('name')) {
+            foreach ($request->get('name') as $key => $row_id) {
                 $gradingScale = [
                     'gradingType_id' => $gradingType->id,
                     'name' => $row_id,
@@ -54,7 +55,7 @@ class GradingController extends CollegeBaseController
             }
         }
 
-        return response()->json(['success',' Create Successfully.']);
+        return response()->json(['success', ' Create Successfully.']);
     }
 
     public function edit($id)
@@ -68,7 +69,7 @@ class GradingController extends CollegeBaseController
             ->orderBy('title')
             ->get();
 
-        $data['grade_scale'] = $data['row']->gradingScale('id','name', 'percentage_from','percentage_to','grade_point','description')->get();
+        $data['grade_scale'] = $data['row']->gradingScale('id', 'name', 'percentage_from', 'percentage_to', 'grade_point', 'description')->get();
 
         $data['base_route'] = $this->base_route;
         return response()->json($data);
@@ -95,7 +96,7 @@ class GradingController extends CollegeBaseController
                 ];
                 GradingScale::create($gradingScale);
 
-            }else {
+            } else {
                 //update
                 $grade_scale = GradingScale::find($grade);
                 $grade_scale->update([
@@ -113,7 +114,7 @@ class GradingController extends CollegeBaseController
 
         //update grading type
         $row->update($request->all());
-        return response()->json(['success', $row->id.' '.$this->panel.' Update Successfully.']);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' Update Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -124,7 +125,7 @@ class GradingController extends CollegeBaseController
         $row->gradingScale()->delete();
         //delete grading
         $row->delete();
-        return response()->json(['success', $row->id.' '.$this->panel.' Delete Successfully.']);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' Delete Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -138,7 +139,7 @@ class GradingController extends CollegeBaseController
                         case 'in-active':
                             $row = GradingType::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -155,7 +156,7 @@ class GradingController extends CollegeBaseController
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
                     return response()->json(['success', ' Action Successfully.']);
                 else
-                    return response()->json(['success',' Delete Successfully.']);
+                    return response()->json(['success', ' Delete Successfully.']);
 
                 return redirect()->route($this->base_route);
 
@@ -176,7 +177,7 @@ class GradingController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id.' '.$this->panel.' Active Successfully.']);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -187,12 +188,12 @@ class GradingController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->id.' '.$this->panel.' In-Active Successfully.']);
+        return response()->json(['success', $row->id . ' ' . $this->panel . ' In-Active Successfully.']);
     }
 
     public function gradeHtmlRow()
     {
-        $response['html'] = view($this->view_path.'.includes.grade_tr')->render();
+        $response['html'] = view($this->view_path . '.includes.grade_tr')->render();
         return response()->json(json_encode($response));
     }
 }

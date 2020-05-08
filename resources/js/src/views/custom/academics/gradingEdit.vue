@@ -166,8 +166,8 @@
 
         methods: {
             getData() {
-                this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
-                    this.title=res.data.row.title
+                this.$http.get(this.url + '/' + this.$route.params.id + '/edit').then(res => {
+                    this.title = res.data.row.title
                     this.items = res.data.data;
                     this.mainItem = this.items;
                     this.gradeList = res.data.grade_scale
@@ -177,7 +177,7 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        this.$http.post(this.url+'/'+this.$route.params.id+'/update', {
+                        this.$http.post(this.url + '/' + this.$route.params.id + '/update', {
                             title: this.title,
                             name: this.gradeList.map(d => {
                                 return d.name
@@ -201,6 +201,7 @@
                             this.gradeList = [];
                             this.getData();
                             this.$validator.reset()
+                            this.$router.push({path: '/grading'})
                         })
                     }
                 })
@@ -210,8 +211,12 @@
                 let url = '/json/grading/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -225,8 +230,12 @@
             deleteItems() {
                 this.$http.get('/json/grading/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
             },
             addRow() {

@@ -213,7 +213,7 @@
                             this.$http.post(this.url + '/' + this.id + '/update', {title: this.title, id: this.id})
                                 .then(res => {
                                     this.$vs.notify({
-                                        title: 'success',
+                                        title: res.data[0],
                                         text: res.data[1],
                                         color: res.data[0],
                                         icon: 'verified_user'
@@ -227,7 +227,7 @@
                                 title: this.title,
                             }).then(res => {
                                 this.$vs.notify({
-                                    title: 'success',
+                                    title: res.data[0],
                                     text: res.data[1],
                                     color: res.data[0],
                                     icon: 'verified_user'
@@ -246,7 +246,12 @@
                 let url = '/json/bed-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$vs.notify({title: 'success', text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -267,7 +272,12 @@
             deleteItems() {
                 this.$http.get('/json/bed-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$vs.notify({title: 'error', text: res.data[1], color: res.data[0], icon: 'verified_user'})
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
             },
         }

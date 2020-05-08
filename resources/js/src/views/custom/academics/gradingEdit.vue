@@ -108,104 +108,6 @@
                                 <i class="fa fa-save bigger-110"></i> Update
                             </vs-button>
                         </div>
-                        <div class="col-md-7">
-                            <ow-data-table :headers="tableHeader"
-                                           :tableHeader="'Grading Scale List'"
-                                           :suggestText="'Grading Scale Record list on table. Filter Grading Scale using the filter.'"
-                                           :url="url"
-                                           :noDataMessage="'No Grading data found. Please Grading filter to show.'"
-                                           :hasSearch="true"
-                                           :has-multiple="true"
-                                           :has-pagination="true"
-                                           :main-item="mainItem"
-                                           :getData="getData"
-                            >
-                                <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.title">
-                                        {{props.data.title}}
-                                    </vs-td>
-
-                                    <vs-td>
-                                        <div class="d-flex flex-column">
-                                            <span v-for="(sub,idx) in props.data.grading_scale"
-                                                  :class="{'p-2':true ,'border-t':idx>0}">
-                                                {{sub.name+'-['+sub.percentage_from+'% To '+sub.percentage_to+']-'+sub.grade_point}}
-                                            </span>
-                                        </div>
-                                    </vs-td>
-
-                                    <vs-td>
-                                        <div class="d-flex flex-wrap">
-                                            <vs-switch color="success"
-                                                       :checked="props.data.status=='active'?true:false"
-                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
-                                                       class="pointer-all ml-2"
-                                            >
-                                                <span slot="on">Active</span>
-                                                <span slot="off">In-Active</span>
-                                            </vs-switch>
-                                        </div>
-                                    </vs-td>
-
-                                    <vs-td>
-                                        <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deletePopModal(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
-                                </template>
-
-
-                                <template slot="printSection" slot-scope="printData">
-                                    <thead>
-                                    <tr>
-                                        <th>SN.No.</th>
-                                        <th>
-                                            Group
-                                        </th>
-                                        <th>
-                                            Grade-From-To-Score
-                                        </th>
-                                        <th>
-                                            Status
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(tr, idx) in printData.data">
-                                        <td>
-                                            {{printData.data.indexOf(tr)+1}}
-                                        </td>
-                                        <td>
-                                            {{tr.title}}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                            <span v-for="(sub,idx) in tr.grading_scale"
-                                                  :class="{'p-2':true ,'border-t':idx>0}">
-                                                {{sub.name+'-['+sub.percentage_from+'% To '+sub.percentage_to+']-'+sub.grade_point}}
-                                            </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span v-if="tr.status=='active'" class="p-2 ">Active</span>
-                                                <span v-else class="p-2">In-Active</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </template>
-                            </ow-data-table>
-                        </div>
                     </div>
 
                 </vs-card>
@@ -265,8 +167,10 @@
         methods: {
             getData() {
                 this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
+                    this.title=res.data.row.title
                     this.items = res.data.data;
                     this.mainItem = this.items;
+                    this.gradeList = res.data.grade_scale
                 })
             },
 

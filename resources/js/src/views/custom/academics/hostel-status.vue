@@ -4,16 +4,16 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Hostel Bed Status Manager</h2>
                 <div class="mb-2">
-                <router-link :to="'/hostel/resident'">
-                    <vs-button type="filled" class="smBtn">Resident</vs-button>
-                </router-link>
-                <router-link :to="'/hostel'">
-                    <vs-button type="filled" class="smBtn">Hostel</vs-button>
-                </router-link>
-                <router-link :to="'/hostel/food'">
-                    <vs-button type="filled" class="smBtn">Food & Meal</vs-button>
-                </router-link>
-            </div>
+                    <router-link :to="'/hostel/resident'">
+                        <vs-button type="filled" class="smBtn">Resident</vs-button>
+                    </router-link>
+                    <router-link :to="'/hostel'">
+                        <vs-button type="filled" class="smBtn">Hostel</vs-button>
+                    </router-link>
+                    <router-link :to="'/hostel/food'">
+                        <vs-button type="filled" class="smBtn">Food & Meal</vs-button>
+                    </router-link>
+                </div>
             </div>
 
             <notify-bar/>
@@ -185,14 +185,14 @@
                     {name: 'Status'},
                     {name: 'Action'},
                 ],
-                title:'',
-                id:null,
+                title: '',
+                id: null,
                 items: [],
                 mainItem: [],
                 deletePop: false,
                 deleteItem: null,
                 url: '/json/bed-status',
-                submitText:'Create'
+                submitText: 'Create'
             }
         },
         created() {
@@ -209,19 +209,29 @@
             submit() {
                 this.$validator.validateAll().then(value => {
                     if (value) {
-                        if(this.id) {
-                            this.$http.post(this.url + '/' +this.id + '/update', {title:this.title, id:this.id})
-                                .then(res=>{
-                                    this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
-                                    this.title=''
+                        if (this.id) {
+                            this.$http.post(this.url + '/' + this.id + '/update', {title: this.title, id: this.id})
+                                .then(res => {
+                                    this.$vs.notify({
+                                        title: 'success',
+                                        text: res.data[1],
+                                        color: res.data[0],
+                                        icon: 'verified_user'
+                                    })
+                                    this.title = ''
                                     this.id = null
                                     this.getData()
                                 })
-                        }else{
+                        } else {
                             this.$http.post(this.url + '/store', {
                                 title: this.title,
                             }).then(res => {
-                                this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                                this.$vs.notify({
+                                    title: 'success',
+                                    text: res.data[1],
+                                    color: res.data[0],
+                                    icon: 'verified_user'
+                                })
                                 this.title = '';
                                 this.getData();
                                 this.$validator.reset()
@@ -236,13 +246,13 @@
                 let url = '/json/bed-status/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$vs.notify({title:'success',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title: 'success', text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 })
 
             },
             editItems(id) {
-                let item = this.mainItem.filter(it=>{
-                    return it.id===id
+                let item = this.mainItem.filter(it => {
+                    return it.id === id
                 })[0]
 
                 this.title = item.title
@@ -257,7 +267,7 @@
             deleteItems() {
                 this.$http.get('/json/bed-status/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$vs.notify({title:'error',text:res.data[1],color:res.data[0],icon:'verified_user'})
+                    this.$vs.notify({title: 'error', text: res.data[1], color: res.data[0], icon: 'verified_user'})
                 })
             },
         }

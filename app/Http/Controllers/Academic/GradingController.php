@@ -42,9 +42,10 @@ class GradingController extends CollegeBaseController
 
         if ($request->get('name')) {
             foreach ($request->get('name') as $key => $row_id) {
+//                dd($key, $row_id);
                 $gradingScale = [
                     'gradingType_id' => $gradingType->id,
-                    'name' => $row_id,
+                    'name' => $request->get('name')[$key],
                     'percentage_from' => $request->get('percentage_from')[$key],
                     'percentage_to' => $request->get('percentage_to')[$key],
                     'grade_point' => $request->get('grade_point')[$key],
@@ -80,7 +81,7 @@ class GradingController extends CollegeBaseController
         //dd($request->all());
         if (!$row = GradingType::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
         //update & add grade scales
         foreach ($request->get('gsID') as $key => $grade) {
             if ($grade == null) {
@@ -158,11 +159,9 @@ class GradingController extends CollegeBaseController
                 else
                     return response()->json(['success', ' Delete Successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();
@@ -173,7 +172,7 @@ class GradingController extends CollegeBaseController
     {
         if (!$row = GradingType::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
@@ -184,7 +183,7 @@ class GradingController extends CollegeBaseController
     {
         if (!$row = GradingType::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 

@@ -289,8 +289,12 @@
                                 return d.description
                             })
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.gradeList = [];
                             this.getData();
@@ -304,8 +308,12 @@
                 let url = '/json/grading/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -319,8 +327,12 @@
             deleteItems() {
                 this.$http.get('/json/grading/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
             },
             addRow() {

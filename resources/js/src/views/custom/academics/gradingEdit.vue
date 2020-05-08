@@ -146,6 +146,7 @@
         data() {
             return {
                 title: '',
+                id:null,
                 tableHeader: [
                     {name: 'Group', sort_key: 'title'},
                     {name: 'Grade-From-To-Score', sort_key: ''},
@@ -168,6 +169,7 @@
             getData() {
                 this.$http.get(this.url + '/' + this.$route.params.id + '/edit').then(res => {
                     this.title = res.data.row.title
+                    this.id=res.data.row.id
                     this.items = res.data.data;
                     this.mainItem = this.items;
                     this.gradeList = res.data.grade_scale
@@ -179,6 +181,7 @@
                     if (value) {
                         this.$http.post(this.url + '/' + this.$route.params.id + '/update', {
                             title: this.title,
+                            id:this.id,
                             name: this.gradeList.map(d => {
                                 return d.name
                             }),
@@ -193,10 +196,18 @@
                             }),
                             description: this.gradeList.map(d => {
                                 return d.description
+                            }),
+                            gsID:this.gradeList.map(d=>{
+                                return d.id
                             })
+
                         }).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.title = '';
                             this.gradeList = [];
                             this.getData();

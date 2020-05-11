@@ -162,193 +162,6 @@
                             >Update
                             </vs-button>
                         </div>
-                        <div class="col-md-7">
-                            <ow-data-table :headers="tableHeader"
-                                           :tableHeader="'Course List'"
-                                           :suggestText="'Course Record list on table. Filter Course using the filter.'"
-                                           :url="url"
-                                           :noDataMessage="'No Course data found. Please Filter Course to show.'"
-                                           :hasSearch="true"
-                                           :has-multiple="true"
-                                           :has-pagination="true"
-                                           :main-item="mainItem"
-                                           :getData="getData"
-                            >
-                                <template slot="items" slot-scope="props">
-                                    <vs-td :data="props.data.title">
-                                        <div class="d-flex flex-column">
-                                            <span class="p-2">
-                                                {{props.data.title}}
-                                            </span>
-                                            <span
-                                                    class="p-2 border-t">
-                                                {{props.data.code}}
-                                            </span>
-                                        </div>
-                                    </vs-td>
-                                    <vs-td>
-                                        <div class="d-flex flex-column">
-                                            <span class="p-2">
-                                                {{'FM(T) - '+props.data.full_mark_theory}}
-                                            </span>
-                                            <span
-                                                    class="p-2 border-t">
-                                                {{'PM(T) - '+props.data.pass_mark_theory}}
-                                            </span>
-                                            <span
-                                                    class="p-2 border-t">
-                                                {{'FM(P) - '+props.data.full_mark_practical}}
-                                            </span>
-                                            <span
-                                                    class="p-2 border-t">
-                                                {{'PM(P) - '+props.data.pass_mark_practical}}
-                                            </span>
-                                        </div>
-                                    </vs-td>
-                                    <vs-td>
-                                        <div class="d-flex flex-column">
-                                            <div class="p-2 d-flex">
-                                                <span class="flex-1">Credit Hour- </span>
-                                                <span class="flex-1">{{props.data.credit_hour}}</span>
-
-                                            </div>
-                                            <div class="p-2 border-t d-flex">
-                                                <span class="flex-1">Subject Type -</span>
-                                                <span class="flex-1">{{props.data.sub_type}}</span>
-                                            </div>
-                                            <div class="p-2 border-t d-flex">
-                                                <span class="flex-1">Class Type -</span>
-                                                <span class="flex-1">{{props.data.class_type}}</span>
-                                            </div>
-
-                                            <div class="p-2 border-t d-flex">
-                                                <span class="flex-1">Teacher/Staff -</span>
-                                                <span class="flex-1"> {{props.data.staff.first_name?props.data.staff.first_name:' '}}
-                                                {{props.data.staff.middle_name?' '+props.data.staff.middle_name:' '+' '}}
-                                                {{props.data.staff.last_name?' '+props.data.staff.last_name:' '}}</span>
-                                            </div>
-
-                                        </div>
-                                    </vs-td>
-                                    <vs-td>
-                                        <div class="d-flex flex-wrap">
-                                            <vs-switch color="success"
-                                                       :checked="props.data.status=='active'?true:false"
-                                                       @click.stop="changeStatus(props.data.id,props.data.status)"
-                                                       class="pointer-all ml-2"
-                                            >
-                                                <span slot="on">Active</span>
-                                                <span slot="off">In-Active</span>
-                                            </vs-switch>
-                                        </div>
-                                    </vs-td>
-
-                                    <vs-td>
-                                        <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deletePopModal(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
-                                </template>
-
-
-                                <template slot="printSection" slot-scope="printData">
-                                    <thead>
-                                    <tr>
-                                        <th>SN.No.</th>
-                                        <th>
-                                            Course
-                                        </th>
-                                        <th>
-                                            Marking
-                                        </th>
-                                        <th>
-                                            Info
-                                        </th>
-                                        <th>
-                                            Status
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(tr, idx) in printData.data">
-                                        <td>
-                                            {{printData.data.indexOf(tr)+1}}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                            <span class="p-2">
-                                                {{tr.title}}
-                                            </span>
-                                                <span
-                                                        class="p-2 border-t">
-                                                {{tr.code}}
-                                            </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                            <span class="p-2">
-                                                {{'FM(T) - '+tr.full_mark_theory}}
-                                            </span>
-                                                <span
-                                                        class="p-2 border-t">
-                                                {{'PM(T) - '+tr.pass_mark_theory}}
-                                            </span>
-                                                <span
-                                                        class="p-2 border-t">
-                                                {{'FM(P) - '+tr.full_mark_practical}}
-                                            </span>
-                                                <span
-                                                        class="p-2 border-t">
-                                                {{'PM(P) - '+tr.pass_mark_practical}}
-                                            </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <div class="p-2 d-flex">
-                                                    <span class="flex-1">Credit Hour- </span>
-                                                    <span class="flex-1">{{tr.credit_hour}}</span>
-
-                                                </div>
-                                                <div class="p-2 border-t d-flex">
-                                                    <span class="flex-1">Subject Type -</span>
-                                                    <span class="flex-1">{{tr.sub_type}}</span>
-                                                </div>
-                                                <div class="p-2 border-t d-flex">
-                                                    <span class="flex-1">Class Type -</span>
-                                                    <span class="flex-1">{{tr.class_type}}</span>
-                                                </div>
-
-                                                <div class="p-2 border-t d-flex">
-                                                    <span class="flex-1">Teacher/Staff -</span>
-                                                    <span class="flex-1"> {{tr.staff.first_name?tr.staff.first_name:' '}}
-                                                {{tr.staff.middle_name?' '+tr.staff.middle_name:' '+' '}}
-                                                {{tr.staff.last_name?' '+tr.staff.last_name:' '}}</span>
-                                                </div>
-
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span v-if="tr.status=='active'" class="p-2 ">Active</span>
-                                                <span v-else class="p-2">In-Active</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </template>
-                            </ow-data-table>
-                        </div>
                     </div>
 
                 </vs-card>
@@ -409,6 +222,7 @@
                 this.$http.get(this.url+'/'+this.$route.params.id+'/edit').then(res => {
                     this.items = res.data.data;
                     this.mainItem = this.items;
+                    this.subject = res.data.row
                     this.staff = this.$root.objectToArray(res.data.staff);
                 })
             },
@@ -417,12 +231,17 @@
                 this.$validator.validateAll().then(value => {
                     if (value) {
                         this.$http.post(this.url +'/'+this.$route.params.id+'/update', this.subject).then(res => {
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                             this.subject = {};
                             this.subjects = [];
                             this.getData();
                             this.$validator.reset()
+                            this.$router.push({path:'/subject'})
                         })
                     }
                 })
@@ -433,8 +252,12 @@
                 let url = '/json/subject/' + id + '/' + stat;
                 this.$http.get(url).then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
 
             },
@@ -448,8 +271,12 @@
             deleteItems() {
                 this.$http.get('/json/subject/' + this.deleteItem + '/delete').then(res => {
                     this.getData();
-                    this.$root.notification.status = res.data[0];
-                    this.$root.notification.message = res.data[1]
+                    this.$vs.notify({
+                        title: res.data[0],
+                        text: res.data[1],
+                        color: res.data[0],
+                        icon: 'verified_user'
+                    })
                 })
             },
         }

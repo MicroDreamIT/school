@@ -54,20 +54,20 @@
                                             {{roles.filter(d=>d.id==role)[0].display_name+' - '}}</span>
                                     </vs-td>
 
-                                    <vs-td>
-                                        <div class="action-own">
-                                            <a class="btn btn-success btn-sm pointer-all"
-                                               title="Edit"
-                                               @click.stop="editItems(props.data.id)">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            <a class="btn btn-danger btn-sm pointer-all"
-                                               title="Delete"
-                                               @click.stop="deletePopModal(props.data.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </div>
-                                    </vs-td>
+<!--                                    <vs-td>-->
+<!--                                        <div class="action-own">-->
+<!--                                            <a class="btn btn-success btn-sm pointer-all"-->
+<!--                                               title="Edit"-->
+<!--                                               @click.stop="editItems(props.data.id)">-->
+<!--                                                <i class="fa fa-pencil"></i>-->
+<!--                                            </a>-->
+<!--                                            <a class="btn btn-danger btn-sm pointer-all"-->
+<!--                                               title="Delete"-->
+<!--                                               @click.stop="deletePopModal(props.data.id)">-->
+<!--                                                <i class="fa fa-trash-o"></i>-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                    </vs-td>-->
                                 </template>
 
 
@@ -150,7 +150,7 @@
                     {name: 'Publish Date', sort_key: 'publish_date'},
                     {name: 'End Date', sort_key: 'end_date'},
                     {name: 'Display Group', sort_key: ''},
-                    {name: 'Action'},
+                    // {name: 'Action'},
                 ],
                 items: [],
                 mainItem: [],

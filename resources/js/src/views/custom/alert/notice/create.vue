@@ -168,11 +168,15 @@
                 this.$validator.validateAll().then(value => {
                     if (value) {
                         this.$http.post('/json/info/notice/store', this.notice).then(res => {
-                            this.notice = {role: []};
-                            this.$root.notification.status = res.data[0];
-                            this.$root.notification.message = res.data[1];
+                            this.notice = {role: []}
                             this.getData();
                             this.$validator.reset()
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
                         })
                     }
                 })

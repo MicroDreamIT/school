@@ -37,7 +37,7 @@
                         <vs-divider class="mx-3"></vs-divider>
                         <div class="col-md-12 row">
                             <div class="col-md-8">
-                                <p>Subject</p>
+                                <p v-if="sms.type.includes('email')">Subject</p>
                                 <vs-input
                                         v-model="sms.subject"
                                         v-validate="'required'"
@@ -45,6 +45,7 @@
                                         :danger="errors.first('subject')?true:false"
                                         :danger-text="errors.first('subject')"
                                         class="w-100"
+                                        v-if="sms.type.includes('email')"
                                 >
 
                                 </vs-input>
@@ -57,6 +58,7 @@
                                         :danger-text="errors.first('message')"
                                         class="w-100"
                                         height="100px"
+                                        v-if="sms.type.includes('sms')"
                                 >
 
                                 </vs-textarea>
@@ -68,14 +70,15 @@
                                         v-model="sms.emailMessage"
                                         class="w-100"
                                         height="100px"
+                                        v-if="sms.type.includes('email')"
                                 >
 
                                 </vs-textarea>
                             </div>
                             <div class="col-md-4">
                                 <p>Type</p>
-                                <vs-radio v-model="sms.type"  vs-value="sms">Sms</vs-radio>
-                                <vs-radio v-model="sms.type" vs-value="email">Email</vs-radio>
+                                <vs-checkbox v-model="sms.type"  vs-value="sms">Sms</vs-checkbox>
+                                <vs-checkbox v-model="sms.type" vs-value="email">Email</vs-checkbox>
                                 <p>Message Display Groups</p>
                                 <vs-checkbox v-model="sms.role"
                                              class="my-2"
@@ -115,7 +118,10 @@
     export default {
         data() {
             return {
-                sms: {role: [],type:['sms']},
+                sms: {
+                    role: [],
+                    type:['sms']
+                },
                 roles: []
             }
         },

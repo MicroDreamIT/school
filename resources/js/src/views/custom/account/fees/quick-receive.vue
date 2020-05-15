@@ -103,14 +103,14 @@
 <!--                                  v-model="selected"-->
 <!--                        >-->
 <!--                        </v-select>-->
-                        <vs-select
+                        <v-select
                                    v-model="selectedStudent"
                                    class="w-100"
                                    :filterable="false"
                                    @search="findStudent"
                                    :options="students"
                         >
-                        </vs-select>
+                        </v-select>
                     </div>
                     <vs-divider></vs-divider>
                     <vs-button @click="verifyStudent" class="smBtn">
@@ -239,7 +239,7 @@
 
         data() {
             return {
-                selectedStudent: '',
+                selectedStudent: {},
                 students: [],
                 receive_date: '',
                 receive_amount: null,
@@ -257,9 +257,9 @@
         },
 
         methods: {
-            findStudent(){
-                console.log(this.selectedStudent)
-            },
+            // findStudent(){
+            //     console.log(this.selectedStudent)
+            // },
             verifyStudent() {
 
             },

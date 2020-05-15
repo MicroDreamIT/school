@@ -94,15 +94,22 @@
                             <i class="fa fa-search" aria-hidden="true"></i>
                             Search & Verify Student Before Collect
                         </h4>
-                        <vs-select autocomplete
+<!--                        <v-select class="col-sm-9"-->
+<!--                                  :options="staffs"-->
+<!--                                  :filterable="false"-->
+<!--                                  @search="searchStaff"-->
+<!--                                  label="fullname"-->
+<!--                                  multiple-->
+<!--                                  v-model="selected"-->
+<!--                        >-->
+<!--                        </v-select>-->
+                        <vs-select
                                    v-model="selectedStudent"
                                    class="w-100"
+                                   :filterable="false"
+                                   @search="findStudent"
+                                   :options="students"
                         >
-                            <vs-select-item :key="index"
-                                            :value="item"
-                                            :text="item"
-                                            v-for="(item,index) in students"/>
-
                         </vs-select>
                     </div>
                     <vs-divider></vs-divider>
@@ -232,8 +239,8 @@
 
         data() {
             return {
-                selectedStudent: null,
-                students: ['dsad', 'sadsad'],
+                selectedStudent: '',
+                students: [],
                 receive_date: '',
                 receive_amount: null,
                 discount: 0,
@@ -243,11 +250,16 @@
             }
         },
 
-        created() {
-
+        watch:{
+            selectedStudent(val){
+                console.log(val)
+            }
         },
 
         methods: {
+            findStudent(){
+                console.log(this.selectedStudent)
+            },
             verifyStudent() {
 
             },

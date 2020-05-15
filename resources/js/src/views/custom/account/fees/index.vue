@@ -254,42 +254,44 @@
                             Fees Collection Record list on table. Filter Fees Collection using the filter.
                         </div>
                     </div>
-                    <vs-table
-                            v-model="selected"
-                            pagination
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            :noDataText="'No Fees Collection data found. Please Filter Fees Collection to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="tableHeader"
+                                      :tableHeader="'Route List'"
+                                      :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                      :url="'/json/account/fees'"
+                                      :model="'feehead'"
+                                      :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                      :hasSearch="true"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      ref="fees_head"
+                                      :ajaxVariableSet="['fees_head']"
+                                      @get-return-value="GetReturnValue"
+                                      :showAction="false"
                     >
-
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in feesHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.fee_head_title">
+                                {{props.data.fee_head_title}}
+                            </vs-td>
+                            <vs-td :data="props.data.fee_head_amount">
+                                {{props.data.fee_head_amount}}
+                            </vs-td>
+                            <vs-td :data="props.data.action">
+                                <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-                            <vs-tr class="totalSection">
-                                <vs-td colspan="10">Total {{getTotal}}</vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -302,7 +304,7 @@
 
         data() {
             return {
-                feesHeader: [
+                tableHeader: [
                     {name: 'Reg.Num.', sort_key: 'reg_no'},
                     {name: 'Name', sort_key: ''},
                     {name: 'Sem/Sec', sort_key: ''},
@@ -334,21 +336,14 @@
         },
 
         methods: {
-            getData(){
-
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
             },
-            viewItems() {
-                alert("hey hasib im view ")
-            },
-            editItems() {
-                alert("hey hasib im edit ")
-            },
-            deleteItems() {
-                alert("hey hasib im delete ")
-            },
-            doFilter() {
-
-            }
 
         }
 

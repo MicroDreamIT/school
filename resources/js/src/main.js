@@ -24,7 +24,7 @@ Vue.use(Print);
 Vue.directive('mask', VueMaskDirective);
 // Vuesax Component Framework
 import Vuesax from 'vuesax'
-
+window.$ = require('jquery')
 Vue.use(Vuesax)
 Vue.component('v-select', vSelect)
 // axios

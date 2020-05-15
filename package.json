@@ -88,6 +88,7 @@
         "bootstrap": "^4.4.1",
         "font-awesome": "^4.7.0",
         "html2canvas": "^1.0.0-rc.5",
+        "jquery": "^3.2.1",
         "jspdf": "^1.5.3",
         "jspdf-autotable": "^3.2.13",
         "moment": "^2.24.0",

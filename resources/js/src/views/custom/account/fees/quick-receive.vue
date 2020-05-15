@@ -94,21 +94,14 @@
                             <i class="fa fa-search" aria-hidden="true"></i>
                             Search & Verify Student Before Collect
                         </h4>
-<!--                        <v-select class="col-sm-9"-->
-<!--                                  :options="staffs"-->
-<!--                                  :filterable="false"-->
-<!--                                  @search="searchStaff"-->
-<!--                                  label="fullname"-->
-<!--                                  multiple-->
-<!--                                  v-model="selected"-->
-<!--                        >-->
-<!--                        </v-select>-->
                         <v-select
-                                   v-model="selectedStudent"
-                                   class="w-100"
-                                   :filterable="false"
-                                   @search="findStudent"
-                                   :options="students"
+                                v-model="selectedStudent"
+                                class="w-100"
+                                :filterable="false"
+                                @search="findStudent"
+                                :options="students"
+                                :reduce="student => student.id"
+                                label="text"
                         >
                         </v-select>
                     </div>
@@ -117,65 +110,9 @@
                         <i class="fa fa-user"></i>
                         Verify Student for Collect Fees
                     </vs-button>
-                    <div class="col-sm-12 mt-2" v-if="selectedStudent">
-                        <div class="row w-100">
-                            <div class="col-md-3">
-                                <div class="d-flex justify-content-center align-items-center w-100 ">
-                                    <img :src="selectedStudent.profile_picture"
-                                         v-if="selectedStudent.profile_picture"
-                                         class="img-thumbnail mt-3 ">
-                                    <img src="../../../../../../assets/images/profile-default.jpg"
-                                         v-else
-                                         class="img-thumbnail mt-3 ">
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="data-table">
-                                    <div class="rows">
-                                        <div class="header">Name</div>
-                                        <div class="content">
-                                            <router-link :to="{name:'studentView',params:{id:selectedStudent.id}}">
-                                                {{selectedStudent.name}}sdfds
-                                            </router-link>
-                                        </div>
-                                        <div class="header">Reg. No.:</div>
-                                        <div class="content">
-                                            <router-link :to="{name:'studentView',params:{id:selectedStudent.id}}">
-                                                {{selectedStudent.reg_no}}sfddsfds
-                                            </router-link>
-                                        </div>
-                                    </div>
-                                    <div class="rows">
-                                        <div class="header">Univ.Reg.:</div>
-                                        <div class="content">{{selectedStudent.university_reg_no}}</div>
-                                        <div class="header">DOB:</div>
-                                        <div class="content">{{selectedStudent.date_of_birth}}</div>
-                                    </div>
-                                    <div class="rows">
-                                        <div class="header">Faculty/Class:</div>
-                                        <div class="content">123</div>
-                                        <div class="header">Sem./Sec.:</div>
-                                        <div class="content"> 06/01/2020</div>
-                                    </div>
-                                    <div class="rows">
-                                        <div class="header">Gender :</div>
-                                        <div class="content">1235</div>
-                                        <div class="header">Blood Group :</div>
-                                        <div class="content"> 06/01/2020</div>
-                                    </div>
-                                    <div class="rows">
-                                        <div class="header">Nationality :</div>
-                                        <div class="content">male</div>
-                                        <div class="header">E-mail :</div>
-                                        <div class="content"> a+</div>
-                                    </div>
-                                    <div class="rows2">
-                                        <div class="header">Balance Fee :</div>
-                                        <div class="content">islam</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-sm-12 mt-2" v-if="htmldata">
+                        <div v-html="htmldata"></div>
+<!--                        <div id="student_wrapper"></div>-->
                         <vs-divider></vs-divider>
                         <div class="row mx-0 my-2">
                             <div class="col-sm-2">Receive Date</div>
@@ -204,7 +141,7 @@
                             <div class="col-sm-2 ">Payment Method</div>
                             <div class="col-sm-10">
                                 <vs-radio v-model="payment_method" vs-value="cash">Cash</vs-radio>
-                                <vs-radio v-model="payment_method"  vs-value="bank">Bank</vs-radio>
+                                <vs-radio v-model="payment_method" vs-value="bank">Bank</vs-radio>
                             </div>
                         </div>
                         <div class="row mx-0 my-2">
@@ -245,25 +182,45 @@
                 receive_amount: null,
                 discount: 0,
                 note: '',
-                payment_method:'cash',
-                isPrint:'no_print'
+                payment_method: 'cash',
+                isPrint: 'no_print',
+                htmldata:null
             }
         },
 
-        watch:{
-            selectedStudent(val){
-                console.log(val)
+        watch: {
+            selectedStudent(val) {
+                if(val){
+                    this.$http.post('/json/account/student-detail-html', {
+                        id:parseInt(val)
+                    })
+                        .then(res=>{
+                            this.htmldata = res.data.html
+                        })
+                }
             }
         },
 
         methods: {
-            // findStudent(){
-            //     console.log(this.selectedStudent)
-            // },
+            findStudent(search, loading) {
+                loading(true)
+                this.$http.get('/json/student/student-name-autocomplete', {
+                    params: {
+                        terms: search,
+                        q: search
+                    }
+                })
+                    .then(res => {
+                        if(res.data){
+                            this.students = res.data
+                            loading(false)
+                        }
+                    })
+            },
             verifyStudent() {
 
             },
-            quickCollect(){
+            quickCollect() {
 
             }
         }

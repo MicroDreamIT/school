@@ -114,8 +114,7 @@ class FeesCollectionController extends CollegeBaseController
     {
         $amt = ($request->paid_amount - $request->fine) + $request->discount ;
         if($amt > + $request->due_amount){
-            $request->session()->flash($this->message_danger, 'Due Amount : '.$request->due_amount.' , But you want to receive Amount with Discount :'.$amt);
-            return back();
+            return response()->json(['danger', 'Due Amount : '.$request->due_amount.' , But you want to receive Amount with Discount :'.$amt]);
         }
 
         $request->request->add(['created_by' => auth()->user()->id]);
@@ -127,8 +126,7 @@ class FeesCollectionController extends CollegeBaseController
         $amount = $request->get('paid_amount');
         $this->feeReceiveAlert($studentId, $amount);
 
-        $request->session()->flash($this->message_success, $this->panel. 'Successfully.');
-        return back();
+        return response()->json(['success', $this->panel. 'Successfully.']);
 
     }
 
@@ -138,8 +136,7 @@ class FeesCollectionController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return back();
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
     }
 
     //quick fee receive
@@ -148,7 +145,7 @@ class FeesCollectionController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['payment_method'] = $this->activePaymentMethod();
 
-        return view(parent::loadDataToView('account.fees.quickreceive.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function quickReceiveStore(Request $request)
@@ -273,7 +270,8 @@ class FeesCollectionController extends CollegeBaseController
                 //send alert
                 $studentId = $student->id ;
                 $this->feeReceiveAlert($studentId, $totalReceiveAmt);
-                $request->session()->flash($this->message_success, 'Successfully Receive '.$totalReceiveAmt.' Quick Receive Method');
+
+                return response()->json(['success', 'Successfully Receive '.$totalReceiveAmt.' Quick Receive Method']);
             }
 
         });

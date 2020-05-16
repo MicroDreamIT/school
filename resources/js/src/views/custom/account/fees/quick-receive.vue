@@ -117,12 +117,12 @@
                         <div class="row mx-0 my-2">
                             <div class="col-sm-2">Receive Date</div>
                             <div class="col-sm-2">
-                                <datepicker v-model="receive_date"></datepicker>
+                                <datepicker v-model="forms.date"></datepicker>
                             </div>
                             <div class="col-sm-2">Receive Amount</div>
                             <div class="col-sm-2">
                                 <vs-input type="number"
-                                          v-model="receive_amount"
+                                          v-model="forms.receive_amount"
                                           required>
 
                                 </vs-input>
@@ -131,7 +131,7 @@
                             <div class="col-sm-2">Discount Amount</div>
                             <div class="col-sm-2">
                                 <vs-input type="number"
-                                          v-model="discount"
+                                          v-model="forms.discount_amount"
                                           required>
 
                                 </vs-input>
@@ -140,25 +140,25 @@
                         <div class="row mx-0 my-2">
                             <div class="col-sm-2 ">Payment Method</div>
                             <div class="col-sm-10">
-                                <vs-radio v-model="payment_method" vs-value="cash">Cash</vs-radio>
-                                <vs-radio v-model="payment_method" vs-value="bank">Bank</vs-radio>
+                                <vs-radio v-model="forms.payment_mode" vs-value="cash">Cash</vs-radio>
+                                <vs-radio v-model="forms.payment_mode" vs-value="bank">Bank</vs-radio>
                             </div>
                         </div>
                         <div class="row mx-0 my-2">
                             <div class="col-sm-2">Note</div>
                             <div class="col-sm-10">
-                                <vs-textarea v-model="note"></vs-textarea>
+                                <vs-textarea v-model="forms.note"></vs-textarea>
                             </div>
                         </div>
                         <div class="row mx-0 my-2">
                             <div class="col-sm-2">
-                                <vs-radio v-model="isPrint" vs-value="no_print">No Print</vs-radio>
+                                <vs-radio v-model="forms.print_receipt" name="print_receipt" vs-value="none">No Print</vs-radio>
                             </div>
                             <div class="col-sm-3">
-                                <vs-radio v-model="isPrint" vs-value="short_print">Print Short Print</vs-radio>
+                                <vs-radio v-model="forms.print_receipt" name="print_receipt" vs-value="short">Print Short Print</vs-radio>
                             </div>
                             <div class="col-sm-3">
-                                <vs-radio v-model="isPrint" vs-value="long_print">Print Detail Receipt</vs-radio>
+                                <vs-radio v-model="forms.print_receipt" name="print_receipt" vs-value="long">Print Detail Receipt</vs-radio>
                             </div>
                         </div>
                         <vs-divider></vs-divider>
@@ -184,7 +184,9 @@
                 note: '',
                 payment_method: 'cash',
                 isPrint: 'no_print',
-                htmldata:null
+                htmldata:null,
+                forms:{}
+
             }
         },
 
@@ -195,7 +197,7 @@
                         id:parseInt(val)
                     })
                         .then(res=>{
-                            this.htmldata = res.data.html
+                            this.htmldata = JSON.parse(res.data).html
                         })
                 }
             }
@@ -221,7 +223,15 @@
 
             },
             quickCollect() {
-
+                let elm = document.querySelector('#balance_fee')
+                this.forms.studentDue = parseInt(elm.innerHTML)
+                this.forms.add_collection = 'save'
+                this.forms.student_id = this.selectedStudent
+                console.log(this.forms)
+                this.$http.post('/json/account/fees/quick-receive/store', this.forms)
+                    .then(res=>{
+                        console.log(res.data)
+                    })
             }
         }
 

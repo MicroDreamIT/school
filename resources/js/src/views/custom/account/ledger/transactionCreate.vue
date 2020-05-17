@@ -137,6 +137,12 @@
                     {name: 'Action', sort_key: ''},
                 ],
             }
+        },
+        created() {
+            this.$http.get('/json/account/transaction/add')
+                .then(res=>{
+                    console.log(res.data)
+                })
         }
     }
 </script>

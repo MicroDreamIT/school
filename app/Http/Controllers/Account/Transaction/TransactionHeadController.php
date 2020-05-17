@@ -27,7 +27,7 @@ class TransactionHeadController extends CollegeBaseController
     {
         $data = [];
 
-        $data['tr_head'] = TransactionHead::select('id', 'tr_head', 'acc_id', 'status')
+        $data['tr_head'] = TransactionHead::with('account_category')->select('id', 'tr_head', 'acc_id', 'status')
             ->where(function ($query) use ($request) {
 
                 if ($request->has('tr_head') && $request->get('tr_head') != "") {
@@ -49,18 +49,17 @@ class TransactionHeadController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
-        $request->request->add(['slug' => $request->get('fee_head_title')]);
+        $request->merge(['created_by' => auth()->user()->id]);
+        $request->merge(['slug' => $request->get('fee_head_title')]);
 
         $aCat = TransactionHead::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Created Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Created Successfully.']);
     }
 
     public function edit(Request $request, $id)
@@ -76,15 +75,15 @@ class TransactionHeadController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
     {
         if (!$row = TransactionHead::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['last_updated_by' => auth()->user()->id]);
-        $request->request->add(['slug' => $request->get('fee_head_title')]);
+        $request->merge(['last_updated_by' => auth()->user()->id]);
+        $request->merge(['slug' => $request->get('fee_head_title')]);
 
         $row->update($request->all());
 
@@ -181,7 +180,7 @@ class TransactionHeadController extends CollegeBaseController
     {
         if (!$row = TransactionHead::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
@@ -193,7 +192,7 @@ class TransactionHeadController extends CollegeBaseController
     {
         if (!$row = TransactionHead::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 

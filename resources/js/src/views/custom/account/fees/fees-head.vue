@@ -150,11 +150,11 @@
                     </div>
                     <div class="col-md-8">
                         <data-table-final :headers="tableHeader"
-                                          :tableHeader="'Route List'"
-                                          :suggestText="'Route Record list on table. Filter room type using the filter.'"
+                                          :tableHeader="'fee head List'"
+                                          :suggestText="'fee head Record list on table. fee head type using the filter.'"
                                           :url="'/json/account/fees/head'"
                                           :model="'feehead'"
-                                          :noDataMessage="'No Route data found. Please Filter room type to show.'"
+                                          :noDataMessage="'No fee head data found. Please Filter fee head to show.'"
                                           :hasSearch="true"
                                           :has-multiple="true"
                                           :has-pagination="true"

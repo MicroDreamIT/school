@@ -10,6 +10,52 @@
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
+                <h4>Create New Bank Account</h4>
+                <div class="row mt-5 p-3">
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3">Bank</label>
+                            <vs-input class="col-sm-9" v-model="forms.bank_name" :danger="error.bank_name!==undefined"/>
+                            <p v-if="error.bank_name!==undefined" class="text-danger">
+                                {{ error.bank_name[0] }}
+                            </p>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3">Account Number</label>
+                            <vs-input class="col-sm-9" v-model="forms.ac_name" :danger="error.ac_name!==undefined"/>
+                            <p v-if="error.ac_name!==undefined" class="text-danger">
+                                {{ error.ac_name[0] }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label class="col-sm-3">Account Name </label>
+                            <vs-input class="col-sm-9" v-model="forms.ac_number" :danger="error.ac_number!==undefined"/>
+                            <p v-if="error.ac_number!==undefined" class="text-danger">
+                                {{ error.ac_number[0] }}
+                            </p>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3">Branch</label>
+                            <vs-input class="col-sm-9" v-model="forms.branch" :danger="error.branch!==undefined"/>
+                            <p v-if="error.branch!==undefined" class="text-danger">
+                                {{ error.branch[0] }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary " type="submit" @click="posting">
+                    <i class="fa fa-save"></i>
+                    Save
+                </button>
+                <br>
+                <hr>
+            </div>
+            <hr>
+            <div class="col-md-12">
                 <bank-navigation2></bank-navigation2>
                 <vs-card>
 
@@ -75,55 +121,49 @@
                         <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
                         Bank List
                     </h4>
-                    <div class="easy-link-menu d-flex flex-wrap">
-                        <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
-                            <i class="fa fa-check"></i>
-                            Active
-                        </a>
-                        <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
-                            <i class="fa fa-remove"></i>
-                            In-Active
-                        </a>
-                        <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
-                            <i class="fa fa-trash"></i>
-                            Delete
-                        </a>
-                    </div>
                     <br>
                     <div class="table-header">
                         Bank Record list on table. Filter Bank using the filter.
                     </div>
 
-					<vs-table
-                            v-model="selected"
-                            pagination
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            :noDataText="'No Bank data found. Please Filter Bank to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="tableHeader"
+                                      :tableHeader="'Bank List'"
+                                      :suggestText="'Bank list on table. Filter Bank using the filter.'"
+                                      :url="'/json/account/bank'"
+                                      :model="'bank'"
+                                      :noDataMessage="'No Bank data found. Please Filter Bank to show.'"
+                                      :hasSearch="true"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      ref="bank"
+                                      :ajaxVariableSet="['bank']"
+                                      @get-return-value="GetReturnValue"
+                                      :showAction="false"
                     >
-
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in tableHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.tr_head">
+                                {{props.data.tr_head}}
+                            </vs-td>
+                            <vs-td :data="props.data.group">
+                                {{props.data.group}}
+                            </vs-td>
+                            <vs-td :data="props.data.action">
+                                <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -133,6 +173,9 @@
     export default {
         data() {
             return {
+                forms:{},
+                error:[],
+                buttonText:'create',
             	selected:[],
                 tableHeader: [
                     {name: 'Date', sort_key: ''},
@@ -147,19 +190,47 @@
 
             }
         },
+        created(){
+            this.$http.get('/json/account/bank/add')
+                .then(res=>{
+                    console.log(res.data)
+                    // this.ledgers = this.$root.objectToArray(res.data.th)
+                })
+        },
         methods: {
-            doFilter() {
+            posting() {
+                let url = this.forms.id !== undefined && this.forms.id
+                    ? '/json/account/bank/' + this.forms.id + '/update'
+                    : '/json/account/bank/store'
+                this.$http.post(url, this.forms)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+                            this.$refs.bank.getData()
+                            this.forms = {}
+                        }
 
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
             },
-            doActive() {
-
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        status:st.status
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
             },
-            doInActive() {
-
-            },
-            doDelete() {
-
-            }
         }
     }
 </script>

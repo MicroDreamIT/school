@@ -21,31 +21,44 @@
                                         :format="'yyyy-MM-dd'"
                                         :value="forms.date"
                                         @input="forms.date = $root.formatPicker($event)"
+                                        :danger="error.date!==undefined"
                             >
                             </datepicker>
+                            <p v-if="error.date!==undefined" class="text-danger">
+                                {{ error.date[0] }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <label>
                                 Ledger/Transaction Head
                             </label>
-                            <select v-model="forms.tr_head" class="form-control">
+                            <select v-model="forms.tr_head" class="form-control" :danger="error.tr_head!==undefined">
                                 <option :value="l.id" v-for="l in ledgers">{{l.value}}</option>
                             </select>
+                            <p v-if="error.tr_head!==undefined" class="text-danger">
+                                {{ error.tr_head[0] }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <label for="">
                                 Account Type
                             </label>
-                            <select class="form-control" v-model="forms.account_type" autocomplete="off">
+                            <select class="form-control" v-model="forms.account_type" autocomplete="off" :danger="error.account_type!==undefined">
                                 <option value="dr_amt">Debit (+)</option>
                                 <option value="cr_amt">Credit (-)</option>
                             </select>
+                            <p v-if="error.account_type!==undefined" class="text-danger">
+                                {{ error.account_type[0] }}
+                            </p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             <label>Account</label>
-                            <vs-input class="w-100" v-model="forms.amount" ref="amount"></vs-input>
+                            <vs-input class="w-100" v-model="forms.amount" ref="amount" :danger="error.amount!==undefined"/>
+                            <p v-if="error.amount!==undefined" class="text-danger">
+                                {{ error.amount[0] }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <label>description</label>

@@ -54,7 +54,7 @@ class BankController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
@@ -63,21 +63,16 @@ class BankController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)
     {
-        $request->request->add(['created_by' => auth()->user()->id]);
+        $request->merge(['created_by' => auth()->user()->id]);
         $bank = Bank::create($request->all());
 
-        $request->session()->flash($this->message_success, $this->panel. ' Add Successfully.');
+        return response()->json(['success', $this->panel. ' Add Successfully.']);
 
-        if($request->add_bank_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
 
     }
 
@@ -105,8 +100,8 @@ class BankController extends CollegeBaseController
             'branch' => $request->get('branch'),
             'last_updated_by' => auth()->user()->id,
         ]);
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Updated Successfully.']);
+
     }
 
     public function view(Request $request, $id)
@@ -152,8 +147,8 @@ class BankController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel.' Deleted Successfully.']);
+
     }
 
     public function bulkAction(Request $request)
@@ -180,15 +175,15 @@ class BankController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json(['success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
+
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json(['warning', 'Please, Check at least one row.']);
+
             }
 
         } else return parent::invalidRequest();
@@ -199,24 +194,22 @@ class BankController extends CollegeBaseController
     {
         if (!$row = Bank::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'active']);
+        $request->merge(['status' => 'active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->faculty.' '.$this->panel.' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
     {
         if (!$row = Bank::find($id)) return parent::invalidRequest();
 
-        $request->request->add(['status' => 'in-active']);
+        $request->merge(['status' => 'in-active']);
 
         $row->update($request->all());
 
-        $request->session()->flash($this->message_success, $row->faculty.' '.$this->panel.' In-Active Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $row->faculty.' '.$this->panel.' In-Active Successfully.']);
     }
 
 

@@ -4,63 +4,13 @@
             <div class="col-md-12">
                 <h2 class="pageTitle">Transaction Ledger Manager
                 </h2>
-                <div class="p-2">
-                    <router-link :to="'/account/fees'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-user" aria-hidden="true"></i>
-                            Student Fee
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/payroll'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-user-secret" aria-hidden="true"></i>
-                            Staff Payroll
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/transaction-head'">
-
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Ledger
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/transaction'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Transactions
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/bank'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-bank" aria-hidden="true"></i>
-                            Bank
-                        </vs-button>
-                    </router-link>
-
-                </div>
+                <bank-navigation></bank-navigation>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
                 <vs-card>
                     <div class="p-2">
-                        <router-link :to="'/account/transaction'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-history" aria-hidden="true"></i>
-                                Transaction Detail
-                            </vs-button>
-                        </router-link>
-<!--                        <router-link :to="'/account/transaction/add'">-->
-<!--                            <vs-button type="filled" class="smBtn">-->
-<!--                                <i class="fa fa-list" aria-hidden="true"></i>-->
-<!--                                New Transaction-->
-<!--                            </vs-button>-->
-<!--                        </router-link>-->
-                        <router-link :to="'/account/transaction-head'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                Ledger
-                            </vs-button>
-                        </router-link>
+                        <bank-navigation2></bank-navigation2>
                     </div>
                     <vs-divider/>
 

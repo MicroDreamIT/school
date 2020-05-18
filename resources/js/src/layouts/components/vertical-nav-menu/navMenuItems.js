@@ -211,11 +211,6 @@ export default [
                         slug: "Manage Bank Account"
                     },
                     {
-                        url: "/account/bank/add",
-                        name: "Add New Bank",
-                        slug: "Add New Bank"
-                    },
-                    {
                         url: "/account/bank-transaction",
                         name: "Transaction Detail",
                         slug: "Transaction Detail"

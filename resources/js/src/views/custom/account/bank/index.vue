@@ -5,69 +5,14 @@
                 <h2 class="pageTitle">Bank Manager
                 </h2>
                 <div class="p-2">
-                    <router-link :to="'/account/fees'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-user" aria-hidden="true"></i>
-                            Student Fee
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/payroll'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-user-secret" aria-hidden="true"></i>
-                            Staff Payroll
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/transaction-head'">
-
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Ledger
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/transaction'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                            Transactions
-                        </vs-button>
-                    </router-link>
-                    <router-link :to="'/account/bank'">
-                        <vs-button type="filled" class="smBtn">
-                            <i class="fa fa-bank" aria-hidden="true"></i>
-                            Bank
-                        </vs-button>
-                    </router-link>
-
+                    <bank-navigation></bank-navigation>
                 </div>
             </div>
             <vs-divider class="mx-3"/>
             <div class="col-md-12">
+                <bank-navigation2></bank-navigation2>
                 <vs-card>
-                    <div class="p-2">
-                        <router-link :to="'/account/bank'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-history" aria-hidden="true"></i>
-                                Manage Bank
-                            </vs-button>
-                        </router-link>
-                        <router-link :to="'/account/bank/add'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-list" aria-hidden="true"></i>
-                                Add New Bank
-                            </vs-button>
-                        </router-link>
-                        <router-link :to="'/account/bank-transaction'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-list" aria-hidden="true"></i>
-                                Transaction Details
-                            </vs-button>
-                        </router-link>
-						<router-link :to="'/account/bank-transaction/add'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-compress" aria-hidden="true"></i>
-                                Bank Transaction
-                            </vs-button>
-                        </router-link>
-                    </div>
+
                     <vs-divider/>
 
                     <vs-collapse class="custom-collapse">
@@ -184,9 +129,7 @@
         </div>
     </div>
 </template>
-
 <script>
-
     export default {
         data() {
             return {

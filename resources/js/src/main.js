@@ -118,7 +118,12 @@ Vue.component('student-table', require('./views/custom/component/table/student-t
 Vue.component('roomtype-table', require('./views/custom/component/table/roomtype-table').default);
 Vue.component('staff-table', require('./views/custom/component/table/staff-table').default);
 Vue.component('notify-bar', require('./views/custom/component/notification/notification').default);
-Vue.component('student-navigation', require('./views/custom/student/includes/student-navigation').default)
+
+
+Vue.component('student-navigation', require('./views/custom/student/includes/student-navigation').default);
+Vue.component('bank-navigation', require('./views/components/navigation/bank-navigation').default)
+Vue.component('bank-navigation2', require('./views/components/navigation/bank-navigation2').default)
+
 import Datepicker from 'vuejs-datepicker';
 
 Vue.component('datepicker', Datepicker);

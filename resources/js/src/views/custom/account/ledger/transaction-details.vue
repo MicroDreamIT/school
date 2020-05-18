@@ -67,7 +67,11 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label class="col-sm-3">Date</label>
-                            <datepicker class="col-sm-9" v-model="forms.date">
+                            <datepicker class="col-sm-9"
+                                        :format="'yyyy-MM-dd'"
+                                        :value="forms.date"
+                                        @input="forms.date = $root.formatPicker($event)"
+                            >
                             </datepicker>
                         </div>
                         <div class="col-md-4">
@@ -75,7 +79,7 @@
                                 Ledger/Transaction Head
                             </label>
                             <select v-model="forms.tr_head" class="form-control">
-                                <option :value="l.id" v-for="l in ledgers">{{l.text}}</option>
+                                <option :value="l.id" v-for="l in ledgers">{{l.value}}</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -91,14 +95,28 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>Account</label>
-                            <vs-input class="w-100" v-model="forms.amount"></vs-input>
+                            <vs-input class="w-100" v-model="forms.amount" ref="amount"></vs-input>
                         </div>
                         <div class="col-md-4">
                             <label>description</label>
                             <vs-textarea class="w-`00" v-model="forms.description"></vs-textarea>
                         </div>
-                    </div>
+                        <div class="col-md-4">
 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <vs-button color="#00b8cf"
+                                       type="filled"
+                                       class="my-round"
+                                       @click="posting"
+                            >
+                                {{buttonText}}
+                            </vs-button>
+                        </div>
+                    </div>
+                    <hr>
                     <vs-collapse class="custom-collapse">
                         <vs-collapse-item>
                             <div slot="header">
@@ -161,11 +179,20 @@
                                       :showAction="false"
                     >
                         <template slot="items" slot-scope="props">
-                            <vs-td :data="props.data.tr_head">
-                                {{props.data.tr_head}}
+                            <vs-td :data="props.data.date">
+                                {{props.data.date}}
                             </vs-td>
-                            <vs-td :data="props.data.group">
-                                {{props.data.group}}
+                            <vs-td :data="props.data.head">
+                                {{props.data.head}}
+                            </vs-td>
+                            <vs-td :data="props.data.dr">
+                                {{props.data.dr}}
+                            </vs-td>
+                            <vs-td :data="props.data.cr">
+                                {{props.data.cr}}
+                            </vs-td>
+                            <vs-td :data="props.data.description">
+                                {{props.data.description}}
                             </vs-td>
                             <vs-td :data="props.data.action">
                                 <div class="action-own">
@@ -196,33 +223,97 @@
             return {
             	selected:[],
                 tableHeader: [
-                    {name: 'Date', field:'date', sort_key: ''},
-                    {name: 'Ledger/Head', sort_key: ''},
-                    {name: 'Dr Amount', sort_key: ''},
-                    {name: 'Cr Amount', sort_key: ''},
-                    {name: 'Description', sort_key: ''},
+                    {name: 'Date', field:'date', sort_key: 'date'},
+                    {name: 'Ledger/Head', field:'head', sort_key: 'head'},
+                    {name: 'Dr Amount', field:'dr', sort_key: 'dr'},
+                    {name: 'Cr Amount', field:'cr', sort_key: 'cr'},
+                    {name: 'Description', field:'description', sort_key: 'description'},
                     {name: 'Action', sort_key: ''},
+                    {name: 'status', sort_key: ''},
                 ],
                 searchData: {},
 				mainItem:[],
                 ledgers:[],
                 forms:{},
-                error:[]
-
-
+                error:[],
+                buttonText:'create'
             }
         },
         created(){
             this.$http.get('/json/account/transaction/add')
                 .then(res=>{
-                    this.ledgers = this.$root.objectToArray(res.data)
+                    this.ledgers = this.$root.objectToArray(res.data.th)
                 })
         },
         methods: {
+            editItems(id){
+                this.$refs['amount'].$el.querySelector('input').focus()
+
+                this.$http.get('/json/account/transaction/' + id + '/edit')
+                    .then(res=>{
+                        this.forms = res.data.row
+                        console.log(res.data.row.dr_amount)
+                        this.forms.amount = parseInt(res.data.row.dr_amount)>0?res.data.row.dr_amount:res.data.row.cr_amount
+                        this.forms.account_type =res.data.row.dr_amount?'dr_amt':'cr_amt'
+                        this.forms.tr_head = res.data.row.tr_head_id
+                        this.buttonText = 'Update'
+                    })
+                    .catch(err=>{
+
+                    })
+            },
+            deleteItems(id){
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/account/transaction/' + id + '/delete').then(res => {
+                        this.$refs.transaction.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
+            },
+            posting() {
+                let url = this.forms.id !== undefined && this.forms.id
+                    ? '/json/account/transaction/' + this.forms.id + '/update'
+                    : '/json/account/transaction/store'
+
+                if(this.forms.id){
+                    if(this.forms.account_type==='dr_amt'){
+                        this.forms.dr_amount = this.forms.amount
+                        this.forms.cr_amount = 0
+                    }else{
+                        this.forms.cr_amount = this.forms.amount
+                        this.forms.dr_amount = 0
+                    }
+                }
+
+                this.$http.post(url, this.forms)
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$vs.notify({
+                                title: res.data[0],
+                                text: res.data[1],
+                                color: res.data[0],
+                                icon: 'verified_user'
+                            })
+                            this.$refs.transaction.getData()
+                            this.forms = {}
+                        }
+
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            this.error = err.response.data.errors
+                        }
+                    })
+            },
             GetReturnValue(arg = null) {
                 let val = arg.map(st => {
                     return {
                         id: st.id,
+                        date:st.date,
+                        head:st.tr_head.tr_head,
+                        dr:st.dr_amount,
+                        cr:st.cr_amount,
+                        description:st.description,
                         status:st.status
                     }
                 });

@@ -25,7 +25,7 @@ class TransactionController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['transaction'] = Transaction::select('id', 'date', 'tr_head_id', 'dr_amount','cr_amount', 'description','status')
+        $data['transaction'] = Transaction::with('trHead')->select('id', 'date', 'tr_head_id', 'dr_amount','cr_amount', 'description','status')
             ->where(function ($query) use ($request) {
 
                 if ($request->has('tr_head')) {
@@ -96,16 +96,16 @@ class TransactionController extends CollegeBaseController
 
         $bank = Transaction::create($data);
 
-        $request->session()->flash($this->message_success, $this->panel. ' Add Successfully.');
+        return response()->json(['success', $this->panel. ' Add Successfully.']);
 
-        if($request->add_transaction_another) {
-            $head = TransactionHead::where('status',1)->pluck('tr_head','id')->toArray();
-            $data['th'] =  array_prepend($head,'Select Ledger','0');
-
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+//        if($request->add_transaction_another) {
+//            $head = TransactionHead::where('status',1)->pluck('tr_head','id')->toArray();
+//            $data['th'] =  array_prepend($head,'Select Ledger','0');
+//
+//            return back();
+//        }else{
+//            return redirect()->route($this->base_route);
+//        }
 
     }
 
@@ -126,7 +126,7 @@ class TransactionController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -141,8 +141,7 @@ class TransactionController extends CollegeBaseController
             'description' => $request->get('description'),
             'last_updated_by' => auth()->user()->id,
         ]);
-        $request->session()->flash($this->message_success, $this->panel.' Updated Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
     }
 
     public function delete(Request $request, $id)
@@ -151,8 +150,7 @@ class TransactionController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json([$this->message_success, $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)

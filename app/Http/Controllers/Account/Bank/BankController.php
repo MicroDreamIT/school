@@ -9,6 +9,7 @@ use App\Http\Requests\Account\Bank\EditValidation;
 use App\Models\Bank;
 use Illuminate\Http\Request;
 use URL;
+
 class BankController extends CollegeBaseController
 {
     protected $base_route = 'account.bank';
@@ -24,7 +25,7 @@ class BankController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['bank'] = Bank::select('id', 'bank_name','ac_name','ac_number','branch','status')
+        $data['bank'] = Bank::with('bankTransaction')->select('id', 'bank_name', 'ac_name', 'ac_number', 'branch', 'status')
             ->where(function ($query) use ($request) {
 
                 if ($request->has('bank_name')) {
@@ -71,7 +72,7 @@ class BankController extends CollegeBaseController
         $request->merge(['created_by' => auth()->user()->id]);
         $bank = Bank::create($request->all());
 
-        return response()->json(['success', $this->panel. ' Add Successfully.']);
+        return response()->json(['success', $this->panel . ' Add Successfully.']);
 
 
     }
@@ -86,7 +87,7 @@ class BankController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.edit'), compact('data'));
+        return response()->json($data);
     }
 
     public function update(EditValidation $request, $id)
@@ -100,7 +101,7 @@ class BankController extends CollegeBaseController
             'branch' => $request->get('branch'),
             'last_updated_by' => auth()->user()->id,
         ]);
-        return response()->json(['success', $this->panel.' Updated Successfully.']);
+        return response()->json(['success', $this->panel . ' Updated Successfully.']);
 
     }
 
@@ -127,16 +128,16 @@ class BankController extends CollegeBaseController
             })
             ->get();
 
-        $filteredTransaction  = $transaction->filter(function ($value, $key){
-             $value->balance = $value->dr_amt - $value->cr_amt;
-             return $value;
+        $filteredTransaction = $transaction->filter(function ($value, $key) {
+            $value->balance = $value->dr_amt - $value->cr_amt;
+            return $value;
         });
 
         $data['transaction'] = $filteredTransaction;
 
         $data['url'] = URL::current();
         $data['base_route'] = $this->base_route;
-        return view(parent::loadDataToView($this->view_path.'.detail.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function delete(Request $request, $id)
@@ -147,7 +148,7 @@ class BankController extends CollegeBaseController
 
         $row->delete();
 
-        return response()->json(['success', $this->panel.' Deleted Successfully.']);
+        return response()->json(['success', $this->panel . ' Deleted Successfully.']);
 
     }
 
@@ -162,7 +163,7 @@ class BankController extends CollegeBaseController
                         case 'in-active':
                             $row = Bank::find($row_id);
                             if ($row) {
-                                $row->status = $request->get('bulk_action') == 'active'?'active':'in-active';
+                                $row->status = $request->get('bulk_action') == 'active' ? 'active' : 'in-active';
                                 $row->save();
                             }
                             break;
@@ -175,10 +176,9 @@ class BankController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    return response()->json(['success', $request->get('bulk_action'). ' Action Successfully.']);
+                    return response()->json(['success', $request->get('bulk_action') . ' Action Successfully.']);
                 else
                     return response()->json(['success', 'Deleted successfully.']);
-
 
 
             } else {
@@ -198,7 +198,7 @@ class BankController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->faculty.' '.$this->panel.' Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' Active Successfully.']);
     }
 
     public function inActive(request $request, $id)
@@ -209,9 +209,8 @@ class BankController extends CollegeBaseController
 
         $row->update($request->all());
 
-        return response()->json(['success', $row->faculty.' '.$this->panel.' In-Active Successfully.']);
+        return response()->json(['success', $row->faculty . ' ' . $this->panel . ' In-Active Successfully.']);
     }
-
 
 
 }

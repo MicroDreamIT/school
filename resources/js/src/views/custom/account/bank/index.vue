@@ -15,7 +15,7 @@
                     <div class="col-md-4">
                         <div class="form-group row">
                             <label class="col-sm-3">Bank</label>
-                            <vs-input class="col-sm-9" v-model="forms.bank_name" :danger="error.bank_name!==undefined"/>
+                            <vs-input class="col-sm-9" v-model="forms.bank_name" :danger="error.bank_name!==undefined" ref="name"/>
                             <p v-if="error.bank_name!==undefined" class="text-danger">
                                 {{ error.bank_name[0] }}
                             </p>
@@ -49,7 +49,7 @@
             <div class="col-md-12">
                 <button class="btn btn-primary " type="submit" @click="posting">
                     <i class="fa fa-save"></i>
-                    Save
+                    {{buttonText}}
                 </button>
                 <br>
                 <hr>
@@ -125,7 +125,6 @@
                     <div class="table-header">
                         Bank Record list on table. Filter Bank using the filter.
                     </div>
-
                     <data-table-final :headers="tableHeader"
                                       :tableHeader="'Bank List'"
                                       :suggestText="'Bank list on table. Filter Bank using the filter.'"
@@ -142,11 +141,17 @@
                                       :showAction="false"
                     >
                         <template slot="items" slot-scope="props">
-                            <vs-td :data="props.data.tr_head">
-                                {{props.data.tr_head}}
+                            <vs-td :data="props.data.bank_name">
+                                {{props.data.bank_name}}
                             </vs-td>
-                            <vs-td :data="props.data.group">
-                                {{props.data.group}}
+                            <vs-td :data="props.data.ac_number">
+                                {{props.data.ac_number}}
+                            </vs-td>
+                            <vs-td :data="props.data.branch">
+                                {{props.data.branch}}
+                            </vs-td>
+                            <vs-td :data="props.data.bank_transaction">
+                                {{props.data.bank_transaction}}
                             </vs-td>
                             <vs-td :data="props.data.action">
                                 <div class="action-own">
@@ -178,12 +183,12 @@
                 buttonText:'create',
             	selected:[],
                 tableHeader: [
-                    {name: 'Date', sort_key: ''},
-                    {name: 'Ledger/Head', sort_key: ''},
-                    {name: 'Dr Amount', sort_key: ''},
-                    {name: 'Cr Amount', sort_key: ''},
-                    {name: 'Description', sort_key: ''},
+                    {name: 'name', field:'bank_name', sort_key: 'bank_name'},
+                    {name: 'A/C number',  field:'ac_number',sort_key: 'ac_number'},
+                    {name: 'branch', field:'branch', sort_key: 'branch'},
+                    {name: 'balance', field:'bank_transaction', sort_key: 'bank_transaction'},
                     {name: 'Action', sort_key: ''},
+                    {name:'status'},
                 ],
                 searchData: {},
 				mainItem:[]
@@ -198,6 +203,26 @@
                 })
         },
         methods: {
+            editItems(id){
+                this.$refs['name'].$el.querySelector('input').focus()
+
+                this.$http.get('/json/account/bank/' + id + '/edit')
+                    .then(res=>{
+                        this.forms = res.data.row
+                        this.buttonText = 'Update'
+                    })
+                    .catch(err=>{
+
+                    })
+            },
+            deleteItems(id){
+                this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
+                    this.$http.get('/json/account/bank/' + id + '/delete').then(res => {
+                        this.$refs.bank.getData()
+                        this.$vs.notify({title: res.data[0], text: res.data[1], color: res.data[0], icon: 'verified'})
+                    })
+                })
+            },
             posting() {
                 let url = this.forms.id !== undefined && this.forms.id
                     ? '/json/account/bank/' + this.forms.id + '/update'
@@ -225,8 +250,12 @@
             GetReturnValue(arg = null) {
                 let val = arg.map(st => {
                     return {
+                        ac_number: st.ac_number,
+                        bank_name: st.bank_name,
+                        bank_transaction: st.bank_transaction,
+                        branch: st.branch,
                         id: st.id,
-                        status:st.status
+                        status: st.status
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

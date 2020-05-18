@@ -78,21 +78,21 @@
                                         <div class="col-md-6">
                                             <div class="form-group ">
                                                 <label>Bank:</label>
-                                                <vs-input v-model="searchData.bank" class="w-100">
+                                                <vs-input v-model="searchData.bank_name" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>
 										<div class="col-md-6">
                                             <div class="form-group ">
                                                 <label>Account Name:</label>
-                                                <vs-input v-model="searchData.account_name" class="w-100">
+                                                <vs-input v-model="searchData.ac_name" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>
 										<div class="col-md-6">
                                             <div class="form-group ">
                                                 <label>Account Number:</label>
-                                                <vs-input v-model="searchData.account_No" class="w-100">
+                                                <vs-input v-model="searchData.ac_number" class="w-100">
                                                 </vs-input>
                                             </div>
                                         </div>
@@ -105,22 +105,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-2 pl-0">
-                                    <vs-button type="filled"
-                                               color="#00b8cf"
-                                               icon="double_arrow"
-                                               @click.prevent="doFilter"
-                                    >
-                                        Filter
-                                    </vs-button>
-                                </div>
+
                             </div>
                         </vs-collapse-item>
                     </vs-collapse>
-                    <h4 class="header large lighter blue mt-4">
-                        <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
-                        Bank List
-                    </h4>
                     <br>
                     <div class="table-header">
                         Bank Record list on table. Filter Bank using the filter.
@@ -136,6 +124,7 @@
                                       :has-pagination="true"
                                       :filterSection="true"
                                       ref="bank"
+                                      :searchData="searchData"
                                       :ajaxVariableSet="['bank']"
                                       @get-return-value="GetReturnValue"
                                       :showAction="false"
@@ -193,6 +182,14 @@
                 searchData: {},
 				mainItem:[]
 
+            }
+        },
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    this.$refs.bank.getData()
+                }
             }
         },
         created(){

@@ -55,7 +55,7 @@ class BankTrController extends CollegeBaseController
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+        return response()->json($data);
     }
 
     public function add(Request $request)
@@ -66,8 +66,7 @@ class BankTrController extends CollegeBaseController
 
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
-
-        return view(parent::loadDataToView($this->view_path.'.add'), compact('data'));
+        return response()->json($data);
     }
 
     public function store(AddValidation $request)

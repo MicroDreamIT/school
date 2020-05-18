@@ -10,6 +10,65 @@
                 </div>
             </div>
             <vs-divider class="mx-3"/>
+            <div class="p-2">
+                <h4 >Create New Transaction</h4>
+                <div class="row my-2 ">
+                    <div class="col-md-4">Date</div>
+                    <div class="col-md-5">
+                        <datepicker class="col-sm-9"
+                                    :format="'yyyy-MM-dd'"
+                                    :value="forms.date"
+                                    @input="forms.date = $root.formatPicker($event)"
+                                    :danger="error.date!==undefined"
+                        >
+                        </datepicker>
+                        <p v-if="error.date!==undefined" class="text-danger">
+                            {{ error.date[0] }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4">Bank Name</div>
+                    <div class="col-md-5">
+                        <select>
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4">Account Type</div>
+                    <div class="col-md-5">
+                        <v-select/>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4">Withdraw/Deposit ID</div>
+                    <div class="col-md-5">
+                        <vs-input class="w-100"></vs-input>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4">Amount</div>
+                    <div class="col-md-5">
+                        <vs-input type="number" class="w-100"/>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-4">Description</div>
+                    <div class="col-md-5">
+                        <vs-textarea></vs-textarea>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <vs-button color="#00b8cf"
+                               type="filled"
+                               class="my-round"
+                               @click="posting"
+                    >
+                        {{buttonText}}
+                    </vs-button>
+                </div>
+            </div>
             <div class="col-md-12">
                 <vs-card>
                     <div class="p-2">
@@ -62,61 +121,43 @@
                             </div>
                         </vs-collapse-item>
                     </vs-collapse>
-                    <h4 class="header large lighter blue mt-4">
-                        <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
-                        Bank Transaction List
-                    </h4>
-                    <div class="easy-link-menu d-flex flex-wrap">
-                        <a class="btn-success btn-sm bulk-action-btn  m-1" @click.prevent="doActive">
-                            <i class="fa fa-check"></i>
-                            Active
-                        </a>
-                        <a class="btn-warning btn-sm bulk-action-btn m-1" @click.prevent="doInActive">
-                            <i class="fa fa-remove"></i>
-                            In-Active
-                        </a>
-                        <a class="btn-danger btn-sm bulk-action-btn m-1" @click.prevent="doDelete">
-                            <i class="fa fa-trash"></i>
-                            Delete
-                        </a>
-                    </div>
-                    <br>
-                    <div class="table-header">
-                        Bank Record list on table. Filter Bank using the filter.
-                    </div>
-					<vs-table
-                            v-model="selected"
-                            pagination
-                            :max-items="10"
-                            :data="mainItem"
-                            description
-                            :noDataText="'No Bank Transaction data found. Please Filter Bank Transaction to show.'"
-                            description-title="Showing"
+                    <data-table-final :headers="tableHeader"
+                                      :tableHeader="'Bank Transaction List'"
+                                      :suggestText="'Bank Transaction list on table. Filter Bank Transaction using the filter.'"
+                                      :url="'/json/account/bank-transaction'"
+                                      :model="'transaction'"
+                                      :noDataMessage="'No Bank Transaction data found. Please Filter Bank Transaction to show.'"
+                                      :hasSearch="true"
+                                      :has-multiple="true"
+                                      :has-pagination="true"
+                                      :filterSection="true"
+                                      :searchData="searchData"
+                                      ref="transaction"
+                                      :ajaxVariableSet="['transaction']"
+                                      @get-return-value="GetReturnValue"
+                                      :showAction="false"
+                                      :showStatus="false"
                     >
-
-                        <template slot="thead">
-                            <vs-th>S.N.</vs-th>
-                            <vs-th :sort-key="thead.sort_key?thead.sort_key:''" v-for="(thead,indx) in tableHeader"
-                                   :key="indx">
-                                {{thead.name}}
-                            </vs-th>
+                        <template slot="items" slot-scope="props">
+                            <vs-td :data="props.data.date">
+                                {{props.data.date}}
+                            </vs-td>
+                            <vs-td :data="props.data.action">
+                                <div class="action-own">
+                                    <a class="btn btn-success btn-sm pointer-all"
+                                       title="Edit"
+                                       @click.stop="editItems(props.data.id)">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm pointer-all"
+                                       title="Delete"
+                                       @click.stop="deleteItems(props.data.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </div>
+                            </vs-td>
                         </template>
-                        <template slot-scope="{data}">
-                            <vs-tr :data="tr" :key="idx" v-for="(tr, idx) in data">
-                                <vs-td>{{mainItem.indexOf(tr)+1}}</vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                                <vs-td></vs-td>
-                            </vs-tr>
-							<vs-tr class="totalSection">
-                                <vs-td colspan="10">Total {{getTotal}}</vs-td>
-                            </vs-tr>
-                        </template>
-
-                    </vs-table>
+                    </data-table-final>
                 </vs-card>
             </div>
         </div>
@@ -128,6 +169,9 @@
     export default {
         data() {
             return {
+                forms:{},
+                error:[],
+                buttonText:'create',
             	selected:[],
                 tableHeader: [
                     {name: 'Date', sort_key: ''},
@@ -138,23 +182,31 @@
                     {name: 'Action', sort_key: ''},
                 ],
                 searchData: {},
-				mainItem:[]
-
+				mainItem:[],
+                banks:[]
             }
         },
+        created(){
+            this.$http.get('/json/account/bank-transaction/add')
+                .then(res=>{
+                    console.log(res.data)
+                })
+        },
         methods: {
-            doFilter() {
-
+            GetReturnValue(arg = null) {
+                let val = arg.map(st => {
+                    return {
+                        id: st.id,
+                        date:st.date,
+                        head:st.tr_head.tr_head,
+                        dr:st.dr_amount,
+                        cr:st.cr_amount,
+                        description:st.description,
+                        status:st.status
+                    }
+                });
+                this.$store.dispatch('updateTableData', val)
             },
-            doActive() {
-
-            },
-            doInActive() {
-
-            },
-            doDelete() {
-
-            }
         }
     }
 </script>

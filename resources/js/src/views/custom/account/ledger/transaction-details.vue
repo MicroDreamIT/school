@@ -133,20 +133,20 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group ">
-                                                <label>Reg:</label>
-                                                <vs-input v-model="searchData.ledger" class="w-100">
-                                                </vs-input>
+                                                <label>ledger/transaction head:</label>
+                                                <select v-model="searchData.tr_head" class="form-control">
+                                                    <option :value="l.id" v-for="l in ledgers">{{l.value}}</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Date Range</label>
                                                 <div class="d-flex justify-content-between">
-                                                    <datepicker v-model="searchData.fromDate" class="flex-1"/>
+                                                    <datepicker :format="'yyyy-MM-dd'" :value="searchData.tr_start_date" @input="searchData.tr_start_date = $root.formatPicker($event)" class="flex-1"></datepicker>
                                                     <label>To</label>
-                                                    <datepicker v-model="searchData.toDate" class="flex-1"/>
+                                                    <datepicker :format="'yyyy-MM-dd'" :value="searchData.tr_end_date" @input="searchData.tr_end_date = $root.formatPicker($event)" class="flex-1"></datepicker>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@
                                     <vs-button type="filled"
                                                color="#00b8cf"
                                                icon="double_arrow"
-                                               @click.prevent="doFilter"
+                                               @click.prevent="getdata"
                                     >
                                         Filter
                                     </vs-button>
@@ -173,6 +173,7 @@
                                       :has-multiple="true"
                                       :has-pagination="true"
                                       :filterSection="true"
+                                      :searchData="searchData"
                                       ref="transaction"
                                       :ajaxVariableSet="['transaction']"
                                       @get-return-value="GetReturnValue"
@@ -246,7 +247,18 @@
                     this.ledgers = this.$root.objectToArray(res.data.th)
                 })
         },
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    console.log(val)
+                }
+            }
+        },
         methods: {
+            getdata(){
+                this.$refs.transaction.getData()
+            },
             editItems(id){
                 this.$refs['amount'].$el.querySelector('input').focus()
 

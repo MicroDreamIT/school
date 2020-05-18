@@ -49,12 +49,12 @@
                                 Transaction Detail
                             </vs-button>
                         </router-link>
-                        <router-link :to="'/account/transaction/add'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-list" aria-hidden="true"></i>
-                                New Transaction
-                            </vs-button>
-                        </router-link>
+<!--                        <router-link :to="'/account/transaction/add'">-->
+<!--                            <vs-button type="filled" class="smBtn">-->
+<!--                                <i class="fa fa-list" aria-hidden="true"></i>-->
+<!--                                New Transaction-->
+<!--                            </vs-button>-->
+<!--                        </router-link>-->
                         <router-link :to="'/account/transaction-head'">
                             <vs-button type="filled" class="smBtn">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
@@ -177,6 +177,7 @@
                                       :ajaxVariableSet="['transaction']"
                                       @get-return-value="GetReturnValue"
                                       :showAction="false"
+                                      :showStatus="false"
                     >
                         <template slot="items" slot-scope="props">
                             <vs-td :data="props.data.date">
@@ -229,7 +230,7 @@
                     {name: 'Cr Amount', field:'cr', sort_key: 'cr'},
                     {name: 'Description', field:'description', sort_key: 'description'},
                     {name: 'Action', sort_key: ''},
-                    {name: 'status', sort_key: ''},
+                    // {name: 'status', sort_key: ''},
                 ],
                 searchData: {},
 				mainItem:[],

@@ -49,12 +49,12 @@
 								Transaction Detail
                             </vs-button>
                         </router-link>
-                        <router-link :to="'/account/transaction/add'">
-                            <vs-button type="filled" class="smBtn">
-                                <i class="fa fa-list" aria-hidden="true"></i>
-                                New Transaction
-                            </vs-button>
-                        </router-link>
+<!--                        <router-link :to="'/account/transaction/add'">-->
+<!--                            <vs-button type="filled" class="smBtn">-->
+<!--                                <i class="fa fa-list" aria-hidden="true"></i>-->
+<!--                                New Transaction-->
+<!--                            </vs-button>-->
+<!--                        </router-link>-->
                         <router-link :to="'/account/transaction-head'">
                             <vs-button type="filled" class="smBtn">
                                 <i class="fa fa-plus" aria-hidden="true"></i>

@@ -124,15 +124,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-2 pl-0">
-                                    <vs-button type="filled"
-                                               color="#00b8cf"
-                                               icon="double_arrow"
-                                               @click.prevent="doFilter"
-                                    >
-                                        Filter
-                                    </vs-button>
-                                </div>
                             </div>
                         </vs-collapse-item>
                     </vs-collapse>

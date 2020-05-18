@@ -18,11 +18,11 @@
                 Transaction Details
             </vs-button>
         </router-link>
-        <router-link :to="'/account/bank-transaction/add'">
-            <vs-button type="filled" class="smBtn">
-                <i class="fa fa-compress" aria-hidden="true"></i>
-                Bank Transaction
-            </vs-button>
-        </router-link>
+<!--        <router-link :to="'/account/bank-transaction/add'">-->
+<!--            <vs-button type="filled" class="smBtn">-->
+<!--                <i class="fa fa-compress" aria-hidden="true"></i>-->
+<!--                Bank Transaction-->
+<!--            </vs-button>-->
+<!--        </router-link>-->
     </div>
 </template>

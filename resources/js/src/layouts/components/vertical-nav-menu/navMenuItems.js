@@ -215,11 +215,11 @@ export default [
                         name: "Transaction Detail",
                         slug: "Transaction Detail"
                     },
-                    {
-                        url: "/account/bank-transaction/add",
-                        name: "New Transaction",
-                        slug: "New Transaction"
-                    },
+                    // {
+                    //     url: "/account/bank-transaction/add",
+                    //     name: "New Transaction",
+                    //     slug: "New Transaction"
+                    // },
 
                 ]
             },

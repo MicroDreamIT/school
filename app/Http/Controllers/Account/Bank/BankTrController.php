@@ -25,7 +25,7 @@ class BankTrController extends CollegeBaseController
     public function index(Request $request)
     {
         $data = [];
-        $data['transaction'] = BankTransaction::select('id','banks_id', 'description','deposit_id','date','dr_amt','cr_amt','amount', 'status')
+        $data['transaction'] = BankTransaction::with('banks')->select('id','banks_id', 'description','deposit_id','date','dr_amt','cr_amt','amount', 'status')
             ->where(function ($query) use ($request) {
 
                 if ($request->has('banks_id')) {
@@ -94,13 +94,7 @@ class BankTrController extends CollegeBaseController
 
         $bank = BankTransaction::create($data);
 
-        $request->session()->flash($this->message_success, $this->panel. ' Add Successfully.');
-
-        if($request->add_transaction_another) {
-            return back();
-        }else{
-            return redirect()->route($this->base_route);
-        }
+        return response()->json([ 'success', $this->panel. ' Add Successfully.']);
 
     }
 
@@ -110,8 +104,7 @@ class BankTrController extends CollegeBaseController
 
         $row->delete();
 
-        $request->session()->flash($this->message_success, $this->panel.' Deleted Successfully.');
-        return redirect()->route($this->base_route);
+        return response()->json([ 'success', $this->panel.' Deleted Successfully.']);
     }
 
     public function bulkAction(Request $request)
@@ -137,15 +130,13 @@ class BankTrController extends CollegeBaseController
                 }
 
                 if ($request->get('bulk_action') == 'active' || $request->get('bulk_action') == 'in-active')
-                    $request->session()->flash($this->message_success, $request->get('bulk_action'). ' Action Successfully.');
+                    return response()->json([ 'success', $request->get('bulk_action'). ' Action Successfully.']);
                 else
-                    $request->session()->flash($this->message_success, 'Deleted successfully.');
+                    return response()->json([ 'success', 'Deleted successfully.']);
 
-                return redirect()->route($this->base_route);
 
             } else {
-                $request->session()->flash($this->message_warning, 'Please, Check at least one row.');
-                return redirect()->route($this->base_route);
+                return response()->json([ 'warning', 'Please, Check at least one row.']);
             }
 
         } else return parent::invalidRequest();

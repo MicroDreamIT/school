@@ -249,7 +249,7 @@
                     return {
                         ac_number: st.ac_number,
                         bank_name: st.bank_name,
-                        bank_transaction: st.bank_transaction,
+                        bank_transaction: st.total_transaction,
                         branch: st.branch,
                         id: st.id,
                         status: st.status

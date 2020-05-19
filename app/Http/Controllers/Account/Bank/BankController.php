@@ -52,6 +52,17 @@ class BankController extends CollegeBaseController
             ->orderBy('bank_name')
             ->get();
 
+        $dr_total = 0;
+        $cr_total = 0;
+
+        foreach ($data['bank'] as $bank){
+            foreach($bank->bankTransaction as $transaction){
+                $dr_total +=$transaction->dr_amt;
+                $cr_total +=$transaction->cr_amt;
+            }
+            $bank->total_transaction = $dr_total-$cr_total;
+        }
+
         $data['url'] = URL::current();
         $data['filter_query'] = $this->filter_query;
 

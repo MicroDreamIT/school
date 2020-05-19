@@ -49,6 +49,19 @@ class BankTrController extends CollegeBaseController
             ->latest()
             ->get();
 
+        $dr_total = 0;
+        $cr_total = 0;
+        $total_amount = 0;
+
+        foreach ($data['transaction'] as $d){
+            $dr_total +=$d->dr_amt;
+            $cr_total +=$d->cr_amt;
+            $total_amount += $d->amount;
+        }
+        $data['dr_total'] = $dr_total;
+        $data['cr_total'] = $cr_total;
+        $data['total_amount'] = $dr_total-$cr_total;
+
         $banks = Bank::where('status',1)->pluck('bank_name','id')->toArray();
         $data ['banks'] = array_prepend($banks,'Select Bank','0');
 

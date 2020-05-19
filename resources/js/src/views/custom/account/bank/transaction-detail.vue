@@ -182,6 +182,12 @@
                             </vs-td>
                         </template>
                     </data-table-final>
+                    <div>
+                        <p>debit total: {{dr_total}}</p>
+
+                        <p>credit total: {{cr_total}}</p>
+                        <p>total:{{total_amount}}</p>
+                    </div>
                 </vs-card>
             </div>
         </div>
@@ -209,7 +215,10 @@
                 ],
                 searchData: {},
 				mainItem:[],
-                banks:[]
+                banks:[],
+                dr_total:0,
+                cr_total:0,
+                total_amount:0
             }
         },
         watch:{
@@ -266,7 +275,10 @@
                         }
                     })
             },
-            GetReturnValue(arg = null) {
+            GetReturnValue(arg, all) {
+                this.dr_total = all.dr_total
+                this.cr_total = all.cr_total
+                this.total_amount=all.total_amount
                 let val = arg.map(st => {
                     return {
                         id: st.id,
@@ -274,7 +286,7 @@
                         banks:st.banks.bank_name,
                         dr_amt:st.dr_amt,
                         cr_amt:st.cr_amt,
-                        amount:st.amount,
+                        amount:st.cr_amt>0?'-'+st.amount:st.amount,
                         description:st.description,
                         deposit_id:st.deposit_id,
                         status:st.status

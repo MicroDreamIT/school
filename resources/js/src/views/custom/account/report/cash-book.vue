@@ -73,13 +73,14 @@
                                     <div class="filterBox">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <datepicker v-model="searchData.start_date" class="flex-1"/>
+                                                <datepicker v-model="searchData.start_date" clear-button/>
                                             </div>
                                             <div class="col-md-4">
-                                                <datepicker v-model="searchData.end_date" class="flex-1"/>
+                                                <datepicker v-model="searchData.end_date" clear-button/>
                                             </div>
                                             <div class="col-md-4">
                                                 <select v-model="searchData.report_type" class="form-control">
+                                                    <option :value="null"></option>
                                                     <option value="daily">daily</option>
                                                     <option value="weekly">weekly</option>
                                                     <option value="monthly">monthly</option>

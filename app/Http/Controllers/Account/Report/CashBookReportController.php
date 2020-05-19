@@ -56,7 +56,7 @@ class CashBookReportController extends CollegeBaseController
                     $data['tag'] = $request->report_type;
                     $data['url'] = URL::current();
                     $data['row'] = collect($data);
-                    return view(parent::loadDataToView($this->view_path . '.index'), compact('data'));
+                    return response()->json($data);
                 }
                 elseif($request->report_type == 'weekly'){
                     $period = CarbonPeriod::create($request->start_date, $request->end_date)->week();
@@ -84,7 +84,7 @@ class CashBookReportController extends CollegeBaseController
                     $data['tag'] = $request->report_type;
                     $data['url'] = URL::current();
                     $data['row'] = collect($data);
-                    return view(parent::loadDataToView($this->view_path . '.index'), compact('data'));
+                    return response()->json($data);
                 }
                 elseif($request->report_type == 'monthly'){
                     $period = CarbonPeriod::create($request->start_date, $request->end_date)->month();
@@ -112,7 +112,7 @@ class CashBookReportController extends CollegeBaseController
                     $data['tag'] = $request->report_type;
                     $data['url'] = URL::current();
                     $data['row'] = collect($data);
-                    return view(parent::loadDataToView($this->view_path . '.index'), compact('data'));
+                    return response()->json($data);
                 }
                 elseif($request->report_type == 'yearly'){
                     $period = CarbonPeriod::create($request->start_date, $request->end_date)->year();
@@ -141,7 +141,7 @@ class CashBookReportController extends CollegeBaseController
                     $data['tag'] = $request->report_type;
                     $data['url'] = URL::current();
                     $data['row'] = collect($data);
-                    return view(parent::loadDataToView($this->view_path . '.index'), compact('data'));
+                    return response()->json($data);
                 }
                 else{
 
@@ -169,8 +169,7 @@ class CashBookReportController extends CollegeBaseController
                 $data['total']['dr'] = $salaryDr + $bankDr + $trDr + $data['total']['coh'];
             }
             else{
-                $request->session()->flash($this->message_warning,'Filter With Date Range.');
-                redirect()->back();
+                return response()->json(['warning','Filter With Date Range.']);
             }
 
         }else{
@@ -195,7 +194,8 @@ class CashBookReportController extends CollegeBaseController
         $data['filter_query'] = $this->filter_query;
         $data['url'] = URL::current();
         $data['tag'] = 'today';
-        return view(parent::loadDataToView($this->view_path.'.index'), compact('data'));
+
+        return response()->json($data);
     }
 
     //date range

@@ -1,6 +1,21 @@
 import Vue from 'vue'
 import moment from "moment";
 
+Vue.filter('findTotal', (val, params)=>{
+	let total = 0;
+	if(val !== undefined && val.length>0){
+		return val.forEach(v=>{
+			return {
+				if(v){
+					total +=v[params]
+				}
+			}
+		})
+	}else{
+		return 0
+	}
+})
+
 Vue.filter('capitalize', function (value) {
 	if (!value) return ''
 	value = value.toString()

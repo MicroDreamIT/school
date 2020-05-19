@@ -13,7 +13,7 @@
             </div>
             <vs-divider class="mx-3"/>
             <div class="p-5">
-                <h4 >Create New Transaction</h4>
+                <h4>Create New Transaction</h4>
                 <div class="row">
                     <div class="col-md-4">
                         <label>
@@ -42,7 +42,8 @@
                     </div>
                     <div class="col-md-4">
                         <label>Account Type</label>
-                        <select class="form-control" v-model="forms.account_type" :danger="error.account_type!==undefined">
+                        <select class="form-control" v-model="forms.account_type"
+                                :danger="error.account_type!==undefined">
                             <option value="dr_amt">debit</option>
                             <option value="cr_amt">credit</option>
                         </select>
@@ -61,7 +62,8 @@
                     </div>
                     <div class="col-md-4">
                         <label>Amount</label>
-                        <vs-input type="number" class="w-100" v-model="forms.amount" :danger="error.amount!==undefined"/>
+                        <vs-input type="number" class="w-100" v-model="forms.amount"
+                                  :danger="error.amount!==undefined"/>
                         <p v-if="error.amount!==undefined" class="text-danger">
                             {{ error.amount[0] }}
                         </p>
@@ -112,14 +114,14 @@
                                                 </select>
                                             </div>
                                         </div>
-										<div class="col-md-6">
+                                        <div class="col-md-6">
                                             <div class="form-group ">
                                                 <label>Date Range:</label>
-                                               <div class="d-flex justify-content-between">
-                                                <datepicker v-model="searchData.tr_start_date" class="flex-1"/>
-                                                <label>To</label>
-                                                <datepicker v-model="searchData.tr_end_date" class="flex-1"/>
-                                            </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <datepicker v-model="searchData.tr_start_date" class="flex-1"/>
+                                                    <label>To</label>
+                                                    <datepicker v-model="searchData.tr_end_date" class="flex-1"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -168,11 +170,11 @@
                             </vs-td>
                             <vs-td :data="props.data.action">
                                 <div class="action-own">
-<!--                                    <a class="btn btn-success btn-sm pointer-all"-->
-<!--                                       title="Edit"-->
-<!--                                       @click.stop="editItems(props.data.id)">-->
-<!--                                        <i class="fa fa-pencil"></i>-->
-<!--                                    </a>-->
+                                    <!--                                    <a class="btn btn-success btn-sm pointer-all"-->
+                                    <!--                                       title="Edit"-->
+                                    <!--                                       @click.stop="editItems(props.data.id)">-->
+                                    <!--                                        <i class="fa fa-pencil"></i>-->
+                                    <!--                                    </a>-->
                                     <a class="btn btn-danger btn-sm pointer-all"
                                        title="Delete"
                                        @click.stop="deleteItems(props.data.id)">
@@ -199,50 +201,50 @@
     export default {
         data() {
             return {
-                forms:{},
-                error:[],
-                buttonText:'create',
-            	selected:[],
+                forms: {},
+                error: [],
+                buttonText: 'create',
+                selected: [],
                 tableHeader: [
-                    {name: 'Date',field:'date', sort_key: ''},
-                    {name: 'Bank',field:'banks', sort_key: ''},
-                    {name: 'Description',field:'description', sort_key: ''},
-                    {name: 'Deposit/withdraw ID',field:'deposit_id', sort_key: 'deposit_id'},
-                    {name: 'Debit',field:'dr_amt', sort_key: ''},
-                    {name: 'Credit',field:'cr_amt', sort_key: ''},
-                    {name: 'Amount',field:'amount', sort_key: ''},
+                    {name: 'Date', field: 'date', sort_key: ''},
+                    {name: 'Bank', field: 'banks', sort_key: ''},
+                    {name: 'Description', field: 'description', sort_key: ''},
+                    {name: 'Deposit/withdraw ID', field: 'deposit_id', sort_key: 'deposit_id'},
+                    {name: 'Debit', field: 'dr_amt', sort_key: ''},
+                    {name: 'Credit', field: 'cr_amt', sort_key: ''},
+                    {name: 'Amount', field: 'amount', sort_key: ''},
                     {name: 'Action', sort_key: ''},
                 ],
                 searchData: {},
-				mainItem:[],
-                banks:[],
-                dr_total:0,
-                cr_total:0,
-                total_amount:0
+                mainItem: [],
+                banks: [],
+                dr_total: 0,
+                cr_total: 0,
+                total_amount: 0
             }
         },
-        watch:{
-            searchData:{
-                deep:true,
-                handler(val){
-                    if(val.hasOwnProperty('tr_start_date') && val.tr_start_date){
+        watch: {
+            searchData: {
+                deep: true,
+                handler(val) {
+                    if (val.hasOwnProperty('tr_start_date') && val.tr_start_date) {
                         val.tr_start_date = this.$root.formatPicker(val.tr_start_date)
                     }
-                    if(val.hasOwnProperty('tr_end_date') && val.tr_end_date){
+                    if (val.hasOwnProperty('tr_end_date') && val.tr_end_date) {
                         val.tr_end_date = this.$root.formatPicker(val.tr_end_date)
                     }
                     this.$refs.transaction.getData()
                 }
             }
         },
-        created(){
+        created() {
             this.$http.get('/json/account/bank-transaction/add')
-                .then(res=>{
+                .then(res => {
                     this.banks = this.$root.objectToArray(res.data.banks)
                 })
         },
         methods: {
-            deleteItems(id){
+            deleteItems(id) {
                 this.$dialog.confirm('Are you sure? These items will be permanently deleted and cannot be recovered.').then(dialog => {
                     this.$http.get('/json/account/bank-transaction/' + id + '/delete').then(res => {
                         this.$refs.transaction.getData()
@@ -278,18 +280,18 @@
             GetReturnValue(arg, all) {
                 this.dr_total = all.dr_total
                 this.cr_total = all.cr_total
-                this.total_amount=all.total_amount
+                this.total_amount = all.total_amount
                 let val = arg.map(st => {
                     return {
                         id: st.id,
-                        date:st.date,
-                        banks:st.banks.bank_name,
-                        dr_amt:st.dr_amt,
-                        cr_amt:st.cr_amt,
-                        amount:st.cr_amt>0?'-'+st.amount:st.amount,
-                        description:st.description,
-                        deposit_id:st.deposit_id,
-                        status:st.status
+                        date: st.date,
+                        banks: st.banks.bank_name,
+                        dr_amt: st.dr_amt,
+                        cr_amt: st.cr_amt,
+                        amount: st.cr_amt > 0 ? '-' + st.amount : st.amount,
+                        description: st.description,
+                        deposit_id: st.deposit_id,
+                        status: st.status
                     }
                 });
                 this.$store.dispatch('updateTableData', val)

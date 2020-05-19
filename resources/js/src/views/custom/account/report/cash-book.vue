@@ -8,20 +8,21 @@
                         <vs-button type="filled" class="smBtn"><i class="fa fa-users "> </i> Student Fee</vs-button>
                     </router-link>
                     <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn"><i class="fa fa-user-secret "> </i> Staff Payroll</vs-button>
+                        <vs-button type="filled" class="smBtn"><i class="fa fa-user-secret "> </i> Staff Payroll
+                        </vs-button>
                     </router-link>
                     <router-link :to="'/'">
                         <vs-button type="filled" class="smBtn"><i class="fa fa-list"> </i> Ledger</vs-button>
                     </router-link>
                     <router-link :to="'/'">
-                        <vs-button type="filled" class="smBtn"> <i class="fa fa-list">  </i> Transacrion</vs-button>
+                        <vs-button type="filled" class="smBtn"><i class="fa fa-list"> </i> Transacrion</vs-button>
                     </router-link>
                     <router-link :to="'/'">
                         <vs-button type="filled" class="smBtn"><i class="fa fa-bank"> </i> Bank</vs-button>
                     </router-link>
                 </div>
                 <hr class="own-hr">
-               
+
             </div>
             <div class="col-md-12">
                 <vs-card>
@@ -58,7 +59,37 @@
                                 <i class="fa fa-list" aria-hidden="true"></i>
                                 Bank Transaction List
                             </h4>
-                            <table  class="table table-striped dataex-html5-selectors">
+                            <vs-collapse class="custom-collapse">
+                                <vs-collapse-item>
+                                    <div slot="header">
+                                        <vs-button type="filled"
+                                                   color="primary"
+                                                   icon="double_arrow"
+                                                   class="rounded"
+                                        >
+                                            Filter
+                                        </vs-button>
+                                    </div>
+                                    <div class="filterBox">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <datepicker v-model="searchData.start_date" class="flex-1"/>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <datepicker v-model="searchData.end_date" class="flex-1"/>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select v-model="searchData.report_type" class="form-control">
+                                                    <option value="daily">daily</option>
+                                                    <option value="weekly">weekly</option>
+                                                    <option value="monthly">monthly</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </vs-collapse-item>
+                            </vs-collapse>
+                            <table class="table table-striped dataex-html5-selectors">
                                 <thead>
                                 <tr>
                                     <th class="text-center">Particulars</th>
@@ -70,7 +101,7 @@
                                 <tr>
                                     <td class="text-right"><strong>Opening Balance </strong></td>
                                     <td class="text-right"><strong>{{ all.total.opening }}</strong> Cr.</td>
-                                    <td class="text-right"> </td>
+                                    <td class="text-right"></td>
                                 </tr>
                                 <tr>
                                     <td class="text-left">Total Fee Collected</td>
@@ -118,27 +149,52 @@
 <script>
 
     export default {
-        data:()=>({
-            all:{
-                fee_collection:0,
-                salary_pay:0,
-                total:{
-                    opening:null,
-                    coh:null,
-                    cr:null,
-                    dr:null,
+        data: () => ({
+            all: {
+                fee_collection: 0,
+                salary_pay: 0,
+                total: {
+                    opening: null,
+                    coh: null,
+                    cr: null,
+                    dr: null,
                 }
             },
             searchData: {},
         }),
-        created(){
-            this.$http.get('/json/account/report/cash-book')
-                .then(res=>{
-                    this.all = res.data
-                })
+        watch:{
+            searchData:{
+                deep:true,
+                handler(val){
+                    if(val.start_date !== undefined && val.start_date){
+                        val.start_date = this.$root.formatPicker(val.start_date)
+                    }
+                    if(val.end_date !== undefined && val.end_date){
+                        val.end_date = this.$root.formatPicker(val.end_date)
+                    }
+                    this.getData()
+                }
+            }
         },
-        methods:{
-            totalSum(){
+        created() {
+            this.getData()
+        },
+        methods: {
+            getData(){
+                this.$http.get('/json/account/report/cash-book', {params:this.searchData})
+                    .then(res => {
+                        this.all = res.data
+                    })
+                    .catch(err=>{
+                        this.$vs.notify({
+                            title: err.response.data[0],
+                            text: err.response.data[1],
+                            color: err.response.data[0],
+                            icon: 'verified_user'
+                        })
+                    })
+            },
+            totalSum() {
 
             }
         }

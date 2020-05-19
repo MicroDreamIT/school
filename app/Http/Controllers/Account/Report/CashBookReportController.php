@@ -169,7 +169,7 @@ class CashBookReportController extends CollegeBaseController
                 $data['total']['dr'] = $salaryDr + $bankDr + $trDr + $data['total']['coh'];
             }
             else{
-                return response()->json(['warning','Filter With Date Range.']);
+                return response()->json(['warning','Filter With Date Range.'], 402);
             }
 
         }else{
